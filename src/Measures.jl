@@ -15,11 +15,6 @@ domain(::Type{Measure{X}}) where {P,X} = X
 # This lets us write e.g.
 # @measure Normal
 # making it easier to declare a new measure.
-# We should extend this to allow
-# @measure Normal(μ,σ)
-# which could add a method
-# Normal(μ,σ) = Normal(μ=μ,σ=σ)
-# for default names
 export @measure
 macro measure(d)
     d = esc(d)
