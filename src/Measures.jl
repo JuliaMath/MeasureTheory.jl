@@ -26,6 +26,7 @@ macro measure(d)
     return quote
         struct $d{P,X} <: Measure{X}
             par :: P
+            $d(nt::NamedTuple) = new{typeof(nt), getX(Normal, typeof(nt))}(nt)
         end
         $d(;kwargs...) = $d((;kwargs...))
     end    
@@ -54,22 +55,12 @@ Lebesgue(X) = Lebesgue{X}()
 
 export Normal
 
-# @measure Normal
-
-struct Normal{P,X} <: Measure{X}
-    par :: P
-end
-
-Normal(;kwargs...) = Normal((;kwargs...))
+@measure Normal
 
 
+getX(::Type{Normal}, ::Type{NamedTuple{(:μ, :σ),Tuple{A,B}}}) where {A,B} = promote_type(A,B)
 
-function Normal(μ::Pμ, σ::Pσ) where {Pμ <: Real, Pσ <: Real}
-    let T = promote_type(Float64, Pμ, Pσ)
-        NT = NamedTuple{(:μ, :σ),Tuple{T, T}}
-        Normal{NT,T}((μ = T(μ), σ = T(σ)))
-    end
-end
+Normal(μ::Real, σ::Real) = Normal(μ=μ, σ=σ)
 
 baseMeasure(::Type{Normal{P,X}}) where {P,X} = Lebesgue(X)
 
