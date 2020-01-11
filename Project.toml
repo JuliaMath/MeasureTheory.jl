@@ -7,6 +7,8 @@ version = "0.1.0"
 CanonicalTraits = "a603d957-0e48-4f86-8fbd-0b7bc66df689"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 MLStyle = "d8e11817-5142-5d16-987a-aa16d5891078"
+NamedTupleTools = "d9ec5142-1e00-5aa0-9d6a-321866360f50"
+SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 
 [compat]
 julia = "1.3"
