@@ -16,6 +16,19 @@ domain(::Type{Measure{X}}) where {X} = X
 # @measure Normal
 # making it easier to declare a new measure.
 export @measure
+
+"""
+    @measure dist
+
+Create a new measure named `dist`. For example, `@measure Normal` is equivalent to
+
+    struct Normal{P, X} <:Measure{X}
+        par::P
+        Normal(nt::NamedTuple) = new{typeof(nt), _domain(Normal, typeof(nt))}(nt)
+    end
+
+    Normal(; kwargs...) = Normal((;kwargs...))
+"""
 macro measure(d)
     d = esc(d)
     return quote
