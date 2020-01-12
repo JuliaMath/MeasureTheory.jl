@@ -21,7 +21,7 @@ macro measure(d)
     return quote
         struct $d{P,X} <: Measure{X}
             par :: P
-            $d(nt::NamedTuple) = new{typeof(nt), getX(Normal, typeof(nt))}(nt)
+            $d(nt::NamedTuple) = new{typeof(nt), _domain($d, typeof(nt))}(nt)
         end
         $d(;kwargs...) = $d((;kwargs...))
     end    
@@ -45,6 +45,8 @@ end
 export Lebesgue
 struct Lebesgue{X} <: Measure{X} end
 Lebesgue(X) = Lebesgue{X}()
+
+include("normal.jl")
 
 
 end # module
