@@ -7,8 +7,8 @@ import Distributions
 abstract type Measure{X} end
 
 export domain
-domain(::Measure{X}) where {P,X} = X
-domain(::Type{Measure{X}}) where {P,X} = X
+domain(::Measure{X}) where {X} = X
+domain(::Type{Measure{X}}) where {X} = X
 
 
 
@@ -40,13 +40,9 @@ end
     measure :: [M, S] => Real
 end
 
-# Lebesgue measure
 
-export Lebesgue
-struct Lebesgue{X} <: Measure{X} end
-Lebesgue(X) = Lebesgue{X}()
+include("basemeasures/lebesgue.jl")
 
-include("normal.jl")
-
+include("probability/normal.jl")
 
 end # module

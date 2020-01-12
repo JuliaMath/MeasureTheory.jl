@@ -65,3 +65,4 @@ end
 #  == logdensity(Normal(μ=0.0, σ=0.5), 4.0) 
 #  == logdensity(Normal(μ=0.0, τ=4.0), 4.0) 
 #  == logdensity(Normal(τ=4.0), 4.0)
+
