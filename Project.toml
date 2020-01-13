@@ -4,6 +4,7 @@ authors = ["Chad Scherrer"]
 version = "0.1.0"
 
 [deps]
+BangBang = "198e06fe-97b7-11e9-32a5-e1d131e6ad66"
 CanonicalTraits = "a603d957-0e48-4f86-8fbd-0b7bc66df689"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 MLStyle = "d8e11817-5142-5d16-987a-aa16d5891078"
