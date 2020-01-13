@@ -87,3 +87,10 @@ And another check:
 julia> logdensity(Normal(μ=0.0, τ=4.0), 1.0)
 -2.2257913526447273
 ```
+
+We can combine measures in a few ways, for now just _scaling_ and _superposition_:
+
+```julia
+julia> 2.0*Lebesgue(Float64) + Normal(0.0,1.0)
+SuperpositionMeasure{Float64,2}((Measures.ScaledMeasure{Float64,Float64}(2.0, Lebesgue{Float64}()), Normal{NamedTuple{(:μ, :σ),Tuple{Float64,Float64}},Float64}((μ = 0.0, σ = 1.0))))
+```
