@@ -94,3 +94,7 @@ We can combine measures in a few ways, for now just _scaling_ and _superposition
 julia> 2.0*Lebesgue(Float64) + Normal(0.0,1.0)
 SuperpositionMeasure{Float64,2}((Measures.ScaledMeasure{Float64,Float64}(2.0, Lebesgue{Float64}()), Normal{NamedTuple{(:μ, :σ),Tuple{Float64,Float64}},Float64}((μ = 0.0, σ = 1.0))))
 ```
+
+---
+
+For an easy way to find expressions for the common log-densities, see [this gist](https://gist.github.com/cscherrer/47f0fc7597b4ffc11186d54cc4d8e577)
