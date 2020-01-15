@@ -5,6 +5,8 @@
 
 `Measures.jl` is a package for building and reasoning about measures.
 
+**WARNING: The current README is very developer-oriented. Casual use will be much simpler**
+
 For an example, let's walk through the construction of `src/probability/Normal`.
 
 First, we have
