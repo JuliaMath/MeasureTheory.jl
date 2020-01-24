@@ -14,7 +14,24 @@ ensureSuperposed(m::Measure{X}) where {X} = SuperpositionMeasure(m)
 
 using BangBang
 
-function Base.:+(ms::Measure{X}...) where {X}
+function inferAdd(::Type{SuperpositionMeasure}, ::Type{SuperpositionMeasure})
+    SuperpositionMeasure
+
+function inferAdd end
+@trait Add{A, B, C} where {C = inferAdd(A, B)} begin
+    (+) :: [A, B] => C
+    (+) = Base.:+
+end
+
+addtype()
+
+@implement Add{}
+
+
+function Base.:+(ms::(M where  {X, Measure{M, X} })...) 
+
+    X = promote_type(eltype.(ms))
     measuretuples = getproperty.(ensureSuperposed.(ms), :components)
     SuperpositionMeasure(foldl(append!!, measuretuples))
 end
+
