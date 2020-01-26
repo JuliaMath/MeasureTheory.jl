@@ -5,11 +5,14 @@ using CanonicalTraits
 import Distributions
 using Reexport
 
+
+include("traits.jl")
+
 export Measure
 
 abstract type Measure{X} end
 
-@trait IsMeasure{M,X} where {X = eltype(M)}
+
 
 @implement IsMeasure{M, X} where {X, M <: Measure{X}}
 
@@ -52,31 +55,6 @@ end
 # #     (≪) :: [M1, M2] => Bool
 # #     ≪(m1, m2) = false
 # # end
-
-export HasDensity
-
-export logdensity
-
-@trait IsMeasure{M, X} >: HasDensity{M, X} where {X = eltype(M)} begin
-    logdensity :: [M, X] => Real
-end
-
-export measure
-
-@trait IsMeasure{M,X} >: IsMeasurable{M,S,X} where {X = eltype(S)} begin
-    measure :: [M, S] => Real
-end
-
-export HasRand
-
-@trait IsMeasure{M,X} >: HasRand{M,X} where {X = eltype(M)} begin
-    rand :: [M] => eltype(M)
-end
-
-# @trait Measure{M,X} >: FiniteMeasure{M,X} where {X = eltype{M}} begin
-
-# end
-
 
 include("basemeasures/lebesgue.jl")
 include("combinators/scale.jl")
