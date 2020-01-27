@@ -58,7 +58,7 @@ end
 
 include("basemeasures/lebesgue.jl")
 include("combinators/scale.jl")
-# include("combinators/superpose.jl")
+include("combinators/superpose.jl")
 include("distributions.jl")
 
 include("probability/normal.jl")

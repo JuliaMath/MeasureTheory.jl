@@ -1,7 +1,7 @@
 # Lebesgue measure
 
 export Lebesgue
-struct Lebesgue{X} end
+struct Lebesgue{X} <: Measure{X} end
 
 @implement IsMeasure{Lebesgue{X}, X} where {X <: Real}
 
