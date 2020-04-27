@@ -3,13 +3,27 @@ import Distributions
 export Dists
 const Dists = Distributions
 
-@implement IsMeasure{D} where D <: Dists.Distribution
-
-@implement HasDensity{D,X} where {VF, X, D <: Dists.Distribution{VF,Dists.Continuous}} begin
-    baseMeasure(d) = Lebesgue(X)
-    logdensity(d,x) = Dists.logpdf(d,x)
+function Measure(dist::Dists.Distribution{F,S}) where {F,S}
+    X = eltype(dist)
+    DistributionMeasure{F,S,X}(dist)
 end
 
-@implement HasRand{S} where {S <: Dists.Sampleable} begin
-    rand(d) = Base.rand(d)
+struct DistributionMeasure{F, S, X} <: Measure{X}
+    dist :: Dists.Distribution{F, S}
+end
+
+function baseMeasure(μ::DistributionMeasure{F,S,X}) where {F, S <: Dists.Continuous, X}
+    return Lebesgue(X)
+end
+
+export logdensity
+
+function logdensity(μ::DistributionMeasure{F,S,X}, x::X) where {F, S, X}
+    return Dists.logpdf(μ.dist, x)
+end
+
+export rand
+
+function Base.rand(μ::DistributionMeasure{F,S,X}) where {F, S, X}
+    return rand(μ.dist)
 end

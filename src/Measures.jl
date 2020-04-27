@@ -1,12 +1,12 @@
 module Measures
 
 using MLStyle
-using CanonicalTraits
 import Distributions
 using Reexport
+using BangBang
 
 
-include("traits.jl")
+# include("traits.jl")
 
 export Measure
 
@@ -14,7 +14,6 @@ abstract type Measure{X} end
 
 
 
-@implement IsMeasure{M, X} where {X, M <: Measure{X}}
 
 
 # # This lets us write e.g.
@@ -47,14 +46,9 @@ macro measure(d)
 end
 
 
-# export baseMeasure
+export baseMeasure
 
-# # export ≪
-
-# # @trait DominatedBy{M1 <: Measure{X}, M2 <: Measure{X}} begin
-# #     (≪) :: [M1, M2] => Bool
-# #     ≪(m1, m2) = false
-# # end
+# TODO: Define ≪ for dominating measure
 
 include("basemeasures/lebesgue.jl")
 include("combinators/scale.jl")
