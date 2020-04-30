@@ -5,16 +5,13 @@ import Distributions
 using Reexport
 using BangBang
 
-
 # include("traits.jl")
 
 export Measure
 
 abstract type Measure{X} end
 
-
-
-
+Base.eltype(μ::Measure{X}) where {X} = X
 
 # # This lets us write e.g.
 # # @measure Normal
@@ -45,16 +42,15 @@ macro measure(d)
     end    
 end
 
-
 export baseMeasure
 
 # TODO: Define ≪ for dominating measure
 
 include("basemeasures/lebesgue.jl")
 include("combinators/scale.jl")
-include("combinators/superpose.jl")
 include("distributions.jl")
-
-include("probability/normal.jl")
+include("combinators/superpose.jl")
+include("combinators/product.jl")
+# include("probability/normal.jl")
 
 end # module
