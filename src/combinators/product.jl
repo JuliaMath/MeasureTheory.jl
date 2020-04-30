@@ -1,18 +1,39 @@
 export ProductMeasure
+using Base: eltype
 
 struct ProductMeasure{T} <: Measure{T}
-    # e.g. Tuple{Int64,Float64} => Tuple{Measure{Int64},Measure{Float64}}
-    components :: Tuple{(Measure{t} for t in T.types)...}
+    # TODO: Type annotation
+    components
+
+    ProductMeasure(μs...) = new{Tuple{eltype.(μs)...}}(μs)
 end
 
-ProductMeasure
 
 # ProductMeasure(m::NTuple{N, Measure{X}}) where {N,X} = ProductMeasure(m...)
 
-Base.length(m::ProductMeasure{T}) where {T} = length(m)
+Base.length(m::ProductMeasure{T}) where {T} = length(m.components)
+
+function Base.:*(μ::ProductMeasure{X}, ν::ProductMeasure{Y}) where {X,Y}
+    components = (μ.components..., ν.components...)
+    ProductMeasure(components...)
+end
+
+function Base.:*(μ::Measure{X}, ν::ProductMeasure{Y}) where {X,Y}
+    components = (μ, ν.components...)
+    ProductMeasure(components...)
+end
+
+function Base.:*(μ::ProductMeasure{X}, ν::Measure{Y}) where {X,Y}
+    components = (μ.components..., ν)
+    ProductMeasure(components...)
+end
+
+function Base.:*(μ::Measure{X}, ν::Measure{Y}) where {X,Y}
+    components = (μ, ν)
+    ProductMeasure(components...)
+end
 
 
-function Base.:*(μ::ProductMeasure{X,N1}, ν::ProductMeasure{X,N2})
-    components = append!!(μ.components, ν.components)
-    ProductMeasure{X, N1+N2}(components)
+function Base.rand(μ::ProductMeasure{T}) where T
+    return rand.(μ.components)
 end
