@@ -33,6 +33,9 @@ function Base.:*(μ::Measure{X}, ν::Measure{Y}) where {X,Y}
     ProductMeasure(components...)
 end
 
+export × 
+function ×(μ::Measure{X}, ν::Measure{Y}) = μ*ν
+
 
 function Base.rand(μ::ProductMeasure{T}) where T
     return rand.(μ.components)
