@@ -4,6 +4,7 @@ using MLStyle
 import Distributions
 using Reexport
 using BangBang
+using SimplePosets
 
 # include("traits.jl")
 
@@ -42,10 +43,7 @@ macro measure(d)
     end    
 end
 
-export baseMeasure
-
-# TODO: Define ≪ for dominating measure
-
+include("basemeasures.jl")
 include("basemeasures/lebesgue.jl")
 include("combinators/scale.jl")
 include("distributions.jl")
