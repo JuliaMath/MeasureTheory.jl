@@ -37,3 +37,8 @@ end
 function Base.rand(μ::ProductMeasure{T}) where T
     return rand.(μ.components)
 end
+
+function Base.:^(μ::Measure{X}, n::Integer)
+    components = ntuple(i -> μ, n)
+    ProductMeasure(components...)
+end
