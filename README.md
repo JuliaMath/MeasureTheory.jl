@@ -55,6 +55,17 @@ end
 
 Then we'll have a function `∫`. For cases where μ = ∫f dν,  `∫(f, ν)` will just return `μ` (we can do this based on the types). For unknown cases (which will be most of them), we'll return `∫(f, ν) = Integral(f, ν)`.
 
+## Measure Combinators
+
+It should be very easy to build new measures from existing ones. This can be done using, for example, 
+
+- restriction
+- product measure
+- superposition
+- pushforward
+
+There's also function spaces, but this gets much trickier. We'll need to determine a good way to reason about this.
+
 ## More???
 
 This is very much a work in progress. If there are things you think we should have as goals, please add an issue with the `goals` label.
