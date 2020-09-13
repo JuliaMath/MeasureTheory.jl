@@ -5,6 +5,18 @@
 
 `Measures.jl` is a package for building and reasoning about measures.
 
+# Why?
+
+A distribution (as in Distributions.jl) is also called a _probability measure_, and carries with it the constraint of adding (or integrating) to one. Statistical work usually requires this "at the end of the day", but enforcing it at each step of a computation can have considerable overhead.
+
+# Goals
+
+- 
+
+
+------------------
+# Old Stuff
+
 **WARNING: The current README is very developer-oriented. Casual use will be much simpler**
 
 For an example, let's walk through the construction of `src/probability/Normal`.
