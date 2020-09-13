@@ -36,6 +36,30 @@ If we collapse the equivalence classes (under ≃), `≪` becomes a partial orde
 
 _We need ≃ and ≪ to be fast_. If the support of a measure can be determined statically from its type, we can define ≃ and ≪ as generated functions. 
 
+## Radon-Nikodym Derivatives
+
+One of the equivalent conditions above was "There exists a function f such that μ = ∫f dν". In this case, `f` is called a _Radom-Nikodym derivative_, or (less formally) a _density_. In this case we often write `f = dμ/dν`.
+
+For any measures μ and ν with μ≪ν, we should be represent this.
+
+## Integration
+
+More generally, we'll need to be able to represent change of measure as above, `∫f dν`. We'll need an `Integral` type
+
+```julia
+struct Integral{F,M}
+    f::F
+    μ::M
+end
+```
+
+Then we'll have a function `∫`. For cases where μ = ∫f dν,  `∫(f, ν)` will just return `μ` (we can do this based on the types). For unknown cases (which will be most of them), we'll return `∫(f, ν) = Integral(f, ν)`.
+
+## More???
+
+This is very much a work in progress. If there are things you think we should have as goals, please add an issue with the `goals` label.
+
+
 ------------------
 # Old Stuff
 
