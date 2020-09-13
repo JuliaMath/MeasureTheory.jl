@@ -3,4 +3,6 @@
 export Lebesgue
 struct Lebesgue{X} <: Measure{X} end
 
-Lebesgue(X) = Lebesgue{X}()
+Lebesgue(X::DataType) = Lebesgue{X}()
+
+add!(BASE_MEASURES, Lebesgue{X} where X)

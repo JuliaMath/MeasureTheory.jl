@@ -2,7 +2,7 @@ const BASE_MEASURES = SimplePoset()
 
 export baseMeasure
 
-function baseMeasure
+function baseMeasure end
 
 """
     ≪(μ,ν)
@@ -24,15 +24,17 @@ function ≪(μ,ν)
     return b ∈ BASE_MEASURES.D.N[a]
 end
 
+
+
 """
-    ≅(μ,ν)
+    ≃(μ,ν)
 
 # Equivalence of Measure
 
-Measures μ and ν on the same space X are equivalent, written `μ ≅ ν`, if `μ ≪ ν` and `ν ≪ μ`.
+Measures μ and ν on the same space X are equivalent, written `μ ≃ ν`, if `μ ≪ ν` and `ν ≪ μ`.
 
 Note that this is often written `~` in the literature, but this is overloaded in probabilistic programming, so we use alternate notation.
 """
-function ≅(μ,ν)
+function ≃(μ,ν)
     return (μ≪ν && ν≪μ)
 end

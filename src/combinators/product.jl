@@ -34,14 +34,10 @@ function Base.:*(μ::Measure{X}, ν::Measure{Y}) where {X,Y}
 end
 
 export × 
-function ×(μ::Measure{X}, ν::Measure{Y}) = μ*ν
-
+function ×(μ::Measure{X}, ν::Measure{Y}) where {X,Y}
+    return μ*ν
+end
 
 function Base.rand(μ::ProductMeasure{T}) where T
     return rand.(μ.components)
-end
-
-function Base.:^(μ::Measure{X}, n::Integer) where {X}
-    components = ntuple(i -> μ, n)
-    ProductMeasure(components...)
 end

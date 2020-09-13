@@ -12,6 +12,12 @@ export Measure
 
 abstract type Measure{X} end
 
+@traitdef IsMeasure{X}
+
+@traitimpl IsMeasure{Distribution}
+
+@traitfn
+
 Base.eltype(μ::Measure{X}) where {X} = X
 
 # # This lets us write e.g.
@@ -50,5 +56,7 @@ include("distributions.jl")
 include("combinators/superpose.jl")
 include("combinators/product.jl")
 # include("probability/normal.jl")
+
+
 
 end # module

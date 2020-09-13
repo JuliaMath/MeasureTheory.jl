@@ -16,18 +16,17 @@ Normal(μ::Real, σ::Real) = Normal(μ=μ, σ=σ)
 _domain(::Type{Normal}, ::Type{NamedTuple{(),Tuple{}}}) = Float64
 
 
-# @implement HasDensity{Normal{P,X},X} where {X <: Real, P <: NamedTuple{(),Tuple{}}} begin
-#     baseMeasure(d) = Lebesgue(X)
-#     logdensity(d, x) = - (log(2) + log(π) + x^2) / 2  
-# end
-
 # # μ, σ
 
 
 _domain(::Type{Normal}, ::Type{NamedTuple{(:μ, :σ), Tuple{A, B}}}) where {A,B} = promote_type(A,B)
 
+function logdensity(d::Normal{P,X} , x::X) where {P <: NamedTuple{(:μ, :σ)}, X <: Real}
+    return - (log(2) + log(π)) / 2 - log(d.par.σ)  - (x - d.par.μ)^2 / (2 * d.par.σ^2)
+end
 
 
+ 
 # @implement HasDensity{Normal{P,X},X} where {X, P <: NamedTuple{(:μ, :σ)}} begin
 #     baseMeasure(d) = Lebesgue(X)
 #     logdensity(d, x) = - (log(2) + log(π)) / 2 - log(d.par.σ)  - (x - d.par.μ)^2 / (2 * d.par.σ^2)
