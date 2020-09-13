@@ -3,8 +3,11 @@ module Measures
 using MLStyle
 import Distributions
 using Reexport
-using BangBang
 using SimplePosets
+using SimpleTraits
+
+import Distributions
+const Dists = Distributions
 
 # include("traits.jl")
 
@@ -14,9 +17,7 @@ abstract type Measure{X} end
 
 @traitdef IsMeasure{X}
 
-@traitimpl IsMeasure{Distribution}
-
-@traitfn
+@traitimpl IsMeasure{Dists.Distribution}
 
 Base.eltype(μ::Measure{X}) where {X} = X
 
