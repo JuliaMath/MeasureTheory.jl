@@ -9,10 +9,32 @@
 
 A distribution (as in Distributions.jl) is also called a _probability measure_, and carries with it the constraint of adding (or integrating) to one. Statistical work usually requires this "at the end of the day", but enforcing it at each step of a computation can have considerable overhead.
 
+As a generalization of the concept of volume, measures also have applications outside of probability theory.
+
 # Goals
 
-- 
+## Distributions.jl Compatibility
 
+Distirbutions.jl is wildly popular, and is large enough that replacing it all at once would be a major undertaking. 
+
+Instead, we should aim to make any Distribution easily usable as a Measure. We'll most likely implement this using an `IsMeasure` trait. 
+
+## Absolute Continuity
+
+For two measures μ,ν on a set X, we say μ is _absolutely continuous_ with respect to ν if ν(A)=0 implies μ(A)=0 for every measurable subset A of X.
+
+The following are equivalent:
+1. μ ≪ ν
+2. μ is absolutely continuous wrt ν
+3. There exists a function f such that μ = ∫f dν
+
+So we'll need a `≪` operator. Note that `≪` is not antisymmetric; it's common for both `μ ≪ ν` and  `ν ≪ μ` to hold. 
+
+If `μ ≪ ν` and  `ν ≪ μ`, we say μ and ν are _equivalent_ and write `μ ≃ ν`. (This is often written as `μ ~ ν`, but we reserve `~` for random variables following a distribution, as is common in the literature and probabilistic programming languages.)
+
+If we collapse the equivalence classes (under ≃), `≪` becomes a partial order.
+
+_We need ≃ and ≪ to be fast_. If the support of a measure can be determined statically from its type, we can define ≃ and ≪ as generated functions. 
 
 ------------------
 # Old Stuff
