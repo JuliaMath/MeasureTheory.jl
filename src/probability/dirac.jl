@@ -1,7 +1,7 @@
 
 export Dirac
 
-struct Dirac{X} <: Measure{X}
+struct Dirac{X} <: AbstractMeasure{X}
     supp :: X
 end
 

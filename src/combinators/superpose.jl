@@ -1,6 +1,6 @@
 export SuperpositionMeasure
 
-struct SuperpositionMeasure{X,N} <: Measure{X}
+struct SuperpositionMeasure{X,N} <: AbstractMeasure{X}
     components :: NTuple{N,Measure{X}}
 end
 

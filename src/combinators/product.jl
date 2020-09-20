@@ -1,7 +1,7 @@
 export ProductMeasure
 using Base: eltype
 
-struct ProductMeasure{T} <: Measure{T}
+struct ProductMeasure{T} <: AbstractMeasure{T}
     # TODO: Type annotation
     components
 

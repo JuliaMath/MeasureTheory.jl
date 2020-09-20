@@ -1,11 +1,30 @@
+"""
+    struct Density{M,B}
+        μ::M
+        base::B
+    end
+
+For measures μ and ν with μ≪ν, the density of μ with respect to ν (also called
+the Radon-Nikodym derivative dμ/dν) is a function f defined on the support of ν
+with the property that for any measurable a ⊂ supp(ν), μ(a) = ∫ₐ f dν.
+    
+Because this function is often difficult to express in closed form, there are
+many different ways of computing it. We therefore provide a formal
+representation to allow comptuational flexibilty.
+"""
 struct Density{M,B}
     μ::M
     base::B
 end
 
-struct LogDensity{M,B}
-    μ::M
-    base::B
+"""
+A `DensityMeasure` is a measure defined by a density
+  
+
+"""
+struct DensityMeasure{F,B} <: AbstractMeasure{X}
+    density :: F
+    base    :: B
 end
 
 

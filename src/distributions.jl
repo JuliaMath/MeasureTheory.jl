@@ -3,12 +3,13 @@ import Distributions
 export Dists
 const Dists = Distributions
 
+
 function Measure(dist::Dists.Distribution{F,S}) where {F,S}
     X = Base.eltype(dist)
     DistributionMeasure{F,S,X}(dist)
 end
 
-struct DistributionMeasure{F, S, X} <: Measure{X}
+struct DistributionMeasure{F, S, X} <: AbstractMeasure{X}
     dist :: Dists.Distribution{F, S}
 end
 
@@ -30,11 +31,19 @@ end
 
 export Normal
 
+
+
 function Normal(μ::T, σ::T) where {T <: AbstractFloat}
     d = Dists.Normal(μ,σ; check_args=false)
     return Measure(d)
 end
 
-Normal(μ::Real, σ::Real) = Normal(promote(μ, σ)...)
-Normal(μ::Integer, σ::Integer) = Normal(float(μ), float(σ))
-Normal(μ::T) where {T <: Real} = Normal(μ, one(T))
+function baseMeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous})
+    T = eltype(μ)
+    return Lebesgue(T)
+end
+
+function baseMeasure(μ::Dists.Distribution{Dists.Multivariate,Dists.Continuous})
+    x = rand(μ)
+    return Lebesgue(typeof(x))
+end
