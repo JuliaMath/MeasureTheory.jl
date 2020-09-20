@@ -28,8 +28,8 @@ struct DensityMeasure{F,B} <: AbstractMeasure{X}
 end
 
 
-density(μ, base) = Density(μ, base)
-logdensity(μ, base) = LogDensity(μ, base)
+density(μ, base=basemeasure(μ)) = Density(μ, base)
+logdensity(μ, base=basemeasure(μ)) = LogDensity(μ, base)
 
 density(μ::Distribution{Univariate,Continuous}, x::Real) = pdf(μ,x)
 logdensity(μ::Distribution{Univariate,Continuous}, x::Real) = logpdf(μ,x)

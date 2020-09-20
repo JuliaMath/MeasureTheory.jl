@@ -18,23 +18,23 @@ function Base.:*(μ::ProductMeasure{X}, ν::ProductMeasure{Y}) where {X,Y}
     ProductMeasure(components...)
 end
 
-function Base.:*(μ::Measure{X}, ν::ProductMeasure{Y}) where {X,Y}
+function Base.:*(μ::AbstractMeasure{X}, ν::ProductMeasure{Y}) where {X,Y}
     components = (μ, ν.components...)
     ProductMeasure(components...)
 end
 
-function Base.:*(μ::ProductMeasure{X}, ν::Measure{Y}) where {X,Y}
+function Base.:*(μ::ProductMeasure{X}, ν::AbstractMeasure{Y}) where {X,Y}
     components = (μ.components..., ν)
     ProductMeasure(components...)
 end
 
-function Base.:*(μ::Measure{X}, ν::Measure{Y}) where {X,Y}
+function Base.:*(μ::AbstractMeasure{X}, ν::AbstractMeasure{Y}) where {X,Y}
     components = (μ, ν)
     ProductMeasure(components...)
 end
 
 export × 
-function ×(μ::Measure{X}, ν::Measure{Y}) where {X,Y}
+function ×(μ::AbstractMeasure{X}, ν::AbstractMeasure{Y}) where {X,Y}
     return μ*ν
 end
 
