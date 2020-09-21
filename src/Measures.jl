@@ -43,7 +43,7 @@ Create a new measure named `dist`. For example, `@measure Normal` is equivalent 
 
     struct Normal{P, X} <: AbstractMeasure{X}
         par::P
-        Normal(nt::NamedTuple) = new{typeof(nt), _domain(Normal, typeof(nt))}(nt)
+        Normal(nt::NamedTuple) = new{typeof(nt), eltype(Normal, typeof(nt))}(nt)
     end
 
     Normal(; kwargs...) = Normal((;kwargs...))
@@ -54,12 +54,12 @@ macro measure(d,b)
     return quote
         struct $d{P,X} <: AbstractMeasure{X}
             par :: P
-            $d(nt::NamedTuple) = new{typeof(nt), _domain($d, typeof(nt))}(nt)
+            $d(nt::NamedTuple) = new{typeof(nt), eltype($d, typeof(nt))}(nt)
         end
 
         $d(;kwargs...) = $d((;kwargs...))
 
-        baseMeasure($d) = $b
+        baseMeasure(μ::$d{P,X}) where {P,X} = $b{X}
 
         ≪(::$d{P,X}, ::$b{X}) where {P,X} = true
     end    
@@ -71,7 +71,7 @@ include("combinators/scale.jl")
 include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("distributions.jl")
-# include("probability/normal.jl")
+include("probability/normal.jl")
 
 
 

@@ -18,9 +18,13 @@ struct Density{M,B}
 end
 
 """
-A `DensityMeasure` is a measure defined by a density
-  
-
+    struct DensityMeasure{F,B} <: AbstractMeasure{X}
+        density :: F
+        base    :: B
+    end
+    
+A `DensityMeasure` is a measure defined by a density with respect to some other
+"base" measure 
 """
 struct DensityMeasure{F,B} <: AbstractMeasure{X}
     density :: F
