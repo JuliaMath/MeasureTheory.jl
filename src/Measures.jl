@@ -8,18 +8,28 @@ using SimpleTraits
 
 import Distributions
 const Dists = Distributions
-
 # include("traits.jl")
 
-export Measure
 
-abstract type Measure{X} end
+
+abstract type AbstractMeasure{X} end
+
+
+
 
 @traitdef IsMeasure{X}
 
-@traitimpl IsMeasure{Dists.Distribution}
+# @traitimpl IsMeasure{Dists.Distribution}
 
-Base.eltype(μ::Measure{X}) where {X} = X
+Base.eltype(μ::AbstractMeasure{X}) where {X} = X
+
+
+
+logdensity(μ::Dists.Distribution, x) = Dists.logpdf(μ,x)
+
+density(μ::Dists.Distribution, x) = Dists.pdf(μ,x)
+
+
 
 # # This lets us write e.g.
 # # @measure Normal
@@ -31,32 +41,37 @@ export @measure
 
 Create a new measure named `dist`. For example, `@measure Normal` is equivalent to
 
-    struct Normal{P, X} <: Measure{X}
+    struct Normal{P, X} <: AbstractMeasure{X}
         par::P
-        Normal(nt::NamedTuple) = new{typeof(nt), _domain(Normal, typeof(nt))}(nt)
+        Normal(nt::NamedTuple) = new{typeof(nt), eltype(Normal, typeof(nt))}(nt)
     end
 
     Normal(; kwargs...) = Normal((;kwargs...))
 """
-macro measure(d)
+macro measure(d,b)
     d = esc(d)
+    b = esc(b)
     return quote
-        struct $d{P,X} <: Measure{X}
+        struct $d{P,X} <: AbstractMeasure{X}
             par :: P
-            $d(nt::NamedTuple) = new{typeof(nt), _domain($d, typeof(nt))}(nt)
+            $d(nt::NamedTuple) = new{typeof(nt), eltype($d, typeof(nt))}(nt)
         end
 
         $d(;kwargs...) = $d((;kwargs...))
+
+        baseMeasure(μ::$d{P,X}) where {P,X} = $b{X}
+
+        ≪(::$d{P,X}, ::$b{X}) where {P,X} = true
     end    
 end
 
 include("basemeasures.jl")
 include("basemeasures/lebesgue.jl")
 include("combinators/scale.jl")
-include("distributions.jl")
 include("combinators/superpose.jl")
 include("combinators/product.jl")
-# include("probability/normal.jl")
+include("distributions.jl")
+include("probability/normal.jl")
 
 
 

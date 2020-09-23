@@ -5,27 +5,48 @@ import StatsFuns
 using Intervals
 export Normal
 
-@measure Normal
+
+
+# Note: `Normal Lebesgue` expands to (cleaned up)
+
+# quote
+#     struct Normal{P, X} <: Measures.AbstractMeasure{X}
+#         par::P
+#         Normal(nt::Measures.NamedTuple) = begin
+#                 new{Measures.typeof(nt), Measures._domain(Normal, Measures.typeof(nt))}(nt)
+#             end
+#     end
+
+#     Normal(; kwargs...) = begin
+#             Normal((; kwargs...))
+#         end
+    
+#     baseMeasure(Normal) = begin
+#             Lebesgue
+#         end
+
+#     (:≪(::Normal{P, X}, ::Lebesgue{X}) where {P, X}) = true
+# end
+@measure Normal Lebesgue
+
+
+
 baseMeasure(::Normal{P,X}) where {P,X} = Lebesgue(X)
 
 Normal(μ::Real, σ::Real) = Normal(μ=μ, σ=σ)
 
 
-# # Standard normal
-
-_domain(::Type{Normal}, ::Type{NamedTuple{(),Tuple{}}}) = Float64
-
-
-# # μ, σ
-
-
-_domain(::Type{Normal}, ::Type{NamedTuple{(:μ, :σ), Tuple{A, B}}}) where {A,B} = promote_type(A,B)
-
-function logdensity(d::Normal{P,X} , x::X) where {P <: NamedTuple{(:μ, :σ)}, X <: Real}
+function logdensity(d::Normal{P,X} , ::Lebesgue{X}) where {P <: NamedTuple{(:μ, :σ)}, X <: Real}    
     return - (log(2) + log(π)) / 2 - log(d.par.σ)  - (x - d.par.μ)^2 / (2 * d.par.σ^2)
 end
 
+# Standard normal
 
+function logdensity(d::Normal{Nothing,X} , ::Lebesgue{X}) where {X <: Real}    
+    return - (log(2) + log(π)) / 2  - x^2 / 2 
+end
+
+Normal() = Normal(nothing)
  
 # @implement HasDensity{Normal{P,X},X} where {X, P <: NamedTuple{(:μ, :σ)}} begin
 #     baseMeasure(d) = Lebesgue(X)
