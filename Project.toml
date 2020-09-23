@@ -1,4 +1,4 @@
-name = "Measures"
+name = "MeasureTheory"
 uuid = "eadaa1a4-d27c-401d-8699-e962e1bbc33b"
 authors = ["Chad Scherrer"]
 version = "0.1.0"
@@ -11,7 +11,6 @@ MLStyle = "d8e11817-5142-5d16-987a-aa16d5891078"
 NamedTupleTools = "d9ec5142-1e00-5aa0-9d6a-321866360f50"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 SimplePosets = "b2aef97b-4721-5af9-b440-0bad754dc5ba"
-SimpleTraits = "699a6c99-e7fa-54fc-8d76-47d257e15c1d"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 StatsFuns = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
 

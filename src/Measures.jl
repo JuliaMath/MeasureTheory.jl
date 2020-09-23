@@ -1,10 +1,9 @@
-module Measures
+module MeasureTheory
 
 using MLStyle
 import Distributions
 using Reexport
 using SimplePosets
-using SimpleTraits
 
 import Distributions
 const Dists = Distributions
@@ -26,10 +25,6 @@ Methods for computing density relative to other measures will be
 function logdensity end
 
 
-@traitdef IsMeasure{X}
-
-# @traitimpl IsMeasure{Dists.Distribution}
-
 Base.eltype(μ::AbstractMeasure{X}) where {X} = X
 
 
@@ -41,14 +36,15 @@ density(μ::Dists.Distribution, x) = Dists.pdf(μ,x)
 
 
 # # This lets us write e.g.
-# # @measure Normal
+# # @measure Normal 
 # # making it easier to declare a new measure.
 export @measure
 
 """
-    @measure dist
+    @measure μ base
 
-Create a new measure named `dist`. For example, `@measure Normal` is equivalent to
+Create a new measure named `μ` with base measure `b`. 
+For example, `@measure Normal Lebesgue` is equivalent to
 
     struct Normal{P, X} <: AbstractMeasure{X}
         par::P

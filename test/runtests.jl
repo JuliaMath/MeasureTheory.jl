@@ -1,6 +1,6 @@
-using Measures
+using MeasureTheory
 using Test
 
-@testset "Measures.jl" begin
+@testset "MeasureTheory.jl" begin
     # Write your own tests here.
 end

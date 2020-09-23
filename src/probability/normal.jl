@@ -2,7 +2,6 @@
 # Normal distribution
 
 import StatsFuns
-using Intervals
 export Normal
 
 
@@ -10,10 +9,10 @@ export Normal
 # Note: `Normal Lebesgue` expands to (cleaned up)
 
 # quote
-#     struct Normal{P, X} <: Measures.AbstractMeasure{X}
+#     struct Normal{P, X} <: MeasureTheory.AbstractMeasure{X}
 #         par::P
-#         Normal(nt::Measures.NamedTuple) = begin
-#                 new{Measures.typeof(nt), Measures._domain(Normal, Measures.typeof(nt))}(nt)
+#         Normal(nt::MeasureTheory.NamedTuple) = begin
+#                 new{MeasureTheory.typeof(nt), MeasureTheory._domain(Normal, MeasureTheory.typeof(nt))}(nt)
 #             end
 #     end
 
@@ -27,26 +26,25 @@ export Normal
 
 #     (:≪(::Normal{P, X}, ::Lebesgue{X}) where {P, X}) = true
 # end
-@measure Normal Lebesgue
+# @measure Normal Lebesgue
 
 
 
-baseMeasure(::Normal{P,X}) where {P,X} = Lebesgue(X)
 
 Normal(μ::Real, σ::Real) = Normal(μ=μ, σ=σ)
 
 
-function logdensity(d::Normal{P,X} , ::Lebesgue{X}) where {P <: NamedTuple{(:μ, :σ)}, X <: Real}    
+function logdensity(d::Normal{P} , x::X) where {P <: NamedTuple{(:μ, :σ)}, X}    
     return - (log(2) + log(π)) / 2 - log(d.par.σ)  - (x - d.par.μ)^2 / (2 * d.par.σ^2)
 end
 
 # Standard normal
 
-function logdensity(d::Normal{Nothing,X} , ::Lebesgue{X}) where {X <: Real}    
+function logdensity(d::Normal{EmptyNamedTuple,X} , ::Lebesgue{X}) where {X <: Real}    
     return - (log(2) + log(π)) / 2  - x^2 / 2 
 end
 
-Normal() = Normal(nothing)
+Normal() = Normal(NamedTuple())
  
 # @implement HasDensity{Normal{P,X},X} where {X, P <: NamedTuple{(:μ, :σ)}} begin
 #     baseMeasure(d) = Lebesgue(X)

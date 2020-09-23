@@ -1,9 +1,9 @@
-# Measures
+# MeasureTheory
 
-[![Build Status](https://travis-ci.com/cscherrer/Measures.jl.svg?branch=master)](https://travis-ci.com/cscherrer/Measures.jl)
-[![Codecov](https://codecov.io/gh/cscherrer/Measures.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/cscherrer/Measures.jl)
+[![Build Status](https://travis-ci.com/cscherrer/MeasureTheory.jl.svg?branch=master)](https://travis-ci.com/cscherrer/MeasureTheory.jl)
+[![Codecov](https://codecov.io/gh/cscherrer/MeasureTheory.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/cscherrer/MeasureTheory.jl)
 
-`Measures.jl` is a package for building and reasoning about measures.
+`MeasureTheory.jl` is a package for building and reasoning about measures.
 
 # Why?
 
@@ -163,7 +163,7 @@ We can combine measures in a few ways, for now just _scaling_ and _superposition
 
 ```julia
 julia> 2.0*Lebesgue(Float64) + Normal(0.0,1.0)
-SuperpositionMeasure{Float64,2}((Measures.ScaledMeasure{Float64,Float64}(2.0, Lebesgue{Float64}()), Normal{NamedTuple{(:μ, :σ),Tuple{Float64,Float64}},Float64}((μ = 0.0, σ = 1.0))))
+SuperpositionMeasure{Float64,2}((MeasureTheory.ScaledMeasure{Float64,Float64}(2.0, Lebesgue{Float64}()), Normal{NamedTuple{(:μ, :σ),Tuple{Float64,Float64}},Float64}((μ = 0.0, σ = 1.0))))
 ```
 
 ---
