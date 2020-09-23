@@ -30,6 +30,6 @@ function Base.:+(μ::Measure{X}, ν::Measure{X}) where {X}
     SuperpositionMeasure{X,2}(components)
 end
 
-# TODO : rand(::SuperpositionMeasure)
-# function Base.rand(μ::SuperpositionMeasure{X,N}) where {X,N}
-# end
+function Base.rand(μ::SuperpositionMeasure{X,N}) where {X,N}
+    return rand(rand(μ.components))
+end
