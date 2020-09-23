@@ -12,6 +12,7 @@ NamedTupleTools = "d9ec5142-1e00-5aa0-9d6a-321866360f50"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 SimplePosets = "b2aef97b-4721-5af9-b440-0bad754dc5ba"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 StatsFuns = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
 
 [compat]

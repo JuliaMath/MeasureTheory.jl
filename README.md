@@ -86,13 +86,38 @@ First, we have
 
 this is just a little helper function, and is equivalent to
 
+# TODO: Clean up
 ```julia
-struct Normal{P, X} <: Measure{X}
-    par::P
-    Normal(nt::NamedTuple) = new{typeof(nt), _domain(Normal, typeof(nt))}(nt)
+quote
+    #= /home/chad/git/Measures.jl/src/Measures.jl:55 =#
+    struct Normal{var"#10#P", var"#11#X"} <: Measures.AbstractMeasure{var"#11#X"}
+        #= /home/chad/git/Measures.jl/src/Measures.jl:56 =#
+        par::var"#10#P"
+    end
+    #= /home/chad/git/Measures.jl/src/Measures.jl:59 =#
+    function Normal(var"#13#nt"::Measures.NamedTuple)
+        #= /home/chad/git/Measures.jl/src/Measures.jl:59 =#
+        #= /home/chad/git/Measures.jl/src/Measures.jl:60 =#
+        var"#12#P" = Measures.typeof(var"#13#nt")
+        #= /home/chad/git/Measures.jl/src/Measures.jl:61 =#
+        return Normal{var"#12#P", Measures.eltype(Normal{var"#12#P"})}
+    end
+    #= /home/chad/git/Measures.jl/src/Measures.jl:64 =#
+    Normal(; var"#14#kwargs"...) = begin
+            #= /home/chad/git/Measures.jl/src/Measures.jl:64 =#
+            Normal((; var"#14#kwargs"...))
+        end
+    #= /home/chad/git/Measures.jl/src/Measures.jl:66 =#
+    (var"#8#baseMeasure"(var"#15#μ"::Normal{var"#16#P", var"#17#X"}) where {var"#16#P", var"#17#X"}) = begin
+            #= /home/chad/git/Measures.jl/src/Measures.jl:66 =#
+            Lebesgue{var"#17#X"}
+        end
+    #= /home/chad/git/Measures.jl/src/Measures.jl:68 =#
+    (var"#9#≪"(::Normal{var"#19#P", var"#20#X"}, ::Lebesgue{var"#20#X"}) where {var"#19#P", var"#20#X"}) = begin
+            #= /home/chad/git/Measures.jl/src/Measures.jl:68 =#
+            true
+        end
 end
-
-Normal(; kwargs...) = Normal((;kwargs...))
 ```
 
 Next we have 
@@ -103,10 +128,10 @@ Normal(μ::Real, σ::Real) = Normal(μ=μ, σ=σ)
 
 This defines a default. If we just give two numbers as arguments (but no names), we'll assume this parameterization.
 
-Next need to define a `_domain` function. This takes a constructor (here `Normal`) and a parameter, and tells us the space for which this defines a measure. Let's define this in terms of the types of the parameters,
+Next need to define a `eltype` function. This takes a constructor (here `Normal`) and a parameter, and tells us the space for which this defines a measure. Let's define this in terms of the types of the parameters,
 
 ```julia
-_domain(::Type{Normal}, ::Type{NamedTuple{(:μ, :σ), Tuple{A, B}}}) where {A,B} = promote_type(A,B)
+eltype(::Type{Normal}, ::Type{NamedTuple{(:μ, :σ), Tuple{A, B}}}) where {A,B} = promote_type(A,B)
 ```
 
 That's still kind of boring, so let's build the density. For this, we need to implement the trait
@@ -144,7 +169,7 @@ julia> logdensity(Normal(μ=0.0, σ=0.5), 1.0)
 What about other parameterizations? Sure, no problem. Here's a way to write this for mean `μ` (as before), but using the _precision_ (inverse of the variance) instead of standard deviation:
 
 ```julia
-_domain(::Type{Normal}, ::Type{NamedTuple{(:μ, :τ), Tuple{A, B}}}) where {A,B} = promote_type(A,B)
+eltype(::Type{Normal}, ::Type{NamedTuple{(:μ, :τ), Tuple{A, B}}}) where {A,B} = promote_type(A,B)
 
 @implement Density{Normal{P,X},X} where {X, P <: NamedTuple{(:μ, :τ)}} begin
     baseMeasure(d) = Lebesgue(X)

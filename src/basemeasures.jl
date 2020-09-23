@@ -1,5 +1,3 @@
-const BASE_MEASURES = SimplePoset()
-
 export baseMeasure
 
 function baseMeasure end
@@ -14,15 +12,7 @@ The following are equivalent:
 2. μ is absolutely continuous wrt ν
 3. There exists a function f such that μ = ∫f dν
 """
-function ≪(μ,ν)
-    μ == ν && return true
-    
-    a = baseMeasure(μ)
-    b = baseMeasure(ν)
-    a == b && return true
-
-    return b ∈ BASE_MEASURES.D.N[a]
-end
+function ≪ end
 
 
 

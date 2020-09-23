@@ -11,6 +11,9 @@ const Dists = Distributions
 
 const EmptyNamedTuple = NamedTuple{(),Tuple{}}
 
+
+export ≪
+
 abstract type AbstractMeasure{X} end
 
 """
@@ -58,8 +61,12 @@ macro measure(d,b)
     b = esc(b)
     return quote
         struct $d{P,X} <: AbstractMeasure{X}
-            par :: P
-            $d(nt::NamedTuple) = new{typeof(nt), eltype($d, typeof(nt))}(nt)
+            par :: P    
+        end
+
+        function $d(nt::NamedTuple)
+            P = typeof(nt)
+            return $d{P, eltype($d{P})}
         end
 
         $d(;kwargs...) = $d((;kwargs...))
@@ -71,12 +78,14 @@ macro measure(d,b)
 end
 
 include("basemeasures.jl")
+include("absolutecontinuity.jl")
 include("basemeasures/lebesgue.jl")
 include("combinators/scale.jl")
 include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("distributions.jl")
 include("probability/normal.jl")
+include("density.jl")
 
 
 

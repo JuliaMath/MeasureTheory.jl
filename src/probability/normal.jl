@@ -4,27 +4,26 @@
 import StatsFuns
 export Normal
 
+import Base: eltype
 
-
-# Note: `Normal Lebesgue` expands to (cleaned up)
+# Note: `@measure Normal Lebesgue` expands to (cleaned up)
 
 # quote
-#     struct Normal{P, X} <: MeasureTheory.AbstractMeasure{X}
+#     struct Normal{P, X} <: AbstractMeasure{X}
 #         par::P
-#         Normal(nt::MeasureTheory.NamedTuple) = begin
-#                 new{MeasureTheory.typeof(nt), MeasureTheory._domain(Normal, MeasureTheory.typeof(nt))}(nt)
-#             end
 #     end
 
-#     Normal(; kwargs...) = begin
-#             Normal((; kwargs...))
-#         end
+#     function Normal(nt::NamedTuple)
+#         P = typeof(nt)
+#         return Normal{P, eltype(Normal{P})}
+#     end
     
-#     baseMeasure(Normal) = begin
-#             Lebesgue
-#         end
-
+#     Normal(; kwargs...) = Normal((; kwargs...))
+    
+#     (baseMeasure(μ::Normal{P, X}) where {P, X}) = Lebesgue{X}
+            
 #     (:≪(::Normal{P, X}, ::Lebesgue{X}) where {P, X}) = true
+
 # end
 # @measure Normal Lebesgue
 
@@ -53,7 +52,7 @@ Normal() = Normal(NamedTuple())
 
 # # μ, τ
 
-# _domain(::Type{Normal}, ::Type{NamedTuple{(:μ, :τ), Tuple{A, B}}}) where {A,B} = promote_type(A,B)
+# eltype(::Type{Normal}, ::Type{NamedTuple{(:μ, :τ), Tuple{A, B}}}) where {A,B} = promote_type(A,B)
 
 # @implement HasDensity{Normal{P,X},X} where {X, P <: NamedTuple{(:μ, :τ)}} begin
 #     baseMeasure(d) = Lebesgue(X)
@@ -64,7 +63,7 @@ Normal() = Normal(NamedTuple())
 # # σ
 
 
-# _domain(::Type{Normal}, ::Type{NamedTuple{(:σ,), Tuple{B}}}) where {B} = B
+# eltype(::Type{Normal}, ::Type{NamedTuple{(:σ,), Tuple{B}}}) where {B} = B
 
 
 # @implement HasDensity{Normal{P,X},X} where {X, P <: NamedTuple{(:σ,)}} begin
@@ -74,7 +73,7 @@ Normal() = Normal(NamedTuple())
 
 # # τ
 
-# _domain(::Type{Normal}, ::Type{NamedTuple{(:τ,), Tuple{B}}}) where {B} = B
+# eltype(::Type{Normal}, ::Type{NamedTuple{(:τ,), Tuple{B}}}) where {B} = B
 
 # @implement HasDensity{Normal{P,X},X} where {X, P <: NamedTuple{(:τ,)}} begin
 #     baseMeasure(d) = Lebesgue(X)

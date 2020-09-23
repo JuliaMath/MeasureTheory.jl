@@ -33,10 +33,6 @@ export Normal
 
 
 
-function Normal(μ::T, σ::T) where {T <: AbstractFloat}
-    d = Dists.Normal(μ,σ; check_args=false)
-    return Measure(d)
-end
 
 function baseMeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous})
     T = eltype(μ)
