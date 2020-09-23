@@ -1,11 +1,20 @@
+"""
+    struct ScaledMeasure{R,M,X} <: AbstractMeasure{X}
+        logscale :: R
+        base :: M
+    end
+    
+
+"""
 struct ScaledMeasure{R,M,X} <: AbstractMeasure{X}
-    scale :: R
+    logscale :: R
     base :: M
 end
 
 function logdensity(sm::ScaledMeasure{R,M,X}, x::X) where {X, R <: Real, M <: AbstractMeasure{X}}
-    logdensity(sm.base, x) + log(sm.scale)
+    logdensity(sm.base, x) + sm.logscale
 end
 
-Base.:*(m::AbstractMeasure{X}, k::Real) where {X} = ScaledMeasure{typeof(k), typeof(m),X}(k,m)
-Base.:*(k::Real, m::AbstractMeasure{X}) where {X} = m * k
+Base.:*(k::Number, m::AbstractMeasure{X}) where {X} = ScaledMeasure{typeof(k), typeof(m),X}(log(k),m)
+
+Base.:*(m::AbstractMeasure{X}, k::Real) where {X} = k * m

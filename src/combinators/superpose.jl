@@ -1,7 +1,17 @@
 export SuperpositionMeasure
 
+"""
+    struct SuperpositionMeasure{X,NT} <: AbstractMeasure{X}
+        components :: NT
+    end
+
+Superposition of measures is analogous to mixture distributions, but (because
+measures need not be normalized) requires no scaling.
+
+The superposition of two measures μ and ν can be more concisely written as μ + ν.
+"""
 struct SuperpositionMeasure{X,NT} <: AbstractMeasure{X}
-    components :: NT
+    components :: NT   
 end
 
 SuperpositionMeasure(ms :: AbstractMeasure{X}...) where {X} = SuperpositionMeasure{X,length(ms)}(ms)
