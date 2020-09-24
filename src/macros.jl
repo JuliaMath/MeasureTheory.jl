@@ -36,11 +36,11 @@ function _measure(expr)
         
             $μ($(p...)) = $μ(;$(p...))
         
-            :≪(::$μ{P,X}, ::$base) where {P,X} = true
+            :≪(::$μ{P,X}, ::typeof($base)) where {P,X} = true
         end    
     
         if rel == (:≃)
-            push!(q.args, :(:≪(::$base, ::$μ{P,X}) where {P,X} = true))
+            push!(q.args, :(:≪(::typeof($base), ::$μ{P,X}) where {P,X} = true))
         end
     
         return q
@@ -83,4 +83,4 @@ macro measure(expr)
 end
 
 
-(@macroexpand @measure Normal(μ,σ) ≃ Lebesgue{X}) |> MacroTools.prettify
+(@macroexpand @measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(X)) |> MacroTools.prettify
