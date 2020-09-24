@@ -34,7 +34,7 @@ function _measure(expr)
         
             baseMeasure(μ::$μ{P,X}) where {P,X} = $base
         
-            $μ($(p...)) = $μ(;$p)
+            $μ($(p...)) = $μ(;$(p...))
         
             :≪(::$μ{P,X}, ::$base) where {P,X} = true
         end    
@@ -59,6 +59,26 @@ its relation to its base measure. For example,
 
 declares the `Normal` is a measure with default parameters `μ and σ`, and it is
 equivalent to its base measure, which is `Lebesgue{X}`
+
+You can see the generated code like this:
+
+    julia> MacroTools.prettify(@macroexpand @measure Normal(μ,σ) ≃ Lebesgue{X})
+    quote
+        struct Normal{P, X} <: AbstractMeasure{X}
+            par::P
+        end
+        function Normal(nt::NamedTuple)
+            P = typeof(nt)
+            return Normal{P, eltype(Normal{P})}
+        end
+        Normal(; kwargs...) = Normal((; kwargs...))
+        (baseMeasure(μ::Normal{P, X}) where {P, X}) = Lebesgue{X}
+        Normal(μ, σ) = Normal(; Any[:μ, :σ])
+        ((:≪)(::Normal{P, X}, ::Lebesgue{X}) where {P, X}) = true
+        ((:≪)(::Lebesgue{X}, ::Normal{P, X}) where {P, X}) = true
+    end
+
+Note that the `eltype` function needs to be defined separately by the user.
 """
 macro measure(expr)
     esc(_measure(expr))
