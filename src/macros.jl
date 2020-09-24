@@ -19,7 +19,7 @@ macro capture(template, ex, action)
 end
 
 function _measure(expr)
-    q = @capture $rel($μ($(p...)), $base) expr begin
+    @capture $rel($μ($(p...)), $base) expr begin
         q = quote
             struct $μ{P,X} <: AbstractMeasure{X}
                 par :: P    
@@ -27,7 +27,7 @@ function _measure(expr)
         
             function $μ(nt::NamedTuple)
                 P = typeof(nt)
-                return $μ{P, eltype($μ{P})}
+                return $μ{P, eltype($μ{P})}(nt)
             end
         
             $μ(;kwargs...) = $μ((;kwargs...))
@@ -43,10 +43,8 @@ function _measure(expr)
             push!(q.args, :(:≪(::$base, ::$μ{P,X}) where {P,X} = true))
         end
     
-        q
+        return q
     end
-
-    return q 
 end
 
 """
@@ -85,4 +83,4 @@ macro measure(expr)
 end
 
 
-MacroTools.prettify(@macroexpand @measure Normal(μ,σ) ≃ Lebesgue{X})
+(@macroexpand @measure Normal(μ,σ) ≃ Lebesgue{X}) |> MacroTools.prettify
