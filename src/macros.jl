@@ -4,6 +4,25 @@ using StatsFuns
 
 export @measure
 
+# A fold over ASTs. Example usage in `replaceX`
+function foldast(leaf, branch; kwargs...)
+    function go(ast)
+        MLStyle.@match ast begin
+            Expr(head, args...) => branch(head, map(go, args); kwargs...)
+            x                   => leaf(x; kwargs...)
+        end
+    end
+
+    return go
+end
+
+# Walk through expr, replacing every occurrence of :X with newX
+function replaceX(newX, expr)
+    leaf(s) = (s == :X) ? newX : s 
+    branch(head, newargs) = Expr(head, newargs...)
+    foldast(leaf, branch)(expr)
+end
+
 # from https://thautwarm.github.io/MLStyle.jl/latest/tutorials/capture.html
 function capture(template, ex, action)
     let template = Expr(:quote, template)
@@ -22,6 +41,7 @@ end
 
 function _measure(expr)
     @capture $rel($μ($(p...)), $base) expr begin
+        base = replaceX(:(eltype($μ{P})), base)
         q = quote
             struct $μ{P,X} <: MeasureTheory.AbstractMeasure{X}
                 par :: P    
@@ -42,7 +62,7 @@ function _measure(expr)
         end    
     
         if rel == (:≃)
-            push!(q.args, :(::typeof($base) ≪ ::$μ{P,X} where {P,X} = true))
+            push!(q.args, :((::typeof($base) ≪ ::$μ{P,X} where {P,X}) = true))
         end
     
         return q
