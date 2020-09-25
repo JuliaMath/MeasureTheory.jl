@@ -1,7 +1,7 @@
 # Lebesgue measure
 
 export Lebesgue
-struct Lebesgue{X} end
+struct Lebesgue{X} <: AbstractMeasure{X} end
 
 Lebesgue(X) = Lebesgue{X}()
 
