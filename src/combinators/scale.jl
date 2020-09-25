@@ -25,5 +25,5 @@ end
 
 Base.:*(m::AbstractMeasure{X}, k::Real) where {X} = k * m
 
-:≪(::M, ::ScaledMeasure{R,M,X}) where {R,M,X} = true
-:≪(::ScaledMeasure{R,M,X}, ::M) where {R,M,X} = true
+≪(::M, ::ScaledMeasure{R,M,X}) where {R,M,X} = true
+≪(::ScaledMeasure{R,M,X}, ::M) where {R,M,X} = true

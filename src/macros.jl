@@ -1,6 +1,8 @@
 
 using MLStyle
-import MacroTools
+using StatsFuns
+
+export @measure
 
 # from https://thautwarm.github.io/MLStyle.jl/latest/tutorials/capture.html
 function capture(template, ex, action)
@@ -21,7 +23,7 @@ end
 function _measure(expr)
     @capture $rel($μ($(p...)), $base) expr begin
         q = quote
-            struct $μ{P,X} <: AbstractMeasure{X}
+            struct $μ{P,X} <: MeasureTheory.AbstractMeasure{X}
                 par :: P    
             end
         
@@ -36,11 +38,11 @@ function _measure(expr)
         
             $μ($(p...)) = $μ(;$(p...))
         
-            :≪(::$μ{P,X}, ::typeof($base)) where {P,X} = true
+            ((::$μ{P,X} ≪ ::typeof($base) ) where {P,X})  = true
         end    
     
         if rel == (:≃)
-            push!(q.args, :(:≪(::typeof($base), ::$μ{P,X}) where {P,X} = true))
+            push!(q.args, :(::typeof($base) ≪ ::$μ{P,X} where {P,X} = true))
         end
     
         return q
@@ -83,4 +85,4 @@ macro measure(expr)
 end
 
 
-(@macroexpand @measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(X)) |> MacroTools.prettify
+# (@macroexpand @measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(X)) |> MacroTools.prettify

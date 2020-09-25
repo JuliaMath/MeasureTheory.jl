@@ -26,23 +26,23 @@ end
 A `DensityMeasure` is a measure defined by a density with respect to some other
 "base" measure 
 """
-struct DensityMeasure{F,B} <: AbstractMeasure{X}
+struct DensityMeasure{X,F,B} <: AbstractMeasure{X}
     density :: F
     base    :: B
 end
 
-function density(μ::M, ν::M) 
-    if  μ==ν
-        return 1.0
-    end
-end
+# function density(μ::M, ν::M) where {M}
+#     if  μ==ν
+#         return () -> 1.0
+#     end
+# end
 
 density(μ, base=basemeasure(μ)) = Density(μ, base)
 logdensity(μ, base=basemeasure(μ)) = LogDensity(μ, base)
 
-density(μ::Distribution{Univariate,Continuous}, x::Real) = pdf(μ,x)
-logdensity(μ::Distribution{Univariate,Continuous}, x::Real) = logpdf(μ,x)
+density(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous}, x::Real) = pdf(μ,x)
+logdensity(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous}, x::Real) = logpdf(μ,x)
 
 density(μ::AbstractMeasure{X}, x::X) where {X} = density(μ, baseMeasure(μ))(x) 
 
-logdensity(μ::AbstractMeasure{X}, y::Y) where {Y <: X} = logdensity(μ, baseMeasure(μ))(x)
+logdensity(μ::AbstractMeasure{X}, y::Y) where {X, Y <: X} = logdensity(μ, baseMeasure(μ))(x)
