@@ -58,11 +58,11 @@ function _measure(expr)
         
             $μ($(p...)) = $μ(;$(p...))
         
-            ((::$μ{P,X} ≪ ::typeof($base) ) where {P,X})  = true
+            ((::$μ{P} ≪ ::typeof($base) ) where {P})  = true
         end    
     
         if rel == (:≃)
-            push!(q.args, :((::typeof($base) ≪ ::$μ{P,X}) where {P,X} = true))
+            push!(q.args, :((::typeof($base) ≪ ::$μ{P}) where {P} = true))
         end
     
         return q
