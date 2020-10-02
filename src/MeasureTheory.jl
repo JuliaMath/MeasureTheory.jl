@@ -9,8 +9,9 @@ const EmptyNamedTuple = NamedTuple{(),Tuple{}}
 
 
 export ≪
+export sampletype
 
-abstract type AbstractMeasure{X} end
+abstract type AbstractMeasure end
 
 """
     logdensity(μ::Measure{X}, x::X)
@@ -23,26 +24,15 @@ Methods for computing density relative to other measures will be
 """
 function logdensity end
 
-
-Base.eltype(μ::AbstractMeasure{X}) where {X} = X
-
-
-
-logdensity(μ::Dists.Distribution, x) = Dists.logpdf(μ,x)
-
-density(μ::Dists.Distribution, x) = Dists.pdf(μ,x)
-
-
 include("absolutecontinuity.jl")
-include("basemeasures/lebesgue.jl")
+include("basemeasures.jl")
 include("macros.jl")
 include("combinators/scale.jl")
 include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("distributions.jl")
-# include("probability/normal.jl")
+include("probability/normal.jl")
 include("density.jl")
-
-
+include("pushforward.jl")
 
 end # module

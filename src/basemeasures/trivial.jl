@@ -1,3 +1,5 @@
-struct TrivialMeasure{X} <: AbstractMeasure{X} end
+export TrivialMeasure
 
-TrivialMeasure(X) = TrivialMeasure{X}()
+struct TrivialMeasure <: AbstractMeasure end
+
+sampletype(::TrivialMeasure) = Nothing
