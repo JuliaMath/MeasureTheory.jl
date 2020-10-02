@@ -23,3 +23,5 @@ function Base.:^(μ::Measure{X}, n::Integer) where {X}
     components = ntuple(i -> μ, n)
     ProductMeasure(components...)
 end
+
+sampletype(μ::PowerMeasure{M,N}) where {M,N} = AbstractArray(sampletype(μ), N)
