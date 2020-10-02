@@ -21,5 +21,5 @@ Measures μ and ν on the same space X are equivalent, written `μ ≃ ν`, if `
 Note that this is often written `~` in the literature, but this is overloaded in probabilistic programming, so we use alternate notation.
 """
 function ≃(μ,ν)
-return (μ≪ν && ν≪μ)
+    return (μ≪ν && ν≪μ)
 end
