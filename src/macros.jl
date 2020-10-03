@@ -41,29 +41,31 @@ end
 
 function _measure(expr)
     @capture $rel($μ($(p...)), $base) expr begin
-        base = replaceX(:(eltype($μ{P})), base)
         q = quote
-            struct $μ{P,X} <: MeasureTheory.AbstractMeasure{X}
+            struct $μ{P} <: MeasureTheory.AbstractMeasure
                 par :: P    
             end
         
             function $μ(nt::NamedTuple)
                 P = typeof(nt)
-                return $μ{P, eltype($μ{P})}(nt)
+                return $μ{P}(nt)
             end
         
             $μ(;kwargs...) = $μ((;kwargs...))
         
-            baseMeasure(μ::$μ{P,X}) where {P,X} = $base
+            function baseMeasure(μ::$μ{P}) where {P}
+                X = sampletype($μ{P})
+                $base
+            end
         
             $μ($(p...)) = $μ(;$(p...))
         
-            ((::$μ{P} ≪ ::typeof($base) ) where {P})  = true
+            # ((::$μ{P} ≪ ::typeof($base) ) where {P})  = true
         end    
     
-        if rel == (:≃)
-            push!(q.args, :((::typeof($base) ≪ ::$μ{P}) where {P} = true))
-        end
+        # if rel == (:≃)
+        #     push!(q.args, :((::typeof($base) ≪ ::$μ{P}) where {P} = true))
+        # end
     
         return q
     end
@@ -84,7 +86,7 @@ You can see the generated code like this:
 
     julia> MacroTools.prettify(@macroexpand @measure Normal(μ,σ) ≃ Lebesgue{X})
     quote
-        struct Normal{P, X} <: AbstractMeasure{X}
+        struct Normal{P, X} <: AbstractMeasure
             par::P
         end
         function Normal(nt::NamedTuple)

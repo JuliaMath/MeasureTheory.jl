@@ -23,3 +23,21 @@ Note that this is often written `~` in the literature, but this is overloaded in
 function ≃(μ,ν)
     return (μ≪ν && ν≪μ)
 end
+
+export representative
+
+function representative(μ)
+    # Check if we're done
+    isprimitive(μ) && return μ
+
+    ν = baseMeasure(μ)
+    
+    # Make sure not to leave the equivalence class
+    (ν ≪ μ) || return μ
+
+    # Fall back on a recusive call
+    return representative(ν)
+end
+
+
+≪(μ, ν) = representative(μ) ≪ representative(ν)
