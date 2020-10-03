@@ -19,9 +19,28 @@ struct PowerMeasure{M,N}
     size::NTuple{N,Int}
 end
 
-function Base.:^(μ::Measure{X}, n::Integer) where {X}
-    components = ntuple(i -> μ, n)
-    ProductMeasure(components...)
+import Base
+
+function Base.:^(μ::AbstractMeasure, n::Integer)  
+    PowerMeasure(μ, (n,))
 end
 
-sampletype(μ::PowerMeasure{M,N}) where {M,N} = AbstractArray(sampletype(μ), N)
+function Base.:^(μ::AbstractMeasure, size::NTuple{N,I}) where {N, I <: Integer} 
+    PowerMeasure(μ, size)
+end
+
+sampletype(d::PowerMeasure{M,N}) where {M,N} = AbstractArray{sampletype(d.μ), N}
+
+export rand!
+
+function rand!(result::AbstractArray, d::PowerMeasure)
+    @inbounds for j in eachindex(result)
+        result[j] = rand(d.μ)
+    end
+    return result
+end
+
+function Base.rand(d::PowerMeasure)
+    result = Array{sampletype(d.μ), length(d.size)}(undef, d.size...)
+    return rand!(result, d)
+end    
