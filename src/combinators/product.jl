@@ -1,7 +1,7 @@
 export ProductMeasure
 using Base: eltype
 
-struct ProductMeasure{T}
+struct ProductMeasure{T} <: AbstractMeasure
     components :: T
 
     ProductMeasure(μs...) = new{Tuple{sampletype.(μs)...}}(μs)
