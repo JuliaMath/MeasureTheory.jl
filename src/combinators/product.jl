@@ -4,7 +4,7 @@ using Base: eltype
 struct ProductMeasure{T} <: AbstractMeasure
     components :: T
 
-    ProductMeasure(μs...) = new{Tuple{sampletype.(μs)...}}(μs)
+    ProductMeasure(μs...) = new{typeof(μs)}(μs)
 end
 
 
