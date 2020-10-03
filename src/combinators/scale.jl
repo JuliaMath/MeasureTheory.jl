@@ -6,7 +6,7 @@
     
 
 """
-struct ScaledMeasure{R,M} 
+struct ScaledMeasure{R,M} <: AbstractMeasure
     logscale :: R
     base :: M
 end
