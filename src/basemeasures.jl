@@ -1,9 +1,11 @@
+export basemeasure
+
 """
-    baseMeasure(μ)
+    basemeasure(μ)
 
 
 """
-function baseMeasure end
+function basemeasure end
 
 include("basemeasures/trivial.jl")
 include("basemeasures/lebesgue.jl")

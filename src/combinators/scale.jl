@@ -28,6 +28,6 @@ Base.:*(m::AbstractMeasure, k::Real) = k * m
 ≪(::M, ::ScaledMeasure{R,M}) where {R,M} = true
 ≪(::ScaledMeasure{R,M}, ::M) where {R,M} = true
 
-baseMeasure(μ::ScaledMeasure{R,M}) where {R,M} = μ.base
+basemeasure(μ::ScaledMeasure{R,M}) where {R,M} = μ.base
 
 sampletype(μ:: ScaledMeasure) = sampletype(μ.base)

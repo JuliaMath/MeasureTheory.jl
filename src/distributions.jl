@@ -13,7 +13,7 @@ struct DistributionMeasure{F, S, X} <: AbstractMeasure
     dist :: Dists.Distribution{F, S}
 end
 
-function baseMeasure(μ::DistributionMeasure{F,S,X}) where {F, S <: Dists.Continuous, X}
+function basemeasure(μ::DistributionMeasure{F,S,X}) where {F, S <: Dists.Continuous, X}
     return Lebesgue(X)
 end
 
@@ -32,12 +32,12 @@ export Normal
 
 
 
-function baseMeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous})
+function basemeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous})
     T = eltype(μ)
     return Lebesgue(T)
 end
 
-function baseMeasure(μ::Dists.Distribution{Dists.Multivariate,Dists.Continuous})
+function basemeasure(μ::Dists.Distribution{Dists.Multivariate,Dists.Continuous})
     x = rand(μ)
     return Lebesgue(typeof(x))
 end

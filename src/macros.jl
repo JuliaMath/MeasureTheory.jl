@@ -53,7 +53,7 @@ function _measure(expr)
         
             $μ(;kwargs...) = $μ((;kwargs...))
         
-            function baseMeasure(μ::$μ{P}) where {P}
+            function basemeasure(μ::$μ{P}) where {P}
                 X = sampletype($μ{P})
                 $base
             end
@@ -94,7 +94,7 @@ You can see the generated code like this:
             return Normal{P, eltype(Normal{P})}
         end
         Normal(; kwargs...) = Normal((; kwargs...))
-        (baseMeasure(μ::Normal{P, X}) where {P, X}) = Lebesgue{X}
+        (basemeasure(μ::Normal{P, X}) where {P, X}) = Lebesgue{X}
         Normal(μ, σ) = Normal(; Any[:μ, :σ])
         ((:≪)(::Normal{P, X}, ::Lebesgue{X}) where {P, X}) = true
         ((:≪)(::Lebesgue{X}, ::Normal{P, X}) where {P, X}) = true

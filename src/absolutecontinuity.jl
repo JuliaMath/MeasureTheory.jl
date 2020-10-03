@@ -30,7 +30,7 @@ function representative(μ)
     # Check if we're done
     isprimitive(μ) && return μ
 
-    ν = baseMeasure(μ)
+    ν = basemeasure(μ)
     
     # Make sure not to leave the equivalence class
     (ν ≪ μ) || return μ

@@ -18,7 +18,7 @@ abstract type AbstractMeasure end
 
 Compute the logdensity of the measure μ at the point x. This is the standard way
 to define `logdensity` for a new measure. the base measure is implicit here, and
-is understood to be `baseMeasure(μ)`.
+is understood to be `basemeasure(μ)`.
 
 Methods for computing density relative to other measures will be 
 """
