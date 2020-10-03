@@ -22,7 +22,7 @@ end
 
 # Normal() = Normal{EmptyNamedTuple,Real}(NamedTuple())
  
-sampletype(::NamedTuple{(),Tuple{}}) = Real
+sampletype(::Normal{NamedTuple{(),Tuple{}}}) = Real
 
 Base.rand(μ::Normal{EmptyNamedTuple}) = randn()
 
