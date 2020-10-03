@@ -27,7 +27,7 @@ function Base.:*(μ::ProductMeasure{X}, ν) where {X}
     ProductMeasure(components...)
 end
 
-function Base.:*(μ, ν)
+function Base.:*(μ::M, ν::N) where {M <: AbstractMeasure, N <: AbstractMeasure}
     components = (μ, ν)
     ProductMeasure(components...)
 end
