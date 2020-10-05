@@ -38,7 +38,7 @@ _We need ≃ and ≪ to be fast_. If the support of a measure can be determined 
 
 ## Radon-Nikodym Derivatives
 
-One of the equivalent conditions above was "There exists a function f such that μ = ∫f dν". In this case, `f` is called a _Radom-Nikodym derivative_, or (less formally) a _density_. In this case we often write `f = dμ/dν`.
+One of the equivalent conditions above was "There exists a function f such that μ = ∫f dν". In this case, `f` is called a _Radon-Nikodym derivative_, or (less formally) a _density_. In this case we often write `f = dμ/dν`.
 
 For any measures μ and ν with μ≪ν, we should be represent this.
 
