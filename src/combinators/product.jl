@@ -8,6 +8,8 @@ struct ProductMeasure{T} <: AbstractMeasure
     ProductMeasure(μs) = new{typeof(μs)}(μs)
 end
 
+# TODO
+# Base.show(io::IO, μ::ProductMeasure) = ...
 
 # ProductMeasure(m::NTuple{N, Measure{X}}) where {N,X} = ProductMeasure(m...)
 
