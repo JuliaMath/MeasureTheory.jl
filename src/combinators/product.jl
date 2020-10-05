@@ -5,6 +5,7 @@ struct ProductMeasure{T} <: AbstractMeasure
     components :: T
 
     ProductMeasure(μs...) = new{typeof(μs)}(μs)
+    ProductMeasure(μs) = new{typeof(μs)}(μs)
 end
 
 
@@ -37,3 +38,5 @@ function Base.rand(μ::ProductMeasure{T}) where T
 end
 
 sampletype(μ::ProductMeasure) = Tuple{sampletype.(μ.components)...}
+
+basemeasure(μ::ProductMeasure) = ProductMeasure(basemeasure.(μ.components))

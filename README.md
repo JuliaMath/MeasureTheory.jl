@@ -108,7 +108,7 @@ quote
             Normal((; var"#14#kwargs"...))
         end
     #= /home/chad/git/Measures.jl/src/Measures.jl:66 =#
-    (var"#8#baseMeasure"(var"#15#μ"::Normal{var"#16#P", var"#17#X"}) where {var"#16#P", var"#17#X"}) = begin
+    (var"#8#basemeasure"(var"#15#μ"::Normal{var"#16#P", var"#17#X"}) where {var"#16#P", var"#17#X"}) = begin
             #= /home/chad/git/Measures.jl/src/Measures.jl:66 =#
             Lebesgue{var"#17#X"}
         end
@@ -138,7 +138,7 @@ That's still kind of boring, so let's build the density. For this, we need to im
 
 ```julia
 @trait Density{M,X} where {X = domain{M}} begin
-    baseMeasure :: [M] => Measure{X}
+    basemeasure :: [M] => Measure{X}
     logdensity :: [M, X] => Real
 end
 ```
@@ -146,8 +146,8 @@ end
 A density doesn't exist by itself, but is defined relative to some _base measure_. For a normal distribution this is just Lebesgue measure on the real numbers. That, together with the usual Gaussian log-density, gives us
 
 ```julia
-@implement Density{Normal{P,X},X} where {X, P <: NamedTuple{(:μ, :σ)}} begin
-    baseMeasure(d) = Lebesgue(X)
+@implement Density{Normal{X,P},X} where {X, P <: NamedTuple{(:μ, :σ)}} begin
+    basemeasure(d) = Lebesgue(X)
     logdensity(d, x) = - (log(2) + log(π)) / 2 - log(d.par.σ)  - (x - d.par.μ)^2 / (2 * d.par.σ^2)
 end
 ```
@@ -171,8 +171,8 @@ What about other parameterizations? Sure, no problem. Here's a way to write this
 ```julia
 eltype(::Type{Normal}, ::Type{NamedTuple{(:μ, :τ), Tuple{A, B}}}) where {A,B} = promote_type(A,B)
 
-@implement Density{Normal{P,X},X} where {X, P <: NamedTuple{(:μ, :τ)}} begin
-    baseMeasure(d) = Lebesgue(X)
+@implement Density{Normal{X,P},X} where {X, P <: NamedTuple{(:μ, :τ)}} begin
+    basemeasure(d) = Lebesgue(X)
     logdensity(d, x) = - (log(2) + log(π) - log(d.par.τ)  + d.par.τ * (x - d.par.μ)^2) / 2
 end
 ```
