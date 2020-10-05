@@ -14,7 +14,7 @@ Note that power measures are only well-defined for integer powers.
 
 The nth power of a measure μ can be written μ^x.
 """
-struct PowerMeasure{M,N}
+struct PowerMeasure{M,N} <: AbstractMeasure
     μ::M
     size::NTuple{N,Int}
 end

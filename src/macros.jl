@@ -16,9 +16,8 @@ function foldast(leaf, branch; kwargs...)
     return go
 end
 
-# Walk through expr, replacing every occurrence of :X with newX
-function replaceX(newX, expr)
-    leaf(s) = (s == :X) ? newX : s 
+function replace(p, f, expr)
+    leaf(s) = p(s) ? f(s) : s 
     branch(head, newargs) = Expr(head, newargs...)
     foldast(leaf, branch)(expr)
 end
@@ -41,6 +40,8 @@ end
 
 function _measure(expr)
     @capture $rel($μ($(p...)), $base) expr begin
+        base = replace(s -> s∈p, s -> :(μ.par.$s), base)
+
         q = quote
             struct $μ{P} <: MeasureTheory.AbstractMeasure
                 par :: P    
@@ -53,9 +54,8 @@ function _measure(expr)
         
             $μ(;kwargs...) = $μ((;kwargs...))
         
-            function basemeasure(μ::$μ{P}) where {P}
-                X = sampletype($μ{P})
-                $base
+            function MeasureTheory.basemeasure(μ::$μ{P}) where {P}
+                return $base
             end
         
             $μ($(p...)) = $μ(;$(p...))
