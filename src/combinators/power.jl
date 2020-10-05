@@ -44,3 +44,5 @@ function Base.rand(d::PowerMeasure)
     result = Array{sampletype(d.μ), length(d.size)}(undef, d.size...)
     return rand!(result, d)
 end    
+
+basemeasure(μ::PowerMeasure) = basemeasure(μ.μ)^μ.size
