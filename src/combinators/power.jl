@@ -21,6 +21,8 @@ end
 
 import Base
 
+Base.show(io::IO, μ::PowerMeasure) = print(io, μ.μ, " ^ ", μ.size)
+
 function Base.:^(μ::AbstractMeasure, n::Integer)  
     PowerMeasure(μ, (n,))
 end

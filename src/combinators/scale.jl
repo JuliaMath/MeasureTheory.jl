@@ -11,6 +11,8 @@ struct ScaledMeasure{R,M} <: AbstractMeasure
     base :: M
 end
 
+Base.show(io::IO, μ::ScaledMeasure) = print(io, "(", exp(μ.logscale), " * ", μ.base, ")")
+
 function logdensity(sm::ScaledMeasure{R,M}, x::X) where {X, R, M <: AbstractMeasure}
     logdensity(sm.base, x) + sm.logscale
 end
