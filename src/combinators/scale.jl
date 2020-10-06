@@ -11,7 +11,18 @@ struct ScaledMeasure{R,M} <: AbstractMeasure
     base :: M
 end
 
-Base.show(io::IO, μ::ScaledMeasure) = print(io, "(", exp(μ.logscale), " * ", μ.base, ")")
+Base.show(io::IO, μ::ScaledMeasure) = print(io, exp(μ.logscale), " * ", μ.base)
+
+function Base.show_unquoted(io::IO, μ::ProductMeasure, indent::Int, prec::Int)
+    if Base.operator_precedence(:*) ≤ prec
+        print(io, "(")
+        show(io, μ)
+        print(io, ")")
+    else
+        show(io, μ)
+    end
+    return nothing
+end
 
 function logdensity(sm::ScaledMeasure{R,M}, x::X) where {X, R, M <: AbstractMeasure}
     logdensity(sm.base, x) + sm.logscale

@@ -23,6 +23,17 @@ import Base
 
 Base.show(io::IO, μ::PowerMeasure) = print(io, μ.μ, " ^ ", μ.size)
 
+function Base.show_unquoted(io::IO, μ::ProductMeasure, indent::Int, prec::Int)
+    if Base.operator_precedence(:^) ≤ prec
+        print(io, "(")
+        show(io, μ)
+        print(io, ")")
+    else
+        show(io, μ)
+    end
+    return nothing
+end
+
 function Base.:^(μ::AbstractMeasure, n::Integer)  
     PowerMeasure(μ, (n,))
 end
