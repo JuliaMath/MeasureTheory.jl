@@ -13,7 +13,7 @@ end
 
 Base.show(io::IO, μ::ScaledMeasure) = print(io, exp(μ.logscale), " * ", μ.base)
 
-function Base.show_unquoted(io::IO, μ::ProductMeasure, indent::Int, prec::Int)
+function Base.show_unquoted(io::IO, μ::ScaledMeasure, indent::Int, prec::Int)
     if Base.operator_precedence(:*) ≤ prec
         print(io, "(")
         show(io, μ)
