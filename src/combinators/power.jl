@@ -14,7 +14,7 @@ Note that power measures are only well-defined for integer powers.
 
 The nth power of a measure μ can be written μ^x.
 """
-struct PowerMeasure{M,N}
+struct PowerMeasure{M,N} <: AbstractMeasure
     μ::M
     size::NTuple{N,Int}
 end
@@ -44,3 +44,5 @@ function Base.rand(d::PowerMeasure)
     result = Array{sampletype(d.μ), length(d.size)}(undef, d.size...)
     return rand!(result, d)
 end    
+
+basemeasure(μ::PowerMeasure) = basemeasure(μ.μ)^μ.size

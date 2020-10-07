@@ -7,7 +7,7 @@ export Normal
 import Base: eltype
 
 
-@measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(X)
+@measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(Real)
 
 
 function logdensity(d::Normal{P} , x::X) where {P <: NamedTuple{(:μ, :σ)}, X}    
