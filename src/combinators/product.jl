@@ -8,6 +8,18 @@ struct ProductMeasure{T} <: AbstractMeasure
     ProductMeasure(μs) = new{typeof(μs)}(μs)
 end
 
+Base.show(io::IO, μ::ProductMeasure) = print(io, join(string.(μ.components), " ⊗ "))
+
+function Base.show_unquoted(io::IO, μ::ProductMeasure, indent::Int, prec::Int)
+    if Base.operator_precedence(:*) ≤ prec
+        print(io, "(")
+        show(io, μ)
+        print(io, ")")
+    else
+        show(io, μ)
+    end
+    return nothing
+end
 
 # ProductMeasure(m::NTuple{N, Measure{X}}) where {N,X} = ProductMeasure(m...)
 
