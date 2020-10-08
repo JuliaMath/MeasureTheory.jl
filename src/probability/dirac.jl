@@ -2,21 +2,17 @@
 export Dirac
 
 struct Dirac{X} <: AbstractMeasure
-    supp :: X
+    x::X
 end
 
-Dirac(x::X) = Dirac{X}(x)
 
-sampletype(μ::Dirac{X}) = X
+sampletype(μ::Dirac{X}) where {X} = X
 
 function (μ::Dirac{X})(s) where {X}
-    μ.supp ∈ s && return 1
+    μ.x ∈ s && return 1
     return 0
 end
+isprimitive(::Dirac) = true
 
-function logdensity(μ::Dirac{X}, x::X)
-    μ.supp ∈ s && return 0.0
-    return -Inf
-end
 
-Base.rand(μ::Dirac) = μ.supp
+Base.rand(_::Random.AbstractRNG, μ::Dirac) = μ.x

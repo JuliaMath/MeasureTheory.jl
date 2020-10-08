@@ -1,5 +1,7 @@
 module MeasureTheory
 
+using Random
+
 using MLStyle
 
 import Distributions
@@ -20,7 +22,7 @@ Compute the logdensity of the measure μ at the point x. This is the standard wa
 to define `logdensity` for a new measure. the base measure is implicit here, and
 is understood to be `basemeasure(μ)`.
 
-Methods for computing density relative to other measures will be 
+Methods for computing density relative to other measures will be
 """
 function logdensity end
 
@@ -32,8 +34,10 @@ include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("combinators/power.jl")
 include("distributions.jl")
+include("rand.jl")
+include("probability/dirac.jl")
 include("probability/normal.jl")
 include("density.jl")
 include("pushforward.jl")
-
+include("kernel.jl")
 end # module
