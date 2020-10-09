@@ -23,7 +23,7 @@ import Base
 
 Base.show(io::IO, μ::PowerMeasure) = print(io, μ.μ, " ^ ", μ.size)
 
-function Base.show_unquoted(io::IO, μ::ProductMeasure, indent::Int, prec::Int)
+function Base.show_unquoted(io::IO, μ::PowerMeasure, indent::Int, prec::Int)
     if Base.operator_precedence(:^) ≤ prec
         print(io, "(")
         show(io, μ)
