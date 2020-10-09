@@ -3,13 +3,15 @@
         logscale :: R
         base :: M
     end
-    
+
 
 """
 struct ScaledMeasure{R,M} <: AbstractMeasure
     logscale :: R
     base :: M
 end
+
+logscale(μ::ScaledMeasure) = μ.logscale
 
 Base.show(io::IO, μ::ScaledMeasure) = print(io, exp(μ.logscale), " * ", μ.base)
 
@@ -28,7 +30,7 @@ function logdensity(sm::ScaledMeasure{R,M}, x::X) where {X, R, M <: AbstractMeas
     logdensity(sm.base, x) + sm.logscale
 end
 
-function Base.:*(k::Number, m::AbstractMeasure) 
+function Base.:*(k::Number, m::AbstractMeasure)
     if iszero(k)
         return TrivialMeasure
     else
