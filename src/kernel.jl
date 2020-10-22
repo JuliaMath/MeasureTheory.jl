@@ -17,8 +17,5 @@ struct Kernel{T,S}
 end
 kernel(ops::Tuple, m) = Kernel(ops, m)
 kernel(op, m) = Kernel((op,), m)
-
-tuplemerge(x::Tuple) = x
-tuplemerge(x...) = merge(x...)
-
-(k::Kernel)(x) = k.m(tuplemerge((op(x) for op in k.ops)...)...)
+mapcall(t, x) = map(func -> func(x), t)
+(k::Kernel)(x) = k.m(mapcall(k.ops, x)...)
