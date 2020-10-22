@@ -15,7 +15,8 @@ struct Kernel{T,S}
     ops::S
     m::T
 end
-kernel(ops::Tuple, m) = Kernel(ops, m)
-kernel(op, m) = Kernel((op,), m)
+kernel(m, ops...) = Kernel(ops, m)
+kernel(m; ops...) = Kernel(ans.data, m)
 mapcall(t, x) = map(func -> func(x), t)
 (k::Kernel)(x) = k.m(mapcall(k.ops, x)...)
+(k::Kernel{<:NamedTuple})(x) = k.m(;mapcall(k.ops, x)...)
