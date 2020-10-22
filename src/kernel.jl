@@ -5,7 +5,8 @@
 A kernel `κ = kernel(f, m)` returns a wrapper around
 a function `f` giving the parameters for a measure `m`,
 such that `κ(x) = m(f(x))`.
-If `(f, g)` is a tuple, `κ(x)` is defined as `merge`d return values.
+If `(a=f, b=g)` is a name tuple, `κ(x)` is defined as
+`m(;a=f(x),b=g(x))`.
 
 # Reference
 
@@ -16,7 +17,7 @@ struct Kernel{T,S}
     m::T
 end
 kernel(m, ops...) = Kernel(ops, m)
-kernel(m; ops...) = Kernel(ans.data, m)
+kernel(m::T; ops...) where {T} = Kernel{T,typeof(ops.data)}(ops.data, m)
 mapcall(t, x) = map(func -> func(x), t)
 (k::Kernel)(x) = k.m(mapcall(k.ops, x)...)
-(k::Kernel{<:NamedTuple})(x) = k.m(;mapcall(k.ops, x)...)
+(k::Kernel{<:Any,<:NamedTuple})(x) = k.m(;mapcall(k.ops, x)...)
