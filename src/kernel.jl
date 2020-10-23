@@ -14,10 +14,9 @@ If `(a=f, b=g)` is a name tuple, `κ(x)` is defined as
 """
 struct Kernel{T,S}
     ops::S
-    m::T
 end
-kernel(m, ops...) = Kernel(ops, m)
-kernel(m::T; ops...) where {T} = Kernel{T,typeof(ops.data)}(ops.data, m)
+kernel(::Type{M}, ops...) where {M} = Kernel{M,typeof(ops)}(ops)
+kernel(::Type{M}; ops...) where {M} = Kernel{M,typeof(ops.data)}(ops.data)
 mapcall(t, x) = map(func -> func(x), t)
-(k::Kernel)(x) = k.m(mapcall(k.ops, x)...)
-(k::Kernel{<:Any,<:NamedTuple})(x) = k.m(;mapcall(k.ops, x)...)
+(k::Kernel{M})(x) where {M} = M(mapcall(k.ops, x)...)
+(k::Kernel{M,<:NamedTuple})(x) where {M} = M(;mapcall(k.ops, x)...)
