@@ -6,6 +6,6 @@ using Test
 end
 
 @testset "Kernel" begin
-    κ = MeasureTheory.kernel(MeasureTheory.Dirac, identity)
+    κ = MeasureTheory.kernel(identity, MeasureTheory.Dirac)
     @test rand(κ(1.1)) == 1.1
 end
