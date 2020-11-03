@@ -39,5 +39,8 @@ function representative(μ)
     return representative(ν)
 end
 
-
-≪(μ, ν) = representative(μ) ≪ representative(ν)
+# TODO: ≪ needs more work
+function ≪(μ, ν)
+    μ == ν && return true
+    representative(μ) ≪ representative(ν) && return true
+end
