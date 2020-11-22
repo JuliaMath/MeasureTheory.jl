@@ -30,8 +30,8 @@ function logdensity(sm::ScaledMeasure{R,M}, x::X) where {X, R, M <: AbstractMeas
     logdensity(sm.base, x) + sm.logscale
 end
 
-function Base.:*(k::Number, m::AbstractMeasure)
-    if iszero(k)
+function Base.:*(k::T, m::AbstractMeasure) where {T <: Number}
+    if hasmethod(iszero, (T,)) && iszero(k)
         return TrivialMeasure
     else
         return ScaledMeasure{typeof(k), typeof(m)}(log(k),m)
