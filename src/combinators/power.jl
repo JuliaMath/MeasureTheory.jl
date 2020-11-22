@@ -59,3 +59,8 @@ function Base.rand(d::PowerMeasure)
 end    
 
 basemeasure(μ::PowerMeasure) = basemeasure(μ.μ)^μ.size
+
+function PowerMeasure(μ::ScaledMeasure, n::NTuple{N,Int}) where {N}
+    k = prod(n) * μ.logscale 
+    return ScaledMeasure(k, μ.base^n)
+end
