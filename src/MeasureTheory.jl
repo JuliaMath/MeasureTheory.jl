@@ -7,9 +7,6 @@ using MLStyle
 import Distributions
 const Dists = Distributions
 
-const EmptyNamedTuple = NamedTuple{(),Tuple{}}
-
-
 export ≪
 export sampletype
 
@@ -26,6 +23,7 @@ Methods for computing density relative to other measures will be
 """
 function logdensity end
 
+include("utils.jl")
 include("absolutecontinuity.jl")
 include("basemeasures.jl")
 include("macros.jl")
