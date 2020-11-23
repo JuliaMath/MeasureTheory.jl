@@ -58,6 +58,12 @@ function _measure(expr)
                 return $base
             end
         
+            function Base.show(io::IO, μ::$μ)
+                p = $μ
+                print(io, "$p")
+                showparams(io, μ.par)
+            end
+
             $μ($(p...)) = $μ(;$(p...))
         
             # ((::$μ{P} ≪ ::typeof($base) ) where {P})  = true
