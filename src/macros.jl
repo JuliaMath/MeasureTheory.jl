@@ -4,7 +4,7 @@ using StatsFuns
 
 export @measure
 
-# A fold over ASTs. Example usage in `replaceX`
+# A fold over ASTs. Example usage in `replace`
 function foldast(leaf, branch; kwargs...)
     function go(ast)
         MLStyle.@match ast begin
