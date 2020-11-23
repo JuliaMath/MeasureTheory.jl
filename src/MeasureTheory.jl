@@ -10,6 +10,8 @@ const Dists = Distributions
 export ≪
 export sampletype
 
+export AbstractMeasure
+
 abstract type AbstractMeasure end
 
 """
@@ -35,6 +37,7 @@ include("distributions.jl")
 include("rand.jl")
 include("probability/dirac.jl")
 include("probability/normal.jl")
+include("probability/studentt.jl")
 include("density.jl")
 include("pushforward.jl")
 include("kernel.jl")
