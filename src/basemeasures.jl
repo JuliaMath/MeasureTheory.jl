@@ -20,7 +20,7 @@ export isprimitive
 Most measures are defined in terms of other measures, for example using a
 density or a pushforward. Those that are not are considered (in this library,
 it's not a general measure theory thing) to be _primitive_. The canonical
-example of a primitive measure is `Lebesgue{X}()` for some `X`.
+example of a primitive measure is `Lebesgue(X)` for some `X`.
 
 The default method is
     isprimitive(μ) = false
