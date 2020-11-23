@@ -11,4 +11,4 @@ basemeasure(μ::Lebesgue{X}) where {X} = μ
 
 isprimitive(::Lebesgue) = true
 
-sampletype(::Lebesgue{X}) where{X} = X
+sampletype(::Lebesgue{X}) where {X} = X
