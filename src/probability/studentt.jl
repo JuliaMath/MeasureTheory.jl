@@ -1,20 +1,22 @@
 
 # StudentT distribution
 
-import SpecialFunctions
+using SpecialFunctions
+using StatsFuns
 export StudentT
 
 import Base: eltype
 
 
-@measure StudentT(ν) ≃ gamma(0.5) * Lebesgue(ℝ)
+@measure StudentT(ν) ≃ (1/sqrtπ) * Lebesgue(ℝ)
 
 
 # Standard StudentT
 
-function logdensity(d::StudentT{NamedTuple{(:ν,), Tuple{N}}} where {N} , x::X) where {X}  
-    νplus1 = ν + 1
-    return -0.5 * νplus1 * log(x^2 / νplus1) - log(ν)/2 - loggamma(ν / 2) + loggamma(νplus1 / 2)
+function logdensity(μ::StudentT{NamedTuple{(:ν,), Tuple{N}}} where {N} , x::X) where {X}  
+    ν = μ.par.ν
+    halfνp1 = (ν+1)/2
+    return loggamma(halfνp1) - loggamma(ν/2) + ν * log(ν) - halfνp1 * log(x^2 + ν)
 end
 
 # StudentT() = StudentT{EmptyNamedTuple,Real}(NamedTuple())
