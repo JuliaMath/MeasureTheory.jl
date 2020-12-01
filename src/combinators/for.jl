@@ -37,5 +37,4 @@ function Random.rand!(rng::AbstractRNG, x::AbstractArray, μ::For{F,T,D,X}) wher
     end
 end
 
-function basemeasure(μ::For{F,T,D,X}) where {F,T<:AbstractArray,D,X}
-    ν = basemeasure(μ
+# function basemeasure(μ::For{F,T,D,X}) where {F,T<:AbstractArray,D,X}
