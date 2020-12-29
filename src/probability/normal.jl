@@ -7,7 +7,7 @@ export Normal
 import Base: eltype
 
 
-@measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(Real)
+@measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(ℝ)
 
 
 function logdensity(d::Normal{(:μ, :σ)} , x::X) where {X}    
@@ -31,4 +31,4 @@ sampletype(::Normal{()}) = Real
 Base.rand(rng::Random.AbstractRNG, μ::Normal{()}) = randn(rng)
 
 ≪(::Normal, ::Lebesgue{X}) where X <: Real = true
-representative(::Normal) = Lebesgue(Real)
+representative(::Normal) = Lebesgue(ℝ)
