@@ -46,7 +46,7 @@ function _measure(expr)
             struct $μ{N,T} <: ParameterizedMeasure{N,T}
                 par :: NamedTuple{N,T}
             end
-                       
+
             function MeasureTheory.basemeasure(μ::$μ{P}) where {P}
                 return $base
             end
@@ -55,6 +55,7 @@ function _measure(expr)
             # Requires Julia 1.5
             $μ($(p...)) = $μ(;$(p...))
             
+            # e.g. Normal(;μ=μ, σ=σ) = Normal((μ=μ, σ=σ))
             $μ(;kwargs...) = $μ((;kwargs...))
  
             # ((::$μ{P} ≪ ::typeof($base) ) where {P})  = true
