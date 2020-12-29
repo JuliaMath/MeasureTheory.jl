@@ -54,12 +54,6 @@ function _measure(expr)
             # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
             # Requires Julia 1.5
         
-            function Base.show(io::IO, μ::$μ)
-                p = $μ
-                print(io, "$p")
-                showparams(io, μ.par)
-            end
-
             $μ($(p...)) = $μ(;$(p...))
             
             # e.g. Normal(;μ=μ, σ=σ) = Normal((μ=μ, σ=σ))
