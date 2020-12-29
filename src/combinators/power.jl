@@ -64,7 +64,7 @@ end
 
 basemeasure(μ::PowerMeasure) = basemeasure(μ.μ)^μ.size
 
-function PowerMeasure(μ::ScaledMeasure, n::NTuple{N,Int}) where {N}
-    k = prod(n) * μ.logscale 
-    return ScaledMeasure(k, μ.base^n)
+function PowerMeasure(μ::WeightedMeasure, n::NTuple{N,Int}) where {N}
+    k = prod(n) * μ.logweight
+    return WeightedMeasure(k, μ.base^n)
 end
