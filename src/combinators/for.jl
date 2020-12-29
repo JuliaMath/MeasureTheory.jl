@@ -26,7 +26,11 @@ Find the best IndexStyle that works for both `a` and `b`. This will return
     return IndexCartesian()
 end
 
-Base.rand(μ::For) = rand(GLOBAL_RNG, dist)
+function Base.rand(rng::AbstractRNG, μ::For{F,T,D,X}) where {F,T<:AbstractArray,D,X}
+    s = size(μ.θ)
+    x = Array{X,length(s)}(undef, s...)
+    rand!(rng, x, μ)
+end
 
 import Random
 
