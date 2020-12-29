@@ -28,6 +28,7 @@ function logdensity end
 
 include("absolutecontinuity.jl")
 include("basemeasures.jl")
+include("parameterized.jl")
 include("macros.jl")
 include("combinators/scale.jl")
 include("combinators/superpose.jl")

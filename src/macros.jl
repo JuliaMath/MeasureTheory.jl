@@ -43,25 +43,10 @@ function _measure(expr)
         base = replace(s -> s∈p, s -> :(μ.$s), base)
 
         q = quote
-            struct $μ{P} <: MeasureTheory.AbstractMeasure
-                par :: P    
+            struct $μ{N,T} <: ParameterizedMeasure{N,T}
+                par :: NamedTuple{N,T}
             end
-        
-            function $μ(nt::NamedTuple)
-                P = typeof(nt)
-                return $μ{P}(nt)
-            end
-        
-            $μ(;kwargs...) = $μ((;kwargs...))
-        
-            function Base.getproperty(μ::$μ{P}, prop::Symbol) where {P}
-                return getproperty(getfield(μ, :par), prop)
-            end
-
-            function Base.propertynames(μ::$μ{NamedTuple{N,T}}) where {N,T}
-                return N
-            end
-
+                       
             function MeasureTheory.basemeasure(μ::$μ{P}) where {P}
                 return $base
             end
@@ -69,17 +54,9 @@ function _measure(expr)
             # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
             # Requires Julia 1.5
             $μ($(p...)) = $μ(;$(p...))
-        
-            function Base.show(io::IO, μ::$μ{EmptyNamedTuple})
-                print(io, $μ, "()")
-            end
-
-            function Base.show(io::IO, μ::$μ{P}) where {P}
-                io = IOContext(io, :compact => true)
-                print(io, $μ)
-                print(io, getfield(μ,:par))
-            end
-
+            
+            $μ(;kwargs...) = $μ((;kwargs...))
+ 
             # ((::$μ{P} ≪ ::typeof($base) ) where {P})  = true
         end    
     
