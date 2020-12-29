@@ -40,7 +40,7 @@ end
 
 function _measure(expr)
     @capture $rel($μ($(p...)), $base) expr begin
-        base = replace(s -> s∈p, s -> :(μ.par.$s), base)
+        base = replace(s -> s∈p, s -> :(μ.$s), base)
 
         q = quote
             struct $μ{P} <: MeasureTheory.AbstractMeasure

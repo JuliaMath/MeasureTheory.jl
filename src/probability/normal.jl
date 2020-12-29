@@ -11,11 +11,11 @@ import Base: eltype
 
 
 function logdensity(d::Normal{P} , x::X) where {P <: NamedTuple{(:μ, :σ)}, X}    
-    return - log(d.par.σ)  - (x - d.par.μ)^2 / (2 * d.par.σ^2)
+    return - log(d.σ)  - (x - d.μ)^2 / (2 * d.σ^2)
 end
 
-function Base.rand(rng, d::Normal{P}) where {P <: NamedTuple{(:μ, :σ)}, X}   
-    return randn(rng) * d.par.σ + d.par.μ
+function Base.rand(rng::Random.AbstractRNG, d::Normal{P}) where {P <: NamedTuple{(:μ, :σ)}, X}   
+    return randn(rng) * d.σ + d.μ
 end
 
 # Standard normal
