@@ -60,6 +60,16 @@ function _measure(expr)
         
             $μ($(p...)) = $μ(;$(p...))
         
+            function Base.show(io::IO, μ::$μ{EmptyNamedTuple})
+                print(io, $μ, "()")
+            end
+
+            function Base.show(io::IO, μ::$μ{P}) where {P}
+                io = IOContext(io, :compact => true)
+                print(io, $μ)
+                print(io, getfield(μ,:par))
+            end
+
             # ((::$μ{P} ≪ ::typeof($base) ) where {P})  = true
         end    
     

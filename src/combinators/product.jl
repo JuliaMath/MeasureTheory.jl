@@ -8,7 +8,10 @@ struct ProductMeasure{T} <: AbstractMeasure
     ProductMeasure(μs) = new{typeof(μs)}(μs)
 end
 
-Base.show(io::IO, μ::ProductMeasure) = print(io, join(string.(μ.components), " ⊗ "))
+function Base.show(io::IO, μ::ProductMeasure)
+    io = IOContext(io, :compact => true)
+    print(io, join(string.(μ.components), " ⊗ "))
+end
 
 function Base.show_unquoted(io::IO, μ::ProductMeasure, indent::Int, prec::Int)
     if Base.operator_precedence(:*) ≤ prec

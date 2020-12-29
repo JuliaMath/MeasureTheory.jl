@@ -21,9 +21,13 @@ end
 
 import Base
 
-Base.show(io::IO, μ::PowerMeasure) = print(io, μ.μ, " ^ ", μ.size)
+function Base.show(io::IO, μ::PowerMeasure)
+    io = IOContext(io, :compact => true)
+    print(io, μ.μ, " ^ ", μ.size)
+end
 
 function Base.show_unquoted(io::IO, μ::PowerMeasure, indent::Int, prec::Int)
+    io = IOContext(io, :compact => true)
     if Base.operator_precedence(:^) ≤ prec
         print(io, "(")
         show(io, μ)
