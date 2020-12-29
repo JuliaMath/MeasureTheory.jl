@@ -1,25 +1,25 @@
 abstract type AbstractDomain end
 
-struct RealNumbers <: AbstractDomain end
-ℝ = RealNumbers()
-Base.show(io::IO, ::RealNumbers) = print(io, "ℝ")
+macro domain(name, T)
+    sname = String(name)
+    
+    name = esc(name)
+    quote
+        struct $T <: AbstractDomain end
+        export $name
+        $name = $T()
+        Base.show(io::IO, ::$T) = print(io, $sname)
+    end
+end
 
-struct PositiveReals <: AbstractDomain end
-ℝ₊ = PositiveReals()
-Base.show(io::IO, ::PositiveReals) = print(io, "ℝ₊")
+@domain ℝ RealNumbers
 
-struct UnitInterval <: AbstractDomain end
-𝕀 = UnitInterval()
-Base.show(io::IO, ::RealNumbers) = print(io, "𝕀")
+@domain ℝ₊ PositiveReals
 
-struct Integers <: AbstractDomain end
-ℤ = Integers()
-Base.show(io::IO, ::Integers) = print(io, "ℤ")
+@domain 𝕀 UnitInterval
 
-struct NonnegativeIntegers <: AbstractDomain end
-ℤ₊ = NonnegativeIntegers()
-Base.show(io::IO, ::NonnegativeIntegers) = print(io, "ℤ₊")
+@domain ℤ Integers
 
-struct PositiveIntegers <: AbstractDomain end
-ℤ₀₊ = PositiveIntegers()
-Base.show(io::IO, ::PositiveIntegers) = print(io, "ℤ₀₊")
+@domain ℤ₊ PositiveIntegers
+
+@domain ℤ₀₊ NonnegativeIntegers

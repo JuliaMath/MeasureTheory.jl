@@ -25,6 +25,7 @@ Methods for computing density relative to other measures will be
 """
 function logdensity end
 
+include("domains.jl")
 include("utils.jl")
 include("absolutecontinuity.jl")
 include("basemeasures.jl")
