@@ -65,7 +65,9 @@ function _measure(expr)
             function MeasureTheory.basemeasure(μ::$μ{P}) where {P}
                 return $base
             end
-        
+            
+            # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
+            # Requires Julia 1.5
             $μ($(p...)) = $μ(;$(p...))
         
             function Base.show(io::IO, μ::$μ{EmptyNamedTuple})
