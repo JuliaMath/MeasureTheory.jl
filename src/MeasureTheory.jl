@@ -13,6 +13,8 @@ const EmptyNamedTuple = NamedTuple{(),Tuple{}}
 export ≪
 export sampletype
 
+export AbstractMeasure
+
 abstract type AbstractMeasure end
 
 """
