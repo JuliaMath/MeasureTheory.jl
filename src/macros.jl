@@ -54,6 +54,14 @@ function _measure(expr)
         
             $μ(;kwargs...) = $μ((;kwargs...))
         
+            function Base.getproperty(μ::$μ{P}, prop::Symbol) where {P}
+                return getproperty(getfield(μ, :par), prop)
+            end
+
+            function Base.propertynames(μ::$μ{NamedTuple{N,T}}) where {N,T}
+                return N
+            end
+
             function MeasureTheory.basemeasure(μ::$μ{P}) where {P}
                 return $base
             end
