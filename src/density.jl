@@ -37,8 +37,8 @@ end
 #     end
 # end
 
-density(μ, base=basemeasure(μ)) = Density(μ, base)
-logdensity(μ, base=basemeasure(μ)) = LogDensity(μ, base)
+density(μ, base::AbstractMeasure=basemeasure(μ)) = Density(μ, base)
+logdensity(μ, base::AbstractMeasure=basemeasure(μ)) = LogDensity(μ, base)
 
 density(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous}, x::Real) = pdf(μ,x)
 logdensity(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous}, x::Real) = logpdf(μ,x)
