@@ -13,7 +13,7 @@ import Base: eltype
 
 # Standard StudentT
 
-function logdensity(μ::StudentT{NamedTuple{(:ν,), Tuple{N}}} where {N} , x::X) where {X}  
+function logdensity(μ::StudentT{(:ν,), Tuple{T}} where {T} , x::X) where {X}  
     ν = μ.par.ν
     halfνp1 = (ν+1)/2
     return loggamma(halfνp1) - loggamma(ν/2) + ν * log(ν) - halfνp1 * log(x^2 + ν)
@@ -23,7 +23,7 @@ end
  
 sampletype(::StudentT) = Real
 
-Base.rand(μ::StudentT{EmptyNamedTuple}) = rand(Dists.StudentT())
+Base.rand(rng::AbstractRNG, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 
 ≪(::StudentT, ::Lebesgue{X}) where X <: Real = true
 representative(::StudentT) = Lebesgue(ℝ)
