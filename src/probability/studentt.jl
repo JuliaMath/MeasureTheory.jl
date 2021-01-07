@@ -14,7 +14,7 @@ import Base: eltype
 # Standard StudentT
 
 function logdensity(μ::StudentT{(:ν,), Tuple{T}} where {T} , x::X) where {X}  
-    ν = μ.par.ν
+    ν = μ.ν
     halfνp1 = (ν+1)/2
     return loggamma(halfνp1) - loggamma(ν/2) + ν * log(ν) - halfνp1 * log(x^2 + ν)
 end
