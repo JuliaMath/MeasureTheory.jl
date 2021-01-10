@@ -21,9 +21,13 @@ end
 
 import Base
 
-Base.show(io::IO, μ::PowerMeasure) = print(io, μ.μ, " ^ ", μ.size)
+function Base.show(io::IO, μ::PowerMeasure)
+    io = IOContext(io, :compact => true)
+    print(io, μ.μ, " ^ ", μ.size)
+end
 
 function Base.show_unquoted(io::IO, μ::PowerMeasure, indent::Int, prec::Int)
+    io = IOContext(io, :compact => true)
     if Base.operator_precedence(:^) ≤ prec
         print(io, "(")
         show(io, μ)
@@ -60,7 +64,7 @@ end
 
 basemeasure(μ::PowerMeasure) = basemeasure(μ.μ)^μ.size
 
-function PowerMeasure(μ::ScaledMeasure, n::NTuple{N,Int}) where {N}
-    k = prod(n) * μ.logscale 
-    return ScaledMeasure(k, μ.base^n)
+function PowerMeasure(μ::WeightedMeasure, n::NTuple{N,Int}) where {N}
+    k = prod(n) * μ.logweight
+    return WeightedMeasure(k, μ.base^n)
 end

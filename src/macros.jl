@@ -4,7 +4,7 @@ using StatsFuns
 
 export @measure
 
-# A fold over ASTs. Example usage in `replaceX`
+# A fold over ASTs. Example usage in `replace`
 function foldast(leaf, branch; kwargs...)
     function go(ast)
         MLStyle.@match ast begin
@@ -40,26 +40,25 @@ end
 
 function _measure(expr)
     @capture $rel($μ($(p...)), $base) expr begin
-        base = replace(s -> s∈p, s -> :(μ.par.$s), base)
+        base = replace(s -> s∈p, s -> :(μ.$s), base)
 
         q = quote
-            struct $μ{P} <: MeasureTheory.AbstractMeasure
-                par :: P    
+            struct $μ{N,T} <: ParameterizedMeasure{N,T}
+                par :: NamedTuple{N,T}
             end
-        
-            function $μ(nt::NamedTuple)
-                P = typeof(nt)
-                return $μ{P}(nt)
-            end
-        
-            $μ(;kwargs...) = $μ((;kwargs...))
-        
+
             function MeasureTheory.basemeasure(μ::$μ{P}) where {P}
                 return $base
             end
+            
+            # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
+            # Requires Julia 1.5
         
             $μ($(p...)) = $μ(;$(p...))
-        
+            
+            # e.g. Normal(;μ=μ, σ=σ) = Normal((μ=μ, σ=σ))
+            $μ(;kwargs...) = $μ((;kwargs...))
+ 
             # ((::$μ{P} ≪ ::typeof($base) ) where {P})  = true
         end    
     

@@ -188,7 +188,7 @@ We can combine measures in a few ways, for now just _scaling_ and _superposition
 
 ```julia
 julia> 2.0*Lebesgue(Float64) + Normal(0.0,1.0)
-SuperpositionMeasure{Float64,2}((MeasureTheory.ScaledMeasure{Float64,Float64}(2.0, Lebesgue{Float64}()), Normal{NamedTuple{(:μ, :σ),Tuple{Float64,Float64}},Float64}((μ = 0.0, σ = 1.0))))
+SuperpositionMeasure{Float64,2}((MeasureTheory.WeightedMeasure{Float64,Float64}(2.0, Lebesgue{Float64}()), Normal{NamedTuple{(:μ, :σ),Tuple{Float64,Float64}},Float64}((μ = 0.0, σ = 1.0))))
 ```
 
 ---
