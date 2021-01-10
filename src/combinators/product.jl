@@ -2,7 +2,7 @@ export ProductMeasure
 using Base: eltype
 
 struct ProductMeasure{T} <: AbstractMeasure
-    components :: T
+    data :: T
 
     ProductMeasure(μs...) = new{typeof(μs)}(μs)
     ProductMeasure(μs) = new{typeof(μs)}(μs)
@@ -10,7 +10,7 @@ end
 
 function Base.show(io::IO, μ::ProductMeasure)
     io = IOContext(io, :compact => true)
-    print(io, join(string.(μ.components), " ⊗ "))
+    print(io, join(string.(μ.data), " ⊗ "))
 end
 
 function Base.show_unquoted(io::IO, μ::ProductMeasure, indent::Int, prec::Int)
@@ -26,32 +26,36 @@ end
 
 # ProductMeasure(m::NTuple{N, Measure{X}}) where {N,X} = ProductMeasure(m...)
 
-Base.length(m::ProductMeasure{T}) where {T} = length(m.components)
+Base.length(m::ProductMeasure{T}) where {T} = length(m.data)
 
 function Base.:*(μ::ProductMeasure{X}, ν::ProductMeasure{Y}) where {X,Y}
-    components = (μ.components..., ν.components...)
-    ProductMeasure(components...)
+    data = (μ.data..., ν.data...)
+    ProductMeasure(data...)
 end
 
 function Base.:*(μ, ν::ProductMeasure{Y}) where {Y}
-    components = (μ, ν.components...)
-    ProductMeasure(components...)
+    data = (μ, ν.data...)
+    ProductMeasure(data...)
 end
 
 function Base.:*(μ::ProductMeasure{X}, ν::N) where {X, N <: AbstractMeasure}
-    components = (μ.components..., ν)
-    ProductMeasure(components...)
+    data = (μ.data..., ν)
+    ProductMeasure(data...)
 end
 
 function Base.:*(μ::M, ν::N) where {M <: AbstractMeasure, N <: AbstractMeasure}
-    components = (μ, ν)
-    ProductMeasure(components...)
+    data = (μ, ν)
+    ProductMeasure(data...)
 end
 
 function Base.rand(μ::ProductMeasure{T}) where T
-    return rand.(μ.components)
+    return rand.(μ.data)
 end
 
-sampletype(μ::ProductMeasure) = Tuple{sampletype.(μ.components)...}
+sampletype(μ::ProductMeasure) = Tuple{sampletype.(μ.data)...}
 
-basemeasure(μ::ProductMeasure) = ProductMeasure(basemeasure.(μ.components))
+basemeasure(μ::ProductMeasure) = ProductMeasure(basemeasure.(μ.data))
+
+# function logdensity(μ::ProductMeasure{Aμ}, x::Ax) where {Aμ <: MappedArray, Ax <: AbstractArray}
+#     μ.data
+# end
