@@ -10,8 +10,9 @@ import Base: eltype
 @measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(ℝ)
 
 
-function logdensity(d::Normal{(:μ, :σ)} , x::X) where {X}    
-    return - log(d.σ)  - (x - d.μ)^2 / (2 * d.σ^2)
+function logdensity(d::Normal{(:μ, :σ)} , x::X) where {X} 
+    z = (x - d.μ) / d.σ   
+    return - log(d.σ)  - logdensity(Normal(), z)
 end
 
 function Base.rand(rng::Random.AbstractRNG, d::Normal{(:μ, :σ)})   
