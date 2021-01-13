@@ -123,7 +123,7 @@ function _μσ_methods(ex)
             d_args = (:(d.$arg) for arg in args)
             quote
 
-                function rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ, :σ)}, x)
+                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ, :σ)})
                     d.σ * rand(rng, $dist($(d_args...))) + d.μ
                 end
 
@@ -132,7 +132,7 @@ function _μσ_methods(ex)
                     return logdensity($dist($(d_args...)), z) - log(d.σ)
                 end
 
-                function rand(rng::AbstractRNG, d::$dist{($(argnames...), :σ)}, x)
+                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :σ)})
                     d.σ * rand(rng, $dist($(d_args...)))
                 end
 
@@ -141,7 +141,7 @@ function _μσ_methods(ex)
                     return logdensity($dist($(d_args...)), z) - log(d.σ) 
                 end
 
-                function rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ)}, x)
+                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ)})
                     rand(rng, $dist($(d_args...))) + d.μ
                 end
 
