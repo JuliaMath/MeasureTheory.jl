@@ -17,6 +17,14 @@ struct Density{M,B} <: Function
     base::B
 end
 
+(f::Density)(x) = density(f.μ, x) / density(f, base(x))
+struct LogDensity{M,B} <: Function
+    μ::M
+    base::B
+end
+
+(f::LogDensity)(x) = logdensity(f.μ, x) - logdensity(f.base, x) 
+
 """
     struct DensityMeasure{F,B} <: AbstractMeasure
         density :: F
