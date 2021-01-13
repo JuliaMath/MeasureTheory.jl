@@ -27,3 +27,5 @@ Base.rand(rng::AbstractRNG, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν)
 
 ≪(::StudentT, ::Lebesgue{X}) where X <: Real = true
 representative(::StudentT) = Lebesgue(ℝ)
+
+@μσ_methods StudentT(ν)

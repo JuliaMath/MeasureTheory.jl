@@ -107,3 +107,49 @@ end
 
 
 # (@macroexpand @measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(X)) |> MacroTools.prettify
+
+
+using MLStyle
+
+macro μσ_methods(ex)
+    esc(_μσ_methods(ex))
+end
+
+function _μσ_methods(ex)
+    @match ex begin
+        :($dist($(args...))) => begin
+            argnames = QuoteNode.(args)
+
+            d_args = (:(d.$arg) for arg in args)
+            quote
+
+                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ, :σ)})
+                    d.σ * rand(rng, $dist($(d_args...))) + d.μ
+                end
+
+                function logdensity(d::$dist{($(argnames...), :μ, :σ)}, x)
+                    z = (x - d.μ) / d.σ   
+                    return logdensity($dist($(d_args...)), z) - log(d.σ)
+                end
+
+                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :σ)})
+                    d.σ * rand(rng, $dist($(d_args...)))
+                end
+
+                function logdensity(d::$dist{($(argnames...), :σ)}, x)
+                    z = x / d.σ   
+                    return logdensity($dist($(d_args...)), z) - log(d.σ) 
+                end
+
+                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ)})
+                    rand(rng, $dist($(d_args...))) + d.μ
+                end
+
+                function logdensity(d::$dist{($(argnames...), :μ)}, x)
+                    z = x - d.μ
+                    return logdensity($dist($(d_args...)), z)
+                end
+            end 
+        end
+    end
+end
