@@ -11,7 +11,7 @@ import Base: eltype
 
 # Standard Exponential
 
-function logdensity(d::Exponential{EmptyNamedTuple} , x::X) where {X}  
+function logdensity(d::Exponential{EmptyNamedTuple} , x::MaybeSym{T}) where {T <: Number}  
     return -x
 end
 

@@ -13,7 +13,7 @@ import Base: eltype
 
 # Standard StudentT
 
-function logdensity(μ::StudentT{(:ν,), Tuple{T}} where {T} , x::X) where {X}  
+function logdensity(μ::StudentT{(:ν,)}, x::MaybeSym{T}) where {T <: Number}  
     ν = μ.ν
     halfνp1 = (ν+1)/2
     return loggamma(halfνp1) - loggamma(ν/2) + ν * log(ν) - halfνp1 * log(x^2 + ν)

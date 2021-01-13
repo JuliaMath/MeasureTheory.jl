@@ -11,7 +11,7 @@ import Base: eltype
 
 # Standard normal
 
-function logdensity(d::Normal{()} , x::X) where {X}  
+function logdensity(d::Normal{()} , x::MaybeSym{T}) where {T <: Number}  
     return - x^2 / 2 
 end
 

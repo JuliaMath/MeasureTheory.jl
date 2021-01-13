@@ -12,7 +12,7 @@ import Base: eltype
 
 # Standard Laplace
 
-function logdensity(d::Laplace{()} , x::X) where {X}  
+function logdensity(d::Laplace{()} , x::MaybeSym{T}) where {T <: Number}  
     return -abs(x)
 end
 

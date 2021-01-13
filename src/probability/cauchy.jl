@@ -12,7 +12,7 @@ import Base: eltype
 
 # Standard Cauchy
 
-function logdensity(d::Cauchy{()} , x::X) where {X}  
+function logdensity(d::Cauchy{()} , x::MaybeSym{T}) where {T <: Number}  
     return -log(1 + x^2)
 end
 

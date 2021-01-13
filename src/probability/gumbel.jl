@@ -12,7 +12,7 @@ import Base: eltype
 
 # Standard Gumbel
 
-function logdensity(d::Gumbel{EmptyNamedTuple} , x::X) where {X}  
+function logdensity(d::Gumbel{EmptyNamedTuple} , x::MaybeSym{T}) where {T <: Number}  
     return -exp(-x) - x
 end
 

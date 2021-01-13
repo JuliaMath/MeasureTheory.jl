@@ -10,7 +10,7 @@ export Beta
 
 # Standard Beta
 
-function logdensity(d::Beta{(:α, :β)}, x::X) where {X}
+function logdensity(d::Beta{(:α, :β)}, x::MaybeSym{T}) where {T <: Number}
     return (d.α - 1) * log(x) + (d.β - 1) * log(1 - x) - logbeta(d.α, d.β)
 end
 
