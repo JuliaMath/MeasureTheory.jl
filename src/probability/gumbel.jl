@@ -14,7 +14,7 @@ sampletype(::Gumbel{()}) = Real
 import Base
 
 function Base.rand(rng::AbstractRNG, d::Gumbel{()})
-    u = rand()
+    u = rand(rng)
     log(-log(u))
 end
 
