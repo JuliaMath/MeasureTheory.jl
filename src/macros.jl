@@ -120,21 +120,34 @@ function _μσ_methods(ex)
         :($dist($(args...))) => begin
             argnames = QuoteNode.(args)
 
-
+            d_args = (:(d.$arg) for arg in args)
             quote
-                function logdensity(d::$dist{($(argnames...), :μ, :σ)}, x::X) where {X} 
+
+                function rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ, :σ)}, x)
+                    d.σ * rand(rng, $dist($(d_args...))) + d.μ
+                end
+
+                function logdensity(d::$dist{($(argnames...), :μ, :σ)}, x)
                     z = (x - d.μ) / d.σ   
-                    return logdensity($ex, z) - log(d.σ)
+                    return logdensity($dist($(d_args...)), z) - log(d.σ)
                 end
 
-                function logdensity(d::$dist{($(argnames...), :σ)}, x::X) where {X} 
+                function rand(rng::AbstractRNG, d::$dist{($(argnames...), :σ)}, x)
+                    d.σ * rand(rng, $dist($(d_args...)))
+                end
+
+                function logdensity(d::$dist{($(argnames...), :σ)}, x)
                     z = x / d.σ   
-                    return logdensity($ex, z) - log(d.σ) 
+                    return logdensity($dist($(d_args...)), z) - log(d.σ) 
                 end
 
-                function logdensity(d::$dist{($(argnames...), :μ)}, x::X) where {X} 
+                function rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ)}, x)
+                    rand(rng, $dist($(d_args...))) + d.μ
+                end
+
+                function logdensity(d::$dist{($(argnames...), :μ)}, x)
                     z = x - d.μ
-                    return logdensity($ex, z)
+                    return logdensity($dist($(d_args...)), z)
                 end
             end 
         end
