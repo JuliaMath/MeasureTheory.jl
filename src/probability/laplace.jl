@@ -12,15 +12,16 @@ import Base: eltype
 
 # Standard Laplace
 
-function logdensity(d::Laplace{EmptyNamedTuple} , x::X) where {X}  
+function logdensity(d::Laplace{()} , x::X) where {X}  
     return -abs(x)
 end
 
-# Laplace() = Laplace{EmptyNamedTuple,Real}(NamedTuple())
  
-sampletype(::Laplace{NamedTuple{(),Tuple{}}}) = Real
+sampletype(::Laplace) = Real
 
-Base.rand(μ::Laplace{EmptyNamedTuple}) = rand(Dists.Laplace())
+Base.rand(μ::Laplace{()}) = rand(Dists.Laplace())
 
 ≪(::Laplace, ::Lebesgue{X}) where X <: Real = true
 representative(::Laplace) = Lebesgue(ℝ)
+
+@μσ_methods Laplace()
