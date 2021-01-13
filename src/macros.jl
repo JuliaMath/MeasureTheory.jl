@@ -107,3 +107,36 @@ end
 
 
 # (@macroexpand @measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(X)) |> MacroTools.prettify
+
+
+using MLStyle
+
+macro μσ_methods(ex)
+    esc(_μσ_methods(ex))
+end
+
+function _μσ_methods(ex)
+    @match ex begin
+        :($dist($(args...))) => begin
+            argnames = QuoteNode.(args)
+
+
+            quote
+                function logdensity(d::$dist{($(argnames...), :μ, :σ)}, x::X) where {X} 
+                    z = (x - d.μ) / d.σ   
+                    return logdensity($ex, z) - log(d.σ)
+                end
+
+                function logdensity(d::$dist{($(argnames...), :σ)}, x::X) where {X} 
+                    z = x / d.σ   
+                    return logdensity($ex, z) - log(d.σ) 
+                end
+
+                function logdensity(d::$dist{($(argnames...), :μ)}, x::X) where {X} 
+                    z = x - d.μ
+                    return logdensity($ex, z)
+                end
+            end 
+        end
+    end
+end
