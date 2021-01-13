@@ -19,7 +19,7 @@ end
  
 sampletype(::Laplace) = Real
 
-Base.rand(μ::Laplace{()}) = rand(Dists.Laplace())
+Base.rand(rng::AbstractRNG, μ::Laplace{()}) = rand(rng, Dists.Laplace())
 
 ≪(::Laplace, ::Lebesgue{X}) where X <: Real = true
 representative(::Laplace) = Lebesgue(ℝ)
