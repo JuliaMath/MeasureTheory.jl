@@ -4,19 +4,12 @@
 import StatsFuns
 export Exponential
 
-import Base: eltype
-
-
 @measure Exponential(λ) ≪ Lebesgue(ℝ)
-
-# Standard Exponential
 
 function logdensity(d::Exponential{EmptyNamedTuple} , x::MaybeSym{T}) where {T <: Number}  
     return -x
 end
 
-# Exponential() = Exponential{EmptyNamedTuple,Real}(NamedTuple())
- 
 sampletype(::Exponential{NamedTuple{(),Tuple{}}}) = Real
 
 Base.rand(μ::Exponential{EmptyNamedTuple}) = randn()

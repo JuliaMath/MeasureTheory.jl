@@ -1,22 +1,13 @@
-
 # Gumbel distribution
 
 import StatsFuns
 export Gumbel
 
-import Base: eltype
-
-
 @measure Gumbel(μ,σ) ≃ Lebesgue(ℝ)
-
-
-# Standard Gumbel
 
 function logdensity(d::Gumbel{EmptyNamedTuple} , x::MaybeSym{T}) where {T <: Number}  
     return -exp(-x) - x
 end
-
-# Gumbel() = Gumbel{EmptyNamedTuple,Real}(NamedTuple())
  
 sampletype(::Gumbel{NamedTuple{(),Tuple{}}}) = Real
 
