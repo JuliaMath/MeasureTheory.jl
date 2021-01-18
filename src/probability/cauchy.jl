@@ -6,7 +6,7 @@ export Cauchy
 
 @measure Cauchy(μ,σ) ≃ (1/π) * Lebesgue(ℝ)
 
-function logdensity(d::Cauchy{()} , x::MaybeSym{T}) where {T <: Number}  
+function logdensity(d::Cauchy{()} , x) 
     return -log(1 + x^2)
 end
  

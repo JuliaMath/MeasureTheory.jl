@@ -6,7 +6,7 @@ export Laplace
 
 @measure Laplace(μ,σ) ≃ (1/2) * Lebesgue(ℝ)
 
-function logdensity(d::Laplace{()} , x::MaybeSym{T}) where {T <: Number}  
+function logdensity(d::Laplace{()} , x)
     return -abs(x)
 end
  

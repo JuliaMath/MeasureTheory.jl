@@ -6,7 +6,7 @@ export Exponential
 
 @measure Exponential(λ) ≪ Lebesgue(ℝ)
 
-function logdensity(d::Exponential{EmptyNamedTuple} , x::MaybeSym{T}) where {T <: Number}  
+function logdensity(d::Exponential{EmptyNamedTuple} , x)
     return -x
 end
 

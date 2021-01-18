@@ -5,7 +5,7 @@ export Gumbel
 
 @measure Gumbel(μ,σ) ≃ Lebesgue(ℝ)
 
-function logdensity(d::Gumbel{()} , x::MaybeSym{T}) where {T <: Number}  
+function logdensity(d::Gumbel{()} , x)
     return -exp(-x) - x
 end
  
