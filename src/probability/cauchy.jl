@@ -4,19 +4,11 @@
 import StatsFuns
 export Cauchy
 
-import Base: eltype
-
-
 @measure Cauchy(μ,σ) ≃ (1/π) * Lebesgue(ℝ)
 
-
-# Standard Cauchy
-
-function logdensity(d::Cauchy{()} , x::X) where {X}  
+function logdensity(d::Cauchy{()} , x) 
     return -log(1 + x^2)
 end
-
-# Cauchy() = Cauchy{EmptyNamedTuple,Real}(NamedTuple())
  
 sampletype(::Cauchy) = Real
 

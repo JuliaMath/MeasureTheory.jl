@@ -12,10 +12,18 @@ Because this function is often difficult to express in closed form, there are
 many different ways of computing it. We therefore provide a formal
 representation to allow comptuational flexibilty.
 """
-struct Density{M,B} <: Function
+struct Density{M,B,L}
     μ::M
     base::B
+    log::L
 end
+
+export 𝒹
+function 𝒹(μ::AbstractMeasure, base::AbstractMeasure; log=true)
+    return Density(μ, base, Val(log))
+end
+
+(f::Density{M,B,Val{true}})(x) where {M,B} = logdensity(f.μ, f.base, x) 
 
 """
     struct DensityMeasure{F,B} <: AbstractMeasure
@@ -26,23 +34,29 @@ end
 A `DensityMeasure` is a measure defined by a density with respect to some other
 "base" measure 
 """
-struct DensityMeasure{X,F,B} <: AbstractMeasure
-    density :: F
-    base    :: B
+struct DensityMeasure{F,B,L} <: AbstractMeasure
+    f    :: F
+    base :: B
+    log  :: L
 end
 
-# function density(μ::M, ν::M) where {M}
-#     if  μ==ν
-#         return () -> 1.0
-#     end
-# end
+basemeasure(μ::DensityMeasure) = μ.base
 
-density(μ, base::AbstractMeasure=basemeasure(μ)) = Density(μ, base)
-logdensity(μ, base::AbstractMeasure=basemeasure(μ)) = LogDensity(μ, base)
+logdensity(μ::DensityMeasure{F,B,Val{true}}, x) where {F,B} = μ.f(x)
 
-density(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous}, x::Real) = pdf(μ,x)
-logdensity(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous}, x::Real) = logpdf(μ,x)
+export ∫
 
-density(μ::AbstractMeasure, x::X) where {X} = density(μ, basemeasure(μ))(x) 
+∫(f, base::AbstractMeasure; log=true) = DensityMeasure(f, base, Val(log))
 
-logdensity(μ::AbstractMeasure, y::Y) where {X, Y <: X} = logdensity(μ, basemeasure(μ))(x)
+# TODO: `density` and `logdensity` functions for `DensityMeasure`
+
+function logdensity(μ::AbstractMeasure, ν::AbstractMeasure, x)
+    bμ = basemeasure(μ)
+    bν = basemeasure(ν)
+        
+    result = logdensity(μ,x) + logdensity(bμ,x)
+    result -= logdensity(ν,x) + logdensity(bν, x) 
+    result += _logdensity(basemeasure(bμ), basemeasure(bν), x)
+end
+
+_logdensity(::Lebesgue{ℝ}, ::Lebesgue{ℝ}, x) = zero(float(x))

@@ -1,26 +1,24 @@
-
 # Gumbel distribution
 
 import StatsFuns
 export Gumbel
 
-import Base: eltype
-
-
 @measure Gumbel(μ,σ) ≃ Lebesgue(ℝ)
 
-
-# Standard Gumbel
-
-function logdensity(d::Gumbel{EmptyNamedTuple} , x::X) where {X}  
+function logdensity(d::Gumbel{()} , x)
     return -exp(-x) - x
 end
-
-# Gumbel() = Gumbel{EmptyNamedTuple,Real}(NamedTuple())
  
-sampletype(::Gumbel{NamedTuple{(),Tuple{}}}) = Real
+sampletype(::Gumbel{()}) = Real
 
-Base.rand(μ::Gumbel{EmptyNamedTuple}) = rand(Dists.Gumbel())
+import Base
+
+function Base.rand(rng::AbstractRNG, d::Gumbel{()})
+    u = rand(rng)
+    log(-log(u))
+end
 
 ≪(::Gumbel, ::Lebesgue{X}) where X <: Real = true
 representative(::Gumbel) = Lebesgue(ℝ)
+
+@μσ_methods Gumbel()
