@@ -1,5 +1,4 @@
 export PowerMeasure
-using Base: eltype
 
 """
     struct PowerMeasure{M,N}
@@ -48,9 +47,8 @@ end
 
 sampletype(d::PowerMeasure{M,N}) where {M,N} = AbstractArray{sampletype(d.μ), N}
 
-export rand!
 
-function rand!(result::AbstractArray, d::PowerMeasure)
+function Random.rand!(result::AbstractArray, d::PowerMeasure)
     @inbounds for j in eachindex(result)
         result[j] = rand(d.μ)
     end
@@ -59,7 +57,7 @@ end
 
 function Base.rand(d::PowerMeasure)
     result = Array{sampletype(d.μ), length(d.size)}(undef, d.size...)
-    return rand!(result, d)
+    return Random.rand!(result, d)
 end    
 
 basemeasure(μ::PowerMeasure) = basemeasure(μ.μ)^μ.size
