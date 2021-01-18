@@ -40,6 +40,13 @@ struct DensityMeasure{F,B,L} <: AbstractMeasure
     log  :: L
 end
 
+function Base.show(io::IO, μ::DensityMeasure{F,B,Val{L}}) where {F,B,L}
+    print(io, "DensityMeasure ")
+    print(io, "∫(", μ.f)
+    print(io, ", ", μ.base)
+    print(io, "; log = ", L, ")")
+end
+
 basemeasure(μ::DensityMeasure) = μ.base
 
 logdensity(μ::DensityMeasure{F,B,Val{true}}, x) where {F,B} = μ.f(x)
