@@ -15,3 +15,5 @@ basemeasure(μ::Lebesgue{X}) where {X} = μ
 isprimitive(::Lebesgue) = true
 
 sampletype(::Lebesgue{X}) where {X} = X
+
+logdensity(::Lebesgue{X}, x) where {X} = zero(float(x))

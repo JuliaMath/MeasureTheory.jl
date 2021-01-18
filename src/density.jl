@@ -18,8 +18,9 @@ struct Density{M,B,L}
     log::L
 end
 
-function 𝒹(μ::AbstractMeasure, ν::AbstractMeasure; log=true)
-    return Density(μ, base; log=Val{log})
+export 𝒹
+function 𝒹(μ::AbstractMeasure, base::AbstractMeasure; log=true)
+    return Density(μ, base, Val(log))
 end
 
 (f::Density{M,B,Val{true}})(x) where {M,B} = logdensity(f.μ, x) - logdensity(f.base, x) 
@@ -44,6 +45,19 @@ struct DensityMeasure{F,B,L} <: AbstractMeasure
     log  :: L
 end
 
+export ∫
+
 ∫(f, base::AbstractMeasure; log=true) = DensityMeasure(f, base, Val{log})
 
 # TODO: `density` and `logdensity` functions for `DensityMeasure`
+
+function logdensity(μ::AbstractMeasure, ν::AbstractMeasure, x)
+    bμ = basemeasure(μ)
+    bν = basemeasure(ν)
+        
+    result = logdensity(μ,x) + logdensity(bμ,x)
+    result -= logdensity(ν,x) + logdensity(bν, x) 
+    result += _logdensity(basemeasure(bμ), basemeasure(bν), x)
+end
+
+_logdensity(::Lebesgue{ℝ}, ::Lebesgue{ℝ}, x) = zero(float(x))
