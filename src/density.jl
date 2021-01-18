@@ -40,9 +40,13 @@ struct DensityMeasure{F,B,L} <: AbstractMeasure
     log  :: L
 end
 
+basemeasure(μ::DensityMeasure) = μ.base
+
+logdensity(μ::DensityMeasure{F,B,Val{true}}, x) where {F,B} = μ.f(x)
+
 export ∫
 
-∫(f, base::AbstractMeasure; log=true) = DensityMeasure(f, base, Val{log})
+∫(f, base::AbstractMeasure; log=true) = DensityMeasure(f, base, Val(log))
 
 # TODO: `density` and `logdensity` functions for `DensityMeasure`
 
