@@ -12,7 +12,7 @@ Because this function is often difficult to express in closed form, there are
 many different ways of computing it. We therefore provide a formal
 representation to allow comptuational flexibilty.
 """
-struct Density{M,B,L} <: Function
+struct Density{M,B,L}
     μ::M
     base::B
     log::L
@@ -22,9 +22,9 @@ function 𝒹(μ::AbstractMeasure, ν::AbstractMeasure; log=true)
     return Density(μ, base; log=Val{log})
 end
 
-(f::Density{M,B,Val{true})(x) = logdensity(f.μ, x) - logdensity(f.base, x) 
+(f::Density{M,B,Val{true}})(x) where {M,B} = logdensity(f.μ, x) - logdensity(f.base, x) 
 
-(f::Density{M,B,Val{false})(x) = density(f.μ, x) / density(f, base(x))
+(f::Density{M,B,Val{false}})(x) where {M,B} = density(f.μ, x) / density(f, base(x))
 
 
 
@@ -44,6 +44,6 @@ struct DensityMeasure{F,B,L} <: AbstractMeasure
     log  :: L
 end
 
-∫(f, base::AbstractMeasure; log=true) = DensityMeasure(f, base; Val{log})
+∫(f, base::AbstractMeasure; log=true) = DensityMeasure(f, base, Val{log})
 
 # TODO: `density` and `logdensity` functions for `DensityMeasure`

@@ -3,7 +3,7 @@ export For
 using Random
 import Base
 
-For{D,N,T,F} = ProductMeasure{MA} where {D,N,T,F, MA <: AbstractMappedArray{D, N, T, F}}
+For{D,N,T,F} = ProductMeasure{ReadonlyMappedArray{D, N, T, F}} 
 
 function Base.show(io::IO, d::ProductMeasure{<:AbstractMappedArray})
     print(io, "For(")
