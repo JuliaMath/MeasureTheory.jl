@@ -4,15 +4,16 @@
 import StatsFuns
 export Exponential
 
-@measure Exponential(λ) ≪ Lebesgue(ℝ)
+@measure Exponential(λ) ≪ Lebesgue(ℝ₊)
 
-function logdensity(d::Exponential{EmptyNamedTuple} , x)
+function logdensity(d::Exponential{()} , x)
     return -x
 end
 
-sampletype(::Exponential{NamedTuple{(),Tuple{}}}) = Real
+sampletype(::Exponential) = Real
 
-Base.rand(μ::Exponential{EmptyNamedTuple}) = randn()
+Base.rand(μ::Exponential{()}) = -log(rand())
 
-≪(::Exponential, ::Lebesgue{X}) where X <: Real = true
-representative(::Exponential) = Lebesgue(ℝ)
+≪(::Exponential, ::Lebesgue{ℝ₊}) = true
+
+representative(::Exponential) = Lebesgue(ℝ₊)
