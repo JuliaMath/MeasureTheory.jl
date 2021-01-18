@@ -14,7 +14,7 @@ sampletype(::Normal{()}) = Real
 
 Base.rand(rng::Random.AbstractRNG, μ::Normal{()}) = randn(rng)
 
-≪(::Normal, ::Lebesgue{X}) where X <: Real = true
+≪(::Normal, ::Lebesgue{ℝ}) = true
 representative(::Normal) = Lebesgue(ℝ)
 
 @μσ_methods Normal()
