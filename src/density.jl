@@ -23,12 +23,7 @@ function 𝒹(μ::AbstractMeasure, base::AbstractMeasure; log=true)
     return Density(μ, base, Val(log))
 end
 
-(f::Density{M,B,Val{true}})(x) where {M,B} = logdensity(f.μ, x) - logdensity(f.base, x) 
-
-(f::Density{M,B,Val{false}})(x) where {M,B} = density(f.μ, x) / density(f, base(x))
-
-
-
+(f::Density{M,B,Val{true}})(x) where {M,B} = logdensity(f.μ, f.base, x) 
 
 """
     struct DensityMeasure{F,B} <: AbstractMeasure
