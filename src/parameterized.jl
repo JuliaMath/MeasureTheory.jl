@@ -1,3 +1,4 @@
+export ParameterizedMeasure
 abstract type ParameterizedMeasure{N,T} <: AbstractMeasure end
 
 
