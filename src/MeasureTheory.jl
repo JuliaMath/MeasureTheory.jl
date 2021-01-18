@@ -15,7 +15,7 @@ export AbstractMeasure
 abstract type AbstractMeasure end
 
 """
-    logdensity(μ::Measure{X}, x::X)
+    logdensity(μ::AbstractMeasure{X}, x::X)
 
 Compute the logdensity of the measure μ at the point x. This is the standard way
 to define `logdensity` for a new measure. the base measure is implicit here, and
@@ -45,6 +45,7 @@ include("probability/cauchy.jl")
 include("probability/laplace.jl")
 include("probability/beta.jl")
 include("probability/gumbel.jl")
+include("probability/exponential.jl")
 include("density.jl")
 include("pushforward.jl")
 include("kernel.jl")
