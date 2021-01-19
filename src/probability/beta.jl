@@ -15,8 +15,6 @@ function logdensity(d::Beta{(:α, :β)}, x)
 end
 
 # Beta() = Beta{EmptyNamedTuple,Real}(NamedTuple())
- 
-sampletype(::Beta) = Real
 
 Base.rand(rng::AbstractRNG, μ::Beta) = rand(rng, Dists.Beta(μ.α, μ.β))
 

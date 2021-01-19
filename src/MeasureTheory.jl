@@ -10,6 +10,8 @@ const Dists = Distributions
 export ≪
 export sampletype
 
+sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
+
 export AbstractMeasure
 
 abstract type AbstractMeasure end

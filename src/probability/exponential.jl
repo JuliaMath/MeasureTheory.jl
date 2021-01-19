@@ -10,8 +10,6 @@ function logdensity(d::Exponential{()} , x)
     return -x
 end
 
-sampletype(::Exponential) = Real
-
 Base.rand(rng::AbstractRNG, μ::Exponential{()}) = -log(rand(rng))
 
 ≪(::Exponential, ::Lebesgue{ℝ₊}) = true

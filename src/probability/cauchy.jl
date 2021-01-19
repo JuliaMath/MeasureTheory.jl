@@ -9,8 +9,6 @@ export Cauchy
 function logdensity(d::Cauchy{()} , x) 
     return -log(1 + x^2)
 end
- 
-sampletype(::Cauchy) = Real
 
 Base.rand(μ::Cauchy{()}) = rand(Dists.Cauchy())
 

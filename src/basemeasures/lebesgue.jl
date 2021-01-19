@@ -10,10 +10,10 @@ end
 
 Lebesgue(X) = Lebesgue{X}()
 
-basemeasure(μ::Lebesgue{X}) where {X} = μ
+basemeasure(μ::Lebesgue) = μ
 
 isprimitive(::Lebesgue) = true
 
-sampletype(::Lebesgue{X}) where {X} = X
+sampletype(::Lebesgue{ℝ}) = Float64
 
-logdensity(::Lebesgue{X}, x) where {X} = zero(float(x))
+logdensity(::Lebesgue, x) = zero(float(x))

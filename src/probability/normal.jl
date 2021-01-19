@@ -9,8 +9,6 @@ export Normal
 function logdensity(d::Normal{()} , x)
     return - x^2 / 2 
 end
- 
-sampletype(::Normal{()}) = Real
 
 Base.rand(rng::Random.AbstractRNG, μ::Normal{()}) = randn(rng)
 
