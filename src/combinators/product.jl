@@ -100,6 +100,7 @@ function sampletype(d::ProductMeasure{A}) where {T,N,A <: AbstractArray{T,N}}
     Array{S, N}
 end
 
+# TODO: Pull weights outside
 basemeasure(μ::ProductMeasure) = ProductMeasure(basemeasure.(μ.data))
 
 # function logdensity(μ::ProductMeasure{Aμ}, x::Ax) where {Aμ <: MappedArray, Ax <: AbstractArray}

@@ -20,13 +20,15 @@ function Base.show_unquoted(io::IO, μ::PowerMeasure{M,N,D}, indent::Int, prec::
     return nothing
 end
 
-Base.:^(μ::AbstractMeasure, n::Integer) = ProductMeasure(Fill(μ, (n,)))
+Base.:^(μ::AbstractMeasure, n::Integer) = μ ^ (n,)
 
 Base.:^(μ::AbstractMeasure, size::NTuple{N,I}) where {N, I <: Integer} = ProductMeasure(Fill(μ, size))
 
-sampletype(d::PowerMeasure{M,N}) where {M,N} = Array{sampletype(d.data[1]), N}
+sampletype(d::PowerMeasure{M,N}) where {M,N} = @inbounds Array{sampletype(d.data[1]), N}
 
 function Base.:^(μ::WeightedMeasure, n::NTuple{N,Int}) where {N}
     k = prod(n) * μ.logweight
     return WeightedMeasure(k, μ.base^n)
 end
+
+basemeasure(μ::PowerMeasure) = basemeasure(μ.data[1])^size(μ.data)
