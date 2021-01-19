@@ -50,19 +50,6 @@ function Base.:*(μ::M, ν::N) where {M <: AbstractMeasure, N <: AbstractMeasure
     ProductMeasure(data...)
 end
 
-export rand!
-using Random: rand!, GLOBAL_RNG, AbstractRNG
-
-
-@inline function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
-    @boundscheck size(d.data) == size(x) || throw(BoundsError)
-
-    @inbounds for j in eachindex(x)
-        x[j] = rand(rng, d.data[j])
-    end
-    x
-end
-
 @inline function MeasureTheory.logdensity(d::ProductMeasure, x)
     @boundscheck size(d.data) == size(x) || throw(BoundsError)
 
@@ -75,14 +62,43 @@ end
     s
 end
 
+export rand!
+using Random: rand!, GLOBAL_RNG, AbstractRNG
+
+@inline function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
+    @boundscheck size(d.data) == size(x) || throw(BoundsError)
+
+    @inbounds for j in eachindex(x)
+        x[j] = rand(rng, d.data[j])
+    end
+    x
+end
 
 @inline Random.rand!(d::ProductMeasure, arr::AbstractArray) = rand!(GLOBAL_RNG, d, arr)
 
-function Base.rand(rng::AbstractRNG, μ::ProductMeasure{T}) where T
-    return rand.(rng, μ.data)
+function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure)
+    dims = size(d.data)
+    x = Array{T, length(dims)}(undef, dims)
+    return @inbounds rand!(rng, d, x)
 end
 
-sampletype(μ::ProductMeasure) = Tuple{sampletype.(μ.data)...}
+function Base.rand(rng::AbstractRNG, d::ProductMeasure)
+    return rand(rng, sampletype(d), d)
+end
+
+function Base.rand(T::Type, d::ProductMeasure)
+    return rand(Random.GLOBAL_RNG, T, d)
+end
+
+function Base.rand(d::ProductMeasure)
+    T = @inbounds sampletype(d.data[1])
+    return rand(Random.GLOBAL_RNG, T, d)
+end
+
+function sampletype(d::ProductMeasure{A}) where {T,N,A <: AbstractArray{T,N}}
+    S = @inbounds sampletype(d.data[1])
+    Array{S, N}
+end
 
 basemeasure(μ::ProductMeasure) = ProductMeasure(basemeasure.(μ.data))
 
