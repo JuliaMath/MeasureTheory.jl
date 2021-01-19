@@ -10,11 +10,11 @@ const Dists = Distributions
 export ≪
 export sampletype
 
-sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
-
 export AbstractMeasure
 
 abstract type AbstractMeasure end
+
+sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
 
 """
     logdensity(μ::AbstractMeasure{X}, x::X)
