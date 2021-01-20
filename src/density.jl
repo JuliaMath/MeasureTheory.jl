@@ -19,6 +19,13 @@ struct Density{M,B,L}
 end
 
 export 𝒹
+
+"""
+    𝒹(μ::AbstractMeasure, base::AbstractMeasure; log=true)
+
+Compute the Radom-Nikodym derivative (or its log, if `log=true`) of μ with
+respect to `base`.
+"""
 function 𝒹(μ::AbstractMeasure, base::AbstractMeasure; log=true)
     return Density(μ, base, Val(log))
 end
@@ -46,6 +53,12 @@ logdensity(μ::DensityMeasure{F,B,Val{true}}, x) where {F,B} = μ.f(x)
 
 export ∫
 
+"""
+    ∫(f, base::AbstractMeasure; log=true)
+
+Define a new measure in terms of a density `f` over some measure `base`. If
+`log=true` (the default), `f` is considered as a log-density.
+"""
 ∫(f, base::AbstractMeasure; log=true) = DensityMeasure(f, base, Val(log))
 
 # TODO: `density` and `logdensity` functions for `DensityMeasure`

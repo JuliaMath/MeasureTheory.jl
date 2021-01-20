@@ -3,7 +3,10 @@ export basemeasure
 """
     basemeasure(μ)
 
+Many measures are defined in terms of a logdensity relative to some base
+measure. This makes it important to be able to find that base measure.
 
+For measures not defined in this way, we'll typically have `basemeasure(μ) == μ`.
 """
 function basemeasure end
 

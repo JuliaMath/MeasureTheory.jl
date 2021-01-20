@@ -1,6 +1,6 @@
 
 """
-≪(μ,ν)
+    ≪(μ,ν)
 
 # Absolute continuity
 
@@ -12,7 +12,7 @@ The following are equivalent:
 function ≪ end
 
 """
-≃(μ,ν)
+    ≃(μ,ν)
 
 # Equivalence of Measure
 
