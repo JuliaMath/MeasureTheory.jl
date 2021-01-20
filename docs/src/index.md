@@ -5,9 +5,8 @@ CurrentModule = MeasureTheory
 # MeasureTheory
 
 
-## Introduction
 
-## API
+# API
 
 ```@index
 ```

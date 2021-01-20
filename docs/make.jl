@@ -1,6 +1,12 @@
 using MeasureTheory
 using Documenter
 
+
+pages = [
+    "Introduction" => "intro.md"
+    "Home" => "index.md"
+]
+
 makedocs(;
     modules=[MeasureTheory],
     authors="Chad Scherrer <chad.scherrer@gmail.com> and contributors",
@@ -11,9 +17,7 @@ makedocs(;
         canonical="https://cscherrer.github.io/MeasureTheory.jl",
         assets=String[],
     ),
-    pages=[
-        "Home" => "index.md",
-    ],
+    pages=pages
 )
 
 deploydocs(;
