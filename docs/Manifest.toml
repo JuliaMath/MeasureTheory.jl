@@ -75,11 +75,6 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
 
-[[MeasureTheory]]
-path = ".."
-uuid = "a0f6e684-35f2-45d9-b328-01fa192822dd"
-version = "0.1.0"
-
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
