@@ -1,0 +1,3 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+MeasureTheory = "a0f6e684-35f2-45d9-b328-01fa192822dd"
