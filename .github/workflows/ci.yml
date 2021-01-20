@@ -6,7 +6,12 @@ on:
     branches:
       - master
       - dev
-  - pull_request
+    tags: '*'
+  pull_request:
+    branches:
+      - master
+      - dev
+    tags: '*'
   schedule:
   - cron: '44 9 16 * *' # run the cron job one time per month
 jobs:
