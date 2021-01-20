@@ -1,4 +1,6 @@
 name: CI
+env:
+  JULIA_NUM_THREADS: 2
 on:
   push:
     branches:
@@ -17,7 +19,7 @@ jobs:
       matrix:
         version:
           - '1.5'
-          - '1.6'
+          - '1'
           - 'nightly'
         os:
           - ubuntu-latest
