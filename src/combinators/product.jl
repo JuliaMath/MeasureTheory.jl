@@ -76,9 +76,9 @@ end
 
 @inline Random.rand!(d::ProductMeasure, arr::AbstractArray) = rand!(GLOBAL_RNG, d, arr)
 
-function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure)
+function Base.rand(rng::AbstractRNG, ::Type{A}, d::ProductMeasure) where {T, N, A <: AbstractArray{T,N}}
     dims = size(d.data)
-    x = Array{T, length(dims)}(undef, dims)
+    x = A(undef, dims)
     return @inbounds rand!(rng, d, x)
 end
 
@@ -91,7 +91,7 @@ function Base.rand(T::Type, d::ProductMeasure)
 end
 
 function Base.rand(d::ProductMeasure)
-    T = @inbounds sampletype(d.data[1])
+    T = sampletype(d)
     return rand(Random.GLOBAL_RNG, T, d)
 end
 
