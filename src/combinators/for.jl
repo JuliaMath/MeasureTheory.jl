@@ -18,7 +18,7 @@ function Base.show(io::IO, d::For{D,N,T,F}) where {D,N,T <: CartesianIndices,F}
     print(io, ")")
 end
 
-For(f, dims...) = ProductMeasure(mappedarray(f, dims...))
+For(f, dims::AbstractArray...) = ProductMeasure(mappedarray(f, dims...))
 
 For(f, dims::Int...) = ProductMeasure(mappedarray(i -> f(Tuple(i)...), CartesianIndices(dims))) 
 

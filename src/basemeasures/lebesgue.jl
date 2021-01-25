@@ -15,5 +15,8 @@ basemeasure(μ::Lebesgue) = μ
 isprimitive(::Lebesgue) = true
 
 sampletype(::Lebesgue{ℝ}) = Float64
+sampletype(::Lebesgue{ℝ₊}) = Float64
+sampletype(::Lebesgue{𝕀}) = Float64
+
 
 logdensity(::Lebesgue, x) = zero(float(x))

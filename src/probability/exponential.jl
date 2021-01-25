@@ -10,7 +10,7 @@ function logdensity(d::Exponential{()} , x)
     return -x
 end
 
-Base.rand(rng::AbstractRNG, μ::Exponential{()}) = -log(rand(rng))
+Base.rand(rng::AbstractRNG, T::Type, μ::Exponential{()}) = -log(rand(rng, T))
 
 ≪(::Exponential, ::Lebesgue{ℝ₊}) = true
 
@@ -19,8 +19,8 @@ representative(::Exponential) = Lebesgue(ℝ₊)
 
 ##########################
 
-function Base.rand(rng::AbstractRNG, d::Exponential{(:min, :λ)})
-    rand(rng, Exponential()) / d.λ + d.min
+function Base.rand(rng::AbstractRNG, T::Type, d::Exponential{(:min, :λ)})
+    rand(rng, T, Exponential()) / d.λ + d.min
 end
 
 function logdensity(d::Exponential{(:min, :λ)}, x)
@@ -28,8 +28,8 @@ function logdensity(d::Exponential{(:min, :λ)}, x)
     return logdensity(Exponential(), z) + log(d.λ)
 end
 
-function Base.rand(rng::AbstractRNG, d::Exponential{(:λ,)})
-    rand(rng, Exponential()) / d.λ
+function Base.rand(rng::AbstractRNG, T::Type, d::Exponential{(:λ,)})
+    rand(rng, T, Exponential()) / d.λ
 end
 
 function logdensity(d::Exponential{(:λ,)}, x)
@@ -37,8 +37,8 @@ function logdensity(d::Exponential{(:λ,)}, x)
     return logdensity(Exponential(), z) + log(d.λ)
 end
 
-function Base.rand(rng::AbstractRNG, d::Exponential{(:min,)})
-    rand(rng, Exponential()) + d.min
+function Base.rand(rng::AbstractRNG, T::Type, d::Exponential{(:min,)})
+    rand(rng, T, Exponential()) + d.min
 end
 
 function logdensity(d::Exponential{(:min,)}, x)

@@ -10,7 +10,8 @@ function logdensity(d::Normal{()} , x)
     return - x^2 / 2 
 end
 
-Base.rand(rng::Random.AbstractRNG, μ::Normal{()}) = randn(rng)
+Base.rand(rng::Random.AbstractRNG, T, μ::Normal{()}) = randn(rng, T)
+
 
 ≪(::Normal, ::Lebesgue{ℝ}) = true
 representative(::Normal) = Lebesgue(ℝ)

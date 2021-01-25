@@ -10,6 +10,8 @@ struct ProductMeasure{T} <: AbstractMeasure
     ProductMeasure(μs) = new{typeof(μs)}(μs)
 end
 
+Base.size(μ::ProductMeasure) = size(μ.data)
+
 function Base.show(io::IO, μ::ProductMeasure)
     io = IOContext(io, :compact => true)
     print(io, join(string.(μ.data), " ⊗ "))
@@ -69,31 +71,24 @@ using Random: rand!, GLOBAL_RNG, AbstractRNG
     @boundscheck size(d.data) == size(x) || throw(BoundsError)
 
     @inbounds for j in eachindex(x)
-        x[j] = rand(rng, d.data[j])
+        x[j] = rand(rng, eltype(x), d.data[j])
     end
     x
 end
 
-@inline Random.rand!(d::ProductMeasure, arr::AbstractArray) = rand!(GLOBAL_RNG, d, arr)
 
-function Base.rand(rng::AbstractRNG, ::Type{A}, d::ProductMeasure) where {T, N, A <: AbstractArray{T,N}}
-    dims = size(d.data)
-    x = A(undef, dims)
-    return @inbounds rand!(rng, d, x)
-end
+# function Base.rand(rng::AbstractRNG, d::ProductMeasure)
+#     return rand(rng, sampletype(d), d)
+# end
 
-function Base.rand(rng::AbstractRNG, d::ProductMeasure)
-    return rand(rng, sampletype(d), d)
-end
+# function Base.rand(T::Type, d::ProductMeasure)
+#     return rand(Random.GLOBAL_RNG, T, d)
+# end
 
-function Base.rand(T::Type, d::ProductMeasure)
-    return rand(Random.GLOBAL_RNG, T, d)
-end
-
-function Base.rand(d::ProductMeasure)
-    T = sampletype(d)
-    return rand(Random.GLOBAL_RNG, T, d)
-end
+# function Base.rand(d::ProductMeasure)
+#     T = sampletype(d)
+#     return rand(Random.GLOBAL_RNG, T, d)
+# end
 
 function sampletype(d::ProductMeasure{A}) where {T,N,A <: AbstractArray{T,N}}
     S = @inbounds sampletype(d.data[1])

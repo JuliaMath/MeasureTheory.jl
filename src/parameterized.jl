@@ -1,7 +1,6 @@
 export ParameterizedMeasure
 abstract type ParameterizedMeasure{N,T} <: AbstractMeasure end
 
-
 function Base.getproperty(μ::ParameterizedMeasure{N,T}, prop::Symbol) where {N,T}
     return getproperty(getfield(μ, :par), prop)
 end
