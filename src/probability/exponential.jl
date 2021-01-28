@@ -12,8 +12,6 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Exponential{()}) = -log(rand(rng, T))
 
-≪(::Exponential, ::Lebesgue{ℝ₊}) = true
-
 representative(::Exponential) = Lebesgue(ℝ₊)
 
 
