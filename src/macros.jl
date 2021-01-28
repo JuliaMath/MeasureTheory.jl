@@ -53,18 +53,14 @@ function _measure(expr)
             
             # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
             # Requires Julia 1.5
-        
             $μ($(p...)) = $μ(;$(p...))
-            
-            # e.g. Normal(;μ=μ, σ=σ) = Normal((μ=μ, σ=σ))
-            $μ(;kwargs...) = $μ((;kwargs...))
  
-            # ((::$μ{P} ≪ ::typeof($base) ) where {P})  = true
+            (::$μ{P} ≪ ::typeof(representative($base))) where {P}  = true
         end    
     
-        # if rel == (:≃)
-        #     push!(q.args, :((::typeof($base) ≪ ::$μ{P}) where {P} = true))
-        # end
+        if rel == (:≃)
+            push!(q.args, :((::typeof(representative($base)) ≪ ::$μ{P}) where {P} = true))
+        end
     
         return q
     end
