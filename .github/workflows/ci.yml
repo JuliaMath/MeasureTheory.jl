@@ -1,14 +1,19 @@
 name: CI
+env:
+  JULIA_NUM_THREADS: 2
 on:
-  pull_request:
-    branches:
-      - master
   push:
     branches:
       - master
+      - dev
+    tags: '*'
+  pull_request:
+    branches:
+      - master
+      - dev
     tags: '*'
   schedule:
-    - cron: '44 9 16 * *' # run the cron job one time per month
+  - cron: '44 9 16 * *' # run the cron job one time per month
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
@@ -22,6 +27,8 @@ jobs:
           - 'nightly'
         os:
           - ubuntu-latest
+          - macOS-latest
+          - windows-latest
         arch:
           - x64
     steps:
@@ -40,8 +47,8 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
             ${{ runner.os }}-
-      - uses: julia-actions/julia-buildpkg@latest
-      - uses: julia-actions/julia-runtest@latest
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
       - uses: codecov/codecov-action@v1
         with:
@@ -59,6 +66,11 @@ jobs:
             using Pkg
             Pkg.develop(PackageSpec(path=pwd()))
             Pkg.instantiate()'
+      - run: |
+          julia --project=docs -e '
+            using Documenter: doctest
+            using MeasureTheory
+            doctest(MeasureTheory)'
       - run: julia --project=docs docs/make.jl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

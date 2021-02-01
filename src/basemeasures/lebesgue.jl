@@ -1,6 +1,7 @@
 # Lebesgue measure
 
 export Lebesgue
+
 struct Lebesgue{X} <: AbstractMeasure end
 
 function Base.show(io::IO, μ::Lebesgue{X}) where X
