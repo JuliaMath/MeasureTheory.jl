@@ -2,6 +2,7 @@ export ProductMeasure
 
 using MappedArrays
 using FillArrays
+using Base: @propagate_inbounds
 
 struct ProductMeasure{T} <: AbstractMeasure
     data :: T
@@ -52,11 +53,12 @@ function Base.:*(μ::M, ν::N) where {M <: AbstractMeasure, N <: AbstractMeasure
     ProductMeasure(data...)
 end
 
-@inline function MeasureTheory.logdensity(d::ProductMeasure, x)
-    @boundscheck size(d.data) == size(x) || throw(BoundsError)
+@propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure, x)
+    data = d.data
+    @boundscheck size(data) == size(x) || throw(BoundsError)
 
-    s = zero(Float64)
-    Δs(j) = @inbounds logdensity(d.data[j], x[j])
+    s = 0.0
+    Δs(j) = @inbounds logdensity(data[j], x[j])
 
     @inbounds @simd for j in eachindex(x)
         s += Δs(j)
@@ -67,7 +69,7 @@ end
 export rand!
 using Random: rand!, GLOBAL_RNG, AbstractRNG
 
-@inline function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
+@propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
     @boundscheck size(d.data) == size(x) || throw(BoundsError)
 
     @inbounds for j in eachindex(x)

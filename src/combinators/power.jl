@@ -24,11 +24,11 @@ Base.:^(μ::AbstractMeasure, n::Integer) = μ ^ (n,)
 
 Base.:^(μ::AbstractMeasure, size::NTuple{N,I}) where {N, I <: Integer} = ProductMeasure(Fill(μ, size))
 
-sampletype(d::PowerMeasure{M,N}) where {M,N} = @inbounds Array{sampletype(d.data[1]), N}
+sampletype(d::PowerMeasure{M,N}) where {M,N} = @inbounds Array{sampletype(first(d.data)), N}
 
 function Base.:^(μ::WeightedMeasure, n::NTuple{N,Int}) where {N}
     k = prod(n) * μ.logweight
     return WeightedMeasure(k, μ.base^n)
 end
 
-basemeasure(μ::PowerMeasure) = basemeasure(μ.data[1])^size(μ.data)
+basemeasure(μ::PowerMeasure) = @inbounds basemeasure(first(μ.data))^size(μ.data)
