@@ -1,5 +1,5 @@
+export ParameterizedMeasure
 abstract type ParameterizedMeasure{N,T} <: AbstractMeasure end
-
 
 function Base.getproperty(μ::ParameterizedMeasure{N,T}, prop::Symbol) where {N,T}
     return getproperty(getfield(μ, :par), prop)
@@ -18,3 +18,6 @@ function Base.show(io::IO, μ::ParameterizedMeasure{N,T}) where {N,T}
     print(io, nameof(typeof(μ)))
     print(io, getfield(μ,:par))
 end
+
+# e.g. Normal(;μ=μ, σ=σ) = Normal((μ=μ, σ=σ))
+(M::Type{<: ParameterizedMeasure})(; kwargs...) = M((; kwargs...))

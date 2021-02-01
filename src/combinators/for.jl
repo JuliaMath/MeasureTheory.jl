@@ -5,19 +5,28 @@ import Base
 
 For{D,N,T,F} = ProductMeasure{ReadonlyMappedArray{D, N, T, F}} 
 
-function Base.show(io::IO, d::ProductMeasure{<:AbstractMappedArray})
+function Base.show(io::IO, d::For{D,N,T,F}) where {D,N,T,F}
     print(io, "For(")
     print(io, d.data.f, ", ")
     print(io, d.data.data, ")")
 end
 
-For(f, dims) = ProductMeasure(mappedarray(f, dims))
+function Base.show(io::IO, d::For{D,N,T,F}) where {D,N,T <: CartesianIndices,F}
+    print(io, "For(")
+    print(io, d.data.f, ", ")
+    join(io, size(d.data), ", ")
+    print(io, ")")
+end
 
+For(f, dims::AbstractArray...) = ProductMeasure(mappedarray(f, dims...))
+
+For(f, dims::Int...) = ProductMeasure(mappedarray(i -> f(Tuple(i)...), CartesianIndices(dims))) 
 
 function Base.eltype(::For{D,N,T,F}) where {D,N,T,F}
     return eltype(D)
 end
 
+basemeasure(μ::For) = @inbounds basemeasure(μ.data[1])^size(μ.data)
 
 # """
 #     indexstyle(a::AbstractArray, b::AbstractArray)

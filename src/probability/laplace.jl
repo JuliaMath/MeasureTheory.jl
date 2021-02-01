@@ -9,8 +9,6 @@ export Laplace
 function logdensity(d::Laplace{()} , x)
     return -abs(x)
 end
- 
-sampletype(::Laplace) = Real
 
 Base.rand(rng::AbstractRNG, μ::Laplace{()}) = rand(rng, Dists.Laplace())
 

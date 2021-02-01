@@ -53,18 +53,14 @@ function _measure(expr)
             
             # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
             # Requires Julia 1.5
-        
             $μ($(p...)) = $μ(;$(p...))
-            
-            # e.g. Normal(;μ=μ, σ=σ) = Normal((μ=μ, σ=σ))
-            $μ(;kwargs...) = $μ((;kwargs...))
  
-            # ((::$μ{P} ≪ ::typeof($base) ) where {P})  = true
+            (::$μ{P} ≪ ::typeof(representative($base))) where {P}  = true
         end    
     
-        # if rel == (:≃)
-        #     push!(q.args, :((::typeof($base) ≪ ::$μ{P}) where {P} = true))
-        # end
+        if rel == (:≃)
+            push!(q.args, :((::typeof(representative($base)) ≪ ::$μ{P}) where {P} = true))
+        end
     
         return q
     end
@@ -123,8 +119,8 @@ function _μσ_methods(ex)
             d_args = (:(d.$arg) for arg in args)
             quote
 
-                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ, :σ)})
-                    d.σ * rand(rng, $dist($(d_args...))) + d.μ
+                function Base.rand(rng::AbstractRNG, T::Type, d::$dist{($(argnames...), :μ, :σ)})
+                    d.σ * rand(rng, T, $dist($(d_args...))) + d.μ
                 end
 
                 function logdensity(d::$dist{($(argnames...), :μ, :σ)}, x)
@@ -132,8 +128,8 @@ function _μσ_methods(ex)
                     return logdensity($dist($(d_args...)), z) - log(d.σ)
                 end
 
-                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :σ)})
-                    d.σ * rand(rng, $dist($(d_args...)))
+                function Base.rand(rng::AbstractRNG, T::Type, d::$dist{($(argnames...), :σ)})
+                    d.σ * rand(rng, T, $dist($(d_args...)))
                 end
 
                 function logdensity(d::$dist{($(argnames...), :σ)}, x)
@@ -141,8 +137,8 @@ function _μσ_methods(ex)
                     return logdensity($dist($(d_args...)), z) - log(d.σ) 
                 end
 
-                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ)})
-                    rand(rng, $dist($(d_args...))) + d.μ
+                function Base.rand(rng::AbstractRNG, T::Type, d::$dist{($(argnames...), :μ)})
+                    rand(rng, T, $dist($(d_args...))) + d.μ
                 end
 
                 function logdensity(d::$dist{($(argnames...), :μ)}, x)

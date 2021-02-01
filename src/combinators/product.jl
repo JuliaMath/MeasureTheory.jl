@@ -2,6 +2,7 @@ export ProductMeasure
 
 using MappedArrays
 using FillArrays
+using Base: @propagate_inbounds
 
 struct ProductMeasure{T} <: AbstractMeasure
     data :: T
@@ -9,6 +10,8 @@ struct ProductMeasure{T} <: AbstractMeasure
     ProductMeasure(μs...) = new{typeof(μs)}(μs)
     ProductMeasure(μs) = new{typeof(μs)}(μs)
 end
+
+Base.size(μ::ProductMeasure) = size(μ.data)
 
 function Base.show(io::IO, μ::ProductMeasure)
     io = IOContext(io, :compact => true)
@@ -50,24 +53,12 @@ function Base.:*(μ::M, ν::N) where {M <: AbstractMeasure, N <: AbstractMeasure
     ProductMeasure(data...)
 end
 
-export rand!
-using Random: rand!, GLOBAL_RNG, AbstractRNG
+@propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure, x)
+    data = d.data
+    @boundscheck size(data) == size(x) || throw(BoundsError)
 
-
-@inline function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
-    @boundscheck size(d.data) == size(x) || throw(BoundsError)
-
-    @inbounds for j in eachindex(x)
-        x[j] = rand(rng, d.data[j])
-    end
-    x
-end
-
-@inline function MeasureTheory.logdensity(d::ProductMeasure, x)
-    @boundscheck size(d.data) == size(x) || throw(BoundsError)
-
-    s = zero(Float64)
-    Δs(j) = @inbounds logdensity(d.data[j], x[j])
+    s = 0.0
+    Δs(j) = @inbounds logdensity(data[j], x[j])
 
     @inbounds @simd for j in eachindex(x)
         s += Δs(j)
@@ -75,15 +66,38 @@ end
     s
 end
 
+export rand!
+using Random: rand!, GLOBAL_RNG, AbstractRNG
 
-@inline Random.rand!(d::ProductMeasure, arr::AbstractArray) = rand!(GLOBAL_RNG, d, arr)
+@propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
+    @boundscheck size(d.data) == size(x) || throw(BoundsError)
 
-function Base.rand(rng::AbstractRNG, μ::ProductMeasure{T}) where T
-    return rand.(rng, μ.data)
+    @inbounds for j in eachindex(x)
+        x[j] = rand(rng, eltype(x), d.data[j])
+    end
+    x
 end
 
-sampletype(μ::ProductMeasure) = Tuple{sampletype.(μ.data)...}
 
+# function Base.rand(rng::AbstractRNG, d::ProductMeasure)
+#     return rand(rng, sampletype(d), d)
+# end
+
+# function Base.rand(T::Type, d::ProductMeasure)
+#     return rand(Random.GLOBAL_RNG, T, d)
+# end
+
+# function Base.rand(d::ProductMeasure)
+#     T = sampletype(d)
+#     return rand(Random.GLOBAL_RNG, T, d)
+# end
+
+function sampletype(d::ProductMeasure{A}) where {T,N,A <: AbstractArray{T,N}}
+    S = @inbounds sampletype(d.data[1])
+    Array{S, N}
+end
+
+# TODO: Pull weights outside
 basemeasure(μ::ProductMeasure) = ProductMeasure(basemeasure.(μ.data))
 
 # function logdensity(μ::ProductMeasure{Aμ}, x::Ax) where {Aμ <: MappedArray, Ax <: AbstractArray}

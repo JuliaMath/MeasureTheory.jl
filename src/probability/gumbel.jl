@@ -8,8 +8,6 @@ export Gumbel
 function logdensity(d::Gumbel{()} , x)
     return -exp(-x) - x
 end
- 
-sampletype(::Gumbel{()}) = Real
 
 import Base
 
