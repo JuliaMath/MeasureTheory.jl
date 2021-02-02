@@ -36,6 +36,7 @@ NamedTupleTools = "0.13"
 SpecialFunctions = "0.10, 1.0"
 StaticArrays = "0.12, 1.0"
 StatsFuns = "0.9"
+StrideArrays = "0.1"
 julia = "1.5"
 
 [extras]
