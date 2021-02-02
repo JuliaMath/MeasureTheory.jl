@@ -4,6 +4,7 @@ using Random
 
 using MLStyle
 
+import Base
 import Distributions
 const Dists = Distributions
 
