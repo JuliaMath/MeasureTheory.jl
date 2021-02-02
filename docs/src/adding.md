@@ -64,10 +64,38 @@ Finally, note that in both of these examples, the log-density has a relatively d
 
 ### Random Sampling
 
+For univariate distributions, you should define a `Base.rand` method that uses three arguments:
+- A `Random.AbstractRNG` to use for randomization,
+- A type to be returned, and
+- The measure to sample from.
+
+For our `Normal` example, this is
+
 ```julia
-Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
+Base.rand(rng::Random.AbstractRNG, T::Type, d::Normal{()}) = randn(rng, T)
 ```
 
+Again, for location-scale families, other methods are derived automatically. 
+
+For multivariate distributions (or anything that requires heap allocation), you should instead define a `Random.rand!` method. This also takes three arguments, different from `rand`:
+- The `Random.AbstractRNG`,
+- The measure to sample from, and
+- Where to store the result.
+
+For example, here's the implementation for `ProductMeasure`:
+
+```julia
+@propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
+    @boundscheck size(d.data) == size(x) || throw(BoundsError)
+
+    @inbounds for j in eachindex(x)
+        x[j] = rand(rng, eltype(x), d.data[j])
+    end
+    x
+end
+```
+
+Note that in this example, `d.data[j]` might itself require allocation. This implementation is likely to change in the future to make it easier to define nested structures without any need for ongoing allocation.
 
 ## Primitive Measures
 
