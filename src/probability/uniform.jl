@@ -9,8 +9,6 @@ export Uniform
 
 logdensity(d::Uniform{()}, x) = 0.0
 
-# Beta() = Beta{EmptyNamedTuple,Real}(NamedTuple())
-
 Base.rand(rng::AbstractRNG, T::Type, μ::Uniform{()}) = rand(rng, T)
 
 representative(::Uniform{()}) = Lebesgue(𝕀)
