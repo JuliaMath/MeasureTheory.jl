@@ -120,3 +120,9 @@ sampletype(::Lebesgue{𝕀}) = Float64
 
 logdensity(::Lebesgue, x) = zero(float(x))
 ```
+
+We haven't yet talked about `sampletype`. When you call `rand` without specifying a type, there needs to be a default. That default is the `sampletype`. This only needs to be defined for primitive measures, because others will fall back on 
+
+```julia
+sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
+```
