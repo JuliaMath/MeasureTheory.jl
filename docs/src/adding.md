@@ -23,9 +23,9 @@ Normal(μ = -3.0, σ = 2.1)
 
 The right side, `(1/sqrt2π) * Lebesgue(ℝ)`, gives the _base measure_. `Lebesgue` in this case is the technical name for the measure associating an interval of real numbers to its length. The `(1/sqrt2π)` comes from the normalization constant in the probability density function,
 
-$$
+```math
 f_{\text{Normal}}(x|μ,σ) = \frac{1}{σ \sqrt{2 \pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}\ \ .
-$$
+```
 
 Making this part of the base measure allows us to avoid including it in every computation.
 
