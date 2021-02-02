@@ -2,7 +2,7 @@
 
 ## Parameterized Measures
 
-This is by far the most common kind of measure, and is especially useful as a way to describe families of proibability distributions.
+This is by far the most common kind of measure, and is especially useful as a way to describe families of probability distributions.
 
 ### Declaring a Parameterized Measure
 
