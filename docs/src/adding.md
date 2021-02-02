@@ -99,21 +99,14 @@ Note that in this example, `d.data[j]` might itself require allocation. This imp
 
 ## Primitive Measures
 
-Most measures are defined in terms of a `logdensity` with respect to some other measure, its `basemeasure`. But this might 
+Most measures are defined in terms of a `logdensity` with respect to some other measure, its `basemeasure`. But how is _that_ measure defined? It can't be "densities all the way down"; at some point, the chain has to stop.
 
-This is by far the simplest case
+A _primitive_ measure is just a measure that has itself as its own base measure. Note that this also means its log-density is always zero.
+
+Here's the implementation of `Lebesgue`:
 
 ```julia
-# Lebesgue measure
-
-export Lebesgue
-
 struct Lebesgue{X} <: AbstractMeasure end
-
-function Base.show(io::IO, μ::Lebesgue{X}) where X
-    io = IOContext(io, :compact => true)
-    print(io, "Lebesgue(", X, ")")
-end
 
 Lebesgue(X) = Lebesgue{X}()
 
@@ -124,7 +117,6 @@ isprimitive(::Lebesgue) = true
 sampletype(::Lebesgue{ℝ}) = Float64
 sampletype(::Lebesgue{ℝ₊}) = Float64
 sampletype(::Lebesgue{𝕀}) = Float64
-
 
 logdensity(::Lebesgue, x) = zero(float(x))
 ```
