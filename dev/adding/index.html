@@ -9,16 +9,7 @@ end</code></pre><p>Note that when possible, we avoid extra control flow for chec
         x[j] = rand(rng, eltype(x), d.data[j])
     end
     x
-end</code></pre><p>Note that in this example, <code>d.data[j]</code> might itself require allocation. This implementation is likely to change in the future to make it easier to define nested structures without any need for ongoing allocation.</p><h2 id="Primitive-Measures"><a class="docs-heading-anchor" href="#Primitive-Measures">Primitive Measures</a><a id="Primitive-Measures-1"></a><a class="docs-heading-anchor-permalink" href="#Primitive-Measures" title="Permalink"></a></h2><p>Most measures are defined in terms of a <code>logdensity</code> with respect to some other measure, its <code>basemeasure</code>. But this might </p><p>This is by far the simplest case</p><pre><code class="language-julia"># Lebesgue measure
-
-export Lebesgue
-
-struct Lebesgue{X} &lt;: AbstractMeasure end
-
-function Base.show(io::IO, μ::Lebesgue{X}) where X
-    io = IOContext(io, :compact =&gt; true)
-    print(io, &quot;Lebesgue(&quot;, X, &quot;)&quot;)
-end
+end</code></pre><p>Note that in this example, <code>d.data[j]</code> might itself require allocation. This implementation is likely to change in the future to make it easier to define nested structures without any need for ongoing allocation.</p><h2 id="Primitive-Measures"><a class="docs-heading-anchor" href="#Primitive-Measures">Primitive Measures</a><a id="Primitive-Measures-1"></a><a class="docs-heading-anchor-permalink" href="#Primitive-Measures" title="Permalink"></a></h2><p>Most measures are defined in terms of a <code>logdensity</code> with respect to some other measure, its <code>basemeasure</code>. But how is <em>that</em> measure defined? It can&#39;t be &quot;densities all the way down&quot;; at some point, the chain has to stop.</p><p>A <em>primitive</em> measure is just a measure that has itself as its own base measure. Note that this also means its log-density is always zero.</p><p>Here&#39;s the implementation of <code>Lebesgue</code>:</p><pre><code class="language-julia">struct Lebesgue{X} &lt;: AbstractMeasure end
 
 Lebesgue(X) = Lebesgue{X}()
 
@@ -30,5 +21,4 @@ sampletype(::Lebesgue{ℝ}) = Float64
 sampletype(::Lebesgue{ℝ₊}) = Float64
 sampletype(::Lebesgue{𝕀}) = Float64
 
-
-logdensity(::Lebesgue, x) = zero(float(x))</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 2 February 2021 18:40">Tuesday 2 February 2021</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+logdensity(::Lebesgue, x) = zero(float(x))</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 2 February 2021 19:44">Tuesday 2 February 2021</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
