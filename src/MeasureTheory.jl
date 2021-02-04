@@ -3,6 +3,7 @@ module MeasureTheory
 using Random
 
 using MLStyle
+using NestedTuples
 
 import Base
 import Distributions
