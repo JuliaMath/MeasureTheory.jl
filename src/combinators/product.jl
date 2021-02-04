@@ -97,6 +97,10 @@ function sampletype(d::ProductMeasure{A}) where {T,N,A <: AbstractArray{T,N}}
     Array{S, N}
 end
 
+function sampletype(d::ProductMeasure{<: Tuple}) 
+    Tuple{sampletype.(d.data)...}
+end
+
 # TODO: Pull weights outside
 basemeasure(μ::ProductMeasure) = ProductMeasure(basemeasure.(μ.data))
 
