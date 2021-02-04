@@ -4,6 +4,11 @@ Base.rand(T::Type, d::AbstractMeasure) = rand(GLOBAL_RNG, T, d)
 
 Base.rand(rng::AbstractRNG, d::AbstractMeasure) = rand(rng, sampletype(d), d)
 
+function Base.rand(rng::AbstractRNG, T::Type{<:Tuple}, d::ProductMeasure)
+    s = schema(T)
+    tuple((rand(rng, sn, dn) for (sn,dn) in zip(s,d.data))...)
+end
+
 function Base.rand(rng::AbstractRNG, ::Type{A}, d::AbstractMeasure) where {T, N, A <: AbstractArray{T,N}}
     dims = size(d)
     x = A(undef, dims...)
