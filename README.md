@@ -196,3 +196,8 @@ SuperpositionMeasure{Float64,2}((MeasureTheory.WeightedMeasure{Float64,Float64}(
 ---
 
 For an easy way to find expressions for the common log-densities, see [this gist](https://gist.github.com/cscherrer/47f0fc7597b4ffc11186d54cc4d8e577)
+
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/cscherrer/MeasureTheory.jl.svg)](https://starchart.cc/cscherrer/MeasureTheory.jl)

@@ -4,6 +4,7 @@ using Random
 
 using MLStyle
 
+import Base
 import Distributions
 const Dists = Distributions
 
@@ -45,6 +46,7 @@ include("probability/normal.jl")
 include("probability/studentt.jl")
 include("probability/cauchy.jl")
 include("probability/laplace.jl")
+include("probability/uniform.jl")
 include("probability/beta.jl")
 include("probability/gumbel.jl")
 include("probability/exponential.jl")

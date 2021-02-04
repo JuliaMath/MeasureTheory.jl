@@ -8,6 +8,6 @@ export Normal
 
 logdensity(d::Normal{()} , x) = - x^2 / 2 
 
-Base.rand(rng::Random.AbstractRNG, T, μ::Normal{()}) = randn(rng, T)
+Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 
 @μσ_methods Normal()

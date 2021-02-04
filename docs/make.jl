@@ -5,6 +5,7 @@ using Documenter
 pages = [
     "Introduction" => "intro.md"
     "Home" => "index.md"
+    "Adding a New Measure" => "adding.md"
 ]
 
 makedocs(;

@@ -50,13 +50,16 @@ function _measure(expr)
             function MeasureTheory.basemeasure(μ::$μ{P}) where {P}
                 return $base
             end
-            
-            # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
-            # Requires Julia 1.5
-            $μ($(p...)) = $μ(;$(p...))
  
             (::$μ{P} ≪ ::typeof(representative($base))) where {P}  = true
         end    
+
+
+        if !isempty(p)
+            # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
+            # Requires Julia 1.5
+            push!(q.args, :($μ($(p...)) = $μ(;$(p...))))
+        end
     
         if rel == (:≃)
             push!(q.args, :((::typeof(representative($base)) ≪ ::$μ{P}) where {P} = true))
