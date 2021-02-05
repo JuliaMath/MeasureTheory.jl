@@ -12,6 +12,7 @@ function basemeasure end
 
 include("basemeasures/trivial.jl")
 include("basemeasures/lebesgue.jl")
+include("basemeasures/counting.jl")
 
 
 
