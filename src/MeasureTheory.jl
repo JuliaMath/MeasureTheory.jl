@@ -3,6 +3,7 @@ module MeasureTheory
 using Random
 
 using MLStyle
+using NestedTuples
 
 import Base
 import Distributions
@@ -52,6 +53,7 @@ include("probability/gumbel.jl")
 include("probability/exponential.jl")
 include("probability/mvnormal.jl")
 include("probability/inverse-gamma.jl")
+include("probability/bernoulli.jl")
 include("density.jl")
 include("pushforward.jl")
 include("kernel.jl")
