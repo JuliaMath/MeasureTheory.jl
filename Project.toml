@@ -26,7 +26,7 @@ StatsFuns = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
 StrideArrays = "d1fa6d79-ef01-42a6-86c9-f7c551f8593b"
 
 [compat]
-ArrayInterface = "2"
+ArrayInterface = "2, 3.0"
 Bijectors = "0.8"
 Distributions = "0.23, 0.24"
 DistributionsAD = "0.6"
