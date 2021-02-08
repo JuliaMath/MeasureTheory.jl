@@ -13,6 +13,9 @@ export ≪
 export sampletype
 
 export AbstractMeasure
+using InfiniteArrays: ∞
+
+export ∞
 
 abstract type AbstractMeasure end
 
@@ -35,7 +38,7 @@ include("absolutecontinuity.jl")
 include("basemeasures.jl")
 include("parameterized.jl")
 include("macros.jl")
-include("combinators/scale.jl")
+include("combinators/weighted.jl")
 include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("combinators/for.jl")
@@ -54,6 +57,7 @@ include("probability/exponential.jl")
 include("probability/mvnormal.jl")
 include("probability/inverse-gamma.jl")
 include("probability/bernoulli.jl")
+include("probability/poisson.jl")
 include("density.jl")
 include("pushforward.jl")
 include("kernel.jl")
