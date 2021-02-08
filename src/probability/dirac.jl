@@ -14,4 +14,11 @@ end
 isprimitive(::Dirac) = true
 
 
+
+
 Base.rand(_::Random.AbstractRNG, ::Type, μ::Dirac) = μ.x
+
+
+export dirac
+
+dirac(d::AbstractMeasure) = Dirac(rand(d))
