@@ -28,7 +28,7 @@ function Base.eltype(::ForArray{D,N,T,F}) where {D,N,T,F}
     return eltype(D)
 end
 
-basemeasure(μ::For) = @inbounds basemeasure(μ.data[1])^size(μ.data)
+basemeasure(μ::ForArray) = @inbounds basemeasure(μ.data[1])^size(μ.data)
 
 # """
 #     indexstyle(a::AbstractArray, b::AbstractArray)
