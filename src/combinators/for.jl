@@ -80,3 +80,7 @@ end
 function Base.rand(rng::AbstractRNG, ::Type{<:Array{T}}, d::ForGenerator) where {T}
     return collect(T, rand(rng, d))
 end
+
+function MeasureTheory.logdensity(d::ForGenerator, x)
+    sum((logdensity(dj, xj) for (dj, xj) in zip(d.data, x)))
+end
