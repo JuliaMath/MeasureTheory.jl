@@ -71,12 +71,12 @@ For(f, dims::Base.Generator) = ProductMeasure(Base.Generator(f ∘ dims.f, dims.
 
 sampletype(::ForGenerator) = Base.Generator
 
-function rand(rng::AbstractRNG, T::Type{<:Base.Generator}, d::ForGenerator)
+function Base.rand(rng::AbstractRNG, T::Type{<:Base.Generator}, d::ForGenerator)
     elT = sampletype(first(d.data))
     f(x) = rand(rng, elT, x)
     Base.Generator(f ∘ d.data.f, d.data.iter)
 end
 
-function rand(rng::AbstractRNG, ::Type{<:Array{T}}, d::ForGenerator) where {T}
+function Base.rand(rng::AbstractRNG, ::Type{<:Array{T}}, d::ForGenerator) where {T}
     return collect(T, rand(rng, d))
 end
