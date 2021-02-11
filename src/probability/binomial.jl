@@ -35,6 +35,12 @@ end
 
 sampletype(::Binomial) = Int
 
-Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:λ,)}) = rand(Dists.Binomial(d.n, d.p))
+function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:p)}) where {n}
+    rand(rng, Dists.Binomial(d.n, d.p))
+end
+
+function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:logit_p)}) where {n}
+    rand(Dists.Binomial(d.n, logistic(d.logit_p)))
+end
 
 representative(::Binomial{n}) where {n} = CountingMeasure(ℤ[0:n])
