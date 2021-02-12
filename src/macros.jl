@@ -1,6 +1,7 @@
 
 using MLStyle
 using StatsFuns
+using Random: AbstractRNG
 
 export @measure
 
@@ -149,6 +150,43 @@ function _μσ_methods(ex)
                     return logdensity($dist($(d_args...)), z)
                 end
             end 
+        end
+    end
+end
+
+macro half(ex)
+    esc(_half(ex))
+end
+
+function _half(ex)
+    @match ex begin
+        :($dist($(args...))) => begin
+            halfdist = Symbol(:Half, dist)
+
+            quote
+                export $halfdist
+                
+                struct $halfdist{N,T} <: ParameterizedMeasure{N,T}
+                    par :: NamedTuple{N,T}
+                end
+                
+                unhalf(μ::$halfdist) = $dist(getfield(μ, :par))
+
+                function MeasureTheory.basemeasure(μ::$halfdist) 
+                    return 2 * basemeasure(unhalf(μ))
+                end
+            
+                function MeasureTheory.logdensity(μ::$halfdist, x)
+                    return logdensity(unhalf(μ), x)
+                end
+
+                function Base.rand(rng::AbstractRNG, T::Type, μ::$halfdist)
+                    return abs(rand(rng, T, unhalf(μ)))
+                end
+
+                (::$halfdist ≪ ::Lebesgue{ℝ₊}) = true
+                (::Lebesgue{ℝ₊} ≪ ::$halfdist) = true
+            end
         end
     end
 end

@@ -19,3 +19,4 @@ Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDi
 representative(::StudentT) = Lebesgue(ℝ)
 
 @μσ_methods StudentT(ν)
+@half StudentT()

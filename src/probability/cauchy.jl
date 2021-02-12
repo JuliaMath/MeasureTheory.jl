@@ -16,3 +16,4 @@ Base.rand(μ::Cauchy{()}) = rand(Dists.Cauchy())
 representative(::Cauchy) = Lebesgue(ℝ)
 
 @μσ_methods Cauchy()
+@half Cauchy()
