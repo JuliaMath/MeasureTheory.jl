@@ -33,6 +33,11 @@ function logdensity(d::Binomial{n, (:n, :logit_p)}, y) where {n}
     return  - loggamma(n - y + 1) - loggamma(y + 1)  + y * x - n * log1pexp(x)
 end
 
+function logdensity(d::Binomial{n, (:n, :probit_p)}, y) where {n}
+    z = d.probit_p
+    return  - loggamma(n - y + 1) - loggamma(y + 1)  + y * normlogcdf(z) + (n-y) * normlogccdf(z)
+end
+
 sampletype(::Binomial) = Int
 
 function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:p)}) where {n}
@@ -40,7 +45,11 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:p)}) where {n}
 end
 
 function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:logit_p)}) where {n}
-    rand(Dists.Binomial(d.n, logistic(d.logit_p)))
+    rand(rng, Dists.Binomial(d.n, logistic(d.logit_p)))
+end
+
+function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:probit_p)}) where {n}
+    rand(rng, Dists.Binomial(d.n, normcdf(d.probit_p)))
 end
 
 representative(::Binomial{n}) where {n} = CountingMeasure(ℤ[0:n])
