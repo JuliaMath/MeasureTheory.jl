@@ -1,5 +1,6 @@
 using MeasureTheory
 using Test
+using StatsFuns
 
 function draw2(μ)
     x = rand(μ)
@@ -9,9 +10,6 @@ function draw2(μ)
     end
     return (x,y)
 end
-
-using Test
-using StatsFuns
 
 @testset "Parameterized Measures" begin
 
