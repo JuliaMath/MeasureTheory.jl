@@ -2,6 +2,7 @@
 using MLStyle
 using StatsFuns
 using Random: AbstractRNG
+using StatsFuns: logtwo
 
 export @measure
 
@@ -173,7 +174,9 @@ function _half(ex)
                 unhalf(μ::$halfdist) = $dist(getfield(μ, :par))
 
                 function MeasureTheory.basemeasure(μ::$halfdist) 
-                    return 2 * basemeasure(unhalf(μ))
+                    b = basemeasure(unhalf(μ))
+                    lw = b.logweight
+                    return WeightedMeasure(logtwo + lw, Lebesgue(ℝ₊))
                 end
             
                 function MeasureTheory.logdensity(μ::$halfdist, x)
