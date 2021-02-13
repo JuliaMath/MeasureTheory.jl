@@ -3,6 +3,10 @@
 export Binomial
 import Base
 using StatsFuns
+using SpecialFunctions
+
+probit(p) = sqrt2 * erfinv(2p - 1)
+Φ(z) = (1 + erf(invsqrt2 * z))/2
 
 struct Binomial{n, N, T} <: ParameterizedMeasure{N, T}
     par::NamedTuple{N, T}
@@ -35,7 +39,7 @@ end
 
 function logdensity(d::Binomial{n, (:n, :probit_p)}, y) where {n}
     z = d.probit_p
-    return  - loggamma(n - y + 1) - loggamma(y + 1)  + y * normlogcdf(z) + (n-y) * normlogccdf(z)
+    return  - loggamma(n - y + 1) - loggamma(y + 1)  + y * log(Φ(z)) + (n-y) * log(Φ(-z))
 end
 
 sampletype(::Binomial) = Int
@@ -49,7 +53,7 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:logit_p)}) whe
 end
 
 function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:probit_p)}) where {n}
-    rand(rng, Dists.Binomial(d.n, normcdf(d.probit_p)))
+    rand(rng, Dists.Binomial(d.n, Φ(d.probit_p)))
 end
 
 representative(::Binomial{n}) where {n} = CountingMeasure(ℤ[0:n])
