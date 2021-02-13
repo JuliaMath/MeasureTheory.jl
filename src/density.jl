@@ -54,6 +54,11 @@ function Base.show(io::IO, μ::DensityMeasure{F,B,Val{L}}) where {F,B,L}
     print(io, "; log = ", L, ")")
 end
 
+function Base.rand(rng::AbstractRNG, T::Type, d::DensityMeasure)
+    x = rand(d.base)
+    WeightedMeasure(d.f(x), Dirac(x))
+end
+
 basemeasure(μ::DensityMeasure) = μ.base
 
 logdensity(μ::DensityMeasure{F,B,Val{true}}, x) where {F,B} = μ.f(x)
@@ -68,6 +73,8 @@ Define a new measure in terms of a density `f` over some measure `base`. If
 """
 ∫(f, base::AbstractMeasure; log=true) = DensityMeasure(f, base, Val(log))
 
+∫(μ::AbstractMeasure, base::AbstractMeasure; log=true) = ∫(𝒹(μ,base), base; log=log)
+
 # TODO: `density` and `logdensity` functions for `DensityMeasure`
 
 function logdensity(μ::AbstractMeasure, ν::AbstractMeasure, x)
@@ -80,3 +87,9 @@ function logdensity(μ::AbstractMeasure, ν::AbstractMeasure, x)
 end
 
 _logdensity(::Lebesgue{ℝ}, ::Lebesgue{ℝ}, x) = zero(float(x))
+
+export density
+
+density(μ::AbstractMeasure, ν::AbstractMeasure, x) = Exp(logdensity(μ, ν, x))
+
+density(μ::AbstractMeasure, x) = Exp(logdensity(μ, x))

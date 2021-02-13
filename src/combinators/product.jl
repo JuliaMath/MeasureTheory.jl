@@ -1,7 +1,6 @@
 export ProductMeasure
 
 using MappedArrays
-using FillArrays
 using Base: @propagate_inbounds
 
 struct ProductMeasure{T} <: AbstractMeasure

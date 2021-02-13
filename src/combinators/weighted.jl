@@ -1,3 +1,5 @@
+export WeightedMeasure
+
 """
     struct WeightedMeasure{R,M} <: AbstractMeasure
         logweight :: R
@@ -38,7 +40,8 @@ function Base.:*(k::T, m::AbstractMeasure) where {T <: Number}
     if hasmethod(iszero, (T,)) && iszero(k)
         return TrivialMeasure
     else
-        return WeightedMeasure{typeof(k), typeof(m)}(log(k),m)
+        logk = log(k)
+        return WeightedMeasure{typeof(logk), typeof(m)}(logk,m)
     end
 end
 
