@@ -1,3 +1,5 @@
+export WeightedMeasure
+
 """
     struct WeightedMeasure{R,M} <: AbstractMeasure
         logweight :: R
