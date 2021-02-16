@@ -13,3 +13,5 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 @μσ_methods Normal()
 
 @half Normal()
+
+HalfNormal(σ) = HalfNormal(σ = σ)
