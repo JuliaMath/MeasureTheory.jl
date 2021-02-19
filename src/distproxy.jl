@@ -1,0 +1,41 @@
+export distproxy
+function distproxy end
+
+import MonteCarloMeasurements
+
+PROXIES = Dict(
+    :Distributions => [
+        :mean
+        :std
+        :entropy
+        ],
+    :MonteCarloMeasurements => [
+        :Particles
+    ]
+)
+
+for m in keys(PROXIES)
+    for f in PROXIES[m]
+        @eval begin
+            import $m: $f
+            export $f
+            $m.$f(d::AbstractMeasure) = $m.$f(MeasureTheory.distproxy(d))
+        end
+    end
+end
+
+MonteCarloMeasurements.Particles(N::Int, d::AbstractMeasure) = MonteCarloMeasurements.Particles(N, distproxy(d))
+
+# using MonteCaroMeasurements
+
+# MonteCaroMeasurementsPROXIES = [
+#     :Particles
+# ]
+
+# for f in DistributionsPROXIES
+#     @eval begin
+#         import Distributions: $f
+#         export $f
+#         Distributions.$f(d::AbstractMeasure) = Distributions.$f(MeasureTheory.distproxy(d))
+#     end
+# end
