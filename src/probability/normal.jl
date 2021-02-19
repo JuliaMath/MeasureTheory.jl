@@ -15,3 +15,5 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 @half Normal()
 
 HalfNormal(σ) = HalfNormal(σ = σ)
+
+distproxy(d::Normal{(:μ, :σ)}) = Dists.Normal(d.μ, d.σ)

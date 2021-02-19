@@ -34,3 +34,6 @@ Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logit_p,)}) = T(rand(rng) < 
 ≪(::Bernoulli, ::IntegerRange{lo,hi}) where {lo, hi} = lo ≤ 0 && 1 ≤ hi
 
 representative(::Bernoulli) = CountingMeasure(ℤ[0:1])
+
+distproxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
+distproxy(d::Bernoulli{(:logit_p,)}) = Dists.Bernoulli(logistic(d.logit_p))
