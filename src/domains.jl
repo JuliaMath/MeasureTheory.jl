@@ -54,3 +54,10 @@ end
 function Base.show(io::IO, r::IntegerRange{lo, hi}) where {lo, hi}
     print(io, "ℤ[", lo, ":", hi, "]")
 end
+
+###########################################################
+# Real intervals
+
+using IntervalSets
+
+struct RealInterval{lo, hi} <: AbstractDomain end

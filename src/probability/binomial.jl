@@ -57,3 +57,6 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:probit_p)}) wh
 end
 
 representative(::Binomial{n}) where {n} = CountingMeasure(ℤ[0:n])
+
+
+distproxy(d::Binomial{n, (:n, :p)}) where {n} = Dists.Binomial(d.n, d.p)

@@ -43,3 +43,5 @@ function logdensity(d::Exponential{(:min,)}, x)
     z = x - d.min
     return logdensity(Exponential(), z)
 end
+
+distproxy(d::Exponential{(:λ,)}) = Dists.Exponential(d.λ)

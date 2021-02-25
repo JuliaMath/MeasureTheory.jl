@@ -61,6 +61,7 @@ include("probability/bernoulli.jl")
 include("probability/poisson.jl")
 include("probability/binomial.jl")
 include("density.jl")
-include("pushforward.jl")
+# include("pushforward.jl")
 include("kernel.jl")
+include("distproxy.jl")
 end # module

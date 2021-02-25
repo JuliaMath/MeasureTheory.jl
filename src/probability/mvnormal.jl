@@ -6,7 +6,6 @@ using LinearAlgebra
 export MvNormal
 using Random
 import Base
-using LazyArrays
 
 struct MvNormal{N, T, I, J} <: ParameterizedMeasure{N, T}
     cache::Vector{Float64}
