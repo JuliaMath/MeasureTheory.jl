@@ -12,3 +12,5 @@ function fix(f, x)
         return fix(f, y)
     end
 end
+
+Dists.logpdf(d::AbstractMeasure, x) = logdensity(d,x)
