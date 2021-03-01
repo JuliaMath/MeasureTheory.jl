@@ -8,6 +8,7 @@ PROXIES = Dict(
         :mean
         :std
         :entropy
+        :cdf
         ],
     :MonteCarloMeasurements => [
         :Particles
@@ -19,7 +20,7 @@ for m in keys(PROXIES)
         @eval begin
             import $m: $f
             export $f
-            $m.$f(d::AbstractMeasure) = $m.$f(MeasureTheory.distproxy(d))
+            $m.$f(d::AbstractMeasure, args...) = $m.$f(MeasureTheory.distproxy(d), args...)
         end
     end
 end
