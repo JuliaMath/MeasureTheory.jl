@@ -4,7 +4,7 @@ using Random
 
 using MLStyle
 using NestedTuples
-
+using TransformVariables
 import Base
 import Distributions
 const Dists = Distributions
@@ -13,7 +13,9 @@ export ≪
 export sampletype
 
 export AbstractMeasure
-using InfiniteArrays: ∞
+using InfiniteArrays
+
+const ∞ = InfiniteArrays.∞
 
 export ∞
 
@@ -44,6 +46,7 @@ include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("combinators/for.jl")
 include("combinators/power.jl")
+include("combinators/elementwise.jl")
 include("distributions.jl")
 include("rand.jl")
 include("probability/dirac.jl")
@@ -61,6 +64,7 @@ include("probability/bernoulli.jl")
 include("probability/poisson.jl")
 include("probability/binomial.jl")
 include("density.jl")
+include("likelihood.jl")
 # include("pushforward.jl")
 include("kernel.jl")
 include("distproxy.jl")
