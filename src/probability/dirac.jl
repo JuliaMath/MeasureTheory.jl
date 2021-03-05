@@ -13,7 +13,7 @@ function (μ::Dirac{X})(s) where {X}
 end
 isprimitive(::Dirac) = true
 
-
+logdensity(μ::Dirac, x) = (x == μ.x) ? 0.0 : -Inf
 
 
 Base.rand(_::Random.AbstractRNG, ::Type, μ::Dirac) = μ.x
