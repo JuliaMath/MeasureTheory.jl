@@ -1,6 +1,8 @@
 export PushForward
 
 import Bijectors
+
+const Bij = Bijectors
 import Base
 
 struct PushForward{F,M} <: AbstractMeasure
@@ -8,29 +10,33 @@ struct PushForward{F,M} <: AbstractMeasure
     μ::M
 end
 
-function logdensity(d::PushForward{F,M}, y) where {F <: Bijectors.Bijector, M}
-    res = Bijectors.forward(inv(d.f), y)
+function logdensity(d::PushForward{F,M}, y) where {F <: Bij.Bijector, M}
+    res = Bij.forward(inv(d.f), y)
     return logdensity(d.μ, res.rv) + res.logabsdetjac
 end
 
+function logdensity(d::PushForward{F,M}, y) where {F <: TransformVariables.AbstractTransform, M}
+    
+end
+
 for F in [
-      Bijectors.ADBijector
-    , Bijectors.Composed
-    , Bijectors.Exp
-    , Bijectors.Identity
-    , Bijectors.Inverse
-    , Bijectors.InvertibleBatchNorm
-    , Bijectors.Log
-    , Bijectors.Logit
-    , Bijectors.PDBijector
-    , Bijectors.Permute
-    , Bijectors.PlanarLayer
-    , Bijectors.RadialLayer
-    , Bijectors.Scale
-    , Bijectors.Shift
-    , Bijectors.SimplexBijector
-    , Bijectors.Stacked
-    , Bijectors.TruncatedBijector] 
+      Bij.ADBijector
+    , Bij.Composed
+    , Bij.Exp
+    , Bij.Identity
+    , Bij.Inverse
+    , Bij.InvertibleBatchNorm
+    , Bij.Log
+    , Bij.Logit
+    , Bij.PDBijector
+    , Bij.Permute
+    , Bij.PlanarLayer
+    , Bij.RadialLayer
+    , Bij.Scale
+    , Bij.Shift
+    , Bij.SimplexBijector
+    , Bij.Stacked
+    , Bij.TruncatedBijector] 
     @eval (f::$F)(μ::M) where {M <: AbstractMeasure} = PushForward(f,μ)
 end
 
