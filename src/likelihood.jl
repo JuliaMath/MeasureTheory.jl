@@ -6,6 +6,8 @@ end
 
 Likelihood(T::Type, x::X) where {X} = Likelihood{T,X}(x)
 
-function logdensity(μ::Likelihood{T,X}, p::NamedTuple) where {T,X}
+Likelihood(μ::T, x::X) where {X, T<:AbstractMeasure} = Likelihood{T,X}(x)
+
+function logdensity(μ::Likelihood{T,X}, p) where {T,X}
     logdensity(T(p), μ.x)
 end
