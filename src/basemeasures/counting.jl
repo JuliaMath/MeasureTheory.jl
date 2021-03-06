@@ -17,7 +17,7 @@ isprimitive(::CountingMeasure) = true
 # sampletype(::CountingMeasure{ℝ₊}) = Float64
 # sampletype(::CountingMeasure{𝕀}) = Float64
 
-sampletype(::CountingMeasure{IntegerRange{lo,hi}}) where {lo, hi} = Int
+sampletype(::CountingMeasure)= Int
 
 
 
