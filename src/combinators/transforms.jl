@@ -37,9 +37,10 @@ Base.rand(rng::AbstractRNG, T::Type, ν::Pushforward) = ν.f(rand(rng, ν.μ))
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Pullback) = μ.f(rand(rng, μ.ν))
 
-sampletype(ν::Pushforward) = typeof(transform(ν.f, testvalue(ν.μ)))
+testvalue(ν::Pushforward) = transform(ν.f, testvalue(ν.μ))
 
-sampletype(μ::Pullback) = typeof(transform(μ.f, testvalue(μ.ν)))
+testvalue(μ::Pullback) = transform(μ.f, testvalue(μ.ν))
+
 
 # t = as𝕀
 # μ = Normal()
