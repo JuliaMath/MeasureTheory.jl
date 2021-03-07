@@ -36,3 +36,14 @@ end
     κ = MeasureTheory.kernel(identity, MeasureTheory.Dirac)
     @test rand(κ(1.1)) == 1.1
 end
+
+@testset "SpikeMixture" begin
+    @test rand(SpikeMixture(Dirac(0), 0.5)) == 0
+    @test rand(SpikeMixture(Dirac(1), 1.0)) == 1
+    w = 1/3
+    m = SpikeMixture(Normal(), w)
+    bm = basemeasure(m)
+    @test bm.w*bm.m == 1.0*basemeasure(Normal())
+    @test density(m, 1.0)*bm.w == w*density(Normal(),1.0)
+    @test density(m, 0)*bm.w̄ ≈ (1-w)
+end
