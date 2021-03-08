@@ -17,9 +17,18 @@ If the argument is a named tuple `(;a=f1, b=f1)`, `κ(x)` is defined as
 struct Kernel{T,S}
     ops::S
 end
+
+export kernel
 kernel(op, ::Type{M}) where {M} = Kernel{M,typeof(op)}(op)
 kernel(::Type{M}; ops...) where {M} = Kernel{M,typeof(ops.data)}(ops.data)
 mapcall(t, x) = map(func -> func(x), t)
 (k::Kernel{M,<:Tuple})(x) where {M} = M(mapcall(k.ops, x)...)
 (k::Kernel{M,<:NamedTuple})(x) where {M} = M(;mapcall(k.ops, x)...)
 (k::Kernel{M})(x) where {M} = M(k.ops(x)...)
+
+export kernelize
+
+function kernelize(μ::M) where {N, T, M <: ParameterizedMeasure{N,T}}
+    C = M.name.wrapper
+    (kernel(NamedTuple{N}, C), values(getfield(μ, :par)))
+end
