@@ -32,6 +32,10 @@ end
 
 Base.length(m::ProductMeasure{T}) where {T} = length(m.data)
 
+function Base.:*(μ::ProductMeasure{Tuple{}}, ν::N) where {X, N <: AbstractMeasure}
+    ProductMeasure((ν,))
+end
+
 function Base.:*(μ::ProductMeasure{X}, ν::ProductMeasure{Y}) where {X,Y}
     data = (μ.data..., ν.data...)
     ProductMeasure(data...)
