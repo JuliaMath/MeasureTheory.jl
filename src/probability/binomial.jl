@@ -12,8 +12,6 @@ struct Binomial{N, T} <: ParameterizedMeasure{N, T}
     par::NamedTuple{N, T}
 end
 
-Binomial(nt::NamedTuple{N,T}) where {N, T} = Binomial{N,T}(nt)
-
 basemeasure(μ::Binomial) = CountingMeasure(ℤ[0:(μ.n)])
 
 Binomial(n,p) = Binomial(; n, p)

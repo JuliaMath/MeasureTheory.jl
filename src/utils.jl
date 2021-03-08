@@ -14,3 +14,5 @@ function fix(f, x)
 end
 
 Dists.logpdf(d::AbstractMeasure, x) = logdensity(d,x)
+
+testvalue(μ::AbstractMeasure) = testvalue(basemeasure(μ))

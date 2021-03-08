@@ -39,8 +39,11 @@ Base.rand(rng::AbstractRNG, T::Type, μ::Pullback) = μ.f(rand(rng, μ.ν))
 
 testvalue(ν::Pushforward) = transform(ν.f, testvalue(ν.μ))
 
-testvalue(μ::Pullback) = transform(μ.f, testvalue(μ.ν))
+testvalue(μ::Pullback) = transform(inverse(μ.f), testvalue(μ.ν))
 
+basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν))
+
+basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ))
 
 # t = as𝕀
 # μ = Normal()

@@ -21,6 +21,8 @@ export ∞
 
 abstract type AbstractMeasure end
 
+# sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
+
 sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
 
 """
@@ -47,6 +49,7 @@ include("combinators/product.jl")
 include("combinators/for.jl")
 include("combinators/power.jl")
 include("combinators/elementwise.jl")
+include("combinators/transforms.jl")
 include("distributions.jl")
 include("rand.jl")
 include("probability/dirac.jl")
