@@ -21,9 +21,9 @@ export ∞
 
 abstract type AbstractMeasure end
 
-# sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
+sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
-sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
+# sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
 
 """
     logdensity(μ::AbstractMeasure{X}, x::X)
