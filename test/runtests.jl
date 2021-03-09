@@ -43,7 +43,7 @@ end
     w = 1/3
     m = SpikeMixture(Normal(), w)
     bm = basemeasure(m)
-    @test bm.w*bm.m == 1.0*basemeasure(Normal())
-    @test density(m, 1.0)*bm.w == w*density(Normal(),1.0)
-    @test density(m, 0)*bm.w̄ ≈ (1-w)
+    @test (bm.s*bm.w)*bm.m == 1.0*basemeasure(Normal())
+    @test density(m, 1.0)*(bm.s*bm.w) == w*density(Normal(),1.0)
+    @test density(m, 0)*(bm.s*(1-bm.w)) ≈ (1-w)
 end
