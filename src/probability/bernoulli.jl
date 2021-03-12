@@ -3,7 +3,10 @@
 export Bernoulli
 import Base
 
-@measure Bernoulli(p) ≃ CountingMeasure(ℤ[0:1])
+@measure Bernoulli(p)
+
+
+basemeasure(::Bernoulli) = CountingMeasure(ℤ[0:1])
 
 function logdensity(d::Bernoulli{(:p,)}, y)
     p = d.p

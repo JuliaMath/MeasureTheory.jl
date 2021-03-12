@@ -4,7 +4,9 @@
 import StatsFuns
 export Cauchy
 
-@measure Cauchy(μ,σ) ≃ (1/π) * Lebesgue(ℝ)
+@measure Cauchy(μ,σ) 
+
+basemeasure(::Cauchy) = (1/π) * Lebesgue(ℝ)
 
 function logdensity(d::Cauchy{()} , x) 
     return -log(1 + x^2)
