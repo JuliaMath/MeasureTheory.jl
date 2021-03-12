@@ -5,7 +5,9 @@ using SpecialFunctions
 using StatsFuns
 export StudentT
 
-@measure StudentT(ν) ≃ (1/sqrtπ) * Lebesgue(ℝ)
+@measure StudentT(ν)
+
+basemeasure(::StudentT) = (1/sqrtπ) * Lebesgue(ℝ)
 
 function logdensity(d::StudentT{(:ν,)}, x) 
     ν = d.ν

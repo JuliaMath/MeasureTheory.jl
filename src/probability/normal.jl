@@ -4,7 +4,9 @@
 import StatsFuns
 export Normal
 
-@measure Normal(μ,σ) ≪ (1/sqrt2π) * Lebesgue(ℝ)
+@measure Normal(μ,σ)
+
+basemeasure(::Normal) = (1/sqrt2π) * Lebesgue(ℝ)
 
 logdensity(d::Normal{()} , x) = - x^2 / 2 
 
