@@ -49,6 +49,8 @@ function _measure(expr)
                 par :: NamedTuple{N,T}
             end
 
+            (::Type{$μ{N}})(nt::NamedTuple{N,T}) where {N,T} = $μ{N,T}(nt)
+
             function MeasureTheory.basemeasure(μ::$μ{P}) where {P}
                 return $base
             end
