@@ -55,6 +55,8 @@ function Base.show(io::IO, r::IntegerRange{lo, hi}) where {lo, hi}
     print(io, "ℤ[", lo, ":", hi, "]")
 end
 
+testvalue(::IntegerRange{lo, hi}) where {lo, hi} = lo
+
 ###########################################################
 # Real intervals
 
