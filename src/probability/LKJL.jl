@@ -1,6 +1,8 @@
 # Modified from
 # https://github.com/tpapp/AltDistributions.jl
 
+export LKJL
+
 """
 The LKJ distribution (Lewandowski et al 2009) for the Cholesky factor L of correlation
 matrices.
@@ -48,5 +50,5 @@ TransformVariables.as(::LKJL{k}) where {k} = TransformVariables.CorrCholeskyFact
 function basemeasure(μ::LKJL{k}) where {k}
     t = as(μ)
     d = dimension(t)
-    return Pushforward(t, Lebesgue(ℝ)^d)
+    return Pushforward(t, Lebesgue(ℝ)^d, false)
 end
