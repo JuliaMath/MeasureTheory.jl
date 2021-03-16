@@ -1,6 +1,6 @@
 export Likelihood
 
-struct Likelihood{T,X} <: AbstractMeasure
+struct Likelihood{T,X}
     x::X
 end
 
