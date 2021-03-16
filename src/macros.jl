@@ -48,7 +48,14 @@ function _measure(expr)
             end
 
             (::Type{$μ{N}})(nt::NamedTuple{N,T}) where {N,T} = $μ{N,T}(nt) 
-        end       
+        end   
+        
+        if !isempty(p)
+            # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
+            # Requires Julia 1.5
+            push!(q.args, :($μ($(p...)) = $μ(;$(p...))))
+        end
+        
         return q
     end
 end
