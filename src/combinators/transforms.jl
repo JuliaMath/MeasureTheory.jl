@@ -7,31 +7,46 @@ export Pullback
 struct Pushforward{F,M} <: AbstractMeasure
     f::F
     μ::M
+    logjac::Bool
 end
+
+Pushforward(f,μ) = Pushforward(f, μ, true)
 
 struct Pullback{F,M} <: AbstractMeasure
     f::F
     ν::M
+    logjac::Bool
 end
+
+Pullback(f,ν) = Pullback(f, ν, true)
 
 function logdensity(pb::Pullback{F}, x) where {F <: AbstractTransform}
     f = pb.f
     ν = pb.ν
-    y, ℓ = transform_and_logjac(f, x)
-    logdensity(ν,y) + ℓ
+    if pb.logjac
+        y, ℓ = transform_and_logjac(f, x)
+        return logdensity(ν, y) + ℓ
+    else
+        y = transform(f, x)
+        return logdensity(ν, y)
+    end
 end
 
 function logdensity(pf::Pushforward{F}, y) where {F <: AbstractTransform}
     f = pf.f
     μ = pf.μ
     x = inverse(f, y)
-    _, ℓ = transform_and_logjac(f, x)
-    logdensity(μ, x) - ℓ
+    if pf.logjac
+        _, ℓ = transform_and_logjac(f, x)
+        return logdensity(μ, x) - ℓ
+    else
+        return logdensity(μ, x)
+    end
 end
 
-Pullback(f::InverseTransform, ν) = Pushforward(f.transform, ν)
+Pullback(f::InverseTransform, ν, logjac=true) = Pushforward(f.transform, ν, logjac)
 
-Pushforward(f::InverseTransform, ν) = Pullback(f.transform, ν)
+Pushforward(f::InverseTransform, ν, logjac=true) = Pullback(f.transform, ν, logjac)
 
 Base.rand(rng::AbstractRNG, T::Type, ν::Pushforward) = ν.f(rand(rng, ν.μ))
 
@@ -41,9 +56,9 @@ testvalue(ν::Pushforward) = transform(ν.f, testvalue(ν.μ))
 
 testvalue(μ::Pullback) = transform(inverse(μ.f), testvalue(μ.ν))
 
-basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν))
+basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν), false)
 
-basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ))
+basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ), false)
 
 # t = as𝕀
 # μ = Normal()
