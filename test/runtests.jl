@@ -20,7 +20,7 @@ end
         (x,y) = draw2(Binomial(n,p))
 
         let Δlogπ(n,p,x) = logdensity(Binomial(n,p), x) - binomlogpdf(n,p,x)
-            @test Δlogπ(n,p,x) ≈ Δlogπ(n,p,y)
+            @test Δlogπ(n,p,x) ≈ Δlogπ(n,p,y) atol=1e-8
         end
 
         @test logdensity(Binomial(;n,p), x) ≈ logdensity(Binomial(; n, logit_p), x)
