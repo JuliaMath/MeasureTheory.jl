@@ -20,4 +20,4 @@ function Base.show(io::IO, μ::ParameterizedMeasure{N,T}) where {N,T}
 end
 
 # e.g. Normal(;μ=μ, σ=σ) = Normal((μ=μ, σ=σ))
-(M::Type{<: ParameterizedMeasure})(; kwargs...) = M((; kwargs...))
+(M::Type{<: ParameterizedMeasure})(; kwargs...) = M(keysort((; kwargs...)))
