@@ -33,33 +33,33 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n,:p)})
 end
 
 ###############################################################################
-# (n, logit_p)
+# (n, logitp)
 
-function logdensity(d::Binomial{(:n, :logit_p)}, y)
+function logdensity(d::Binomial{(:n, :logitp)}, y)
     n = d.n
-    x = d.logit_p
+    x = d.logitp
     return  -log1p(n) - logbeta(n - y + 1, y + 1) + y * x - n * log1pexp(x)
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n,:logit_p)})
-    rand(rng, Dists.Binomial(d.n, logistic(d.logit_p)))
+function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n,:logitp)})
+    rand(rng, Dists.Binomial(d.n, logistic(d.logitp)))
 end
 
 ###############################################################################
-# (n, probit_p)
+# (n, probitp)
 
-function logdensity(d::Binomial{(:n, :probit_p)}, y)
+function logdensity(d::Binomial{(:n, :probitp)}, y)
     n = d.n
-    z = d.probit_p
+    z = d.probitp
     return  -log1p(n) - logbeta(n - y + 1, y + 1)  + y * log(Φ(z)) + (n-y) * log(Φ(-z))
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n, :probit_p)})
-    rand(rng, Dists.Binomial(d.n, Φ(d.probit_p)))
+function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n, :probitp)})
+    rand(rng, Dists.Binomial(d.n, Φ(d.probitp)))
 end
 
 representative(d::Binomial) = CountingMeasure(ℤ[0:d.n])
 
 distproxy(d::Binomial{(:n, :p)}) = Dists.Binomial(d.n, d.p)
-distproxy(d::Binomial{(:n,:logit_p)}) = Dists.Binomial(d.n, logistic(d.logit_p))
-distproxy(d::Binomial{(:n,:probit_p)}) = Dists.Binomial(d.n, Φ(d.probit_p))
+distproxy(d::Binomial{(:n,:logitp)}) = Dists.Binomial(d.n, logistic(d.logitp))
+distproxy(d::Binomial{(:n,:probitp)}) = Dists.Binomial(d.n, Φ(d.probitp))

@@ -18,13 +18,13 @@ function density(d::Bernoulli{(:p,)}, y)
     return 2*p*y - p - y + 1
 end
 
-function logdensity(d::Bernoulli{(:logit_p,)}, y)
-    x = d.logit_p
+function logdensity(d::Bernoulli{(:logitp,)}, y)
+    x = d.logitp
     return y * x - log1pexp(x)
 end
 
-function density(d::Bernoulli{(:logit_p,)}, y)
-    exp_x = exp(d.logit_p)
+function density(d::Bernoulli{(:logitp,)}, y)
+    exp_x = exp(d.logitp)
     return exp_x ^ y / (1 + exp_x)
 end
 
@@ -32,11 +32,11 @@ sampletype(::Bernoulli) = Bool
 
 Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:p,)}) = T(rand(rng) < d.p)
 
-Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logit_p,)}) = T(rand(rng) < logistic(d.logit_p))
+Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logitp,)}) = T(rand(rng) < logistic(d.logitp))
 
 ≪(::Bernoulli, ::IntegerRange{lo,hi}) where {lo, hi} = lo ≤ 0 && 1 ≤ hi
 
 representative(::Bernoulli) = CountingMeasure(ℤ[0:1])
 
 distproxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
-distproxy(d::Bernoulli{(:logit_p,)}) = Dists.Bernoulli(logistic(d.logit_p))
+distproxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))

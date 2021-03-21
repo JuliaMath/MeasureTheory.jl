@@ -15,17 +15,17 @@ end
 
     @testset "Binomial" begin
         (n,p) = (10,0.3)
-        logit_p = logit(p)
-        probit_p = norminvcdf(p)
+        logitp = logit(p)
+        probitp = norminvcdf(p)
         (x,y) = draw2(Binomial(n,p))
 
         let Δlogπ(n,p,x) = logdensity(Binomial(n,p), x) - binomlogpdf(n,p,x)
             @test Δlogπ(n,p,x) ≈ Δlogπ(n,p,y) atol=1e-8
         end
 
-        @test logdensity(Binomial(;n,p), x) ≈ logdensity(Binomial(; n, logit_p), x)
+        @test logdensity(Binomial(;n,p), x) ≈ logdensity(Binomial(; n, logitp), x)
 
-        @test logdensity(Binomial(;n,p), x) ≈ logdensity(Binomial(; n, probit_p), x)
+        @test logdensity(Binomial(;n,p), x) ≈ logdensity(Binomial(; n, probitp), x)
 
         @test_broken logdensity(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
     end
