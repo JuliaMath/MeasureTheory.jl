@@ -19,3 +19,10 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 HalfNormal(σ) = HalfNormal(σ = σ)
 
 distproxy(d::Normal{(:μ, :σ)}) = Dists.Normal(d.μ, d.σ)
+
+asparams(::Type{<:Normal}, ::Val{:μ}) = asℝ
+asparams(::Type{<:Normal}, ::Val{:σ}) = asℝ₊
+asparams(::Type{<:Normal}, ::Val{:logσ}) = asℝ
+asparams(::Type{<:Normal}, ::Val{:σ²}) = asℝ₊
+asparams(::Type{<:Normal}, ::Val{:τ}) = asℝ₊
+asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
