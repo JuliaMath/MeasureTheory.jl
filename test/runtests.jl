@@ -13,7 +13,6 @@ function draw2(μ)
 end
 
 @testset "Parameterized Measures" begin
-
     @testset "Binomial" begin
         D = Binomial{(:n, :p)}
         par = merge((n=20,),transform(asparams(D, (n=20,)), randn(1)))
@@ -46,8 +45,6 @@ end
         @test ℓ ≈ logdensity(Normal(;μ,τ), y)
         @test ℓ ≈ logdensity(Normal(;μ,logσ), y)
     end
-
-
 end
 
 @testset "Kernel" begin
