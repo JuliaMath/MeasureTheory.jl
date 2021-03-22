@@ -8,9 +8,7 @@ using SpecialFunctions
 probit(p) = sqrt2 * erfinv(2p - 1)
 Φ(z) = (1 + erf(invsqrt2 * z))/2
 
-struct Binomial{N, T} <: ParameterizedMeasure{N, T}
-    par::NamedTuple{N, T}
-end
+@measure Binomial(n,p)
 
 basemeasure(μ::Binomial) = CountingMeasure(ℤ[0:(μ.n)])
 
