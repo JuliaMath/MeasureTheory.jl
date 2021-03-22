@@ -36,6 +36,7 @@ Methods for computing density relative to other measures will be
 """
 function logdensity end
 
+include("paramorder.jl")
 include("exp.jl")
 include("domains.jl")
 include("utils.jl")
