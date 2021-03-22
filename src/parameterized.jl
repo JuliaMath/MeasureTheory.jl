@@ -20,7 +20,7 @@ function Base.show(io::IO, μ::ParameterizedMeasure{N,T}) where {N,T}
 end
 
 # e.g. Normal(;μ=μ, σ=σ) = Normal((μ=μ, σ=σ))
-(M::Type{<: ParameterizedMeasure})(; kwargs...) = M(keysort((; kwargs...)))
+(M::Type{<: ParameterizedMeasure})(; kwargs...) = M(paramsort((; kwargs...)))
 
 (M::Type{<: ParameterizedMeasure})(::Tuple{}) = M(NamedTuple())
 
@@ -79,5 +79,5 @@ function asparams(M::Type{<: ParameterizedMeasure{N}}, constraints::NamedTuple) 
         t = asparams(M, Val(k))
         result = merge(result, NamedTuple{(k,)}((t,)))
     end
-    return as(keysort(result))
+    return as(paramsort(result))
 end
