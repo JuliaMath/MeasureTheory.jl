@@ -60,6 +60,12 @@ basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν), false)
 
 basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ), false)
 
+TransformVariables.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
+
+TransformVariables.as(μ::Pullback) = inverse(μ.f) ∘ μ.ν
+
+as(::Lebesgue) = asℝ
+
 # t = as𝕀
 # μ = Normal()
 # ν = Pushforward(t, μ)
