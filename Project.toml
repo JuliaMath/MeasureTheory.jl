@@ -1,7 +1,7 @@
 name = "MeasureTheory"
 uuid = "eadaa1a4-d27c-401d-8699-e962e1bbc33b"
 authors = ["Chad Scherrer <chad.scherrer@gmail.com> and contributors"]
-version = "0.5.0"
+version = "0.4.3"
 
 [deps]
 Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
@@ -29,9 +29,12 @@ TransformVariables = "84d833dd-6860-57f9-a1a7-6da5db126cff"
 Tullio = "bc48ee85-29a4-5162-ae0b-a64e1601d4bc"
 
 [compat]
+Accessors = "0.1"
 ArrayInterface = "2,3"
+ConcreteStructs = "0.2"
 Distributions = "0.23, 0.24"
 DistributionsAD = "0.6"
+DynamicIterators = "0.4"
 InfiniteArrays = "0.7, 0.8, 0.9, 0.10"
 IntervalSets = "0.5"
 IterTools = "1"
@@ -46,6 +49,7 @@ SpecialFunctions = "0.10, 1"
 StaticArrays = "0.12, 1"
 StatsFuns = "0.9"
 TransformVariables = "0.3"
+Tullio = "0.2"
 julia = "1.5"
 
 [extras]
