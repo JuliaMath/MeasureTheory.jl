@@ -1,7 +1,7 @@
 name = "MeasureTheory"
 uuid = "eadaa1a4-d27c-401d-8699-e962e1bbc33b"
 authors = ["Chad Scherrer <chad.scherrer@gmail.com> and contributors"]
-version = "0.4.3"
+version = "0.5.0"
 
 [deps]
 ArrayInterface = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
