@@ -86,7 +86,7 @@ function logdensity(μ::AbstractMeasure, ν::AbstractMeasure, x)
     result += _logdensity(basemeasure(bμ), basemeasure(bν), x)
 end
 
-_logdensity(::Lebesgue{ℝ}, ::Lebesgue{ℝ}, x) = zero(float(x))
+_logdensity(::Lebesgue{ℝ}, ::Lebesgue{ℝ}, x) = zero(x)
 
 export density
 
