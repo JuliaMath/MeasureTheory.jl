@@ -64,7 +64,7 @@ TransformVariables.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
 
 TransformVariables.as(μ::Pullback) = inverse(μ.f) ∘ μ.ν
 
-as(::Lebesgue) = asℝ
+TransformVariables.as(::Lebesgue) = asℝ
 
 # t = as𝕀
 # μ = Normal()
