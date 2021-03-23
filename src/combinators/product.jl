@@ -56,18 +56,53 @@ function Base.:*(μ::M, ν::N) where {M <: AbstractMeasure, N <: AbstractMeasure
     ProductMeasure(data...)
 end
 
-@propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure, x)
+using Tullio
+
+function logdensity(d::ProductMeasure{A}, x) where {T, A<:AbstractArray}
     data = d.data
     @boundscheck size(data) == size(x) || throw(BoundsError)
-
     s = 0.0
-    Δs(j) = @inbounds logdensity(data[j], x[j])
-
-    @inbounds @simd for j in eachindex(x)
-        s += Δs(j)
+    Δs(i) = logdensity(data[i], x[i])
+    for i in eachindex(x)
+        s += Δs(i)
     end
-    s
+    return s
 end
+
+# @propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure{A}, x) where{T, A<:AbstractArray{T,1}}
+#     data = d.data
+#     @boundscheck size(data) == size(x) || throw(BoundsError)
+#     @tullio s = logdensity(data[i], x[i])
+#     s
+# end
+
+# @propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure{A}, x) where{T, A<:AbstractArray{T,2}}
+#     data = d.data
+#     @boundscheck size(data) == size(x) || throw(BoundsError)
+#     @tullio s = @inbounds logdensity(data[i,j], x[i,j])
+#     s
+# end
+
+# @propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure{A}, x) where{T, A<:AbstractArray{T,3}}
+#     data = d.data
+#     @boundscheck size(data) == size(x) || throw(BoundsError)
+#     @tullio s = @inbounds logdensity(data[i,j,k], x[i,j,k])
+#     s
+# end
+
+# @propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure{A}, x) where{T, A<:AbstractArray{T,4}}
+#     data = d.data
+#     @boundscheck size(data) == size(x) || throw(BoundsError)
+#     @tullio s = @inbounds logdensity(data[i,j,k,l], x[i,j,k,l])
+#     s
+# end
+
+# @propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure{A}, x) where{T, A<:AbstractArray{T,5}}
+#     data = d.data
+#     @boundscheck size(data) == size(x) || throw(BoundsError)
+#     @tullio s = @inbounds logdensity(data[i,j,k,l,m], x[i,j,k,l,m])
+#     s
+# end
 
 export rand!
 using Random: rand!, GLOBAL_RNG, AbstractRNG

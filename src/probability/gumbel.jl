@@ -3,7 +3,10 @@
 import StatsFuns
 export Gumbel
 
-@measure Gumbel(μ,σ) ≃ Lebesgue(ℝ)
+@measure Gumbel(μ,σ)
+
+
+basemeasure(::Gumbel) = Lebesgue(ℝ)
 
 function logdensity(d::Gumbel{()} , x)
     return -exp(-x) - x

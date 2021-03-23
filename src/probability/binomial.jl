@@ -8,55 +8,60 @@ using SpecialFunctions
 probit(p) = sqrt2 * erfinv(2p - 1)
 Φ(z) = (1 + erf(invsqrt2 * z))/2
 
-struct Binomial{n, N, T} <: ParameterizedMeasure{N, T}
-    par::NamedTuple{N, T}
-end
+@measure Binomial(n,p)
 
-Binomial{n}(nt::NamedTuple{N,T}) where {n, N, T} = Binomial{n,N,T}(nt)
+basemeasure(μ::Binomial) = CountingMeasure(ℤ[0:(μ.n)])
 
-function MeasureTheory.basemeasure(μ::Binomial{n}) where {n}
-    return WeightedMeasure(-log1p(n) + loggamma(n + 2), CountingMeasure(ℤ[0:n]))
-end
+Binomial(n,p) = Binomial(; n, p)
 
-(::Binomial{n} ≪ ::CountingMeasure{IntegerRange{a,b}}) where {n,a,b} = a ≤ 0 && b ≥ n
+(d::Binomial ≪ ::CountingMeasure{IntegerRange{a,b}}) where {a,b} = a ≤ 0 && b ≥ d.n
 
-(::CountingMeasure{IntegerRange{a,b}} ≪ ::Binomial{n}) where {n,a,b} = a ≥ 0 && b ≤ n
+(::CountingMeasure{IntegerRange{a,b}} ≪ ::Binomial) where {a,b} = a ≥ 0 && b ≤ d.n
 
-Binomial(n,p) = Binomial{n}(; n, p)
-
-
-Binomial(nt::NamedTuple) = Binomial{nt.n}(nt)
+###############################################################################
+# (n, p)
     
-function logdensity(d::Binomial{n, (:n, :p)}, y) where {n}
-    p = d.p
-    return  - loggamma(n - y + 1) - loggamma(y + 1)  + y * log(p) + (n - y) * log1p(-p)
+function logdensity(d::Binomial{(:n, :p)}, y)
+    (n, p) = (d.n, d.p)
+    return -log1p(n) - logbeta(n - y + 1, y + 1) + y * log(p) + (n - y) * log1p(-p)
 end
 
-function logdensity(d::Binomial{n, (:n, :logit_p)}, y) where {n}
-    x = d.logit_p
-    return  - loggamma(n - y + 1) - loggamma(y + 1)  + y * x - n * log1pexp(x)
-end
-
-function logdensity(d::Binomial{n, (:n, :probit_p)}, y) where {n}
-    z = d.probit_p
-    return  - loggamma(n - y + 1) - loggamma(y + 1)  + y * log(Φ(z)) + (n-y) * log(Φ(-z))
-end
-
-sampletype(::Binomial) = Int
-
-function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:p)}) where {n}
+function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n,:p)})
     rand(rng, Dists.Binomial(d.n, d.p))
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:logit_p)}) where {n}
-    rand(rng, Dists.Binomial(d.n, logistic(d.logit_p)))
+###############################################################################
+# (n, logitp)
+
+function logdensity(d::Binomial{(:n, :logitp)}, y)
+    n = d.n
+    x = d.logitp
+    return  -log1p(n) - logbeta(n - y + 1, y + 1) + y * x - n * log1pexp(x)
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{n, (:n,:probit_p)}) where {n}
-    rand(rng, Dists.Binomial(d.n, Φ(d.probit_p)))
+function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n,:logitp)})
+    rand(rng, Dists.Binomial(d.n, logistic(d.logitp)))
 end
 
-representative(::Binomial{n}) where {n} = CountingMeasure(ℤ[0:n])
+###############################################################################
+# (n, probitp)
 
+function logdensity(d::Binomial{(:n, :probitp)}, y)
+    n = d.n
+    z = d.probitp
+    return  -log1p(n) - logbeta(n - y + 1, y + 1)  + y * log(Φ(z)) + (n-y) * log(Φ(-z))
+end
 
-distproxy(d::Binomial{n, (:n, :p)}) where {n} = Dists.Binomial(d.n, d.p)
+function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n, :probitp)})
+    rand(rng, Dists.Binomial(d.n, Φ(d.probitp)))
+end
+
+representative(d::Binomial) = CountingMeasure(ℤ[0:d.n])
+
+distproxy(d::Binomial{(:n, :p)}) = Dists.Binomial(d.n, d.p)
+distproxy(d::Binomial{(:n,:logitp)}) = Dists.Binomial(d.n, logistic(d.logitp))
+distproxy(d::Binomial{(:n,:probitp)}) = Dists.Binomial(d.n, Φ(d.probitp))
+
+asparams(::Type{<:Binomial}, ::Val{:p}) = as𝕀
+asparams(::Type{<:Binomial}, ::Val{:logitp}) = asℝ
+asparams(::Type{<:Binomial}, ::Val{:probitp}) = asℝ

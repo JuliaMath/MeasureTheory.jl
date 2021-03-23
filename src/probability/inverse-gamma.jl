@@ -5,7 +5,9 @@ using SpecialFunctions
 using StatsFuns
 export InverseGamma
 
-@measure InverseGamma(shape) ≃ Lebesgue(ℝ₊)
+@measure InverseGamma(shape)
+
+basemeasure(::InverseGamma) = Lebesgue(ℝ₊)
 
 function logdensity(μ::InverseGamma{(:shape,)}, x) 
     α = μ.shape

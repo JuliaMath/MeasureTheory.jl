@@ -4,7 +4,7 @@ using Random
 
 using MLStyle
 using NestedTuples
-
+using TransformVariables
 import Base
 import Distributions
 const Dists = Distributions
@@ -13,13 +13,17 @@ export ≪
 export sampletype
 
 export AbstractMeasure
-using InfiniteArrays: ∞
+using InfiniteArrays
+
+const ∞ = InfiniteArrays.∞
 
 export ∞
 
 abstract type AbstractMeasure end
 
-sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
+sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
+
+# sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
 
 """
     logdensity(μ::AbstractMeasure{X}, x::X)
@@ -32,6 +36,7 @@ Methods for computing density relative to other measures will be
 """
 function logdensity end
 
+include("paramorder.jl")
 include("exp.jl")
 include("domains.jl")
 include("utils.jl")
@@ -44,6 +49,9 @@ include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("combinators/for.jl")
 include("combinators/power.jl")
+include("combinators/elementwise.jl")
+include("combinators/transforms.jl")
+include("combinators/spikemixture.jl")
 include("distributions.jl")
 include("rand.jl")
 include("probability/dirac.jl")
@@ -60,8 +68,9 @@ include("probability/inverse-gamma.jl")
 include("probability/bernoulli.jl")
 include("probability/poisson.jl")
 include("probability/binomial.jl")
-include("combinators/spikemixture.jl")
+include("probability/LKJL.jl")
 include("density.jl")
+include("likelihood.jl")
 # include("pushforward.jl")
 include("kernel.jl")
 include("distproxy.jl")

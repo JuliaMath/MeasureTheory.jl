@@ -5,7 +5,9 @@ using SpecialFunctions
 using StatsFuns
 export StudentT
 
-@measure StudentT(ν) ≃ (1/sqrtπ) * Lebesgue(ℝ)
+@measure StudentT(ν)
+
+basemeasure(::StudentT) = (1/sqrtπ) * Lebesgue(ℝ)
 
 function logdensity(d::StudentT{(:ν,)}, x) 
     ν = d.ν
@@ -17,6 +19,8 @@ Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDi
 
 ≪(::StudentT, ::Lebesgue{X}) where X <: Real = true
 representative(::StudentT) = Lebesgue(ℝ)
+
+distproxy(d::StudentT{(:ν, :μ, :σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.TDist(d.ν))
 
 @μσ_methods StudentT(ν)
 @half StudentT()

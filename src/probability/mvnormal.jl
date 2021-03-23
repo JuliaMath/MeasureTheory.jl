@@ -7,14 +7,12 @@ export MvNormal
 using Random
 import Base
 
+
+
 struct MvNormal{N, T, I, J} <: ParameterizedMeasure{N, T}
-    cache::Vector{Float64}
     par::NamedTuple{N, T}
 end
 
-function getcache(d::MvNormal, n)
-    view(getfield(d, :cache), 1:n)
-end
 
 function MvNormal(nt::NamedTuple{N,T}) where {N,T}
     I,J = mvnormaldims(nt)
@@ -57,3 +55,11 @@ end
 
 ≪(::MvNormal, ::Lebesgue{ℝ}) = true
 representative(::MvNormal{N, T, I,I}) where {N, T, I} = Lebesgue(ℝ)^I
+
+
+function logdensity(d::MvNormal{(:Σ⁻¹,)}, x)
+    @tullio ℓ = -0.5 * x[i] * d.Σ⁻¹[i,j] * x[j]
+    return ℓ
+end
+
+mvnormaldims(nt::NamedTuple{(:Σ⁻¹,)}) = size(nt.Σ⁻¹)

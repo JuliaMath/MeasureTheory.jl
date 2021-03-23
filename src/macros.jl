@@ -41,32 +41,21 @@ macro capture(template, ex, action)
 end
 
 function _measure(expr)
-    @capture $rel($μ($(p...)), $base) expr begin
-        base = replace(s -> s∈p, s -> :(μ.$s), base)
-
+    @capture $μ($(p...)) expr begin
         q = quote
             struct $μ{N,T} <: ParameterizedMeasure{N,T}
                 par :: NamedTuple{N,T}
             end
 
-            function MeasureTheory.basemeasure(μ::$μ{P}) where {P}
-                return $base
-            end
- 
-            (::$μ{P} ≪ ::typeof(representative($base))) where {P}  = true
-        end    
-
-
+            (::Type{$μ{N}})(nt::NamedTuple{N,T}) where {N,T} = $μ{N,T}(nt) 
+        end   
+        
         if !isempty(p)
             # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
             # Requires Julia 1.5
             push!(q.args, :($μ($(p...)) = $μ(;$(p...))))
         end
-    
-        if rel == (:≃)
-            push!(q.args, :((::typeof(representative($base)) ≪ ::$μ{P}) where {P} = true))
-        end
-    
+        
         return q
     end
 end

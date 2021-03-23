@@ -86,10 +86,12 @@ function logdensity(μ::AbstractMeasure, ν::AbstractMeasure, x)
     result += _logdensity(basemeasure(bμ), basemeasure(bν), x)
 end
 
-_logdensity(::Lebesgue{ℝ}, ::Lebesgue{ℝ}, x) = zero(float(x))
+_logdensity(::Lebesgue{ℝ}, ::Lebesgue{ℝ}, x) = zero(x)
 
 export density
 
-density(μ::AbstractMeasure, ν::AbstractMeasure, x) = Exp(logdensity(μ, ν, x))
+density(μ::AbstractMeasure, ν::AbstractMeasure, x) = exp(logdensity(μ, ν, x))
 
-density(μ::AbstractMeasure, x) = Exp(logdensity(μ, x))
+density(μ::AbstractMeasure, x) = exp(logdensity(μ, x))
+
+Δlogdensity(μ::AbstractMeasure, x) = logdensity(μ,x)

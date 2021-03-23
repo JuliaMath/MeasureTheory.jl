@@ -3,7 +3,9 @@
 
 export Uniform
 
-@measure Uniform() ≃ Lebesgue(𝕀)
+@measure Uniform()
+
+basemeasure(::Uniform) = Lebesgue(𝕀)
 
 # Standard Uniform
 

@@ -1,6 +1,7 @@
 using MeasureTheory
 using Test
 using StatsFuns
+using TransformVariables: transform
 
 function draw2(μ)
     x = rand(μ)
@@ -12,24 +13,38 @@ function draw2(μ)
 end
 
 @testset "Parameterized Measures" begin
-
     @testset "Binomial" begin
-        (n,p) = (10,0.3)
-        logit_p = logit(p)
-        probit_p = norminvcdf(p)
-        (x,y) = draw2(Binomial(n,p))
+        D = Binomial{(:n, :p)}
+        par = merge((n=20,),transform(asparams(D, (n=20,)), randn(1)))
+        d = D(par)
+        (n,p) = (par.n, par.p)
+        logitp = logit(p)
+        probitp = norminvcdf(p)
+        y = rand(d)
 
-        let Δlogπ(n,p,x) = logdensity(Binomial(n,p), x) - binomlogpdf(n,p,x)
-            @test Δlogπ(n,p,x) ≈ Δlogπ(n,p,y)
-        end
-
-        @test logdensity(Binomial(;n,p), x) ≈ logdensity(Binomial(; n, logit_p), x)
-
-        @test logdensity(Binomial(;n,p), x) ≈ logdensity(Binomial(; n, probit_p), x)
+        ℓ = logdensity(Binomial(;n, p), y)
+        @test ℓ ≈ logdensity(Binomial(;n, logitp), y)
+        @test ℓ ≈ logdensity(Binomial(;n, probitp), y)
 
         @test_broken logdensity(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
     end
 
+    @testset "Normal" begin
+        D = Normal{(:μ,:σ)}
+        par = transform(asparams(D), randn(2))
+        d = D(par)
+        μ = par.μ
+        σ = par.σ
+        σ² = σ^2
+        τ = 1/σ²
+        logσ = log(σ)
+        y = rand(d)
+
+        ℓ = logdensity(Normal(;μ,σ), y)
+        @test ℓ ≈ logdensity(Normal(;μ,σ²), y)
+        @test ℓ ≈ logdensity(Normal(;μ,τ), y)
+        @test ℓ ≈ logdensity(Normal(;μ,logσ), y)
+    end
 end
 
 @testset "Kernel" begin
