@@ -1,21 +1,21 @@
 using TransformVariables
 
 export ParameterizedMeasure
-abstract type ParameterizedMeasure{N,T} <: AbstractMeasure end
+abstract type ParameterizedMeasure{N} <: AbstractMeasure end
 
-function Base.getproperty(μ::ParameterizedMeasure{N,T}, prop::Symbol) where {N,T}
+function Base.getproperty(μ::ParameterizedMeasure{N}, prop::Symbol) where {N}
     return getproperty(getfield(μ, :par), prop)
 end
 
-function Base.propertynames(μ::ParameterizedMeasure{N,T}) where {N,T}
+function Base.propertynames(μ::ParameterizedMeasure{N}) where {N}
     return N
 end
 
-function Base.show(io::IO, μ::ParameterizedMeasure{(),Tuple{}}) 
+function Base.show(io::IO, μ::ParameterizedMeasure{()}) 
     print(io, nameof(typeof(μ)), "()")
 end
 
-function Base.show(io::IO, μ::ParameterizedMeasure{N,T}) where {N,T}
+function Base.show(io::IO, μ::ParameterizedMeasure{N}) where {N}
     io = IOContext(io, :compact => true)
     print(io, nameof(typeof(μ)))
     print(io, getfield(μ,:par))

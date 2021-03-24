@@ -20,7 +20,7 @@ correction of the transformation.
 Adapted from
 https://github.com/tpapp/AltDistributions.jl
 """
-struct LKJL{k, N, T} <: ParameterizedMeasure{N,T}
+struct LKJL{k, N, T} <: ParameterizedMeasure{N}
     par :: NamedTuple{N,T}
 end
 
