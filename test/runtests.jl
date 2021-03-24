@@ -33,6 +33,8 @@ end
         D = Normal{(:μ,:σ)}
         par = transform(asparams(D), randn(2))
         d = D(par)
+        @test params(d) == par
+
         μ = par.μ
         σ = par.σ
         σ² = σ^2
