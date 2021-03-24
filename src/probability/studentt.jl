@@ -15,7 +15,7 @@ function logdensity(d::StudentT{(:ν,)}, x)
     return loggamma(halfνp1) - loggamma(ν/2) + ν * log(ν) - halfνp1 * log(x^2 + ν)
 end
 
-Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
+Base.rand(rng::AbstractRNG, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 
 ≪(::StudentT, ::Lebesgue{X}) where X <: Real = true
 representative(::StudentT) = Lebesgue(ℝ)

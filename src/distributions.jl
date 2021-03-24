@@ -23,8 +23,8 @@ function logdensity(μ::DistributionMeasure{F,S,X}, x::X) where {F, S, X}
     return Dists.logpdf(μ.dist, x)
 end
 
-function Base.rand(μ::DistributionMeasure{F,S,X}) where {F, S, X}
-    return rand(μ.dist)
+function Base.rand(rng::AbstractRNG, μ::DistributionMeasure{F,S,X}) where {F, S, X}
+    return rand(rng, μ.dist)
 end
 
 export Normal

@@ -10,7 +10,7 @@ basemeasure(::Normal) = (1/sqrt2π) * Lebesgue(ℝ)
 
 logdensity(d::Normal{()} , x) = - x^2 / 2 
 
-Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
+Base.rand(rng::Random.AbstractRNG, μ::Normal{()}) = randn(rng)
 
 @μσ_methods Normal()
 

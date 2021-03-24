@@ -24,7 +24,7 @@ end
 function sampletype(μ::SpikeMixture)
     sampletype(μ.m)
 end
-function Base.rand(rng::AbstractRNG, T::Type, μ::SpikeMixture)
+function Base.rand(rng::AbstractRNG, μ::SpikeMixture)
     μ.s != 1 && throw(ArgumentError("Not a probability measure"))
-    return T((rand(rng) < μ.w)*rand(rng, μ.m))
+    return (rand(rng) < μ.w)*rand(rng, μ.m)
 end

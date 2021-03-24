@@ -83,3 +83,7 @@ function asparams(M::Type{<: ParameterizedMeasure{N}}, constraints::NamedTuple) 
     end
     return as(paramsort(result))
 end
+
+export params
+
+params(μ::ParameterizedMeasure) = getfield(μ, :par)

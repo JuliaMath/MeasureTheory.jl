@@ -33,6 +33,8 @@ end
         D = Normal{(:μ,:σ)}
         par = transform(asparams(D), randn(2))
         d = D(par)
+        @test params(d) == par
+
         μ = par.μ
         σ = par.σ
         σ² = σ^2
@@ -61,4 +63,10 @@ end
     @test (bm.s*bm.w)*bm.m == 1.0*basemeasure(Normal())
     @test density(m, 1.0)*(bm.s*bm.w) == w*density(Normal(),1.0)
     @test density(m, 0)*(bm.s*(1-bm.w)) ≈ (1-w)
+end
+
+@testset "Dirac" begin
+    @test rand(Dirac(0.2)) == 0.2
+    @test logdensity(Dirac(0.3), 0.3) == 0.0
+    @test logdensity(Dirac(0.3), 0.4) == -Inf
 end

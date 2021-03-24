@@ -48,6 +48,8 @@ function _measure(expr)
             end
 
             (::Type{$μ{N}})(nt::NamedTuple{N,T}) where {N,T} = $μ{N,T}(nt) 
+
+            (::Type{$μ})() where {N,T} = $μ(NamedTuple()) 
         end   
         
         if !isempty(p)
@@ -113,8 +115,8 @@ function _μσ_methods(ex)
             d_args = (:(d.$arg) for arg in args)
             quote
 
-                function Base.rand(rng::AbstractRNG, T::Type, d::$dist{($(argnames...), :μ, :σ)})
-                    d.σ * rand(rng, T, $dist($(d_args...))) + d.μ
+                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ, :σ)})
+                    d.σ * rand(rng, $dist($(d_args...))) + d.μ
                 end
 
                 function logdensity(d::$dist{($(argnames...), :μ, :σ)}, x)
@@ -122,8 +124,8 @@ function _μσ_methods(ex)
                     return logdensity($dist($(d_args...)), z) - log(d.σ)
                 end
 
-                function Base.rand(rng::AbstractRNG, T::Type, d::$dist{($(argnames...), :σ)})
-                    d.σ * rand(rng, T, $dist($(d_args...)))
+                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :σ)})
+                    d.σ * rand(rng, $dist($(d_args...)))
                 end
 
                 function logdensity(d::$dist{($(argnames...), :σ)}, x)
@@ -131,7 +133,7 @@ function _μσ_methods(ex)
                     return logdensity($dist($(d_args...)), z) - log(d.σ) 
                 end
 
-                function Base.rand(rng::AbstractRNG, T::Type, d::$dist{($(argnames...), :μ)})
+                function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ)})
                     rand(rng, T, $dist($(d_args...))) + d.μ
                 end
 
@@ -172,8 +174,8 @@ function _half(ex)
                     return logdensity(unhalf(μ), x)
                 end
 
-                function Base.rand(rng::AbstractRNG, T::Type, μ::$halfdist)
-                    return abs(rand(rng, T, unhalf(μ)))
+                function Base.rand(rng::AbstractRNG, μ::$halfdist)
+                    return abs(rand(rng, unhalf(μ)))
                 end
 
                 (::$halfdist ≪ ::Lebesgue{ℝ₊}) = true
