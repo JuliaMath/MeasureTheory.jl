@@ -28,7 +28,7 @@ mapcall(t, x) = map(func -> func(x), t)
 
 export kernelize
 
-function kernelize(μ::M) where {N, T, M <: ParameterizedMeasure{N}}
+function kernelize(μ::M) where {N, M <: ParameterizedMeasure{N}}
     C = M.name.wrapper
     (kernel(NamedTuple{N}, C), values(getfield(μ, :par)))
 end
