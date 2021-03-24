@@ -12,7 +12,7 @@ function logdensity(d::Cauchy{()} , x)
     return -log(1 + x^2)
 end
 
-Base.rand(rng, T::Type, μ::Cauchy{()}) = rand(rng, Dists.Cauchy())
+Base.rand(rng, μ::Cauchy{()}) = rand(rng, Dists.Cauchy())
 
 ≪(::Cauchy, ::Lebesgue{X}) where X <: Real = true
 representative(::Cauchy) = Lebesgue(ℝ)

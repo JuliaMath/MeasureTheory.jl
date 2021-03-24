@@ -14,7 +14,7 @@ end
 
 import Base
 
-function Base.rand(rng::AbstractRNG, T::Type, d::Gumbel{()})
+function Base.rand(rng::AbstractRNG, d::Gumbel{()})
     u = rand(rng)
     log(-log(u))
 end

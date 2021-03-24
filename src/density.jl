@@ -54,8 +54,8 @@ function Base.show(io::IO, μ::DensityMeasure{F,B,Val{L}}) where {F,B,L}
     print(io, "; log = ", L, ")")
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::DensityMeasure)
-    x = rand(d.base, T)
+function Base.rand(rng::AbstractRNG, d::DensityMeasure)
+    x = rand(d.base)
     WeightedMeasure(d.f(x), Dirac(x))
 end
 

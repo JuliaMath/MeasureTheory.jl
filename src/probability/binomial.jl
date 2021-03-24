@@ -24,7 +24,7 @@ function logdensity(d::Binomial{(:n, :p)}, y)
     return -log1p(n) - logbeta(n - y + 1, y + 1) + y * log(p) + (n - y) * log1p(-p)
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n,:p)})
+function Base.rand(rng::AbstractRNG, d::Binomial{(:n,:p)})
     rand(rng, Dists.Binomial(d.n, d.p))
 end
 
@@ -37,7 +37,7 @@ function logdensity(d::Binomial{(:n, :logitp)}, y)
     return  -log1p(n) - logbeta(n - y + 1, y + 1) + y * x - n * log1pexp(x)
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n,:logitp)})
+function Base.rand(rng::AbstractRNG, d::Binomial{(:n,:logitp)})
     rand(rng, Dists.Binomial(d.n, logistic(d.logitp)))
 end
 
@@ -50,7 +50,7 @@ function logdensity(d::Binomial{(:n, :probitp)}, y)
     return  -log1p(n) - logbeta(n - y + 1, y + 1)  + y * log(Φ(z)) + (n-y) * log(Φ(-z))
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n, :probitp)})
+function Base.rand(rng::AbstractRNG, d::Binomial{(:n, :probitp)})
     rand(rng, Dists.Binomial(d.n, Φ(d.probitp)))
 end
 

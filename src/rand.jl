@@ -1,12 +1,9 @@
-Base.rand(μ::AbstractMeasure) = rand(Random.GLOBAL_RNG, Float64, μ)
+Base.rand(μ::AbstractMeasure) = rand(Random.GLOBAL_RNG, μ)
 
-Base.rand(T::Type, d::AbstractMeasure) = rand(GLOBAL_RNG, T, d)
+Base.rand(rng::AbstractRNG, d::AbstractMeasure) = rand(rng, d)
 
-Base.rand(rng::AbstractRNG, d::AbstractMeasure) = rand(rng, sampletype(d), d)
-
-function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure)
-    s = schema(T)
-    tuple((rand(rng, sn, dn) for (sn,dn) in zip(s,d.data))...)
+function Base.rand(rng::AbstractRNG, d::ProductMeasure)
+    tuple((rand(rng, dn) for dn in d.data)...)
 end
 
 
