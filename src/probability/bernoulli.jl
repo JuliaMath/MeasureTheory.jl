@@ -30,9 +30,9 @@ end
 
 sampletype(::Bernoulli) = Bool
 
-Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:p,)}) = T(rand(rng) < d.p)
+Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:p,)}) = rand(rng, T) < d.p
 
-Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logitp,)}) = T(rand(rng) < logistic(d.logitp))
+Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logitp,)}) = rand(rng, T) < logistic(d.logitp)
 
 ≪(::Bernoulli, ::IntegerRange{lo,hi}) where {lo, hi} = lo ≤ 0 && 1 ≤ hi
 

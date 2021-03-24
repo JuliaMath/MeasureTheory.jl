@@ -12,7 +12,7 @@ function logdensity(d::Laplace{()} , x)
     return -abs(x)
 end
 
-Base.rand(rng::AbstractRNG, μ::Laplace{()}) = rand(rng, Dists.Laplace())
+Base.rand(rng::AbstractRNG, T::Type, μ::Laplace{()}) = rand(rng, Dists.Laplace())
 
 ≪(::Laplace, ::Lebesgue{X}) where X <: Real = true
 representative(::Laplace) = Lebesgue(ℝ)

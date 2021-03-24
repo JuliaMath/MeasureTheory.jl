@@ -12,8 +12,6 @@ probit(p) = sqrt2 * erfinv(2p - 1)
 
 basemeasure(μ::Binomial) = CountingMeasure(ℤ[0:(μ.n)])
 
-Binomial(n,p) = Binomial(; n, p)
-
 (d::Binomial ≪ ::CountingMeasure{IntegerRange{a,b}}) where {a,b} = a ≤ 0 && b ≥ d.n
 
 (::CountingMeasure{IntegerRange{a,b}} ≪ ::Binomial) where {a,b} = a ≥ 0 && b ≤ d.n

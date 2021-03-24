@@ -48,6 +48,8 @@ function _measure(expr)
             end
 
             (::Type{$μ{N}})(nt::NamedTuple{N,T}) where {N,T} = $μ{N,T}(nt) 
+
+            (::Type{$μ})() where {N,T} = $μ(NamedTuple()) 
         end   
         
         if !isempty(p)
