@@ -43,7 +43,7 @@ end
 function _measure(expr)
     @capture $μ($(p...)) expr begin
         q = quote
-            struct $μ{N,T} <: ParameterizedMeasure{N,T}
+            struct $μ{N,T} <: ParameterizedMeasure{N}
                 par :: NamedTuple{N,T}
             end
 
@@ -156,7 +156,7 @@ function _half(ex)
             quote
                 export $halfdist
                 
-                struct $halfdist{N,T} <: ParameterizedMeasure{N,T}
+                struct $halfdist{N,T} <: ParameterizedMeasure{N}
                     par :: NamedTuple{N,T}
                 end
                 

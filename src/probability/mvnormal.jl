@@ -9,7 +9,7 @@ import Base
 
 
 
-struct MvNormal{N, T, I, J} <: ParameterizedMeasure{N, T}
+struct MvNormal{N, T, I, J} <: ParameterizedMeasure{N}
     par::NamedTuple{N, T}
 end
 
