@@ -2,6 +2,7 @@ using MeasureTheory
 using Test
 using StatsFuns
 using TransformVariables: transform
+using Base.Iterators: take
 
 function draw2(μ)
     x = rand(μ)
@@ -69,4 +70,16 @@ end
     @test rand(Dirac(0.2)) == 0.2
     @test logdensity(Dirac(0.3), 0.3) == 0.0
     @test logdensity(Dirac(0.3), 0.4) == -Inf
+end
+
+@testset "DynamicFor" begin
+    mc = Chain(Normal(μ=0.0)) do x Normal(μ=x) end
+    r = rand(mc)
+   
+    # Check that `r` is now deterministic
+    @test_broken logdensity(mc, take(r, 100)) == logdensity(mc, take(r, 100))
+    
+    d2 = For(r) do x Normal(μ=x) end  
+    r2 = rand(d2)
+    @test_broken logdensity(d2, take(r2, 100)) == logdensity(d2, take(r2, 100))
 end
