@@ -134,7 +134,7 @@ function _μσ_methods(ex)
                 end
 
                 function Base.rand(rng::AbstractRNG, d::$dist{($(argnames...), :μ)})
-                    rand(rng, T, $dist($(d_args...))) + d.μ
+                    rand(rng, $dist($(d_args...))) + d.μ
                 end
 
                 function logdensity(d::$dist{($(argnames...), :μ)}, x)
