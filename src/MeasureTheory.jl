@@ -14,6 +14,8 @@ export sampletype
 
 export AbstractMeasure
 using InfiniteArrays
+using ConcreteStructs
+using DynamicIterators
 
 const ∞ = InfiniteArrays.∞
 
