@@ -48,7 +48,6 @@ struct Lenses{T}
     ls::T
 end
 
-export call
 call(f,args...; kwargs...) = f(args...; kwargs...)
 
 (ℓ::Lenses)(nt::NamedTuple) = Base.Fix2(call, nt).(ℓ.ls)
