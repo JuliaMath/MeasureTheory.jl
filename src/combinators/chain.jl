@@ -1,7 +1,5 @@
 using ConcreteStructs
 using DynamicIterators
-using DynamicIterators: dub
-import Base
 
 export Chain
 
