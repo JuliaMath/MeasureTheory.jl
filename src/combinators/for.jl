@@ -91,8 +91,10 @@ end
     iter
 end
 
-iterate(iter::DynamicIterator) = dyniterate(iter, nothing)
-iterate(iter::DynamicIterator, state) = dyniterate(iter, state)
+function dyniterate(df::DynamicFor, st, args...)
+    (val, state) = dyniterate(df.iter, st, args...)
+    return (f(val), state)
+end
 
 For(f, it::DynamicIterator) = DynamicFor(f, it)
 
