@@ -80,6 +80,9 @@ end
     @test_broken logdensity(mc, take(r, 100)) == logdensity(mc, take(r, 100))
     
     d2 = For(r) do x Normal(μ=x) end  
-    r2 = rand(d2)
-    @test_broken logdensity(d2, take(r2, 100)) == logdensity(d2, take(r2, 100))
+
+    @test_broken let r2 = rand(d2)
+        logdensity(d2, take(r2, 100)) == logdensity(d2, take(r2, 100))
+    end
+    
 end
