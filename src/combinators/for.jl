@@ -79,30 +79,3 @@ end
 function MeasureTheory.logdensity(d::ForGenerator, x)
     sum((logdensity(dj, xj) for (dj, xj) in zip(d.data, x)))
 end
-
-
-###############################################################################
-# DynamicFor
-
-# A `DynamicFor` is produced when `For` is called on a `DynamicIterator`.
-
-@concrete terse struct DynamicFor <: AbstractMeasure
-    f
-    iter
-end
-
-function dyniterate(df::DynamicFor, st, args...)
-    (val, state) = dyniterate(df.iter, st, args...)
-    return (f(val), state)
-end
-
-For(f, it::DynamicIterator) = DynamicFor(f, it)
-
-For(f, it::DynamicFor) = DynamicFor(f, it)
-
-function dyniterate(fr::DynamicFor, state)
-      ϕ = dyniterate(fr.iter, state)
-      ϕ === nothing && return nothing
-      u, state = ϕ
-      fr.f(u), state
-end

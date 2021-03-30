@@ -21,32 +21,79 @@ end
 DynamicIterators.evolve(mc::Chain, μ) =  μ ⋅ mc.κ
 DynamicIterators.evolve(mc::Chain, ::Nothing) =  mc.μ
 
+@concrete terse struct SampleInit
+    rng
+    seed
+end
+
+function dyniterate(mc::Chain, (u,)::Start{<:SampleInit})
+    !isnothing(u.seed) && Random.seed!(u.rng, u.seed)
+    x = rand(u.rng, mc.μ)
+    1=>x, Sample(1=>x, u.rng)
+end
+
+function dyniterate(mc::Chain, (i=>x,rng)::Sample)
+    xnew = rand(rng, mc.κ(x))
+    xnew, Sample(i+1 => xnew, rng)
+end
+
 Base.IteratorSize(::Chain) = Base.IsInfinite()
 
+function Base.rand(rng::AbstractRNG, mc::Chain)
+    rng = copy(rng)
+    seed = rand(rng, Int)
+    return dyniterate(mc, Start(SampleInit(rng, seed)))
+end
+
+const DynamicSampler{T,S,R} = Tuple{T, DynamicIterators.Sample{S,R}}
+
+
 ###############################################################################
-# RandChain
+# DynamicFor
 
-Base.rand(rng::AbstractRNG, mc::Chain) = RandChain(rng, mc)
+# A `DynamicFor` is produced when `For` is called on a `DynamicIterator`.
 
-@concrete terse struct RandChain <: Evolution
-    rng
-    mc
+@concrete terse struct DynamicFor{F,T,S,R} <: AbstractMeasure
+    f :: F
+    sampler::DynamicSampler{T,S,R}
 end
 
-Base.IteratorSize(::RandChain) = Base.IsInfinite()
+For(f, s::DynamicSampler) = DynamicFor(f,s)
 
-function DynamicIterators.evolve(rc::RandChain, x) 
-    rng = rc.rng
-    rand(rng, rc.mc.κ(x))
+function dyniterate(df::DynamicFor, st, args...)
+    (val, state) = dyniterate(df.iter, st, args...)
+    return (f(val), state)
 end
 
-function DynamicIterators.evolve(rc::RandChain, ::Nothing)
-    rng = rc.rng
-    μ0 = rc.mc.μ
-    rand(rng, μ0)
+For(f, it::DynamicIterator) = DynamicFor(f, it)
+
+For(f, it::DynamicFor) = DynamicFor(f, it)
+
+function dyniterate(fr::DynamicFor, state)
+      ϕ = dyniterate(fr.iter, state)
+      ϕ === nothing && return nothing
+      u, state = ϕ
+      fr.f(u), state
 end
 
 
+# @concrete terse struct RandChain <: Evolution
+#     rng
+#     mc
+# end
+
+# Base.IteratorSize(::RandChain) = Base.IsInfinite()
+
+# function DynamicIterators.evolve(rc::RandChain, x) 
+#     rng = rc.rng
+#     rand(rng, rc.mc.κ(x))
+# end
+
+# function DynamicIterators.evolve(rc::RandChain, ::Nothing)
+#     rng = rc.rng
+#     μ0 = rc.mc.μ
+#     rand(rng, μ0)
+# end
 
 
 # using Soss
