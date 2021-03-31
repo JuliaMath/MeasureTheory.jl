@@ -39,26 +39,45 @@ end
 
 Base.IteratorSize(::Chain) = Base.IsInfinite()
 
-function Base.rand(rng::AbstractRNG, mc::Chain)
-    rng = copy(rng)
-    seed = rand(rng, UInt)
-    return dyniterate(mc, Start(SampleInit(rng, seed)))
+# After calling `r = rand(mc)`, we should be able to do things like
+# `collect(take(r,10))`. This means we need all information in `r`, and `r`
+# needs to be a new type so we can dispatch.
+@concrete terse struct RandChain <: Evolution
+    rng
+    seed
+    mc
 end
 
-const DynamicSampler{T,S,R} = Tuple{T, DynamicIterators.Sample{S,R}}
+Base.IteratorSize(::RandChain) = Base.IsInfinite()
 
+function DynamicIterators.evolve(r::RandChain, ::Nothing)
+    Random.seed!(r.rng, r.seed)
+    return rand(r.rng, r.mc.μ)
+end
+
+function DynamicIterators.evolve(r::RandChain, x)
+    μ = r.mc.κ(x)
+    return rand(r.rng, μ)
+end
+
+function Base.rand(rng::AbstractRNG, mc::Chain)
+    seed = rand(rng, UInt)
+    return RandChain(copy(rng), seed, mc)
+end
 
 ###############################################################################
 # DynamicFor
 
 # A `DynamicFor` is produced when `For` is called on a `DynamicIterator`.
 
-@concrete terse struct DynamicFor{F,T,S,R} <: AbstractMeasure
-    f :: F
-    sampler::DynamicSampler{T,S,R}
+@concrete terse struct DynamicFor <: AbstractMeasure
+    κ
+    sampler
 end
 
-For(f, s::DynamicSampler) = DynamicFor(f,s)
+For(f, r::RandChain) = DynamicFor(f,r)
+
+
 
 function dyniterate(df::DynamicFor, st, args...)
     (val, state) = dyniterate(df.iter, st, args...)
