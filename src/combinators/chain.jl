@@ -41,7 +41,7 @@ Base.IteratorSize(::Chain) = Base.IsInfinite()
 
 function Base.rand(rng::AbstractRNG, mc::Chain)
     rng = copy(rng)
-    seed = rand(rng, Int)
+    seed = rand(rng, UInt)
     return dyniterate(mc, Start(SampleInit(rng, seed)))
 end
 
