@@ -29,6 +29,22 @@ end
         @test_broken logdensity(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
     end
 
+    @testset "NegativeBinomial" begin
+        D = NegativeBinomial{(:r, :p)}
+        par = transform(asparams(D), randn(2))
+        d = D(par)
+        (r,p) = (par.r, par.p)
+        logitp = logit(p)
+        λ = p * r / (1 - p)
+        y = rand(d)
+
+        ℓ = logdensity(NegativeBinomial(;r, p), y)
+        @test ℓ ≈ logdensity(NegativeBinomial(;r, logitp), y)
+        @test ℓ ≈ logdensity(NegativeBinomial(;r, λ), y)
+
+        @test_broken logdensity(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
+    end
+
     @testset "Normal" begin
         D = Normal{(:μ,:σ)}
         par = transform(asparams(D), randn(2))
