@@ -49,6 +49,14 @@ function distproxy(d::NegativeBinomial{(:r,:λ)})
     return Dists.NegativeBinomial(d.r, p)
 end
 
+# https://en.wikipedia.org/wiki/Negative_binomial_distribution#Gamma%E2%80%93Poisson_mixture
+function rand(rng::AbstractRNG, d::NegativeBinomial{(:r,:λ)})
+    r = d.r
+    λ = d.λ
+    μ = rand(rng, Dists.Gamma(r, λ/r))
+    return rand(rng, Dists.Poisson(μ))
+end
+
 asparams(::Type{<:NegativeBinomial}, ::Val{:p}) = as𝕀
 asparams(::Type{<:NegativeBinomial}, ::Val{:logitp}) = asℝ
 asparams(::Type{<:NegativeBinomial}, ::Val{:r}) = asℝ₊
