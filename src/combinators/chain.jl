@@ -81,7 +81,7 @@ end
 
 function dyniterate(df::DynamicFor, st, args...)
     (val, state) = dyniterate(df.iter, st, args...)
-    return (f(val), state)
+    return (df.κ(val), state)
 end
 
 For(f, it::DynamicIterator) = DynamicFor(f, it)
