@@ -117,8 +117,7 @@ end
 
 @testset "DynamicFor" begin
     mc = Chain(Normal(μ=0.0)) do x Normal(μ=x) end
-    @test_broken rand(mc)
-    r = rand(Random.GLOBAL_RNG, mc)
+    r = rand(mc)
    
     # Check that `r` is now deterministic
     @test logdensity(mc, take(r, 100)) == logdensity(mc, take(r, 100))
