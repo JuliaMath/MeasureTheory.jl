@@ -2,6 +2,7 @@ module MeasureTheory
 
 using Random
 
+using Tricks
 using MLStyle
 using NestedTuples
 using TransformVariables

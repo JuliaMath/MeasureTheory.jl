@@ -6,11 +6,14 @@ export Normal
 
 @measure Normal(μ,σ)
 
-basemeasure(::Normal) = (1/sqrt2π) * Lebesgue(ℝ)
+# To pass `@code_warntype`
+const _Normal_basemeasure = (1/sqrt2π) * Lebesgue(ℝ)
+
+basemeasure(::Normal)=  _Normal_basemeasure
 
 logdensity(d::Normal{()} , x) = - x^2 / 2 
 
-Base.rand(rng::Random.AbstractRNG, μ::Normal{()}) = randn(rng)
+Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 
 @μσ_methods Normal()
 

@@ -37,12 +37,8 @@ function logdensity(sm::WeightedMeasure{R,M}, x::X) where {X, R, M <: AbstractMe
 end
 
 function Base.:*(k::T, m::AbstractMeasure) where {T <: Number}
-    if hasmethod(iszero, (T,)) && iszero(k)
-        return TrivialMeasure
-    else
-        logk = log(k)
-        return WeightedMeasure{typeof(logk), typeof(m)}(logk,m)
-    end
+    logk = log(k)
+    return WeightedMeasure{typeof(logk), typeof(m)}(logk,m)
 end
 
 Base.:*(m::AbstractMeasure, k::Real) = k * m
