@@ -79,3 +79,5 @@ end
 function MeasureTheory.logdensity(d::ForGenerator, x)
     sum((logdensity(dj, xj) for (dj, xj) in zip(d.data, x)))
 end
+
+testvalue(μ::ProductMeasure) = mappedarray(testvalue, μ.data)
