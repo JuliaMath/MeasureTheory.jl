@@ -1,5 +1,7 @@
 Base.rand(μ::AbstractMeasure) = rand(Random.GLOBAL_RNG, μ)
 
+Base.rand(rng::AbstractRNG, d::ParameterizedMeasure) = rand(rng, distproxy(d))
+
 function Base.rand(rng::AbstractRNG, d::ProductMeasure)
     tuple((rand(rng, dn) for dn in d.data)...)
 end
