@@ -74,7 +74,10 @@ end
 
 For(f, r::Realized) = DynamicFor(f,r)
 
-
+function Base.rand(rng::AbstractRNG, dfor::DynamicFor)
+    seed = rand(rng, UInt)
+    return Realized(seed, copy(rng), dfor)
+end
 
 function dyniterate(df::DynamicFor, st, args...)
     (val, state) = dyniterate(df.iter, st, args...)
