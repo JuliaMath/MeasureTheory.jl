@@ -1,5 +1,8 @@
 using ConcreteStructs
 using DynamicIterators
+using DynamicIterators: dub
+using Base.Iterators: SizeUnknown, IsInfinite
+import DynamicIterators: dyniterate, evolve
 
 export Chain
 
@@ -21,48 +24,45 @@ end
 DynamicIterators.evolve(mc::Chain, μ) =  μ ⋅ mc.κ
 DynamicIterators.evolve(mc::Chain, ::Nothing) =  mc.μ
 
-@concrete terse struct SampleInit
-    rng
-    seed
+DynamicIterators.evolve(mc::Chain, μ) =  μ ⋅ mc.κ
+DynamicIterators.evolve(mc::Chain) =  mc.μ
+
+dyniterate(E::Chain, value) = dub(evolve(E, value))
+dyniterate(E::Chain, ::Nothing) = dub(evolve(E))
+Base.iterate(E::Chain) = dyniterate(E, nothing)
+Base.iterate(E::Chain, value) = dyniterate(E, value)
+
+function DynamicIterators.dyniterate(r::Chain, (u,rng)::Sample)
+    μ = r.κ(u) 
+    u = rand(rng, μ)
+    return u, Sample(u, rng)
+end
+Base.IteratorSize(::Chain) = IsInfinite()
+
+
+
+struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
+    seed::R
+    rng::S
+    iter::T
+end
+Base.IteratorSize(::Realized) = IsInfinite()
+Base.iterate(E::Realized) = dyniterate(E, nothing)
+Base.iterate(E::Realized, value) = dyniterate(E, value)
+
+function dyniterate(rv::Realized, ::Nothing)
+    !isnothing(rv.seed) && Random.seed!(rv.rng, rv.seed)
+    μ = evolve(rv.iter)
+    x = rand(rv.rng, μ)
+    x, Sample(x, rv.rng)
+end
+function dyniterate(rv::Realized, u::Sample)
+    dyniterate(rv.iter, u)
 end
 
-function dyniterate(mc::Chain, (u,)::Start{<:SampleInit})
-    !isnothing(u.seed) && Random.seed!(u.rng, u.seed)
-    x = rand(u.rng, mc.μ)
-    1=>x, Sample(1=>x, u.rng)
-end
-
-function dyniterate(mc::Chain, (i=>x,rng)::Sample)
-    xnew = rand(rng, mc.κ(x))
-    xnew, Sample(i+1 => xnew, rng)
-end
-
-Base.IteratorSize(::Chain) = Base.IsInfinite()
-
-# After calling `r = rand(mc)`, we should be able to do things like
-# `collect(take(r,10))`. This means we need all information in `r`, and `r`
-# needs to be a new type so we can dispatch.
-@concrete terse struct RandChain <: Evolution
-    rng
-    seed
-    mc
-end
-
-Base.IteratorSize(::RandChain) = Base.IsInfinite()
-
-function DynamicIterators.evolve(r::RandChain, ::Nothing)
-    Random.seed!(r.rng, r.seed)
-    return rand(r.rng, r.mc.μ)
-end
-
-function DynamicIterators.evolve(r::RandChain, x)
-    μ = r.mc.κ(x)
-    return rand(r.rng, μ)
-end
-
-function Base.rand(rng::AbstractRNG, mc::Chain)
+function Base.rand(rng::AbstractRNG, chain::Chain)
     seed = rand(rng, UInt)
-    return RandChain(copy(rng), seed, mc)
+    return Realized(seed, copy(rng), chain)
 end
 
 ###############################################################################
@@ -75,7 +75,7 @@ end
     sampler
 end
 
-For(f, r::RandChain) = DynamicFor(f,r)
+For(f, r::Realized) = DynamicFor(f,r)
 
 
 
@@ -94,25 +94,6 @@ function dyniterate(fr::DynamicFor, state)
       u, state = ϕ
       fr.f(u), state
 end
-
-
-# @concrete terse struct RandChain <: Evolution
-#     rng
-#     mc
-# end
-
-# Base.IteratorSize(::RandChain) = Base.IsInfinite()
-
-# function DynamicIterators.evolve(rc::RandChain, x) 
-#     rng = rc.rng
-#     rand(rng, rc.mc.κ(x))
-# end
-
-# function DynamicIterators.evolve(rc::RandChain, ::Nothing)
-#     rng = rc.rng
-#     μ0 = rc.mc.μ
-#     rand(rng, μ0)
-# end
 
 
 # using Soss
