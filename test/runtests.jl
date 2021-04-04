@@ -1,11 +1,11 @@
 using MeasureTheory
 using Test
 using StatsFuns
-using TransformVariables: transform
 using Base.Iterators: take
 using Random
 using LinearAlgebra
 using DynamicIterators: trace, TimeLift
+using TransformVariables: transform, as𝕀, inverse
 
 function draw2(μ)
     x = rand(μ)
@@ -151,5 +151,21 @@ end
     tr2 = trace(TimeLift(rand(Random.GLOBAL_RNG, chain)), nothing, u -> u[1] > 15)
     collect(Iterators.take(chain, 10))
     collect(Iterators.take(rand(Random.GLOBAL_RNG, chain), 10))
-    
+end
+
+@testset "Transforms" begin
+    t = as𝕀
+    @testset "Pushforward" begin
+        μ = Normal()
+        ν = Pushforward(t, μ)
+        x = rand(μ)
+        @test logdensity(μ, x) ≈ logdensity(Pushforward(inverse(t), ν), x)
+    end
+
+    @testset "Pullback" begin
+        ν = Uniform()
+        μ = Pullback(t,ν)
+        y = rand(ν)
+        @test logdensity(ν, y) ≈ logdensity(Pullback(inverse(t), μ), y)
+    end
 end
