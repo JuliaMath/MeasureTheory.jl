@@ -22,9 +22,6 @@ function logdensity(mc::Chain, x)
 end
 
 DynamicIterators.evolve(mc::Chain, μ) =  μ ⋅ mc.κ
-DynamicIterators.evolve(mc::Chain, ::Nothing) =  mc.μ
-
-DynamicIterators.evolve(mc::Chain, μ) =  μ ⋅ mc.κ
 DynamicIterators.evolve(mc::Chain) =  mc.μ
 
 dyniterate(E::Chain, value) = dub(evolve(E, value))
