@@ -71,8 +71,8 @@ For(f, dims::Base.Generator) = ProductMeasure(Base.Generator(f ∘ dims.f, dims.
 
 sampletype(::ForGenerator) = Base.Generator
 
-function Base.rand(rng::AbstractRNG, d::ForGenerator)
-    r(x) = rand(rng, x)
+function Base.rand(rng::AbstractRNG, T::Type, d::ForGenerator)
+    r(x) = rand(rng, T, x)
     Base.Generator(r ∘ d.data.f, d.data.iter)
 end
 
