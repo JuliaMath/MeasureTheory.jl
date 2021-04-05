@@ -1,6 +1,6 @@
 Base.rand(d::ParameterizedMeasure) = rand(Random.GLOBAL_RNG, Float64, d)
 
-Base.rand(T::Type, μ::AbstractMeasure) = rand(Random.GLOBAL_RNG, μ)
+Base.rand(T::Type, μ::AbstractMeasure) = rand(Random.GLOBAL_RNG, T, μ)
 
 Base.rand(rng::AbstractRNG, d::ParameterizedMeasure) = rand(rng, Float64, d)
 
