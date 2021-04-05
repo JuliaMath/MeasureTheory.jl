@@ -57,7 +57,7 @@ function dyniterate(rv::Realized, u::Sample)
     dyniterate(rv.iter, u)
 end
 
-function Base.rand(rng::AbstractRNG, chain::Chain)
+function Base.rand(rng::AbstractRNG, T::Type, chain::Chain)
     seed = rand(rng, UInt)
     return Realized(seed, copy(rng), chain)
 end
