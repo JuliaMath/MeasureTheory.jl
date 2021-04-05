@@ -19,8 +19,8 @@ representative(::Exponential) = Lebesgue(ℝ₊)
 
 ##########################
 
-function Base.rand(rng::AbstractRNG, d::Exponential{(:λ,)})
-    randexp(rng) / d.λ
+function Base.rand(rng::AbstractRNG, , T::Type, d::Exponential{(:λ,)})
+    randexp(rng, T) / d.λ
 end
 
 function logdensity(d::Exponential{(:λ,)}, x)

@@ -1,7 +1,7 @@
 using MeasureTheory
 using Test
 using StatsFuns
-using TransformVariables: transform
+using TransformVariables: transform, as𝕀, inverse
 
 function draw2(μ)
     x = rand(μ)
@@ -85,4 +85,21 @@ end
     @test rand(Dirac(0.2)) == 0.2
     @test logdensity(Dirac(0.3), 0.3) == 0.0
     @test logdensity(Dirac(0.3), 0.4) == -Inf
+end
+
+@testset "Transforms" begin
+    t = as𝕀
+    @testset "Pushforward" begin
+        μ = Normal()
+        ν = Pushforward(t, μ)
+        x = rand(μ)
+        @test logdensity(μ, x) ≈ logdensity(Pushforward(inverse(t), ν), x)
+    end
+
+    @testset "Pullback" begin
+        ν = Uniform()
+        μ = Pullback(t,ν)
+        y = rand(ν)
+        @test logdensity(ν, y) ≈ logdensity(Pullback(inverse(t), μ), y)
+    end
 end

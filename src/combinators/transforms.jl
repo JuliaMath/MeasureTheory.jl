@@ -44,9 +44,9 @@ function logdensity(pf::Pushforward{F}, y) where {F <: AbstractTransform}
     end
 end
 
-Pullback(f::InverseTransform, ν, logjac=true) = Pushforward(f.transform, ν, logjac)
+Pullback(f::InverseTransform, ν, logjac::Bool=true) = Pushforward(f.transform, ν, logjac)
 
-Pushforward(f::InverseTransform, ν, logjac=true) = Pullback(f.transform, ν, logjac)
+Pushforward(f::InverseTransform, ν, logjac::Bool=true) = Pullback(f.transform, ν, logjac)
 
 Base.rand(rng::AbstractRNG, ν::Pushforward) = ν.f(rand(rng, ν.μ))
 
