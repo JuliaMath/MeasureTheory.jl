@@ -12,14 +12,14 @@ function logdensity(d::Exponential{()} , x)
     return -x
 end
 
-Base.rand(rng::AbstractRNG, μ::Exponential{()}) = randexp(rng)
+Base.rand(rng::AbstractRNG, T::Type, μ::Exponential{()}) = randexp(rng,T)
 
 representative(::Exponential) = Lebesgue(ℝ₊)
 
 
 ##########################
 
-function Base.rand(rng::AbstractRNG, , T::Type, d::Exponential{(:λ,)})
+function Base.rand(rng::AbstractRNG, T::Type, d::Exponential{(:λ,)})
     randexp(rng, T) / d.λ
 end
 
