@@ -1,6 +1,6 @@
 export ⊙
 
-struct ElementwiseProductMeasure{T} <: AbstractMeasure
+@concrete terse struct ElementwiseProductMeasure{T} <: AbstractMeasure
     data :: T
 
     ElementwiseProductMeasure(μs...) = new{typeof(μs)}(μs)
@@ -44,6 +44,11 @@ end
 
 function ⊙(μ::M, ν::N) where {M <: AbstractMeasure, N <: AbstractMeasure}
     data = (μ, ν)
+    ElementwiseProductMeasure(data...)
+end
+
+function ⊙(μ::AbstractMeasure, ℓ::Likelihood)
+    data = (μ, ℓ)
     ElementwiseProductMeasure(data...)
 end
 

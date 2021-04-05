@@ -18,13 +18,16 @@ function basemeasure(μ::SpikeMixture)
     ki = (1/μ.w - 1)/density(μ.m, 0)
     SpikeMixture(basemeasure(μ.m), 1/(1+ki), μ.s*(1+ki))
 end
+
 function MeasureTheory.logdensity(μ::SpikeMixture, x)
     return log(μ.w) + logdensity(μ.m, x)
 end
+
 function sampletype(μ::SpikeMixture)
     sampletype(μ.m)
 end
-function Base.rand(rng::AbstractRNG, μ::SpikeMixture)
+
+function Base.rand(rng::AbstractRNG, T::Type, μ::SpikeMixture)
     μ.s != 1 && throw(ArgumentError("Not a probability measure"))
-    return (rand(rng) < μ.w)*rand(rng, μ.m)
+    return (rand(rng, T) < μ.w) * rand(rng, T, μ.m)
 end

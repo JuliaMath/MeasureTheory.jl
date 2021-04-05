@@ -125,7 +125,7 @@ function _μσ_methods(ex)
                 end
 
                 function Base.rand(rng::AbstractRNG, T::Type, d::$dist{($(argnames...), :σ)})
-                    d.σ * rand(rng, $dist($(d_args...)))
+                    d.σ * rand(rng, T, $dist($(d_args...)))
                 end
 
                 function logdensity(d::$dist{($(argnames...), :σ)}, x)
@@ -174,8 +174,8 @@ function _half(ex)
                     return logdensity(unhalf(μ), x)
                 end
 
-                function Base.rand(rng::AbstractRNG, μ::$halfdist)
-                    return abs(rand(rng, unhalf(μ)))
+                function Base.rand(rng::AbstractRNG, T::Type, μ::$halfdist)
+                    return abs(rand(rng, T, unhalf(μ)))
                 end
 
                 (::$halfdist ≪ ::Lebesgue{ℝ₊}) = true
