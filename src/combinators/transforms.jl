@@ -48,9 +48,9 @@ Pullback(f::InverseTransform, ν, logjac::Bool=true) = Pushforward(f.transform, 
 
 Pushforward(f::InverseTransform, ν, logjac::Bool=true) = Pullback(f.transform, ν, logjac)
 
-Base.rand(rng::AbstractRNG, ν::Pushforward) = ν.f(rand(rng, ν.μ))
+Base.rand(rng::AbstractRNG, T::Type, ν::Pushforward) = ν.f(rand(rng, T, ν.μ))
 
-Base.rand(rng::AbstractRNG, μ::Pullback) = μ.f(rand(rng, μ.ν))
+Base.rand(rng::AbstractRNG, T::Type, μ::Pullback) = μ.f(rand(rng, T, μ.ν))
 
 testvalue(ν::Pushforward) = transform(ν.f, testvalue(ν.μ))
 
