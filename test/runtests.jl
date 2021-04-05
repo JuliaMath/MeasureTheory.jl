@@ -169,3 +169,9 @@ end
         @test logdensity(ν, y) ≈ logdensity(Pullback(inverse(t), μ), y)
     end
 end
+
+@testset "Likelihood" begin
+    d = Normal()
+    ℓ = Likelihood(Normal{(:μ,)}, 3.0) 
+    @test logdensity(d ⊙ ℓ, 2.0) == logdensity(d, 2.0) + logdensity(ℓ, 2.0)
+end
