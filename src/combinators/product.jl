@@ -58,6 +58,14 @@ end
 
 using Tullio
 
+function logdensity(d::ProductMeasure, x::NTuple)
+    mapreduce(logdensity, +, d.data, x)
+end
+
+function logdensity(d::ProductMeasure{A}, x::NTuple) where {A <: AbstractArray}
+    mapreduce(logdensity, +, d.data, x)
+end
+
 function logdensity(d::ProductMeasure{A}, x) where {T, A<:AbstractArray}
     data = d.data
     @boundscheck size(data) == size(x) || throw(BoundsError)
