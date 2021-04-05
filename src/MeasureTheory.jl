@@ -2,6 +2,8 @@ module MeasureTheory
 
 using Random
 
+using ConcreteStructs
+using Tricks
 using MLStyle
 using NestedTuples
 using TransformVariables
@@ -49,6 +51,7 @@ include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("combinators/for.jl")
 include("combinators/power.jl")
+include("combinators/likelihood.jl")
 include("combinators/elementwise.jl")
 include("combinators/transforms.jl")
 include("combinators/spikemixture.jl")
@@ -71,7 +74,6 @@ include("probability/binomial.jl")
 include("probability/LKJL.jl")
 include("probability/negativebinomial.jl")
 include("density.jl")
-include("likelihood.jl")
 # include("pushforward.jl")
 include("kernel.jl")
 include("distproxy.jl")
