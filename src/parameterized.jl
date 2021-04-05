@@ -28,6 +28,16 @@ end
 
 export asparams
 
+# Allow things like
+#
+# julia> Normal{(:μ,)}(2)
+# Normal(μ = 2,)
+#
+function (M::Type{P})(args...) where {N, P <: ParameterizedMeasure{N}}
+    constructor = M.body.name.wrapper
+    return constructor(NamedTuple{N}(args...))
+end
+
 """
 `asparams` build on `TransformVariables.as` to construct bijections to the
 parameter space of a given parameterized measure. Because this is only possible
