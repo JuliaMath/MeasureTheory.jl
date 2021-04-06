@@ -16,6 +16,8 @@ export sampletype
 
 export AbstractMeasure
 using InfiniteArrays
+using ConcreteStructs
+using DynamicIterators
 
 const ∞ = InfiniteArrays.∞
 
@@ -55,6 +57,7 @@ include("combinators/likelihood.jl")
 include("combinators/elementwise.jl")
 include("combinators/transforms.jl")
 include("combinators/spikemixture.jl")
+include("combinators/chain.jl")
 include("distributions.jl")
 include("rand.jl")
 include("probability/dirac.jl")

@@ -1,7 +1,7 @@
 name = "MeasureTheory"
 uuid = "eadaa1a4-d27c-401d-8699-e962e1bbc33b"
 authors = ["Chad Scherrer <chad.scherrer@gmail.com> and contributors"]
-version = "0.6.0"
+version = "0.6.1"
 
 [deps]
 Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
@@ -35,7 +35,7 @@ ArrayInterface = "2,3"
 ConcreteStructs = "0.2"
 Distributions = "0.23, 0.24"
 DistributionsAD = "0.6"
-DynamicIterators = "0.4"
+DynamicIterators = "0.4.2"
 InfiniteArrays = "0.7, 0.8, 0.9, 0.10"
 IntervalSets = "0.5"
 IterTools = "1"

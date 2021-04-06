@@ -2,7 +2,7 @@ Base.rand(d::AbstractMeasure) = rand(Random.GLOBAL_RNG, Float64, d)
 
 Base.rand(T::Type, μ::AbstractMeasure) = rand(Random.GLOBAL_RNG, T, μ)
 
-Base.rand(rng::AbstractRNG, d::ParameterizedMeasure) = rand(rng, Float64, d)
+Base.rand(rng::AbstractRNG, d::AbstractMeasure) = rand(rng, Float64, d)
 
 Base.rand(rng::AbstractRNG, T::Type, d::ParameterizedMeasure) = rand(rng, distproxy(d))
 

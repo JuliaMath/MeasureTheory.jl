@@ -1,6 +1,10 @@
 using MeasureTheory
 using Test
 using StatsFuns
+using Base.Iterators: take
+using Random
+using LinearAlgebra
+using DynamicIterators: trace, TimeLift
 using TransformVariables: transform, as𝕀, inverse
 
 function draw2(μ)
@@ -87,6 +91,68 @@ end
     @test logdensity(Dirac(0.3), 0.4) == -Inf
 end
 
+import MeasureTheory.:⋅
+function ⋅(μ::Normal, kernel) 
+    m = kernel(μ)
+    Normal(μ = m.μ.μ, σ = sqrt(m.μ.σ^2 + m.σ^2))
+end
+
+"""
+    ConstantMap(β)
+Represents a function `f = ConstantMap(β)`
+such that `f(x) == β`.
+"""
+struct ConstantMap{T}
+    x::T
+end
+(a::ConstantMap)(x) = a.x
+(a::ConstantMap)() = a.x
+
+struct AffineMap{S,T}
+    B::S
+    β::T
+end
+(a::AffineMap)(x) = a.B*x + a.β
+(a::AffineMap)(p::Normal) = Normal(μ = a.B*mean(p) + a.β, σ = sqrt(a.B*p.σ^2*a.B'))
+
+@testset "DynamicFor" begin
+    mc = Chain(Normal(μ=0.0)) do x Normal(μ=x) end
+    r = rand(mc)
+   
+    # Check that `r` is now deterministic
+    @test logdensity(mc, take(r, 100)) == logdensity(mc, take(r, 100))
+    
+    d2 = For(r) do x Normal(μ=x) end  
+
+    @test_broken let r2 = rand(d2)
+        logdensity(d2, take(r2, 100)) == logdensity(d2, take(r2, 100))
+    end
+end
+
+@testset "Univariate chain" begin
+    ξ0 = 1.
+    x = 1.2
+    P0 = 1.0
+
+    Φ = 0.8
+    β = 0.1
+    Q = 0.2
+
+    μ = Normal(μ=ξ0, σ=sqrt(P0))
+    kernel = MeasureTheory.kernel(Normal; μ=AffineMap(Φ, β), σ=ConstantMap(Q))
+    
+    @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
+    
+    chain = Chain(kernel, μ)
+    
+
+    dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing) 
+    tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
+    tr2 = trace(TimeLift(rand(Random.GLOBAL_RNG, chain)), nothing, u -> u[1] > 15)
+    collect(Iterators.take(chain, 10))
+    collect(Iterators.take(rand(Random.GLOBAL_RNG, chain), 10))
+end
+
 @testset "Transforms" begin
     t = as𝕀
     @testset "Pushforward" begin
@@ -102,4 +168,10 @@ end
         y = rand(ν)
         @test logdensity(ν, y) ≈ logdensity(Pullback(inverse(t), μ), y)
     end
+end
+
+@testset "Likelihood" begin
+    d = Normal()
+    ℓ = Likelihood(Normal{(:μ,)}, 3.0) 
+    @test logdensity(d ⊙ ℓ, 2.0) == logdensity(d, 2.0) + logdensity(ℓ, 2.0)
 end
