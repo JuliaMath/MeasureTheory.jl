@@ -10,6 +10,7 @@ PARAMS = [
     :Σ
     :σ²
     :n
+    :r
     :p
     :logitp
     :probitp
@@ -34,8 +35,12 @@ using NamedTupleTools: namedtuple
 
 _paramsort(nt::NamedTuple{(), Tuple{}}) = nt
 
+
+
 function _paramsort(nt::NamedTuple{K,V}) where {K,V}
-    π = sortperm(collect(K), by = p -> get(PARAM_ORDER, p, reinterpret(Float64, hash(p))))
+    # Assign each symbol a default rank
+    namerank(p) = Base.Math.evalpoly(256, reverse(Float64.(collect(String(p)))))
+    π = sortperm(collect(K), by = p -> get(PARAM_ORDER, p, namerank(p)))
     k = K[π]
     v = @inbounds (_paramsort.(values(nt)))[π]
     return namedtuple(k)(v)
