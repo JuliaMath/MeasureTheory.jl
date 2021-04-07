@@ -153,3 +153,7 @@ basemeasure(μ::ProductMeasure) = ProductMeasure(basemeasure.(μ.data))
 # function logdensity(μ::ProductMeasure{Aμ}, x::Ax) where {Aμ <: MappedArray, Ax <: AbstractArray}
 #     μ.data
 # end
+
+export marginals
+
+marginals(d::ProductMeasure) = d.data
