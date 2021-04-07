@@ -91,6 +91,20 @@ end
     @test logdensity(Dirac(0.3), 0.4) == -Inf
 end
 
+@testset "For" begin
+    FORDISTS = [
+        For(1:10) do j Normal(μ=j) end
+        For(4,3) do μ,σ Normal(μ,σ) end
+        For(1:4, 1:4) do μ,σ Normal(μ,σ) end
+        For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end
+        For(rand(4), rand(4)) do μ,σ Normal(μ,σ) end
+    ]
+
+    for d in FORDISTS
+        @test logdensity(d, rand(d)) isa Float64
+    end
+end
+
 import MeasureTheory.:⋅
 function ⋅(μ::Normal, kernel) 
     m = kernel(μ)
