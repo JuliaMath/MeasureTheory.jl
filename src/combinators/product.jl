@@ -12,7 +12,13 @@ end
 
 Base.size(μ::ProductMeasure) = size(μ.data)
 
-function Base.show(io::IO, μ::ProductMeasure)
+function Base.show(io::IO, μ::ProductMeasure{NamedTuple{N,T}}) where {N,T}
+    io = IOContext(io, :compact => true)
+    print(io, "Product(",μ.data, ")")
+end
+
+
+function Base.show(io::IO, μ::ProductMeasure{T}) where {T <: Tuple}
     io = IOContext(io, :compact => true)
     print(io, join(string.(μ.data), " ⊗ "))
 end
@@ -157,3 +163,8 @@ basemeasure(μ::ProductMeasure) = ProductMeasure(basemeasure.(μ.data))
 export marginals
 
 marginals(d::ProductMeasure) = d.data
+
+function testvalue(d::MeasureTheory.ProductMeasure{NamedTuple{N,T}}) where {N,T}
+    vals = values(d.data)
+    NamedTuple{N}(testvalue.(vals))
+end
