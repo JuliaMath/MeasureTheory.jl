@@ -22,5 +22,6 @@ sampletype(::Lebesgue{𝕀}) = Float64
 testvalue(::Lebesgue{ℝ}) = 0.0
 testvalue(::Lebesgue{𝕀}) = 0.5
 testvalue(::Lebesgue{ℝ₊}) = 1.0
+testvalue(::Lebesgue{<:Real}) = 0.0
 
 logdensity(::Lebesgue, x) = zero(x)
