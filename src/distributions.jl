@@ -30,17 +30,12 @@ end
 export Normal
 
 
-
+basemeasure(d::Dists.AbstractMvNormal) = Lebesgue(ℝ)^size(d)
 
 function basemeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous})
-    T = eltype(μ)
-    return Lebesgue(T)
+    return Lebesgue(ℝ)
 end
 
-function basemeasure(μ::Dists.Distribution{Dists.Multivariate,Dists.Continuous})
-    x = rand(μ)
-    return Lebesgue(typeof(x))
-end
 
 logdensity(μ::Dists.Distribution, x) = Dists.logpdf(μ,x)
 
