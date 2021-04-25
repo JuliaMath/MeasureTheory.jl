@@ -1,3 +1,7 @@
+struct Kernel{T,S}
+    ops::S
+end
+
 """
     kernel(f, M)
     kernel((f1, f2, ...), M)
@@ -14,9 +18,7 @@ If the argument is a named tuple `(;a=f1, b=f1)`, `κ(x)` is defined as
 
 * https://en.wikipedia.org/wiki/Markov_kernel
 """
-struct Kernel{T,S}
-    ops::S
-end
+function kernel end
 
 export kernel
 kernel(op, ::Type{M}) where {M} = Kernel{M,typeof(op)}(op)
