@@ -6,6 +6,10 @@ export Normal
 
 @measure Normal(μ,σ)
 
+Normal(nt::NamedTuple{(:μ,:σ),T}) where {T} = Normal{(:μ,:σ), T}(nt)
+
+@kwcall Normal(μ,σ)
+
 # To pass `@code_warntype`
 const _Normal_basemeasure = (1/sqrt2π) * Lebesgue(ℝ)
 
