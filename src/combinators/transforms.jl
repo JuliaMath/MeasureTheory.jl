@@ -1,5 +1,5 @@
 using TransformVariables
-using TransformVariables: AbstractTransform, InverseTransform
+using TransformVariables: AbstractTransform, CallableInverse
 
 export Pushforward
 export Pullback
@@ -44,9 +44,9 @@ function logdensity(pf::Pushforward{F}, y) where {F <: AbstractTransform}
     end
 end
 
-Pullback(f::InverseTransform, ν, logjac::Bool=true) = Pushforward(f.transform, ν, logjac)
+Pullback(f::CallableInverse, ν, logjac::Bool=true) = Pushforward(transform(f.t), ν, logjac)
 
-Pushforward(f::InverseTransform, ν, logjac::Bool=true) = Pullback(f.transform, ν, logjac)
+Pushforward(f::CallableInverse, ν, logjac::Bool=true) = Pullback(transform(f.t), ν, logjac)
 
 Base.rand(rng::AbstractRNG, T::Type, ν::Pushforward) = ν.f(rand(rng, T, ν.μ))
 
