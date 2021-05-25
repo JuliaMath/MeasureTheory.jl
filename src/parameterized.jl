@@ -22,7 +22,7 @@ function Base.show(io::IO, μ::ParameterizedMeasure{N}) where {N}
 end
 
 # e.g. Normal(;μ=μ, σ=σ) = Normal((μ=μ, σ=σ))
-(M::Type{<: ParameterizedMeasure})(; kwargs...) = M((; kwargs...))
+(M::Type{<: ParameterizedMeasure})(; kwargs...) = M(NamedTuple(kwargs))
 
 (M::Type{<: ParameterizedMeasure})(::Tuple{}) = M(NamedTuple())
 
