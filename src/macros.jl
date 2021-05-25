@@ -1,8 +1,6 @@
 
 using MLStyle
-using StatsFuns
 using Random: AbstractRNG
-using StatsFuns: logtwo
 
 export @measure
 
@@ -40,22 +38,23 @@ macro capture(template, ex, action)
     capture(template, ex, action) |> esc
 end
 
+
+
 function _measure(expr)
+    ParameterizedMeasure = ParameterizedMeasure
     @capture $μ($(p...)) expr begin
         q = quote
-            struct $μ{N,T} <: ParameterizedMeasure{N}
+            struct $μ{N,T} <: $ParameterizedMeasure{N}
                 par :: NamedTuple{N,T}
             end
 
-            # (::Type{$μ{N}})(nt::NamedTuple{N,T}) where {N,T} = $μ{N,T}(nt) 
-
-            # (::Type{$μ})() where {N,T} = $μ(NamedTuple()) 
+            $KeywordCalls.@kwstruct $expr
         end   
         
         if !isempty(p)
-            # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
-            # Requires Julia 1.5
-            push!(q.args, :($μ($(p...)) = $μ(;$(p...))))
+            # e.g. Normal(μ,σ) = Normal((μ=μ, σ=σ))
+            pnames = QuoteNode.(p)
+            push!(q.args, :($μ($(p...)) = $μ(NamedTuple{($(pnames...),)}(($(p...),)))))
         end
         
         return q
@@ -68,30 +67,20 @@ end
 The <declaration> gives a measure and its default parameters, and specifies
 its relation to its base measure. For example,
 
-    @measure Normal(μ,σ) ≃ Lebesgue{X}
+    @measure Normal(μ,σ)
 
-declares the `Normal` is a measure with default parameters `μ and σ`, and it is
-equivalent to its base measure, which is `Lebesgue{X}`
+declares the `Normal` is a measure with default parameters `μ and σ`. The result is equivalent to
+```
+struct Normal{N,T} <: ParameterizedMeasure{N}
+    par :: NamedTuple{N,T}
+end
 
-You can see the generated code like this:
+KeywordCalls.@kwstruct Normal(μ,σ)
 
-    julia> MacroTools.prettify(@macroexpand @measure Normal(μ,σ) ≃ Lebesgue{X})
-    quote
-        struct Normal{P, X} <: AbstractMeasure
-            par::P
-        end
-        function Normal(nt::NamedTuple)
-            P = typeof(nt)
-            return Normal{P, eltype(Normal{P})}
-        end
-        Normal(; kwargs...) = Normal((; kwargs...))
-        (basemeasure(μ::Normal{P, X}) where {P, X}) = Lebesgue{X}
-        Normal(μ, σ) = Normal(; Any[:μ, :σ])
-        ((:≪)(::Normal{P, X}, ::Lebesgue{X}) where {P, X}) = true
-        ((:≪)(::Lebesgue{X}, ::Normal{P, X}) where {P, X}) = true
-    end
+Normal(μ,σ) = Normal((μ=μ, σ=σ))
+```
 
-Note that the `eltype` function needs to be defined separately by the user.
+See [KeywordCalls.jl](https://github.com/cscherrer/KeywordCalls.jl) for details on `@kwstruct`.
 """
 macro measure(expr)
     esc(_measure(expr))
@@ -164,13 +153,13 @@ function _half(ex)
                 
                 unhalf(μ::$halfdist) = $dist(getfield(μ, :par))
 
-                function MeasureTheory.basemeasure(μ::$halfdist) 
+                function $MeasureBase.basemeasure(μ::$halfdist) 
                     b = basemeasure(unhalf(μ))
                     lw = b.logweight
                     return WeightedMeasure(logtwo + lw, Lebesgue(ℝ₊))
                 end
             
-                function MeasureTheory.logdensity(μ::$halfdist, x)
+                function $MeasureBase.logdensity(μ::$halfdist, x)
                     return logdensity(unhalf(μ), x)
                 end
 
