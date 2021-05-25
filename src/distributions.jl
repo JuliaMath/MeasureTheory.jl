@@ -33,11 +33,7 @@ function basemeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous})
     return Lebesgue(ℝ)
 end
 
-
-
 ∫(::typeof(identity), ::Dists.Distribution) = 1.0
-
-∫(Dists.Normal()) do x x^2 end
 
 logdensity(μ::Dists.Distribution, x) = Dists.logpdf(μ,x)
 Dists.logpdf(d::AbstractMeasure, x) = logdensity(d,x)
