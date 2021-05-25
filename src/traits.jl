@@ -50,7 +50,7 @@ For measures not defined in this way, we'll typically have `basemeasure(μ) == �
 """
 function basemeasure end
 
-@traitfn basemeasure(μ::M) where {M; IsPrimType{M}} = μ
+@traitfn basemeasure(μ::M) where {M; IsPrimitive{M}} = μ
 
 @traitdef IsRepType{X}
 
@@ -58,6 +58,6 @@ function basemeasure end
 isreptype(X) = false # set default
 
 # Every primitive measure is also a representative
-@traitfn isreptype(μ::M) where {M; IsPrimType{M}} = true
+@traitfn isreptype(μ::M) where {M; IsPrimitive{M}} = true
 
 isreptype(X) = isreptype

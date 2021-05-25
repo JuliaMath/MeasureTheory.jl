@@ -2,7 +2,7 @@ export CountingMeasure
 
 struct CountingMeasure{X} <: AbstractMeasure end
 
-isprimtype(::CountingMeasure) = true
+@primitive CountingMeasure
 
 function Base.show(io::IO, μ::CountingMeasure{X}) where {X}
     io = IOContext(io, :compact => true)

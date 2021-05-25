@@ -5,7 +5,7 @@ struct Dirac{X} <: AbstractMeasure
     x::X
 end
 
-isprimtype(::Dirac) = true
+@primitive Dirac
 
 sampletype(μ::Dirac{X}) where {X} = X
 
