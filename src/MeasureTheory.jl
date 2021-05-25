@@ -44,6 +44,7 @@ function logdensity end
 include("exp.jl")
 include("domains.jl")
 include("utils.jl")
+include("traits.jl")
 include("absolutecontinuity.jl")
 include("parameterized.jl")
 include("macros.jl")
