@@ -51,13 +51,3 @@ For measures not defined in this way, we'll typically have `basemeasure(μ) == �
 function basemeasure end
 
 @traitfn basemeasure(μ::M) where {M; IsPrimitive{M}} = μ
-
-@traitdef IsRepType{X}
-
-@traitimpl IsRepType{X} <- isreptype(X)
-isreptype(X) = false # set default
-
-# Every primitive measure is also a representative
-@traitfn isreptype(μ::M) where {M; IsPrimitive{M}} = true
-
-isreptype(X) = isreptype
