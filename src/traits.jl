@@ -32,8 +32,15 @@ Declare that every measure of type `T` should be considered "primitive". A measu
 Note that this is not a general measure-theoretic term, but is specific to the MeasureTheory.jl implementation.
 """
 macro primitive(T)
+    MT = MeasureTheory
+    ST = MeasureTheory.SimpleTraits
+
+    # Really the same as `@traitimpl IsPrimitive{T}`
+    # But maybe easier for beginners
     quote
-        @traitimpl IsPrimitive{$T}
+        function $ST.trait(::$ST.Type{$MT.IsPrimitive{S}}) where {S <: $T}
+            return $MT.IsPrimitive{S} 
+        end
     end
 end
 
