@@ -12,9 +12,5 @@ function fix(f, x)
     return y
 end
 
-Dists.logpdf(d::AbstractMeasure, x) = logdensity(d,x)
-
 export testvalue
 testvalue(μ::AbstractMeasure) = testvalue(basemeasure(μ))
-
-testvalue(d::Dists.Distribution) = rand(d)
