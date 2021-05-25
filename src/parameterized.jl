@@ -21,11 +21,6 @@ function Base.show(io::IO, μ::ParameterizedMeasure{N}) where {N}
     print(io, getfield(μ,:par))
 end
 
-# e.g. Normal(;μ=μ, σ=σ) = Normal((μ=μ, σ=σ))
-(M::Type{<: ParameterizedMeasure})(; kwargs...) = M(NamedTuple(kwargs))
-
-(M::Type{<: ParameterizedMeasure})(::Tuple{}) = M(NamedTuple())
-
 export asparams
 
 # Allow things like
