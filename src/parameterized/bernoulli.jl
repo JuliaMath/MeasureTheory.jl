@@ -3,7 +3,7 @@
 export Bernoulli
 import Base
 
-@measure Bernoulli(p)
+@parameterized Bernoulli(p)
 
 
 basemeasure(::Bernoulli) = CountingMeasure(ℤ[0:1])

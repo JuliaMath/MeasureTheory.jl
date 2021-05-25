@@ -5,7 +5,7 @@ using SpecialFunctions
 using StatsFuns
 export InverseGamma
 
-@measure InverseGamma(shape)
+@parameterized InverseGamma(shape)
 
 basemeasure(::InverseGamma) = Lebesgue(ℝ₊)
 

@@ -6,7 +6,7 @@ using LinearAlgebra
 export MvNormal
 using Random
 import Base
-
+using Tullio
 
 
 struct MvNormal{N, T, I, J} <: ParameterizedMeasure{N}

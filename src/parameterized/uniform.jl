@@ -3,7 +3,7 @@
 
 export Uniform
 
-@measure Uniform()
+@parameterized Uniform()
 
 basemeasure(::Uniform) = Lebesgue(𝕀)
 

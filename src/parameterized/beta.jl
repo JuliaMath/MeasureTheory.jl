@@ -3,7 +3,7 @@
 import StatsFuns
 export Beta
 
-@measure Beta(α,β)
+@parameterized Beta(α,β)
 
 basemeasure(::Beta) = Lebesgue(𝕀)
 

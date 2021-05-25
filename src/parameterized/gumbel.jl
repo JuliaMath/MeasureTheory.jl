@@ -3,7 +3,7 @@
 import StatsFuns
 export Gumbel
 
-@measure Gumbel(μ,σ)
+@parameterized Gumbel(μ,σ)
 
 
 basemeasure(::Gumbel) = Lebesgue(ℝ)

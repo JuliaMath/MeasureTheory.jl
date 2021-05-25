@@ -4,7 +4,7 @@ export Poisson
 import Base
 using SpecialFunctions: logfactorial
 
-@measure Poisson(λ)
+@parameterized Poisson(λ)
 
 basemeasure(::Poisson) = CountingMeasure(ℤ[0:∞])
 

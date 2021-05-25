@@ -4,7 +4,7 @@
 import StatsFuns
 export Exponential
 
-@measure Exponential(λ)
+@parameterized Exponential(λ)
 
 basemeasure(::Exponential) = Lebesgue(ℝ₊)
 

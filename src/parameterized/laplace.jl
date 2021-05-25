@@ -4,7 +4,7 @@
 import StatsFuns
 export Laplace
 
-@measure Laplace(μ,σ)
+@parameterized Laplace(μ,σ)
 
 basemeasure(::Laplace) = (1/2) * Lebesgue(ℝ)
 

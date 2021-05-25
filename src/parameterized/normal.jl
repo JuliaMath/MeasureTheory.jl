@@ -1,14 +1,21 @@
 
 # Normal distribution
 
-import StatsFuns
+using StatsFuns
 export Normal
 
-@measure Normal(μ,σ)
+@parameterized Normal(μ,σ)
 
-Normal(nt::NamedTuple{(:μ,:σ),T}) where {T} = Normal{(:μ,:σ), T}(nt)
+@kwstruct Normal(μ,σ)
 
-@kwcall Normal(μ,σ)
+@kwalias Normal [
+    mean  => μ
+    mu    => μ
+    std   => σ
+    sigma => σ
+]
+
+# Normal(nt::NamedTuple{(:μ,:σ),T}) where {T} = Normal{(:μ,:σ), T}(nt)
 
 # To pass `@code_warntype`
 const _Normal_basemeasure = (1/sqrt2π) * Lebesgue(ℝ)

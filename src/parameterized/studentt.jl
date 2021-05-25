@@ -5,7 +5,7 @@ using SpecialFunctions
 using StatsFuns
 export StudentT
 
-@measure StudentT(ν)
+@parameterized StudentT(ν)
 
 basemeasure(::StudentT) = (1/sqrtπ) * Lebesgue(ℝ)
 

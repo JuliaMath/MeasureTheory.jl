@@ -4,7 +4,7 @@
 import StatsFuns
 export Cauchy
 
-@measure Cauchy(μ,σ) 
+@parameterized Cauchy(μ,σ) 
 
 basemeasure(::Cauchy) = (1/π) * Lebesgue(ℝ)
 
