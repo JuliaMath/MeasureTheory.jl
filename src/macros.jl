@@ -2,7 +2,7 @@
 using MLStyle
 using Random: AbstractRNG
 
-export @measure
+export @parameterized
 
 # A fold over ASTs. Example usage in `replace`
 function foldast(leaf, branch; kwargs...)
@@ -40,15 +40,15 @@ end
 
 
 
-function _measure(expr)
-    ParameterizedMeasure = ParameterizedMeasure
+function _parameterized(__module__, expr)
+    ParameterizedMeasure = MeasureTheory.ParameterizedMeasure
     @capture $μ($(p...)) expr begin
+        μ = esc(μ)
+
         q = quote
             struct $μ{N,T} <: $ParameterizedMeasure{N}
                 par :: NamedTuple{N,T}
             end
-
-            $KeywordCalls.@kwstruct $expr
         end   
         
         if !isempty(p)
@@ -62,12 +62,12 @@ function _measure(expr)
 end
 
 """
-    @measure <declaration>
+    @parameterized <declaration>
     
 The <declaration> gives a measure and its default parameters, and specifies
 its relation to its base measure. For example,
 
-    @measure Normal(μ,σ)
+    @parameterized Normal(μ,σ)
 
 declares the `Normal` is a measure with default parameters `μ and σ`. The result is equivalent to
 ```
@@ -82,12 +82,12 @@ Normal(μ,σ) = Normal((μ=μ, σ=σ))
 
 See [KeywordCalls.jl](https://github.com/cscherrer/KeywordCalls.jl) for details on `@kwstruct`.
 """
-macro measure(expr)
-    esc(_measure(expr))
+macro parameterized(expr)
+    _parameterized(__module__, expr)
 end
 
 
-# (@macroexpand @measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(X)) |> MacroTools.prettify
+# (@macroexpand @parameterized Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(X)) |> MacroTools.prettify
 
 
 using MLStyle
@@ -153,13 +153,13 @@ function _half(ex)
                 
                 unhalf(μ::$halfdist) = $dist(getfield(μ, :par))
 
-                function $MeasureBase.basemeasure(μ::$halfdist) 
+                function $MeasureTheory.basemeasure(μ::$halfdist) 
                     b = basemeasure(unhalf(μ))
                     lw = b.logweight
                     return WeightedMeasure(logtwo + lw, Lebesgue(ℝ₊))
                 end
             
-                function $MeasureBase.logdensity(μ::$halfdist, x)
+                function $MeasureTheory.logdensity(μ::$halfdist, x)
                     return logdensity(unhalf(μ), x)
                 end
 
