@@ -3,9 +3,8 @@
 
 export Uniform
 
-@parameterized Uniform()
+@parameterized Uniform() ≪ Lebesgue(𝕀)
 
-basemeasure(::Uniform) = Lebesgue(𝕀)
 
 # Standard Uniform
 

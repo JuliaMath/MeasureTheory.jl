@@ -4,9 +4,7 @@
 import StatsFuns
 export Laplace
 
-@parameterized Laplace(μ,σ)
-
-basemeasure(::Laplace) = (1/2) * Lebesgue(ℝ)
+@parameterized Laplace(μ,σ) ≪ (1/2) * Lebesgue(ℝ)
 
 function logdensity(d::Laplace{()} , x)
     return -abs(x)

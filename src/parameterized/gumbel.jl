@@ -3,10 +3,7 @@
 import StatsFuns
 export Gumbel
 
-@parameterized Gumbel(μ,σ)
-
-
-basemeasure(::Gumbel) = Lebesgue(ℝ)
+@parameterized Gumbel(μ,σ) ≪ Lebesgue(ℝ)
 
 function logdensity(d::Gumbel{()} , x)
     return -exp(-x) - x

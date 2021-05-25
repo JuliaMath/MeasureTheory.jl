@@ -4,7 +4,7 @@
 using StatsFuns
 export Normal
 
-@parameterized Normal(μ,σ)
+@parameterized Normal(μ,σ) ≪ (1/sqrt2π) * Lebesgue(ℝ)
 
 @kwstruct Normal(μ,σ)
 
@@ -16,11 +16,6 @@ export Normal
 ]
 
 # Normal(nt::NamedTuple{(:μ,:σ),T}) where {T} = Normal{(:μ,:σ), T}(nt)
-
-# To pass `@code_warntype`
-const _Normal_basemeasure = (1/sqrt2π) * Lebesgue(ℝ)
-
-basemeasure(::Normal)=  _Normal_basemeasure
 
 logdensity(d::Normal{()} , x) = - x^2 / 2 
 

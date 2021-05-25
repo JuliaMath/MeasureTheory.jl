@@ -5,9 +5,7 @@ import Base
 using StatsFuns
 using SpecialFunctions
 
-@parameterized NegativeBinomial(r,p)
-
-basemeasure(μ::NegativeBinomial) = CountingMeasure(ℤ[0:∞])
+@parameterized NegativeBinomial(r,p) ≪ CountingMeasure(ℤ[0:∞])
 
 (d::NegativeBinomial ≪ ::CountingMeasure{IntegerRange{a,b}}) where {a,b} = a ≤ 0 && b ≥ d.n
 

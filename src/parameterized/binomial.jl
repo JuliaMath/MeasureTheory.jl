@@ -8,9 +8,8 @@ using SpecialFunctions
 probit(p) = sqrt2 * erfinv(2p - 1)
 Φ(z) = (1 + erf(invsqrt2 * z))/2
 
-@parameterized Binomial(n,p)
+@parameterized Binomial(n,p) ≪ CountingMeasure(ℤ[0:∞])
 
-basemeasure(μ::Binomial) = CountingMeasure(ℤ[0:(μ.n)])
 
 (d::Binomial ≪ ::CountingMeasure{IntegerRange{a,b}}) where {a,b} = a ≤ 0 && b ≥ d.n
 

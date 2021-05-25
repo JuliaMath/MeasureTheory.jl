@@ -3,9 +3,7 @@
 import StatsFuns
 export Beta
 
-@parameterized Beta(α,β)
-
-basemeasure(::Beta) = Lebesgue(𝕀)
+@parameterized Beta(α,β) ≪ Lebesgue(𝕀)
 
 function logdensity(d::Beta{(:α, :β)}, x)
     return (d.α - 1) * log(x) + (d.β - 1) * log(1 - x) - logbeta(d.α, d.β)

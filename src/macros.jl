@@ -42,13 +42,20 @@ end
 
 function _parameterized(__module__, expr)
     ParameterizedMeasure = MeasureTheory.ParameterizedMeasure
-    @capture $μ($(p...)) expr begin
+    @capture ($μ($(p...)) ≪ $base) expr begin
+        μbase = Symbol(:__, μ, :_base)
+
         μ = esc(μ)
+        base = esc(base)
 
         q = quote
             struct $μ{N,T} <: $ParameterizedMeasure{N}
                 par :: NamedTuple{N,T}
             end
+
+            const $μbase = $base
+            
+            basemeasure(::$μ) = $μbase
         end   
         
         if !isempty(p)

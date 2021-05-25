@@ -4,9 +4,7 @@
 import StatsFuns
 export Exponential
 
-@parameterized Exponential(λ)
-
-basemeasure(::Exponential) = Lebesgue(ℝ₊)
+@parameterized Exponential(λ) ≪ Lebesgue(ℝ₊)
 
 function logdensity(d::Exponential{()} , x)
     return -x
