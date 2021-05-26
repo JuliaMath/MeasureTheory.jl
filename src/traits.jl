@@ -56,5 +56,3 @@ measure. This makes it important to be able to find that base measure.
 For measures not defined in this way, we'll typically have `basemeasure(μ) == μ`.
 """
 function basemeasure end
-
-@traitfn basemeasure(μ::M) where {M; IsPrimitive{M}} = μ
