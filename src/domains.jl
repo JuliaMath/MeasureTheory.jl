@@ -6,13 +6,13 @@ abstract type AbstractDomain end
 Defines a new singleton struct `T`, and a value `name` for building values of
 that type.
 
-For example, `MeasureTheory.@domain ℝ RealNumbers` is equivalent to
+For example, `@domain ℝ RealNumbers` is equivalent to
 
-    struct RealNumbers <: MeasureTheory.AbstractDomain end
+    struct RealNumbers <: AbstractDomain end
 
     export ℝ
 
-    ℝ = MeasureTheory.RealNumbers()
+    ℝ = RealNumbers()
 
     Base.show(io::IO, ::RealNumbers) = print(io, "ℝ")
 """
@@ -60,6 +60,5 @@ testvalue(::IntegerRange{lo, hi}) where {lo, hi} = lo
 ###########################################################
 # Real intervals
 
-using IntervalSets
 
 struct RealInterval{lo, hi} <: AbstractDomain end
