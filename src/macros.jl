@@ -55,7 +55,7 @@ function _parameterized(__module__, expr)
 
             const $μbase = $base
             
-            basemeasure(::$μ) = $μbase
+            MeasureTheory.basemeasure(::$μ) = $μbase
         end   
         
         if !isempty(p)
