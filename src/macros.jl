@@ -100,16 +100,25 @@ end
 using MLStyle
 
 macro μσ_methods(ex)
-    esc(_μσ_methods(ex))
+    _μσ_methods(__module__, ex)
 end
 
-function _μσ_methods(ex)
+function _μσ_methods(__module__, ex)
     @match ex begin
         :($dist($(args...))) => begin
             argnames = QuoteNode.(args)
 
             d_args = (:(d.$arg) for arg in args)
-            quote
+
+            method_μσ = KeywordCalls._kwstruct(__module__, :($dist($(args...), μ, σ)))
+            method_μ  = KeywordCalls._kwstruct(__module__, :($dist($(args...), μ)))
+            method_σ  = KeywordCalls._kwstruct(__module__, :($dist($(args...), σ)))
+
+            q = quote
+
+                 $method_μσ
+                 $method_μ
+                 $method_σ
 
                 function Base.rand(rng::AbstractRNG, T::Type, d::$dist{($(argnames...), :μ, :σ)})
                     d.σ * rand(rng, T, $dist($(d_args...))) + d.μ
@@ -138,10 +147,58 @@ function _μσ_methods(ex)
                     return logdensity($dist($(d_args...)), z)
                 end
             end 
+
+            return q
         end
     end
 end
 
+
+macro σ_methods(ex)
+    _σ_methods(__module__, ex)
+end
+
+function _σ_methods(__module__, ex)
+    @match ex begin
+        :($dist($(args...))) => begin
+            argnames = QuoteNode.(args)
+
+            d_args = (:(d.$arg) for arg in args)
+
+            method_σ  = KeywordCalls._kwstruct(__module__, :($dist($(args...), σ)))
+
+            q = quote
+                $method_σ
+
+                function Base.rand(rng::AbstractRNG, T::Type, d::$dist{($(argnames...), :σ)})
+                    d.σ * rand(rng, T, $dist($(d_args...)))
+                end
+
+                function logdensity(d::$dist{($(argnames...), :σ)}, x)
+                    z = x / d.σ   
+                    return logdensity($dist($(d_args...)), z) - log(d.σ) 
+                end
+            end 
+
+            return q
+        end
+    end
+end
+
+"""
+    @half dist([paramnames])
+
+Starting from a symmetric univariate measure `dist ≪ Lebesgue(ℝ)`, create a new
+measure `Halfdist ≪ Lebesgue(ℝ₊)`. For example,
+
+    @half Normal()
+
+creates `HalfNormal()`, and 
+
+    @half StudentT(ν)
+
+creates `HalfStudentT(ν)`.
+"""
 macro half(ex)
     esc(_half(ex))
 end
@@ -152,8 +209,6 @@ function _half(ex)
             halfdist = Symbol(:Half, dist)
 
             quote
-                export $halfdist
-                
                 struct $halfdist{N,T} <: ParameterizedMeasure{N}
                     par :: NamedTuple{N,T}
                 end
@@ -162,6 +217,7 @@ function _half(ex)
 
                 function $MeasureTheory.basemeasure(μ::$halfdist) 
                     b = basemeasure(unhalf(μ))
+                    @assert b == Lebesgue(ℝ)
                     lw = b.logweight
                     return WeightedMeasure(logtwo + lw, Lebesgue(ℝ₊))
                 end
@@ -175,7 +231,6 @@ function _half(ex)
                 end
 
                 (::$halfdist ≪ ::Lebesgue{ℝ₊}) = true
-                (::Lebesgue{ℝ₊} ≪ ::$halfdist) = true
             end
         end
     end
