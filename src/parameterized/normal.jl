@@ -78,8 +78,11 @@ logdensity(d::Normal{()} , x) = - x^2 / 2
 
 ###############################################################################
 # The `@half` macro takes a symmetric univariate measure and efficiently creates
-# a truncated version. In this case, 
+# a truncated version. 
 @half Normal()
+
+@kwstruct HalfNormal()
+@kwstruct HalfNormal(σ)
 
 HalfNormal(σ) = HalfNormal(σ = σ)
 
