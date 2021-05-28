@@ -199,7 +199,7 @@ For an easy way to find expressions for the common log-densities, see [this gist
 
 ## Support
 
-![Planting Space](https://planting.space/sponsor/PlantingSpace-sponsor-3.png)
+[![Planting Space](https://planting.space/sponsor/PlantingSpace-sponsor-3.png)](https://planting.space)
 
 ## Stargazers over time
 
