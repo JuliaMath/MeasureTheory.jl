@@ -14,7 +14,7 @@ using SpecialFunctions
 (::CountingMeasure{IntegerRange{a,b}} ≪ ::NegativeBinomial) where {a,b} = a ≥ 0 && b ≤ d.n
 
 ###############################################################################
-@kwstruct(r, p)
+@kwstruct NegativeBinomial(r, p)
     
 function logdensity(d::NegativeBinomial{(:r, :p)}, y)
     (r, p) = (d.r, d.p)
@@ -22,7 +22,7 @@ function logdensity(d::NegativeBinomial{(:r, :p)}, y)
 end
 
 ###############################################################################
-@kwstruct(r, logitp)
+@kwstruct NegativeBinomial(r, logitp)
 
 function logdensity(d::NegativeBinomial{(:r, :logitp)}, y)
     (r, logitp) = (d.r, d.logitp)
@@ -30,7 +30,7 @@ function logdensity(d::NegativeBinomial{(:r, :logitp)}, y)
 end
 
 ###############################################################################
-@kwstruct(r,λ) 
+@kwstruct NegativeBinomial(r,λ) 
 # mean λ, as in Poisson
 # Converges to Poisson as r→∞
 
