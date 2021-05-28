@@ -5,6 +5,15 @@ export Beta
 
 @parameterized Beta(α,β) ≪ Lebesgue(𝕀)
 
+@kwstruct Beta(α, β)
+
+@kwalias Beta [
+    a     => α
+    alpha => α
+    b     => β
+    beta  => β
+]
+
 function logdensity(d::Beta{(:α, :β)}, x)
     return (d.α - 1) * log(x) + (d.β - 1) * log(1 - x) - logbeta(d.α, d.β)
 end
