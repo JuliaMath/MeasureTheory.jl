@@ -4,6 +4,7 @@
 export Uniform
 
 @parameterized Uniform() ≪ Lebesgue(𝕀)
+@kwstruct Uniform()
 
 
 # Standard Uniform

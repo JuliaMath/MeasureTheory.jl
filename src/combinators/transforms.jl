@@ -1,5 +1,5 @@
 using TransformVariables
-using TransformVariables: AbstractTransform, CallableInverse
+using TransformVariables: AbstractTransform, CallableTransform, CallableInverse
 
 export Pushforward
 export Pullback
@@ -20,29 +20,32 @@ end
 
 Pullback(f,ν) = Pullback(f, ν, true)
 
-function logdensity(pb::Pullback{F}, x) where {F <: AbstractTransform}
+function logdensity(pb::Pullback{F}, x) where {F <: CallableTransform}
     f = pb.f
     ν = pb.ν
     if pb.logjac
-        y, ℓ = transform_and_logjac(f, x)
-        return logdensity(ν, y) + ℓ
+        y, logJ = transform_and_logjac(f.t, x)
+        return logdensity(ν, y) + logJ
     else
         y = transform(f, x)
         return logdensity(ν, y)
     end
 end
 
-function logdensity(pf::Pushforward{F}, y) where {F <: AbstractTransform}
+function logdensity(pf::Pushforward{F}, y) where {F <: CallableTransform}
     f = pf.f
     μ = pf.μ
-    x = inverse(f, y)
+    x = inverse(f)(y)
     if pf.logjac
-        _, ℓ = transform_and_logjac(f, x)
-        return logdensity(μ, x) - ℓ
+        _, logJ = transform_and_logjac(f.t, x)
+        return logdensity(μ, x) - logJ
     else
         return logdensity(μ, x)
     end
 end
+
+Pullback(f::AbstractTransform, ν, logjac::Bool=true) = Pullback(transform(f), ν, logjac)
+Pushforward(f::AbstractTransform, ν, logjac::Bool=true) = Pushforward(transform(f), ν, logjac)
 
 Pullback(f::CallableInverse, ν, logjac::Bool=true) = Pushforward(transform(f.t), ν, logjac)
 
