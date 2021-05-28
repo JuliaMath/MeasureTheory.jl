@@ -6,6 +6,9 @@ export Exponential
 
 @parameterized Exponential(λ) ≪ Lebesgue(ℝ₊)
 
+@kwstruct Exponential(λ)
+@kwstruct Exponential()
+
 function logdensity(d::Exponential{()} , x)
     return -x
 end
