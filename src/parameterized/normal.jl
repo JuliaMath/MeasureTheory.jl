@@ -1,5 +1,5 @@
 using StatsFuns
-export Normal
+export Normal, HalfNormal
 
 # The `@parameterized` macro below does three things:
 # 1. Defines the `Normal` struct 
@@ -41,8 +41,22 @@ export Normal
     cov   => Σ
 ]
 
-distproxy(d::Normal{(:μ, :σ)}) = Dists.Normal(d.μ, d.σ)
-
+# It's often useful to be able to map into the parameter space for a given
+# measure. We (currently, at least) do this *independently* per parameter. This
+# allows us to do things like, e.g.
+#
+# julia> transform(asparams(Normal(2,3)))(randn(2))
+# (μ = -0.6778046205440658, σ = 3.7357686957861898)
+#
+# julia> transform(asparams(Normal(μ=-3,logσ=2)))(randn(2))
+# (μ = 0.3995295982002209, logσ = -1.3902312393777492)
+# 
+# Or using types:
+# julia> transform(asparams(Normal{(:μ,:σ²)}))(randn(2))
+# (μ = -0.4548087051528626, σ² = 11.920775478312793)
+#
+# And of course, you can apply `Normal` to any one of the above.
+#
 asparams(::Type{<:Normal}, ::Val{:μ}) = asℝ
 asparams(::Type{<:Normal}, ::Val{:σ}) = asℝ₊
 asparams(::Type{<:Normal}, ::Val{:logσ}) = asℝ
@@ -50,6 +64,14 @@ asparams(::Type{<:Normal}, ::Val{:σ²}) = asℝ₊
 asparams(::Type{<:Normal}, ::Val{:τ}) = asℝ₊
 asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 
+# Rather than try to reimplement everything in Distributions, measures can have
+# a `distproxy` method. This just delegates some methods to the corresponding
+# Distributions.jl methods. For example,
+#
+#     julia> entropy(Normal(2,4))
+#     2.805232894324563
+#
+distproxy(d::Normal{(:μ, :σ)}) = Dists.Normal(d.μ, d.σ)
 
 
 
@@ -81,9 +103,14 @@ logdensity(d::Normal{()} , x) = - x^2 / 2
 # a truncated version. 
 @half Normal()
 
+
 @kwstruct HalfNormal()
 @kwstruct HalfNormal(σ)
 
+# @μσ_methods, without the μ.
+@σ_methods HalfNormal()
+
+# This lets us 
 HalfNormal(σ) = HalfNormal(σ = σ)
 
 
