@@ -11,6 +11,6 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Beta(μ.α, μ.β))
 
-≪(::Beta, ::Lebesgue{X}) where X <: Real = true
-
 distproxy(d::Beta{(:α, :β)}) = Dists.Beta(d.α, d.β)
+
+representative(::Beta) = Lebesgue(𝕀)

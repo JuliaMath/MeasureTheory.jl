@@ -63,6 +63,10 @@ basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν), false)
 
 basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ), false)
 
+representative(μ::Pullback) = Pullback(μ.f, representative(μ.ν), false)
+
+representative(ν::Pushforward) = Pushforward(ν.f, representative(ν.μ), false)
+
 TransformVariables.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
 
 TransformVariables.as(μ::Pullback) = inverse(μ.f) ∘ μ.ν

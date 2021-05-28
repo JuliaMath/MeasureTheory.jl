@@ -81,3 +81,5 @@ function ≪(μ, ν)
     representative(μ) ≪ representative(ν) && return true
     return false
 end
+
+@traitfn representative(μ::M) where {M; IsRepresentative{M}} = μ
