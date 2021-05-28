@@ -41,7 +41,6 @@ end
 
 
 function _parameterized(__module__, expr)
-    ParameterizedMeasure = MeasureTheory.ParameterizedMeasure
     @capture ($op($μ($(p...)), $base)) expr begin
         @assert op ∈ [:<<, :≪, :≃]
         μbase = Symbol(:__, μ, :_base)
@@ -50,7 +49,7 @@ function _parameterized(__module__, expr)
         base = esc(base)
 
         q = quote
-            struct $μ{N,T} <: $ParameterizedMeasure{N}
+            struct $μ{N,T} <: MeasureTheory.ParameterizedMeasure{N}
                 par :: NamedTuple{N,T}
             end
 
@@ -223,14 +222,14 @@ function _half(ex)
                 
                 unhalf(μ::$halfdist) = $dist(getfield(μ, :par))
 
-                function $MeasureTheory.basemeasure(μ::$halfdist) 
+                function MeasureTheory.basemeasure(μ::$halfdist) 
                     b = basemeasure(unhalf(μ))
                     @assert basemeasure(b) == Lebesgue(ℝ)
                     lw = b.logweight
                     return WeightedMeasure(logtwo + lw, Lebesgue(ℝ₊))
                 end
             
-                function $MeasureTheory.logdensity(μ::$halfdist, x)
+                function MeasureTheory.logdensity(μ::$halfdist, x)
                     return logdensity(unhalf(μ), x)
                 end
 
