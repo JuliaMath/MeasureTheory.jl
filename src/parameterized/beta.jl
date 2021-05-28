@@ -3,7 +3,7 @@
 import StatsFuns
 export Beta
 
-@parameterized Beta(α,β) ≪ Lebesgue(𝕀)
+@parameterized Beta(α,β) ≃ Lebesgue(𝕀)
 
 @kwstruct Beta(α, β)
 
@@ -21,5 +21,3 @@ end
 Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Beta(μ.α, μ.β))
 
 distproxy(d::Beta{(:α, :β)}) = Dists.Beta(d.α, d.β)
-
-representative(::Beta) = Lebesgue(𝕀)
