@@ -5,6 +5,13 @@ export Gumbel
 
 @parameterized Gumbel(μ,σ) ≪ Lebesgue(ℝ)
 
+@kwstruct Gumbel()
+@kwstruct Gumbel(μ,σ)
+
+@μσ_methods Gumbel()
+
+Gumbel(μ,σ) = Gumbel((μ=μ, σ=σ))
+
 function logdensity(d::Gumbel{()} , x)
     return -exp(-x) - x
 end
@@ -18,5 +25,3 @@ end
 
 ≪(::Gumbel, ::Lebesgue{X}) where X <: Real = true
 representative(::Gumbel) = Lebesgue(ℝ)
-
-@μσ_methods Gumbel()
