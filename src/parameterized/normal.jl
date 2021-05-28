@@ -75,7 +75,7 @@ distproxy(d::Normal{(:μ, :σ)}) = Dists.Normal(d.μ, d.σ)
 
 
 
-Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
+
 
 ###############################################################################
 # Some distributions have a "standard" version that takes no parameters
@@ -84,6 +84,8 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 # Instead of setting default values, the `@kwstruct` call above makes a
 # parameter-free instance available. The log-density for this is very efficient.
 logdensity(d::Normal{()} , x) = - x^2 / 2 
+
+Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 
 ###############################################################################
 # We need a `@kwstruct` for each instance, including the one declared in the
@@ -96,6 +98,21 @@ logdensity(d::Normal{()} , x) = - x^2 / 2
 # respectively. Also, it's valid to have existing parameters here as a starting
 # point, in particular a "shape parameter" is very common. See `StudentT` for an
 # example of this.
+#
+# This defines methods for `logdensity` and `Base.rand`. The latter works out
+# especially nicely, because it lets us do things like
+#    
+#     julia> using Symbolics
+#     [ Info: Precompiling Symbolics [0c5d862f-8b57-4792-8d23-62f2024744c7]
+#    
+#     julia> @variables μ σ
+#     2-element Vector{Num}:
+#      μ
+#      σ
+#    
+#     julia> rand(Normal(μ,σ))
+#     μ + 1.2517620265570832σ
+#
 @μσ_methods Normal()
 
 ###############################################################################
