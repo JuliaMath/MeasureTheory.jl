@@ -53,26 +53,31 @@ export representative
 
 """
     representative(μ::AbstractMeasure) -> AbstractMeasure
+
+We need to be able to compute `μ ≪ ν` for each `μ` and `ν`. To do this directly
+would require a huge number of methods (quadratic in the number of defined
+measures). 
+
+This function is a way around that. When defining a new measure `μ`, you should
+also find some equivalent measure `ρ` that's "as primitive as possible". 
+
+If possible, `ρ` should be a `PrimitiveMeasure`, or a `Product` of these. If
+not, it should be a  transform (`Pushforward` or `Pullback`) of a
+`PrimitiveMeasure` (or `Product` of these). 
 """
 function representative(μ)
     function f(μ)
         # Check if we're done
         isprimitive(μ) && return μ
-        
         ν = basemeasure(μ)
-
-        # TODO: Make sure we don't leave the equivalence class
-        # Make sure not to leave the equivalence class
-        # (ν ≪ μ) || return μ
-
         return ν
     end
 
     fix(f, μ)
 end
 
-# TODO: ≪ needs more work
 function ≪(μ, ν)
     μ == ν && return true
     representative(μ) ≪ representative(ν) && return true
+    return false
 end
