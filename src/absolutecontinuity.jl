@@ -65,16 +65,7 @@ If possible, `ρ` should be a `PrimitiveMeasure`, or a `Product` of these. If
 not, it should be a  transform (`Pushforward` or `Pullback`) of a
 `PrimitiveMeasure` (or `Product` of these). 
 """
-function representative(μ)
-    function f(μ)
-        # Check if we're done
-        isprimitive(μ) && return μ
-        ν = basemeasure(μ)
-        return ν
-    end
-
-    fix(f, μ)
-end
+function representative(μ) end
 
 function ≪(μ, ν)
     μ == ν && return true
