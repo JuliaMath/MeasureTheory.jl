@@ -6,10 +6,10 @@ This is by far the most common kind of measure, and is especially useful as a wa
 
 ### Declaring a Parameterized Measure
 
-To start, declare a `@measure`. For example, `Normal` is declared as
+To start, declare a `@parameterized`. For example, `Normal` is declared as
 
 ```julia
-@measure Normal(μ,σ) ≪ (1/sqrt2π) * Lebesgue(ℝ)
+@parameterized Normal(μ,σ) ≪ (1/sqrt2π) * Lebesgue(ℝ)
 ```
 
 [`ℝ` is typed as `\bbR <TAB>`]
