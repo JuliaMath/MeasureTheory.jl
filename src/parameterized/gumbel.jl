@@ -3,7 +3,7 @@
 import StatsFuns
 export Gumbel
 
-@parameterized Gumbel(μ,σ) ≪ Lebesgue(ℝ)
+@parameterized Gumbel(μ,σ) ≃ Lebesgue(ℝ)
 
 @kwstruct Gumbel()
 @kwstruct Gumbel(μ,σ)
@@ -20,8 +20,7 @@ import Base
 
 function Base.rand(rng::AbstractRNG, d::Gumbel{()})
     u = rand(rng)
-    log(-log(u))
+    -log(-log(u))
 end
 
 ≪(::Gumbel, ::Lebesgue{X}) where X <: Real = true
-representative(::Gumbel) = Lebesgue(ℝ)
