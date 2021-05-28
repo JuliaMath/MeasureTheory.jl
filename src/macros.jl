@@ -42,7 +42,8 @@ end
 
 function _parameterized(__module__, expr)
     ParameterizedMeasure = MeasureTheory.ParameterizedMeasure
-    @capture ($μ($(p...)) ≪ $base) expr begin
+    @capture ($op($μ($(p...)), $base)) expr begin
+        @assert op ∈ [:<<, :≪, :≃]
         μbase = Symbol(:__, μ, :_base)
 
         μ = esc(μ)
@@ -58,6 +59,13 @@ function _parameterized(__module__, expr)
             MeasureTheory.basemeasure(::$μ) = $μbase
         end   
         
+        if op == :≃
+            push!(q.args, quote
+                MeasureTheory.representative(::$μ) = MeasureTheory.representative($μbase)
+            end
+            )
+        end
+
         if !isempty(p)
             # e.g. Normal(μ,σ) = Normal((μ=μ, σ=σ))
             pnames = QuoteNode.(p)
