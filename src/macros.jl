@@ -124,7 +124,7 @@ function _μσ_methods(__module__, ex)
                     d.σ * rand(rng, T, $dist($(d_args...))) + d.μ
                 end
 
-                function logdensity(d::$dist{($(argnames...), :μ, :σ)}, x)
+                function MeasureTheory.logdensity(d::$dist{($(argnames...), :μ, :σ)}, x)
                     z = (x - d.μ) / d.σ   
                     return logdensity($dist($(d_args...)), z) - log(d.σ)
                 end
@@ -133,7 +133,7 @@ function _μσ_methods(__module__, ex)
                     d.σ * rand(rng, T, $dist($(d_args...)))
                 end
 
-                function logdensity(d::$dist{($(argnames...), :σ)}, x)
+                function MeasureTheory.logdensity(d::$dist{($(argnames...), :σ)}, x)
                     z = x / d.σ   
                     return logdensity($dist($(d_args...)), z) - log(d.σ) 
                 end
@@ -142,7 +142,7 @@ function _μσ_methods(__module__, ex)
                     rand(rng, T, $dist($(d_args...))) + d.μ
                 end
 
-                function logdensity(d::$dist{($(argnames...), :μ)}, x)
+                function MeasureTheory.logdensity(d::$dist{($(argnames...), :μ)}, x)
                     z = x - d.μ
                     return logdensity($dist($(d_args...)), z)
                 end
@@ -174,7 +174,7 @@ function _σ_methods(__module__, ex)
                     d.σ * rand(rng, T, $dist($(d_args...)))
                 end
 
-                function logdensity(d::$dist{($(argnames...), :σ)}, x)
+                function MeasureTheory.logdensity(d::$dist{($(argnames...), :σ)}, x)
                     z = x / d.σ   
                     return logdensity($dist($(d_args...)), z) - log(d.σ) 
                 end
@@ -217,7 +217,7 @@ function _half(ex)
 
                 function $MeasureTheory.basemeasure(μ::$halfdist) 
                     b = basemeasure(unhalf(μ))
-                    @assert b == Lebesgue(ℝ)
+                    @assert basemeasure(b) == Lebesgue(ℝ)
                     lw = b.logweight
                     return WeightedMeasure(logtwo + lw, Lebesgue(ℝ₊))
                 end
