@@ -73,10 +73,6 @@ asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 #
 distproxy(d::Normal{(:μ, :σ)}) = Dists.Normal(d.μ, d.σ)
 
-
-
-
-
 ###############################################################################
 # Some distributions have a "standard" version that takes no parameters
 @kwstruct Normal()
