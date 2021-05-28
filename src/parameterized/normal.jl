@@ -127,7 +127,7 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 # @μσ_methods, without the μ.
 @σ_methods HalfNormal()
 
-# This lets us 
+# A single unnamed parameter for `HalfNormal` should be interpreted as a `σ`
 HalfNormal(σ) = HalfNormal(σ = σ)
 
 
