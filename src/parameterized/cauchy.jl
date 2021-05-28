@@ -4,7 +4,7 @@
 import StatsFuns
 export Cauchy
 
-@parameterized Cauchy(μ,σ) ≪ (1/π) * Lebesgue(ℝ)
+@parameterized Cauchy(μ,σ) ≃ (1/π) * Lebesgue(ℝ)
 
 @kwstruct Cauchy()
 
@@ -18,7 +18,7 @@ end
 Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng, T)
 
 ≪(::Cauchy, ::Lebesgue{X}) where X <: Real = true
-representative(::Cauchy) = Lebesgue(ℝ)
+# representative(::Cauchy) = Lebesgue(ℝ)
 
 
 @half Cauchy()
