@@ -12,6 +12,7 @@ export StudentT
 @μσ_methods StudentT(ν)
 
 @kwstruct StudentT(ν, μ, σ)
+
 StudentT(ν, μ, σ) = StudentT((ν=ν, μ=μ, σ=σ))
 
 @kwalias StudentT [
@@ -37,5 +38,4 @@ representative(::StudentT) = Lebesgue(ℝ)
 
 distproxy(d::StudentT{(:ν, :μ, :σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.TDist(d.ν))
 
-@μσ_methods StudentT(ν)
 @half StudentT(ν)
