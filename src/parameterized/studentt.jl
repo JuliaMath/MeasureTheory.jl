@@ -9,7 +9,9 @@ export StudentT
 
 @kwstruct StudentT(ν)
 
-@kwstruct StrudentT(ν, μ, σ)
+@μσ_methods StudentT(ν)
+
+@kwstruct StudentT(ν, μ, σ)
 StudentT(ν, μ, σ) = StudentT((ν=ν, μ=μ, σ=σ))
 
 @kwalias StudentT [
