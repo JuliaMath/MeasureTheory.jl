@@ -90,7 +90,7 @@ function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: Par
     thekeys = tuple((k for k in N1 if k ∉ N2)...)
     transforms = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
     C = constructor(M)
-    return params(C(transforms))
+    return as(params(C(transforms)))
 end
 
 
