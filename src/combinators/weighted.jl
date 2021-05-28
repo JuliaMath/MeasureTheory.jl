@@ -46,6 +46,8 @@ Base.:*(m::AbstractMeasure, k::Real) = k * m
 ≪(::M, ::WeightedMeasure{R,M}) where {R,M} = true
 ≪(::WeightedMeasure{R,M}, ::M) where {R,M} = true
 
-basemeasure(μ::WeightedMeasure{R,M}) where {R,M} = μ.base
+basemeasure(μ::WeightedMeasure) = μ.base
+
+representative(μ::WeightedMeasure) = representative(μ.base)
 
 sampletype(μ:: WeightedMeasure) = sampletype(μ.base)
