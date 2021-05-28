@@ -90,7 +90,10 @@ function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: Par
     thekeys = tuple((k for k in N1 if k ∉ N2)...)
     transforms = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
     C = constructor(M)
-    return as(params(C(transforms)))
+    
+    # Make sure we end up with a consistent ordering
+    ordered_transforms = NamedTuple{thekeys}(params(C(merge(constraints, transforms))))
+    return as(ordered_transforms)
 end
 
 
