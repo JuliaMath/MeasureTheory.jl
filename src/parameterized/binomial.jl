@@ -10,13 +10,12 @@ probit(p) = sqrt2 * erfinv(2p - 1)
 
 @parameterized Binomial(n,p) ≪ CountingMeasure(ℤ[0:∞])
 
-
 (d::Binomial ≪ ::CountingMeasure{IntegerRange{a,b}}) where {a,b} = a ≤ 0 && b ≥ d.n
 
 (::CountingMeasure{IntegerRange{a,b}} ≪ ::Binomial) where {a,b} = a ≥ 0 && b ≤ d.n
 
 ###############################################################################
-# (n, p)
+@kwstruct Binomial(n, p)
     
 function logdensity(d::Binomial{(:n, :p)}, y)
     (n, p) = (d.n, d.p)
@@ -28,7 +27,7 @@ function Base.rand(rng::AbstractRNG, d::Binomial{(:n,:p)})
 end
 
 ###############################################################################
-# (n, logitp)
+@kwstruct Binomial(n, logitp)
 
 function logdensity(d::Binomial{(:n, :logitp)}, y)
     n = d.n
@@ -41,7 +40,7 @@ function Base.rand(rng::AbstractRNG, d::Binomial{(:n,:logitp)})
 end
 
 ###############################################################################
-# (n, probitp)
+@kwstruct Binomial(n, probitp)
 
 function logdensity(d::Binomial{(:n, :probitp)}, y)
     n = d.n
