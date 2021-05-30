@@ -1,6 +1,6 @@
 export TrivialMeasure
 
-struct TrivialMeasure <: AbstractMeasure end
+struct TrivialMeasure <: PrimitiveMeasure end
 
 @primitive TrivialMeasure
 

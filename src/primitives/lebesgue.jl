@@ -2,7 +2,7 @@
 
 export Lebesgue
 
-struct Lebesgue{X} <: AbstractMeasure end
+struct Lebesgue{X} <: PrimitiveMeasure end
 
 @primitive Lebesgue
 

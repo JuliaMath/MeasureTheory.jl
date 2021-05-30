@@ -31,7 +31,7 @@ sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 # sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
 
 """
-    logdensity(μ::AbstractMeasure{X}, x::X)
+    logdensity(μ::AbstractMeasure [, ν::AbstractMeasure], x::X)
 
 Compute the logdensity of the measure μ at the point x. This is the standard way
 to define `logdensity` for a new measure. the base measure is implicit here, and
@@ -49,6 +49,7 @@ include("absolutecontinuity.jl")
 include("parameterized.jl")
 include("macros.jl")
 
+include("primitive.jl")
 include("primitives/counting.jl")
 include("primitives/lebesgue.jl")
 include("primitives/dirac.jl")
