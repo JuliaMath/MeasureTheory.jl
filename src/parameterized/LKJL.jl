@@ -38,17 +38,23 @@ function logdensity(d::LKJL{k}, L::Union{LinearAlgebra.AbstractTriangular, Diago
     η = d.η
     # z = diag(L)
     # sum(log.(z) .* ((k:-1:1) .+ 2*(η-1)))
-    c = k + 1 + 2(η - 1)
+
+    # Note: https://github.com/cscherrer/MeasureTheory.jl/issues/100#issuecomment-852428192
+    c = k + 2(η - 1)
     @tullio s = (c - i) * log(L[i,i])
     return s
 end
 
 using TransformVariables
 
-TransformVariables.as(::LKJL{k}) where {k} = TransformVariables.CorrCholeskyFactor(k)
+TransformVariables.as(::LKJL{k}) where {k} = TransformVariables.CorrCholeskyLower(k)
 
 function basemeasure(μ::LKJL{k}) where {k}
     t = as(μ)
     d = dimension(t)
     return Pushforward(t, Lebesgue(ℝ)^d, false)
 end
+
+function Base.rand(rng::AbstractRNG, ::Type, d::LKJL{k}) where {k}
+    return cholesky(rand(rng, Dists.LKJ(k, d.η))).L
+end;
