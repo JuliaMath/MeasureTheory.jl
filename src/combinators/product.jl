@@ -164,7 +164,9 @@ export marginals
 
 marginals(d::ProductMeasure) = d.data
 
-function testvalue(d::MeasureTheory.ProductMeasure{NamedTuple{N,T}}) where {N,T}
+function testvalue(d::ProductMeasure{NamedTuple{N,T}}) where {N,T}
     vals = values(d.data)
     NamedTuple{N}(testvalue.(vals))
 end
+
+representative(μ::ProductMeasure) = ProductMeasure(map(representative, μ.data))

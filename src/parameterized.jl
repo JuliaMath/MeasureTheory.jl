@@ -21,11 +21,6 @@ function Base.show(io::IO, μ::ParameterizedMeasure{N}) where {N}
     print(io, getfield(μ,:par))
 end
 
-# e.g. Normal(;μ=μ, σ=σ) = Normal((μ=μ, σ=σ))
-(M::Type{<: ParameterizedMeasure})(; kwargs...) = M(paramsort((; kwargs...)))
-
-(M::Type{<: ParameterizedMeasure})(::Tuple{}) = M(NamedTuple())
-
 export asparams
 
 # Allow things like
@@ -81,18 +76,28 @@ TransformVariables.TransformTuple{NamedTuple{(:μ, :σ), Tuple{TransformVariable
 """
 function asparams end
 
+asparams(μ::ParameterizedMeasure, v::Val) = asparams(typeof(μ), v)
+asparams(μ, s::Symbol) = asparams(μ, Val(s))
+
 asparams(M::Type{PM}) where {PM<:ParameterizedMeasure} = asparams(M, NamedTuple())
 
-function asparams(M::Type{<: ParameterizedMeasure{N}}, constraints::NamedTuple) where {N} 
-    thekeys = setdiff(N, keys(constraints))
 
-    result = NamedTuple()
-    for k in thekeys
-        t = asparams(M, Val(k))
-        result = merge(result, NamedTuple{(k,)}((t,)))
-    end
-    return as(paramsort(result))
+function constructor(::Type{T}) where {T} 
+    (T isa UnionAll) ? T.body.name.wrapper : T.name.wrapper
 end
+
+function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: ParameterizedMeasure{N1}} 
+    thekeys = tuple((k for k in N1 if k ∉ N2)...)
+    transforms = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
+    C = constructor(M)
+    
+    # Make sure we end up with a consistent ordering
+    ordered_transforms = NamedTuple{thekeys}(params(C(merge(constraints, transforms))))
+    return as(ordered_transforms)
+end
+
+
+asparams(μ::ParameterizedMeasure) = asparams(typeof(μ))
 
 export params
 

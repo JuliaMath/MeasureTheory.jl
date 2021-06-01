@@ -19,7 +19,7 @@ function basemeasure(μ::SpikeMixture)
     SpikeMixture(basemeasure(μ.m), 1/(1+ki), μ.s*(1+ki))
 end
 
-function MeasureTheory.logdensity(μ::SpikeMixture, x)
+function logdensity(μ::SpikeMixture, x)
     return log(μ.w) + logdensity(μ.m, x)
 end
 

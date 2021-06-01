@@ -4,17 +4,16 @@
 import StatsFuns
 export Exponential
 
-@measure Exponential(λ)
+@parameterized Exponential(λ) ≃ Lebesgue(ℝ₊)
 
-basemeasure(::Exponential) = Lebesgue(ℝ₊)
+@kwstruct Exponential(λ)
+@kwstruct Exponential()
 
 function logdensity(d::Exponential{()} , x)
     return -x
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Exponential{()}) = randexp(rng,T)
-
-representative(::Exponential) = Lebesgue(ℝ₊)
 
 
 ##########################

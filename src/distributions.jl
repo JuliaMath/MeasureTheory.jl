@@ -27,16 +27,17 @@ function Base.rand(rng::AbstractRNG, μ::DistributionMeasure{F,S,X}) where {F, S
     return rand(rng, μ.dist)
 end
 
-export Normal
-
-
 basemeasure(d::Dists.AbstractMvNormal) = Lebesgue(ℝ)^size(d)
 
 function basemeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous})
     return Lebesgue(ℝ)
 end
 
+∫(::typeof(identity), ::Dists.Distribution) = 1.0
 
 logdensity(μ::Dists.Distribution, x) = Dists.logpdf(μ,x)
+Dists.logpdf(d::AbstractMeasure, x) = logdensity(d,x)
 
 density(μ::Dists.Distribution, x) = Dists.pdf(μ,x)
+
+testvalue(d::Dists.Distribution) = rand(d)

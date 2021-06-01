@@ -152,7 +152,7 @@ function Base.rand(rng::AbstractRNG, T::Type, d::ForGenerator)
     Base.Generator(r ∘ d.data.f, d.data.iter)
 end
 
-function MeasureTheory.logdensity(d::ForGenerator, x)
+function logdensity(d::ForGenerator, x)
     sum((logdensity(dj, xj) for (dj, xj) in zip(d.data, x)))
 end
 

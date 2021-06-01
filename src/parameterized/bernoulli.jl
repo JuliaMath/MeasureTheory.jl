@@ -3,10 +3,7 @@
 export Bernoulli
 import Base
 
-@measure Bernoulli(p)
-
-
-basemeasure(::Bernoulli) = CountingMeasure(ℤ[0:1])
+@parameterized Bernoulli(p) ≃ CountingMeasure(ℤ[0:1])
 
 function logdensity(d::Bernoulli{(:p,)}, y)
     p = d.p
@@ -36,7 +33,6 @@ Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logitp,)}) = rand(rng, T) < 
 
 ≪(::Bernoulli, ::IntegerRange{lo,hi}) where {lo, hi} = lo ≤ 0 && 1 ≤ hi
 
-representative(::Bernoulli) = CountingMeasure(ℤ[0:1])
 
 distproxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
 distproxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))

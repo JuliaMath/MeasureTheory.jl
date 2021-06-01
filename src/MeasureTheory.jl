@@ -18,6 +18,7 @@ export AbstractMeasure
 using InfiniteArrays
 using ConcreteStructs
 using DynamicIterators
+using KeywordCalls
 
 const ∞ = InfiniteArrays.∞
 
@@ -40,42 +41,49 @@ Methods for computing density relative to other measures will be
 """
 function logdensity end
 
-include("paramorder.jl")
 include("exp.jl")
 include("domains.jl")
 include("utils.jl")
+include("traits.jl")
 include("absolutecontinuity.jl")
-include("basemeasures.jl")
 include("parameterized.jl")
 include("macros.jl")
+
+include("primitives/counting.jl")
+include("primitives/lebesgue.jl")
+include("primitives/dirac.jl")
+include("primitives/trivial.jl")
+
 include("combinators/weighted.jl")
 include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("combinators/for.jl")
 include("combinators/power.jl")
 include("combinators/likelihood.jl")
-include("combinators/elementwise.jl")
+include("combinators/pointwise.jl")
 include("combinators/transforms.jl")
 include("combinators/spikemixture.jl")
 include("combinators/chain.jl")
+
 include("distributions.jl")
 include("rand.jl")
-include("probability/dirac.jl")
-include("probability/normal.jl")
-include("probability/studentt.jl")
-include("probability/cauchy.jl")
-include("probability/laplace.jl")
-include("probability/uniform.jl")
-include("probability/beta.jl")
-include("probability/gumbel.jl")
-include("probability/exponential.jl")
-include("probability/mvnormal.jl")
-include("probability/inverse-gamma.jl")
-include("probability/bernoulli.jl")
-include("probability/poisson.jl")
-include("probability/binomial.jl")
-include("probability/LKJL.jl")
-include("probability/negativebinomial.jl")
+
+include("parameterized/normal.jl")
+include("parameterized/studentt.jl")
+include("parameterized/cauchy.jl")
+include("parameterized/laplace.jl")
+include("parameterized/uniform.jl")
+include("parameterized/beta.jl")
+include("parameterized/gumbel.jl")
+include("parameterized/exponential.jl")
+include("parameterized/mvnormal.jl")
+include("parameterized/inverse-gamma.jl")
+include("parameterized/bernoulli.jl")
+include("parameterized/poisson.jl")
+include("parameterized/binomial.jl")
+include("parameterized/LKJL.jl")
+include("parameterized/negativebinomial.jl")
+
 include("density.jl")
 # include("pushforward.jl")
 include("kernel.jl")

@@ -1,10 +1,8 @@
 
 using MLStyle
-using StatsFuns
 using Random: AbstractRNG
-using StatsFuns: logtwo
 
-export @measure
+export @parameterized
 
 # A fold over ASTs. Example usage in `replace`
 function foldast(leaf, branch; kwargs...)
@@ -40,22 +38,37 @@ macro capture(template, ex, action)
     capture(template, ex, action) |> esc
 end
 
-function _measure(expr)
-    @capture $μ($(p...)) expr begin
+
+
+function _parameterized(__module__, expr)
+    @capture ($op($μ($(p...)), $base)) expr begin
+        @assert op ∈ [:<<, :≪, :≃]
+        μbase = Symbol(:__, μ, :_base)
+
+        μ = esc(μ)
+        base = esc(base)
+
         q = quote
-            struct $μ{N,T} <: ParameterizedMeasure{N}
+            struct $μ{N,T} <: MeasureTheory.ParameterizedMeasure{N}
                 par :: NamedTuple{N,T}
             end
 
-            (::Type{$μ{N}})(nt::NamedTuple{N,T}) where {N,T} = $μ{N,T}(nt) 
-
-            (::Type{$μ})() where {N,T} = $μ(NamedTuple()) 
+            const $μbase = $base
+            
+            MeasureTheory.basemeasure(::$μ) = $μbase
         end   
         
+        if op == :≃
+            push!(q.args, quote
+                MeasureTheory.representative(::$μ) = MeasureTheory.representative($μbase)
+            end
+            )
+        end
+
         if !isempty(p)
-            # e.g. Normal(μ,σ) = Normal(;μ=μ, σ=σ)
-            # Requires Julia 1.5
-            push!(q.args, :($μ($(p...)) = $μ(;$(p...))))
+            # e.g. Normal(μ,σ) = Normal((μ=μ, σ=σ))
+            pnames = QuoteNode.(p)
+            push!(q.args, :($μ($(p...)) = $μ(NamedTuple{($(pnames...),)}(($(p...),)))))
         end
         
         return q
@@ -63,63 +76,62 @@ function _measure(expr)
 end
 
 """
-    @measure <declaration>
+    @parameterized <declaration>
     
 The <declaration> gives a measure and its default parameters, and specifies
 its relation to its base measure. For example,
 
-    @measure Normal(μ,σ) ≃ Lebesgue{X}
+    @parameterized Normal(μ,σ)
 
-declares the `Normal` is a measure with default parameters `μ and σ`, and it is
-equivalent to its base measure, which is `Lebesgue{X}`
+declares the `Normal` is a measure with default parameters `μ and σ`. The result is equivalent to
+```
+struct Normal{N,T} <: ParameterizedMeasure{N}
+    par :: NamedTuple{N,T}
+end
 
-You can see the generated code like this:
+KeywordCalls.@kwstruct Normal(μ,σ)
 
-    julia> MacroTools.prettify(@macroexpand @measure Normal(μ,σ) ≃ Lebesgue{X})
-    quote
-        struct Normal{P, X} <: AbstractMeasure
-            par::P
-        end
-        function Normal(nt::NamedTuple)
-            P = typeof(nt)
-            return Normal{P, eltype(Normal{P})}
-        end
-        Normal(; kwargs...) = Normal((; kwargs...))
-        (basemeasure(μ::Normal{P, X}) where {P, X}) = Lebesgue{X}
-        Normal(μ, σ) = Normal(; Any[:μ, :σ])
-        ((:≪)(::Normal{P, X}, ::Lebesgue{X}) where {P, X}) = true
-        ((:≪)(::Lebesgue{X}, ::Normal{P, X}) where {P, X}) = true
-    end
+Normal(μ,σ) = Normal((μ=μ, σ=σ))
+```
 
-Note that the `eltype` function needs to be defined separately by the user.
+See [KeywordCalls.jl](https://github.com/cscherrer/KeywordCalls.jl) for details on `@kwstruct`.
 """
-macro measure(expr)
-    esc(_measure(expr))
+macro parameterized(expr)
+    _parameterized(__module__, expr)
 end
 
 
-# (@macroexpand @measure Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(X)) |> MacroTools.prettify
+# (@macroexpand @parameterized Normal(μ,σ) ≃ (1/sqrt2π) * Lebesgue(X)) |> MacroTools.prettify
 
 
 using MLStyle
 
 macro μσ_methods(ex)
-    esc(_μσ_methods(ex))
+    _μσ_methods(__module__, ex)
 end
 
-function _μσ_methods(ex)
+function _μσ_methods(__module__, ex)
     @match ex begin
         :($dist($(args...))) => begin
             argnames = QuoteNode.(args)
 
             d_args = (:(d.$arg) for arg in args)
-            quote
+
+            method_μσ = KeywordCalls._kwstruct(__module__, :($dist($(args...), μ, σ)))
+            method_μ  = KeywordCalls._kwstruct(__module__, :($dist($(args...), μ)))
+            method_σ  = KeywordCalls._kwstruct(__module__, :($dist($(args...), σ)))
+
+            q = quote
+
+                 $method_μσ
+                 $method_μ
+                 $method_σ
 
                 function Base.rand(rng::AbstractRNG, T::Type, d::$dist{($(argnames...), :μ, :σ)})
                     d.σ * rand(rng, T, $dist($(d_args...))) + d.μ
                 end
 
-                function logdensity(d::$dist{($(argnames...), :μ, :σ)}, x)
+                function MeasureTheory.logdensity(d::$dist{($(argnames...), :μ, :σ)}, x)
                     z = (x - d.μ) / d.σ   
                     return logdensity($dist($(d_args...)), z) - log(d.σ)
                 end
@@ -128,7 +140,7 @@ function _μσ_methods(ex)
                     d.σ * rand(rng, T, $dist($(d_args...)))
                 end
 
-                function logdensity(d::$dist{($(argnames...), :σ)}, x)
+                function MeasureTheory.logdensity(d::$dist{($(argnames...), :σ)}, x)
                     z = x / d.σ   
                     return logdensity($dist($(d_args...)), z) - log(d.σ) 
                 end
@@ -137,15 +149,63 @@ function _μσ_methods(ex)
                     rand(rng, T, $dist($(d_args...))) + d.μ
                 end
 
-                function logdensity(d::$dist{($(argnames...), :μ)}, x)
+                function MeasureTheory.logdensity(d::$dist{($(argnames...), :μ)}, x)
                     z = x - d.μ
                     return logdensity($dist($(d_args...)), z)
                 end
             end 
+
+            return q
         end
     end
 end
 
+
+macro σ_methods(ex)
+    _σ_methods(__module__, ex)
+end
+
+function _σ_methods(__module__, ex)
+    @match ex begin
+        :($dist($(args...))) => begin
+            argnames = QuoteNode.(args)
+
+            d_args = (:(d.$arg) for arg in args)
+
+            method_σ  = KeywordCalls._kwstruct(__module__, :($dist($(args...), σ)))
+
+            q = quote
+                $method_σ
+
+                function Base.rand(rng::AbstractRNG, T::Type, d::$dist{($(argnames...), :σ)})
+                    d.σ * rand(rng, T, $dist($(d_args...)))
+                end
+
+                function MeasureTheory.logdensity(d::$dist{($(argnames...), :σ)}, x)
+                    z = x / d.σ   
+                    return logdensity($dist($(d_args...)), z) - log(d.σ) 
+                end
+            end 
+
+            return q
+        end
+    end
+end
+
+"""
+    @half dist([paramnames])
+
+Starting from a symmetric univariate measure `dist ≪ Lebesgue(ℝ)`, create a new
+measure `Halfdist ≪ Lebesgue(ℝ₊)`. For example,
+
+    @half Normal()
+
+creates `HalfNormal()`, and 
+
+    @half StudentT(ν)
+
+creates `HalfStudentT(ν)`.
+"""
 macro half(ex)
     esc(_half(ex))
 end
@@ -156,8 +216,6 @@ function _half(ex)
             halfdist = Symbol(:Half, dist)
 
             quote
-                export $halfdist
-                
                 struct $halfdist{N,T} <: ParameterizedMeasure{N}
                     par :: NamedTuple{N,T}
                 end
@@ -166,6 +224,7 @@ function _half(ex)
 
                 function MeasureTheory.basemeasure(μ::$halfdist) 
                     b = basemeasure(unhalf(μ))
+                    @assert basemeasure(b) == Lebesgue(ℝ)
                     lw = b.logweight
                     return WeightedMeasure(logtwo + lw, Lebesgue(ℝ₊))
                 end
@@ -179,7 +238,6 @@ function _half(ex)
                 end
 
                 (::$halfdist ≪ ::Lebesgue{ℝ₊}) = true
-                (::Lebesgue{ℝ₊} ≪ ::$halfdist) = true
             end
         end
     end

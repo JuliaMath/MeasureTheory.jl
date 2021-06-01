@@ -3,9 +3,9 @@
 
 export Uniform
 
-@measure Uniform()
+@parameterized Uniform() ≪ Lebesgue(𝕀)
+@kwstruct Uniform()
 
-basemeasure(::Uniform) = Lebesgue(𝕀)
 
 # Standard Uniform
 

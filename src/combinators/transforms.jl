@@ -1,5 +1,5 @@
 using TransformVariables
-using TransformVariables: AbstractTransform, InverseTransform
+using TransformVariables: AbstractTransform, CallableTransform, CallableInverse
 
 export Pushforward
 export Pullback
@@ -20,33 +20,36 @@ end
 
 Pullback(f,ν) = Pullback(f, ν, true)
 
-function logdensity(pb::Pullback{F}, x) where {F <: AbstractTransform}
+function logdensity(pb::Pullback{F}, x) where {F <: CallableTransform}
     f = pb.f
     ν = pb.ν
     if pb.logjac
-        y, ℓ = transform_and_logjac(f, x)
-        return logdensity(ν, y) + ℓ
+        y, logJ = transform_and_logjac(f.t, x)
+        return logdensity(ν, y) + logJ
     else
         y = transform(f, x)
         return logdensity(ν, y)
     end
 end
 
-function logdensity(pf::Pushforward{F}, y) where {F <: AbstractTransform}
+function logdensity(pf::Pushforward{F}, y) where {F <: CallableTransform}
     f = pf.f
     μ = pf.μ
-    x = inverse(f, y)
+    x = inverse(f)(y)
     if pf.logjac
-        _, ℓ = transform_and_logjac(f, x)
-        return logdensity(μ, x) - ℓ
+        _, logJ = transform_and_logjac(f.t, x)
+        return logdensity(μ, x) - logJ
     else
         return logdensity(μ, x)
     end
 end
 
-Pullback(f::InverseTransform, ν, logjac::Bool=true) = Pushforward(f.transform, ν, logjac)
+Pullback(f::AbstractTransform, ν, logjac::Bool=true) = Pullback(transform(f), ν, logjac)
+Pushforward(f::AbstractTransform, ν, logjac::Bool=true) = Pushforward(transform(f), ν, logjac)
 
-Pushforward(f::InverseTransform, ν, logjac::Bool=true) = Pullback(f.transform, ν, logjac)
+Pullback(f::CallableInverse, ν, logjac::Bool=true) = Pushforward(transform(f.t), ν, logjac)
+
+Pushforward(f::CallableInverse, ν, logjac::Bool=true) = Pullback(transform(f.t), ν, logjac)
 
 Base.rand(rng::AbstractRNG, T::Type, ν::Pushforward) = ν.f(rand(rng, T, ν.μ))
 
@@ -59,6 +62,10 @@ testvalue(μ::Pullback) = transform(inverse(μ.f), testvalue(μ.ν))
 basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν), false)
 
 basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ), false)
+
+representative(μ::Pullback) = Pullback(μ.f, representative(μ.ν), false)
+
+representative(ν::Pushforward) = Pushforward(ν.f, representative(ν.μ), false)
 
 TransformVariables.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
 

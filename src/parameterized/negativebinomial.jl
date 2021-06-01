@@ -5,16 +5,16 @@ import Base
 using StatsFuns
 using SpecialFunctions
 
-@measure NegativeBinomial(r,p)
+@parameterized NegativeBinomial(r,p) ≪ CountingMeasure(ℤ[0:∞])
 
-basemeasure(μ::NegativeBinomial) = CountingMeasure(ℤ[0:∞])
+
 
 (d::NegativeBinomial ≪ ::CountingMeasure{IntegerRange{a,b}}) where {a,b} = a ≤ 0 && b ≥ d.n
 
 (::CountingMeasure{IntegerRange{a,b}} ≪ ::NegativeBinomial) where {a,b} = a ≥ 0 && b ≤ d.n
 
 ###############################################################################
-# (r, p)
+@kwstruct NegativeBinomial(r, p)
     
 function logdensity(d::NegativeBinomial{(:r, :p)}, y)
     (r, p) = (d.r, d.p)
@@ -22,7 +22,7 @@ function logdensity(d::NegativeBinomial{(:r, :p)}, y)
 end
 
 ###############################################################################
-# (r, logitp)
+@kwstruct NegativeBinomial(r, logitp)
 
 function logdensity(d::NegativeBinomial{(:r, :logitp)}, y)
     (r, logitp) = (d.r, d.logitp)
@@ -30,7 +30,7 @@ function logdensity(d::NegativeBinomial{(:r, :logitp)}, y)
 end
 
 ###############################################################################
-# (r,λ) 
+@kwstruct NegativeBinomial(r,λ) 
 # mean λ, as in Poisson
 # Converges to Poisson as r→∞
 

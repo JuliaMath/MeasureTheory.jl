@@ -1,15 +1,15 @@
-export Likelihood
+export LogLikelihood
 
-@concrete terse struct Likelihood{T,X}
+@concrete terse struct LogLikelihood{T,X}
     x::X
 end
 
-Likelihood(T::Type, x::X) where {X} = Likelihood{T,X}(x)
+LogLikelihood(T::Type, x::X) where {X} = LogLikelihood{T,X}(x)
 
-Likelihood(μ::T, x::X) where {X, T<:AbstractMeasure} = Likelihood{T,X}(x)
+LogLikelihood(μ::T, x::X) where {X, T<:AbstractMeasure} = LogLikelihood{T,X}(x)
 
-logdensity(ℓ::Likelihood, p) = ℓ(p)
+logdensity(ℓ::LogLikelihood, p) = ℓ(p)
 
-(ℓ::Likelihood{T,X})(p) where {T,X} = logdensity(T(p), ℓ.x)
+(ℓ::LogLikelihood{T,X})(p) where {T,X} = logdensity(T(p), ℓ.x)
 
-(ℓ::Likelihood)(;kwargs...) = ℓ((;kwargs...))
+(ℓ::LogLikelihood)(;kwargs...) = ℓ((;kwargs...))

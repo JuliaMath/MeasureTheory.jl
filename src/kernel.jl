@@ -1,3 +1,5 @@
+export Kernel
+
 struct Kernel{T,S}
     ops::S
 end
