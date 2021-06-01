@@ -47,7 +47,7 @@ end
 
 using TransformVariables
 
-TransformVariables.as(::LKJL{k}) where {k} = TransformVariables.CorrCholeskyLower(k)
+TransformVariables.as(::LKJL{k}) where {k} = CorrCholeskyLower(k)
 
 function basemeasure(μ::LKJL{k}) where {k}
     t = as(μ)
