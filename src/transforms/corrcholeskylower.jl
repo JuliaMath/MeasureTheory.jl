@@ -23,41 +23,41 @@ correlation matrix `L' * L`.
 struct CorrCholeskyLower <: TV.VectorTransform
     n::Int
     function CorrCholeskyLower(n)
-        @argcheck n ≥ 1 "Dimension should be positive."
+        # @argcheck n ≥ 1 "Dimension should be positive."
         new(n)
     end
 end
 
 TV.dimension(t::CorrCholeskyLower) = TV.unit_triangular_dimension(t.n)
 
-function TV.transform_with(flag::LogJacFlag, t::CorrCholeskyLower, x::AbstractVector, index)
-    @unpack n = t
-    T = extended_eltype(x)
-    ℓ = logjac_zero(flag, T)
-    L = Matrix{T}(undef, n, n)
+function TV.transform_with(flag::TV.LogJacFlag, t::CorrCholeskyLower, x::AbstractVector, index)
+    n = t.n
+    T = TV.extended_eltype(x)
+    ℓ = TV.logjac_zero(flag, T)
+    U = Matrix{T}(undef, n, n)
     @inbounds for col in 1:n
         r = one(T)
-        for row in col:n
+        for row in 1:(col-1)
             xi = x[index]
-            L[row, col], r, ℓi = TV.l2_remainder_transform(flag, xi, r)
+            U[row, col], r, ℓi = TV.l2_remainder_transform(flag, xi, r)
             ℓ += ℓi
             index += 1
         end
-        L[col, col] = √r
+        U[col, col] = √r
     end
-    # We could change the above code, but `transpose` is very cheap
-    LowerTriangular(L), ℓ, index
+    UpperTriangular(U)', ℓ, index
 end
 
-TV.inverse_eltype(t::CorrCholeskyLower, L::LowerTriangular) = extended_eltype(L)
+TV.inverse_eltype(t::CorrCholeskyLower, L::LowerTriangular) = TV.extended_eltype(L)
 
 function TV.inverse_at!(x::AbstractVector, index, t::CorrCholeskyLower, L::LowerTriangular)
-    @unpack n = t
-    @argcheck size(L, 1) == n
+    n = t.n
+    # @argcheck size(L, 1) == n
+    U = L'
     @inbounds for col in 1:n
-        r = one(eltype(L))
-        for row in col:n
-            x[index], r = l2_remainder_inverse(L[row, col], r)
+        r = one(eltype(U))
+        for row in 1:(col-1)
+            x[index], r = TV.l2_remainder_inverse(U[row, col], r)
             index += 1
         end
     end
