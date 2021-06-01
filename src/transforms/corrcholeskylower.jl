@@ -5,7 +5,7 @@
 # Adapted from https://github.com/tpapp/TransformVariables.jl/blob/master/src/special_arrays.jl
 
 const TV = TransformVariables
-using LinearAlegbra
+using LinearAlgebra
 
 """
     CorrCholeskyLower(n)
