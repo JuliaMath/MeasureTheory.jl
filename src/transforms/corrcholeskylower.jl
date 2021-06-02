@@ -11,14 +11,14 @@ using LinearAlgebra
     CorrCholeskyLower(n)
 Cholesky Lower of a correlation matrix of size `n`.
 Transforms ``n×(n-1)/2`` real numbers to an ``n×n`` lower-triangular matrix `L`, such that
-`L'*L` is a correlation matrix (positive definite, with unit diagonal).
+`L*L'` is a correlation matrix (positive definite, with unit diagonal).
 # Notes
 If
 - `z` is a vector of `n` IID standard normal variates,
 - `σ` is an `n`-element vector of standard deviations,
 - `L` is obtained from `CorrCholeskyLower(n)`,
-then `Diagonal(σ) * L' * z` will be a multivariate normal with the given variances and
-correlation matrix `L' * L`.
+then `Diagonal(σ) * L * z` will be a multivariate normal with the given variances and
+correlation matrix `L * L'`.
 """
 struct CorrCholeskyLower <: TV.VectorTransform
     n::Int
