@@ -6,6 +6,7 @@
 
 const TV = TransformVariables
 using LinearAlgebra
+const CorrCholeskyUpper = CorrCholeskyFactor
 
 """
     CorrCholeskyLower(n)
