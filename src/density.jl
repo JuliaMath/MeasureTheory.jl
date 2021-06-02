@@ -78,13 +78,13 @@ Define a new measure in terms of a density `f` over some measure `base`. If
 # TODO: `density` and `logdensity` functions for `DensityMeasure`
 
 function logdensity(μ::AbstractMeasure, ν::AbstractMeasure, x)
-    α = representative(μ)
-    β = representative(ν)
+    α = basemeasure(μ)
+    β = basemeasure(ν)
         
-    logdensity(μ, α, x) - logdensity(ν, β, x) + logdensity(α, β, x)
+    logdensity(μ, x) - logdensity(ν, x) + logdensity(α, β, x)
 end
 
-logdensity(::Lebesgue{ℝ}, ::Lebesgue{ℝ}, x) = zero(x)
+# logdensity(::Lebesgue{ℝ}, ::Lebesgue{ℝ}, x) = zero(x)
 
 export density
 
