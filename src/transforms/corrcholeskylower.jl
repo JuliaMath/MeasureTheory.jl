@@ -18,7 +18,7 @@ If
 - `z` is a vector of `n` IID standard normal variates,
 - `σ` is an `n`-element vector of standard deviations,
 - `L` is obtained from `CorrCholeskyLower(n)`,
-then `Diagonal(σ) * L * z` will be a multivariate normal with the given variances and
+then `Diagonal(σ) * L * z` is a zero-centered multivariate normal variate with the standard deviations `σ` and
 correlation matrix `L * L'`.
 """
 struct CorrCholeskyLower <: TV.VectorTransform
