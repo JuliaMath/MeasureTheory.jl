@@ -61,6 +61,7 @@ using TransformVariables
 
 TransformVariables.as(::LKJL{k}) where {k} = CorrCholeskyLower(k)
 
+# TODO: I think this is wrong
 function basemeasure(μ::LKJL{k}) where {k}
     t = as(μ)
     d = dimension(t)
