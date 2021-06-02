@@ -36,6 +36,8 @@ function Base.show(io::IO, d::LKJL{k}) where {k}
     println(io, "LKJL{", k, "}(", getfield(d, :par), ")")
 end
 
+asparams(::Type{<:LKJL}, ::Val{:η}) = asℝ₊
+
 # Modified from
 # https://github.com/tpapp/AltDistributions.jl
 
