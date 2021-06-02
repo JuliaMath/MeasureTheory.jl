@@ -61,7 +61,8 @@ using TransformVariables
 
 TransformVariables.as(::LKJL{k}) where {k} = CorrCholeskyLower(k)
 
-# TODO: I think this is wrong
+# Should satisfy
+# logdensity(basemeasure(d), rand(d)) == 0.0
 function basemeasure(μ::LKJL{k}) where {k}
     t = as(μ)
     d = dimension(t)
