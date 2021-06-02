@@ -1,6 +1,6 @@
 export CountingMeasure
 
-struct CountingMeasure{X} <: AbstractMeasure end
+struct CountingMeasure{X} <: PrimitiveMeasure end
 
 @primitive CountingMeasure
 

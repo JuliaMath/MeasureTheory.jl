@@ -1,7 +1,7 @@
 
 export Dirac
 
-struct Dirac{X} <: AbstractMeasure
+struct Dirac{X} <: PrimitiveMeasure
     x::X
 end
 
@@ -23,3 +23,14 @@ Base.rand(::Random.AbstractRNG, T::Type, μ::Dirac) = μ.x
 export dirac
 
 dirac(d::AbstractMeasure) = Dirac(rand(d))
+
+function logdensity(μ::Dirac{M}, ν::Dirac{M}, x) where {M} 
+    if μ.x == ν.x
+        x == μ.x && return 0.0
+        return -Inf
+    elseif μ.x == x
+        return Inf
+    else
+        return -Inf
+    end
+end
