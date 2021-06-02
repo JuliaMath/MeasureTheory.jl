@@ -28,7 +28,7 @@ LKJL{k}(nt::NamedTuple{N,T}) where {k,N,T} = LKJL{k,N,T}(nt)
 
 LKJL(k,η) = LKJL{k}(η)
 
-LKJL(k) = LKJL(k, 1.0)
+LKJL(k::Integer) = LKJL(k, 1)
 
 LKJL{k}(η) where {k} = LKJL{k, (:η,), Tuple{typeof(η)}}((η=η,))
 
