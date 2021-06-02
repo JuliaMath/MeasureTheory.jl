@@ -69,6 +69,12 @@ function basemeasure(μ::LKJL{k}) where {k}
     return Pushforward(t, Lebesgue(ℝ)^d, false)
 end
 
+# Note (from @sethaxen): this can be done without the cholesky decomposition, by randomly
+# sampling the canonical partial correlations, as in the LKJ paper, and then
+# mapping them to the cholesky factor instead of the correlation matrix. Stan
+# implements* this. But that can be for a future PR. 
+#
+# * https://github.com/stan-dev/math/blob/develop/stan/math/prim/prob/lkj_corr_cholesky_rng.hpp
 function Base.rand(rng::AbstractRNG, ::Type, d::LKJL{k}) where {k}
     return cholesky(rand(rng, Dists.LKJ(k, d.η))).L
 end;
