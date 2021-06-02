@@ -9,7 +9,7 @@ matrices.
 
 A correlation matrix ``Ω=L*L'`` has a density proportional to ``|Ω|^{η-1}``. However, it is usually not
 necessary to construct ``Ω``, so this distribution is formulated for the Cholesky
-decomposition `L*L'`, and takes `L` directly.
+decomposition `L*L'` and is supported on the lower triangular cholesky factor `L`.
 
 Note that the method **does not check if `L` yields a valid correlation matrix**.
 Valid values are ``η > 0``. When ``η > 1``, the distribution is unimodal at `Ω=I`, while
