@@ -26,7 +26,7 @@ end
 
 LKJL{k}(nt::NamedTuple{N,T}) where {k,N,T} = LKJL{k,N,T}(nt)
 
-LKJL(k,η) = LKJL{k, (:η,), Tuple{typeof(η)}}((η=η,))
+LKJL(k,η) = LKJL{k}(η)
 
 LKJL(k) = LKJL(k, 1.0)
 
