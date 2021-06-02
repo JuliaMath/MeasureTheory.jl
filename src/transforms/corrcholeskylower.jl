@@ -23,10 +23,6 @@ correlation matrix `L * L'`.
 """
 struct CorrCholeskyLower <: TV.VectorTransform
     n::Int
-    function CorrCholeskyLower(n)
-        # @argcheck n ≥ 1 "Dimension should be positive."
-        new(n)
-    end
 end
 
 TV.dimension(t::CorrCholeskyLower) = TV.unit_triangular_dimension(t.n)
