@@ -25,38 +25,15 @@ struct CorrCholeskyLower <: TV.VectorTransform
     n::Int
 end
 
-TV.dimension(t::CorrCholeskyLower) = TV.unit_triangular_dimension(t.n)
+TV.dimension(t::CorrCholeskyLower) = TV.dimension(TV.CorrCholeskyUpper(t.n))
 
 function TV.transform_with(flag::TV.LogJacFlag, t::CorrCholeskyLower, x::AbstractVector, index)
-    n = t.n
-    T = TV.extended_eltype(x)
-    ℓ = TV.logjac_zero(flag, T)
-    U = Matrix{T}(undef, n, n)
-    @inbounds for col in 1:n
-        r = one(T)
-        for row in 1:(col-1)
-            xi = x[index]
-            U[row, col], r, ℓi = TV.l2_remainder_transform(flag, xi, r)
-            ℓ += ℓi
-            index += 1
-        end
-        U[col, col] = √r
-    end
-    UpperTriangular(U)', ℓ, index
+    U, ℓ, index = TV.transform_with(flag, TV.CorrCholeskyUpper(t.n), x, index)
+    return U', ℓ, index
 end
 
 TV.inverse_eltype(t::CorrCholeskyLower, L::LowerTriangular) = TV.extended_eltype(L)
 
 function TV.inverse_at!(x::AbstractVector, index, t::CorrCholeskyLower, L::LowerTriangular)
-    n = t.n
-    # @argcheck size(L, 1) == n
-    U = L'
-    @inbounds for col in 1:n
-        r = one(eltype(U))
-        for row in 1:(col-1)
-            x[index], r = TV.l2_remainder_inverse(U[row, col], r)
-            index += 1
-        end
-    end
-    index
+    return TV.inverse_at!(x, index, TV.CorrCholeskyUpper(t.n), L')
 end
