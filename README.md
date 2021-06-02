@@ -23,7 +23,7 @@ Instead, we should aim to make any Distribution easily usable as a Measure. We'l
 
 ## Absolute Continuity
 
-For two measures μ,ν on a set X, we say μ is _absolutely continuous_ with respect to ν if ν(A)=0 implies μ(A)=0 for every measurable subset A of X.
+For two measures μ, ν on a set X, we say μ is _absolutely continuous_ with respect to ν if ν(A)=0 implies μ(A)=0 for every measurable subset A of X.
 
 The following are equivalent:
 1. μ ≪ ν
@@ -42,7 +42,7 @@ _We need ≃ and ≪ to be fast_. If the support of a measure can be determined 
 
 One of the equivalent conditions above was "There exists a function f such that μ = ∫f dν". In this case, `f` is called a _Radon-Nikodym derivative_, or (less formally) a _density_. In this case we often write `f = dμ/dν`.
 
-For any measures μ and ν with μ≪ν, we should be represent this.
+For any measures μ and ν with μ≪ν, we should be able to represent this.
 
 ## Integration
 
@@ -197,6 +197,9 @@ SuperpositionMeasure{Float64,2}((MeasureTheory.WeightedMeasure{Float64,Float64}(
 
 For an easy way to find expressions for the common log-densities, see [this gist](https://gist.github.com/cscherrer/47f0fc7597b4ffc11186d54cc4d8e577)
 
+## Support
+
+[![Planting Space](https://planting.space/sponsor/PlantingSpace-sponsor-3.png)](https://planting.space)
 
 ## Stargazers over time
 
