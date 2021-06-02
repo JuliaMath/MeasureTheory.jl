@@ -33,7 +33,7 @@ LKJL(k) = LKJL(k, 1.0)
 LKJL{k}(η) where {k} = LKJL{k, (:η,), Tuple{typeof(η)}}((η=η,))
 
 function Base.show(io::IO, d::LKJL{k}) where {k}
-    println(io, "LKJL{", k, "}(", getfield(d, :par), ")")
+    println(io, "LKJL{$k}(", getfield(d, :par), ")")
 end
 
 asparams(::Type{<:LKJL}, ::Val{:η}) = asℝ₊
