@@ -24,7 +24,7 @@ export dirac
 
 dirac(d::AbstractMeasure) = Dirac(rand(d))
 
-function logdensity(μ::Dirac{M}, ν::Dirac{M}, x::X) where {M,X} 
+function logdensity(μ::Dirac{M}, ν::Dirac{M}, x) where {M} 
     if μ.x == ν.x
         x == μ.x && return 0.0
         return -Inf
