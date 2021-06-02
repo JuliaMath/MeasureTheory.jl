@@ -7,7 +7,7 @@ export LKJL
 The LKJ distribution (Lewandowski et al 2009) for the Cholesky factor L of correlation
 matrices.
 
-A correlation matrix ``Ω=L*L'`` has the density ``|Ω|^{η-1}``. However, it is usually not
+A correlation matrix ``Ω=L*L'`` has a density proportional to ``|Ω|^{η-1}``. However, it is usually not
 necessary to construct ``Ω``, so this distribution is formulated for the Cholesky
 decomposition `L*L'`, and takes `L` directly.
 
