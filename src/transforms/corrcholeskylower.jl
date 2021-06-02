@@ -26,15 +26,15 @@ struct CorrCholeskyLower <: TV.VectorTransform
     n::Int
 end
 
-TV.dimension(t::CorrCholeskyLower) = TV.dimension(TV.CorrCholeskyUpper(t.n))
+TV.dimension(t::CorrCholeskyLower) = TV.dimension(CorrCholeskyUpper(t.n))
 
 function TV.transform_with(flag::TV.LogJacFlag, t::CorrCholeskyLower, x::AbstractVector, index)
-    U, ℓ, index = TV.transform_with(flag, TV.CorrCholeskyUpper(t.n), x, index)
+    U, ℓ, index = TV.transform_with(flag, CorrCholeskyUpper(t.n), x, index)
     return U', ℓ, index
 end
 
 TV.inverse_eltype(t::CorrCholeskyLower, L::LowerTriangular) = TV.extended_eltype(L)
 
 function TV.inverse_at!(x::AbstractVector, index, t::CorrCholeskyLower, L::LowerTriangular)
-    return TV.inverse_at!(x, index, TV.CorrCholeskyUpper(t.n), L')
+    return TV.inverse_at!(x, index, CorrCholeskyUpper(t.n), L')
 end
