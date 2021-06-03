@@ -89,3 +89,5 @@ end
 function Base.rand(rng::AbstractRNG, ::Type, d::LKJL{k}) where {k}
     return cholesky(rand(rng, Dists.LKJ(k, d.η))).L
 end;
+
+constructor(::Type{L}) where {k,L<:LKJL{k}} = LKJL{k}

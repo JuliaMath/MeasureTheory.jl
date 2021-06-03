@@ -69,7 +69,7 @@ end
     end
 
     @testset "LKJL" begin
-        D = LKJL{4}
+        D = LKJL{4}{(:η,)}
         par = transform(asparams(D), randn(1))
         d = D(par)
         @test params(d) == par
