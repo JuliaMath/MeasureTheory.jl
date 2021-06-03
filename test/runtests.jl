@@ -74,9 +74,13 @@ end
         d = D(par)
         @test params(d) == par
 
+        η  = par.η
+        logη = log(η)
+
         y = rand(d)
         η = par.η
         ℓ = logdensity(LKJL{4}(η), y)
+        @test ℓ ≈ logdensity(LKJL{4}(logη=logη), y)
     end
 end
 
