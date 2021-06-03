@@ -67,6 +67,17 @@ end
         @test ℓ ≈ logdensity(Normal(;μ,τ), y)
         @test ℓ ≈ logdensity(Normal(;μ,logσ), y)
     end
+
+    @testset "LKJL" begin
+        D = LKJL{4}
+        par = transform(asparams(D), randn(1))
+        d = D(par)
+        @test params(d) == par
+
+        y = rand(d)
+        η = par.η
+        ℓ = logdensity(LKJL{4}(η), y)
+    end
 end
 
 @testset "Kernel" begin
