@@ -24,6 +24,8 @@ struct LKJL{k, N, T} <: ParameterizedMeasure{N}
     par :: NamedTuple{N,T}
 end
 
+LKJL{k}(;kw...) where {k} = LKJL{k}(NamedTuple(kw))
+
 LKJL{k}(nt::NamedTuple{N,T}) where {k,N,T} = LKJL{k,N,T}(nt)
 
 LKJL(k,η) = LKJL{k}(η)
@@ -37,6 +39,7 @@ function Base.show(io::IO, d::LKJL{k}) where {k}
 end
 
 asparams(::Type{<:LKJL}, ::Val{:η}) = asℝ₊
+asparams(::Type{<:LKJL}, ::Val{:logη}) = asℝ
 
 # Modified from
 # https://github.com/tpapp/AltDistributions.jl
@@ -46,7 +49,7 @@ using LinearAlgebra
 using Tullio
 
 
-function logdensity(d::LKJL{k}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal}) where {k}
+function logdensity(d::LKJL{k, (:η,)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal}) where {k}
     η = d.η
     # z = diag(L)
     # sum(log.(z) .* ((k:-1:1) .+ 2*(η-1)))
@@ -56,6 +59,19 @@ function logdensity(d::LKJL{k}, L::Union{LinearAlgebra.AbstractTriangular, Diago
     @tullio s = (c - i) * log(L[i,i])
     return s
 end
+
+function logdensity(d::LKJL{k, (:logη,)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal}) where {k}
+    η = d.η
+    # z = diag(L)
+    # sum(log.(z) .* ((k:-1:1) .+ 2*(η-1)))
+
+    # Note: https://github.com/cscherrer/MeasureTheory.jl/issues/100#issuecomment-852428192
+    c = k + 2 * expm1(d.logη)
+    @tullio s = (c - i) * log(L[i,i])
+    return s
+end
+
+asparams(::Type{<:LKJL}, ::Val{:logη}) = asℝ₊
 
 using TransformVariables
 
