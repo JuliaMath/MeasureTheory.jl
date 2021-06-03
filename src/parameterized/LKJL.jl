@@ -61,12 +61,12 @@ function logdensity(d::LKJL{k, (:η,)}, L::Union{LinearAlgebra.AbstractTriangula
 end
 
 function logdensity(d::LKJL{k, (:logη,)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal}) where {k}
-    η = d.η
+    logη = d.logη
     # z = diag(L)
     # sum(log.(z) .* ((k:-1:1) .+ 2*(η-1)))
 
     # Note: https://github.com/cscherrer/MeasureTheory.jl/issues/100#issuecomment-852428192
-    c = k + 2 * expm1(d.logη)
+    c = k + 2 * expm1(logη)
     @tullio s = (c - i) * log(L[i,i])
     return s
 end
