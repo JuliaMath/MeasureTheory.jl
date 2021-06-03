@@ -49,7 +49,7 @@ using LinearAlgebra
 using Tullio
 
 
-function logdensity(d::LKJL{k, (:η,)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal}) where {k}
+function logdensity(d::LKJL{k, (:η,), T}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal}) where {k,T}
     η = d.η
     # z = diag(L)
     # sum(log.(z) .* ((k:-1:1) .+ 2*(η-1)))
