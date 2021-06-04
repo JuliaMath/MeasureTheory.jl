@@ -86,6 +86,7 @@ include("parameterized/LKJL.jl")
 include("parameterized/negativebinomial.jl")
 
 include("transforms/corrcholeskylower.jl")
+include("transforms/corrcholesky.jl")
 
 include("density.jl")
 # include("pushforward.jl")
