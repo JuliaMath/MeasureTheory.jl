@@ -95,7 +95,7 @@ function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: Par
 end
 
 
-asparams(μ::ParameterizedMeasure) = asparams(typeof(μ))
+asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(typeof(μ), nt)
 
 export params
 
