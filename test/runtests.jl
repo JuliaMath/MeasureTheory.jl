@@ -68,8 +68,8 @@ end
         @test ℓ ≈ logdensity(Normal(;μ,logσ), y)
     end
 
-    @testset "LKJL" begin
-        D = LKJL{4}{(:η,)}
+    @testset "LKJCholesky" begin
+        D = LKJCholesky{4}{(:η,)}
         par = transform(asparams(D), randn(1))
         d = D(par)
         @test params(d) == par
@@ -79,8 +79,8 @@ end
 
         y = rand(d)
         η = par.η
-        ℓ = logdensity(LKJL{4}(η), y)
-        @test ℓ ≈ logdensity(LKJL{4}(logη=logη), y)
+        ℓ = logdensity(LKJCholesky{4}(η), y)
+        @test ℓ ≈ logdensity(LKJCholesky{4}(logη=logη), y)
     end
 end
 
