@@ -2,6 +2,7 @@
 # https://github.com/tpapp/AltDistributions.jl
 
 export LKJL
+using PositiveFactorizations
 
 """
 The LKJ distribution (Lewandowski et al 2009) for the Cholesky factor L of correlation
@@ -91,7 +92,7 @@ function Base.rand(rng::AbstractRNG, ::Type, d::LKJL{k, (:η,)}) where {k}
 end;
 
 function Base.rand(rng::AbstractRNG, ::Type, d::LKJL{k, (:logη,)}) where {k}
-    return cholesky(rand(rng, Dists.LKJ(k, exp(d.logη)))).L
+    return cholesky(Positive, rand(rng, Dists.LKJ(k, exp(d.logη)))).L
 end;
 
 constructor(::Type{L}) where {k,L<:LKJL{k}} = LKJL{k}
