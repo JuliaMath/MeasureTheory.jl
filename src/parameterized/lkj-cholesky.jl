@@ -5,18 +5,22 @@ export LKJCholesky
 using PositiveFactorizations
 
 """
-The LKJ distribution (Lewandowski et al 2009) for the Cholesky factor L of correlation
-matrices.
+    LKJCholesky{k}(η=1.0)
+    LKJCholesky{k}(logη=0.0)
 
-A correlation matrix ``Ω=L*L'`` has a density proportional to ``|Ω|^{η-1}``. However, it is usually not
-necessary to construct ``Ω``, so this distribution is formulated for the Cholesky
-decomposition `L*L'` and is supported on the lower triangular cholesky factor `L`.
+`LKJCholesky{k}` gives the `k×k` LKJ distribution (Lewandowski et al 2009)
+expressed as a Cholesky decomposition. As a special case, for
+`C = rand(LKJCholesky{k}(η=1.0))` (or equivalently
+`C=rand(LKJCholesky{k}(logη=0.0))`), `C.L * C.U` is uniform over the set of all
+`k×k` correlation matrices. NOte, however, that in this case `C.L` and `C.U` are
+**not** sampled uniformly (because the multiplication is nonlinear).
 
-Note that the method **does not check if `L` yields a valid correlation matrix**.
-Valid values are ``η > 0``. When ``η > 1``, the distribution is unimodal at `Ω=I`, while
-``0 < η < 1`` has a trough. ``η = 2`` is recommended as a vague prior.
-When ``η = 1``, the density is uniform in `Ω`, but not in `L`, because of the Jacobian
-correction of the transformation.
+The `logdensity` method for this measure applies for `LowerTriangular`,
+`UpperTriangular`, or `Diagonal` matrices, and will "do the right thing". The
+`logdensity` **does not check if `L*U` yields a valid correlation matrix**.
+
+Valid values are ``η > 0``. When ``η > 1``, the distribution is unimodal with a
+peak at `I`, while ``0 < η < 1`` yields a trough. ``η = 2`` is recommended as a vague prior.
 
 Adapted from
 https://github.com/tpapp/AltDistributions.jl
