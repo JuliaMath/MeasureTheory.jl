@@ -88,11 +88,11 @@ end
 #
 # * https://github.com/stan-dev/math/blob/develop/stan/math/prim/prob/lkj_corr_cholesky_rng.hpp
 function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{k, (:η,)}) where {k}
-    return cholesky(Positive, rand(rng, Dists.LKJ(k, d.η))).L
+    return cholesky(Positive, rand(rng, Dists.LKJ(k, d.η)))
 end;
 
 function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{k, (:logη,)}) where {k}
-    return cholesky(Positive, rand(rng, Dists.LKJ(k, exp(d.logη)))).L
+    return cholesky(Positive, rand(rng, Dists.LKJ(k, exp(d.logη))))
 end;
 
 constructor(::Type{L}) where {k,L<:LKJCholesky{k}} = LKJCholesky{k}
