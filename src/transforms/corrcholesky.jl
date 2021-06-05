@@ -2,6 +2,8 @@
 
 export CorrCholesky
 
+const TV = TransformVariables
+
 """
     CorrCholesky(n)
 Cholesky factor of a correlation matrix of size `n`.
@@ -38,4 +40,8 @@ end
 
 function TV.inverse_at!(x::AbstractVector, index, t::CorrCholesky, U::UpperTriangular)
     return TV.inverse_at!(x, index, CorrCholeskyUpper(t.n), U)
+end
+
+function TV.inverse_at!(x::AbstractVector, index, t::CorrCholesky, C::Cholesky)
+    return TV.inverse_at!(x, index, t, C.UL)
 end
