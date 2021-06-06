@@ -1,8 +1,15 @@
 # Modified from
 # https://github.com/tpapp/AltDistributions.jl
 
+# See also the Stan manual (the "Stanual", though nobody calls it that)
+# https://mc-stan.org/docs/2_27/reference-manual/cholesky-factors-of-correlation-matrices-1.html
+
 export LKJCholesky
 using PositiveFactorizations
+
+const TV = TransformVariables
+
+const CorrCholeskyUpper = TV.CorrCholeskyFactor
 
 """
     LKJCholesky{k}(η=1.0)
