@@ -41,6 +41,9 @@ struct LKJCholesky{k, N, T} <: ParameterizedMeasure{N}
         
         `LKJCholesky` does not yet have the correct base measure
         """
+
+        new{k,N,T}(nt)
+    end
 end
 
 LKJCholesky{k}(;kw...) where {k} = LKJCholesky{k}(NamedTuple(kw))
