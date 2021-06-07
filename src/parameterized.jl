@@ -29,8 +29,8 @@ export asparams
 # Normal(μ = 2,)
 #
 function (M::Type{P})(args...) where {N, P <: ParameterizedMeasure{N}}
-    constructor = M.body.name.wrapper
-    return constructor(NamedTuple{N}(args...))
+    C = constructor(M)
+    return C(NamedTuple{N}(args...))
 end
 
 """
@@ -81,23 +81,21 @@ asparams(μ, s::Symbol) = asparams(μ, Val(s))
 
 asparams(M::Type{PM}) where {PM<:ParameterizedMeasure} = asparams(M, NamedTuple())
 
-
-function constructor(::Type{T}) where {T} 
-    (T isa UnionAll) ? T.body.name.wrapper : T.name.wrapper
-end
-
 function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: ParameterizedMeasure{N1}} 
+    # @show M
     thekeys = tuple((k for k in N1 if k ∉ N2)...)
     transforms = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
     C = constructor(M)
-    
+    # @show C
+    # @show constraints
+    # @show transforms
     # Make sure we end up with a consistent ordering
     ordered_transforms = NamedTuple{thekeys}(params(C(merge(constraints, transforms))))
     return as(ordered_transforms)
 end
 
 
-asparams(μ::ParameterizedMeasure) = asparams(typeof(μ))
+asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(typeof(μ), nt)
 
 export params
 

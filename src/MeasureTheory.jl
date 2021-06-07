@@ -82,8 +82,10 @@ include("parameterized/inverse-gamma.jl")
 include("parameterized/bernoulli.jl")
 include("parameterized/poisson.jl")
 include("parameterized/binomial.jl")
-include("parameterized/LKJL.jl")
+include("parameterized/lkj-cholesky.jl")
 include("parameterized/negativebinomial.jl")
+
+include("transforms/corrcholesky.jl")
 
 include("density.jl")
 # include("pushforward.jl")

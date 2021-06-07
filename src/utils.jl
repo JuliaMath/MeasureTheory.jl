@@ -12,5 +12,15 @@ function fix(f, x)
     return y
 end
 
+function constructor(::Type{T}) where {T} 
+    C = T
+    while C isa UnionAll
+        C = C.body
+    end
+
+    return C.name.wrapper
+end
+
+
 export testvalue
 testvalue(μ::AbstractMeasure) = testvalue(basemeasure(μ))
