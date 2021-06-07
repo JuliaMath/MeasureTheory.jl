@@ -34,6 +34,13 @@ https://github.com/tpapp/AltDistributions.jl
 """
 struct LKJCholesky{k, N, T} <: ParameterizedMeasure{N}
     par :: NamedTuple{N,T}
+
+    function LKJCholesky{k,N,T}(nt)
+        @warn """
+        WARNING: WORK IN PROGRESS
+        
+        `LKJCholesky` does not yet have the correct base measure
+        """
 end
 
 LKJCholesky{k}(;kw...) where {k} = LKJCholesky{k}(NamedTuple(kw))
