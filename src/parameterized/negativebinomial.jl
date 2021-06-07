@@ -39,8 +39,6 @@ function logdensity(d::NegativeBinomial{(:r, :λ)}, y)
     return -log(y + r) - logbeta(r, y+1) + y * log(λ) + r * log(r) - (y + r) * log(r + λ)
 end
 
-representative(d::NegativeBinomial) = CountingMeasure(ℤ[0:d.n])
-
 distproxy(d::NegativeBinomial{(:r, :p)}) = Dists.NegativeBinomial(d.r, d.p)
 distproxy(d::NegativeBinomial{(:n,:logitp)}) = Dists.NegativeBinomial(d.n, logistic(d.logitp))
 

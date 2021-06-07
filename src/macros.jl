@@ -58,13 +58,6 @@ function _parameterized(__module__, expr)
             MeasureTheory.basemeasure(::$μ) = $μbase
         end   
         
-        if op == :≃
-            push!(q.args, quote
-                MeasureTheory.representative(::$μ) = MeasureTheory.representative($μbase)
-            end
-            )
-        end
-
         if !isempty(p)
             # e.g. Normal(μ,σ) = Normal((μ=μ, σ=σ))
             pnames = QuoteNode.(p)

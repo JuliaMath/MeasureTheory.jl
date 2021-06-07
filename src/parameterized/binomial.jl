@@ -52,8 +52,6 @@ function Base.rand(rng::AbstractRNG, d::Binomial{(:n, :probitp)})
     rand(rng, Dists.Binomial(d.n, Φ(d.probitp)))
 end
 
-representative(d::Binomial) = CountingMeasure(ℤ[0:d.n])
-
 distproxy(d::Binomial{(:n, :p)}) = Dists.Binomial(d.n, d.p)
 distproxy(d::Binomial{(:n,:logitp)}) = Dists.Binomial(d.n, logistic(d.logitp))
 distproxy(d::Binomial{(:n,:probitp)}) = Dists.Binomial(d.n, Φ(d.probitp))
