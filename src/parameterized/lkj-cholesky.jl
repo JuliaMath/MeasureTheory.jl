@@ -37,7 +37,7 @@ struct LKJCholesky{k, N, T} <: ParameterizedMeasure{N}
 
     function LKJCholesky{k,N,T}(nt) where {k,N,T}
         @warn """
-        WARNING: WORK IN PROGRESS
+        WORK IN PROGRESS
         
         `LKJCholesky` does not yet have the correct base measure
         """
