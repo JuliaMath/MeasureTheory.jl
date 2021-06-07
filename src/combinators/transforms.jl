@@ -1,6 +1,8 @@
 using TransformVariables
 using TransformVariables: AbstractTransform, CallableTransform, CallableInverse
 
+const TV = TransformVariables
+
 export Pushforward
 export Pullback
 
@@ -27,7 +29,7 @@ function logdensity(pb::Pullback{F}, x) where {F <: CallableTransform}
         y, logJ = transform_and_logjac(f.t, x)
         return logdensity(ν, y) + logJ
     else
-        y = transform(f, x)
+        y = f(x)
         return logdensity(ν, y)
     end
 end
@@ -35,7 +37,7 @@ end
 function logdensity(pf::Pushforward{F}, y) where {F <: CallableTransform}
     f = pf.f
     μ = pf.μ
-    x = inverse(f)(y)
+    x = inverse(f.t)(y)
     if pf.logjac
         _, logJ = transform_and_logjac(f.t, x)
         return logdensity(μ, x) - logJ
@@ -67,12 +69,15 @@ representative(μ::Pullback) = Pullback(μ.f, representative(μ.ν), false)
 
 representative(ν::Pushforward) = Pushforward(ν.f, representative(ν.μ), false)
 
-TransformVariables.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
+TV.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
 
-TransformVariables.as(μ::Pullback) = inverse(μ.f) ∘ μ.ν
+TV.as(μ::Pullback) = inverse(μ.f) ∘ μ.ν
 
-TransformVariables.as(::Lebesgue) = asℝ
+TV.as(::Lebesgue) = asℝ
 
+
+basemeasure(::Pushforward{TV.CallableTransform{T}, Lebesgue{ℝ}}) where {T <: TV.ScalarTransform} = Lebesgue(ℝ)
+basemeasure(::Pullback{TV.CallableTransform{T}, Lebesgue{ℝ}}) where {T <: TV.ScalarTransform} = Lebesgue(ℝ)
 # t = as𝕀
 # μ = Normal()
 # ν = Pushforward(t, μ)
