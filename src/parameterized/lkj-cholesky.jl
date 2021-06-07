@@ -35,7 +35,7 @@ https://github.com/tpapp/AltDistributions.jl
 struct LKJCholesky{k, N, T} <: ParameterizedMeasure{N}
     par :: NamedTuple{N,T}
 
-    function LKJCholesky{k,N,T}(nt)
+    function LKJCholesky{k,N,T}(nt) where {k,N,T}
         @warn """
         WARNING: WORK IN PROGRESS
         
