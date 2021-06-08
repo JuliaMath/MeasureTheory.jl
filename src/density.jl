@@ -86,18 +86,21 @@ function logdensity(μ::AbstractMeasure, ν::AbstractMeasure, x)
     α = basemeasure(μ)
     β = basemeasure(ν)
 
-    if α==μ && β==ν
-        # @warn """
-        # No method found for logdensity(μ, ν, x) where
-        # μ == $μ
-        # ν == $ν
+    ℓμ = @trysupport logdensity(μ, x)
+    ℓν = @trysupport logdensity(ν, x)
 
-        # Assuming logdensity of 0.0
-        # """
-        return logdensity(μ, x) - logdensity(ν, x)
+    if α==μ && β==ν
+        @warn """
+        No method found for logdensity(μ, ν, x) where
+        μ == $μ
+        ν == $ν
+
+        Assuming logdensity of 0.0
+        """
+        return ℓμ - ℓν
     end
         
-    logdensity(μ, x) - logdensity(ν, x) + logdensity(α, β, x)
+    ℓμ - ℓν + logdensity(α, β, x)
 end
 
 logdensity(::Lebesgue, ::Lebesgue, x) = 0.0
