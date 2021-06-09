@@ -7,6 +7,10 @@ end
 
 LogLikelihood(μ::M, x) where {M<:AbstractMeasure} = LogLikelihood(constructor(M), x)
 
+function LogLikelihood(M::Type, constraint::NamedTuple, x) 
+    LogLikelihood((constructor(M), constraint), x)
+end
+
 function LogLikelihood(μ::M, constraint::NamedTuple, x) where {M<:AbstractMeasure}
     LogLikelihood((constructor(M), constraint), x)
 end
