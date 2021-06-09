@@ -5,19 +5,24 @@ export LogLikelihood
     x
 end
 
-LogLikelihood(μ::M, x) where {M<:AbstractMeasure} = LogLikelihood(constructor(M), x)
+LogLikelihood(μ::M, x) where {M<:AbstractMeasure} = LogLikelihood(M, x)
 
-function LogLikelihood(M::Type, constraint::NamedTuple, x) 
-    LogLikelihood((constructor(M), constraint), x)
+function LogLikelihood(::Type{M}, constraint::NamedTuple, x) where {M <: ParameterizedMeasure}
+    LogLikelihood((M, constraint), x)
 end
 
 function LogLikelihood(μ::M, constraint::NamedTuple, x) where {M<:AbstractMeasure}
-    LogLikelihood((constructor(M), constraint), x)
+    LogLikelihood((M, constraint), x)
+end
+
+function (ℓ::LogLikelihood{Tuple{M,NT}})(p::NamedTuple) where {M<:Type, NT <: NamedTuple}
+    (D, constraint) = ℓ.f
+    return logdensity(D(merge(p, constraint)), ℓ.x)
 end
 
 function (ℓ::LogLikelihood{Tuple{M,NT}})(p) where {M<:Type, NT <: NamedTuple}
-    (D, constraint) = ℓ.f
-    return logdensity(D(merge(p, constraint)), ℓ.x)
+    freevar = params(ℓ.f...)
+    ℓ(NamedTuple{freevar}(p))
 end
 
 logdensity(ℓ::LogLikelihood, p) = ℓ(p)
