@@ -83,7 +83,7 @@ asparams(M::Type{PM}) where {PM<:ParameterizedMeasure} = asparams(M, NamedTuple(
 
 function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: ParameterizedMeasure{N1}} 
     # @show M
-    thekeys = tuple((k for k in N1 if k ∉ N2)...)
+    thekeys = params(M, constraints)
     transforms = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
     C = constructor(M)
     # @show C
@@ -100,3 +100,7 @@ asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(typeo
 export params
 
 params(μ::ParameterizedMeasure) = getfield(μ, :par)
+
+function params(::Type{M}, constraints::NamedTuple{N2}=NamedTuple()) where {N1, N2, M<: ParameterizedMeasure{N1}} 
+    thekeys = tuple((k for k in N1 if k ∉ N2)...)
+end
