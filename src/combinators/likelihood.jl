@@ -31,7 +31,7 @@ We can again provide named in the first argument:
 --------
 
 This last form is especially useful for probabilistic programming. Suppose we have a
-`μ ~ Normal()` and `x ~ Normal(μ,σ)`. If we observe `x=3` and, say, `σ=3`, then
+`μ ~ Normal()` and `x ~ Normal(μ,σ)`. If we observe `x=3` and, say, `σ=1`, then
 the posterior density at `μ` is
 
     post = Normal() ⊙ LogLikelihood(Normal{(:μ,:σ)}, (σ=1,), 3)
