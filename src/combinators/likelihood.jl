@@ -1,15 +1,23 @@
 export LogLikelihood
 
-@concrete terse struct LogLikelihood{T,X}
-    x::X
+@concrete terse struct LogLikelihood
+    f
+    x
 end
 
-LogLikelihood(T::Type, x::X) where {X} = LogLikelihood{T,X}(x)
+LogLikelihood(μ::M, x) where {M<:AbstractMeasure} = LogLikelihood(constructor(M), x)
 
-LogLikelihood(μ::T, x::X) where {X, T<:AbstractMeasure} = LogLikelihood{T,X}(x)
+function LogLikelihood(μ::M, constraint::NamedTuple, x) where {M<:AbstractMeasure}
+    LogLikelihood((constructor(M), constraint), x)
+end
+
+function (ℓ::LogLikelihood{Tuple{M,NT}})(p) where {M<:Type, NT <: NamedTuple}
+    (D, constraint) = ℓ.f
+    return logdensity(D(merge(p, constraint)), ℓ.x)
+end
 
 logdensity(ℓ::LogLikelihood, p) = ℓ(p)
 
-(ℓ::LogLikelihood{T,X})(p) where {T,X} = logdensity(T(p), ℓ.x)
+(ℓ::LogLikelihood)(p) = logdensity(ℓ.f(p), ℓ.x)
 
 (ℓ::LogLikelihood)(;kwargs...) = ℓ((;kwargs...))
