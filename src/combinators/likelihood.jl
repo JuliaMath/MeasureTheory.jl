@@ -27,6 +27,19 @@ We can again provide named in the first argument:
 
     julia> LogLikelihood(Normal{(:μ,:σ)}, (μ=2,), 5)(1)
     -4.5
+
+--------
+
+This last form is especially useful for probabilistic programming. Suppose we have a
+`μ ~ Normal()` and `x ~ Normal(μ,σ)`. If we observe `x=3` and, say, `σ=3`, then
+the posterior density at `μ` is
+
+    post = Normal() ⊙ LogLikelihood(Normal{(:μ,:σ)}, (σ=1,), 3)
+
+or, for example,
+
+    julia> logdensity(post, 2)
+    -2.5
 """
 struct LogLikelihood{F,X}
     f::F
