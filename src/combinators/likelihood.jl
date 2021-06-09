@@ -46,12 +46,13 @@ struct LogLikelihood{F,X}
     x::X
 end
 
-function show(io::IO, ℓ::LogLikelihood{Tuple{M,NT}}) where {M<:Type, NT <: NamedTuple}
-    println(io, "LogLikelihood(",ℓ.f..., ℓ.x, ")")
+function Base.show(io::IO, ℓ::LogLikelihood{Tuple{M,NamedTuple{N,T}}}) where {M<:Type, N,T}
+    (m,c) = ℓ.f
+    println(io, "LogLikelihood(",m,", ",c,", ", ℓ.x, ")")
 end
 
-function show(io::IO, ℓ::LogLikelihood)
-    println(io, "LogLikelihood(",ℓ.f, ℓ.x, ")")
+function Base.show(io::IO, ℓ::LogLikelihood)
+    println(io, "LogLikelihood(",ℓ.f, ", ", ℓ.x, ")")
 end
 
 LogLikelihood(μ::M, x) where {M<:AbstractMeasure} = LogLikelihood(M, x)
