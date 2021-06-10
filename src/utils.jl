@@ -40,3 +40,7 @@ end
 
 export testvalue
 testvalue(μ::AbstractMeasure) = testvalue(basemeasure(μ))
+
+export rootmeasure
+
+rootmeasure(μ::AbstractMeasure) = fix(basemeasure, μ)
