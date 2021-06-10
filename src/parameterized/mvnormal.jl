@@ -54,8 +54,6 @@ function logdensity(d::MvNormal{(:A,:b)}, x)
 end
 
 ≪(::MvNormal, ::Lebesgue{ℝ}) = true
-representative(::MvNormal{N, T, I,I}) where {N, T, I} = Lebesgue(ℝ)^I
-
 
 function logdensity(d::MvNormal{(:Σ⁻¹,)}, x)
     @tullio ℓ = -0.5 * x[i] * d.Σ⁻¹[i,j] * x[j]

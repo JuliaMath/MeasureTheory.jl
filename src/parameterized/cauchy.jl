@@ -18,8 +18,6 @@ end
 Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng, T)
 
 ≪(::Cauchy, ::Lebesgue{X}) where X <: Real = true
-# representative(::Cauchy) = Lebesgue(ℝ)
-
 
 @half Cauchy()
 

@@ -48,6 +48,4 @@ Base.:*(m::AbstractMeasure, k::Real) = k * m
 
 basemeasure(μ::WeightedMeasure) = μ.base
 
-representative(μ::WeightedMeasure) = representative(μ.base)
-
 sampletype(μ:: WeightedMeasure) = sampletype(μ.base)

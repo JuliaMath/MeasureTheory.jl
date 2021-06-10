@@ -168,5 +168,3 @@ function testvalue(d::ProductMeasure{NamedTuple{N,T}}) where {N,T}
     vals = values(d.data)
     NamedTuple{N}(testvalue.(vals))
 end
-
-representative(μ::ProductMeasure) = ProductMeasure(map(representative, μ.data))
