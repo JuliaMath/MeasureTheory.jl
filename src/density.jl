@@ -106,6 +106,6 @@ logdensity(::Lebesgue, ::Lebesgue, x) = 0.0
 
 export density
 
-density(μ::AbstractMeasure, ν::AbstractMeasure, x) = exp(logdensity(μ, ν, x))
+density(μ, ν::AbstractMeasure, x) = exp(logdensity(μ, ν, x))
 
-density(μ::AbstractMeasure, x) = exp(logdensity(μ, x))
+density(μ, x) = exp(logdensity(μ, x))
