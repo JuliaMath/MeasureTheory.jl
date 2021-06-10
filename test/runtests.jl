@@ -199,8 +199,22 @@ end
     end
 end
 
-@testset "LogLikelihood" begin
-    d = Normal()
-    ℓ = LogLikelihood(Normal{(:μ,)}, 3.0) 
-    @test logdensity(d ⊙ ℓ, 2.0) == logdensity(d, 2.0) + logdensity(ℓ, 2.0)
+using TransformVariables
+
+@testset "Likelihood" begin
+    dps = [
+        (Normal()                             ,    2.0  )
+        (Pushforward(as((μ=asℝ,)), Normal()^1), (μ=2.0,))
+    ]
+
+    ℓs = [
+        Likelihood(Normal{(:μ,)},              3.0)
+        Likelihood(Normal{(:μ, :σ)}, (σ=2.0,), 3.0)
+    ]
+
+    for (d,p) in dps
+        for ℓ in ℓs
+            @test logdensity(d ⊙ ℓ, p) == logdensity(d, p) + logdensity(ℓ, p)
+        end
+    end
 end
