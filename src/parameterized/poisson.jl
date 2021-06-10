@@ -26,5 +26,3 @@ sampletype(::Poisson) = Int
 Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:λ,)}) = rand(rng, T, Dists.Poisson(d.λ))
 
 ≪(::Poisson, ::IntegerRange{lo,hi}) where {lo, hi} = lo ≤ 0 && isinf(hi)
-
-representative(::Poisson) = CountingMeasure(ℤ[0:∞])

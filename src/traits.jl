@@ -8,7 +8,36 @@ abstract type MeasureTrait{X} <: SimpleTraits.Trait end
 abstract type IsRepresentative{X} <: MeasureTrait{X} end
 abstract type IsPrimitive{X} <: IsRepresentative{X} end
 
-abstract type IsUnivariate{X} <: MeasureTrait{X} end
+abstract type IsScalar{X} <: MeasureTrait{X} end
+
+"""
+    @scalar T
+
+Declare that every measure of type `T` are scalar.
+"""
+macro scalar(T)
+    MT = MeasureTheory
+    ST = MeasureTheory.SimpleTraits
+
+    # Really the same as `@traitimpl IsScalar{T}`
+    # But maybe easier for beginners
+    quote
+        function $ST.trait(::$ST.Type{$MT.IsScalar{S}}) where {S <: $T}
+            return $MT.IsScalar{S} 
+        end
+    end
+end
+
+"""
+    isscalar(::AbstractMeasure)
+    isscalar(::Type{M}) where {M<:AbstractMeasure} 
+
+Tests whether a given measure has been declared scalar. See `@scalar`.
+"""
+function isscalar end
+
+isscalar(::M) where {M} = isscalar(M)
+isscalar(::Type{M}) where {M} = istrait(IsScalar{T})
 
 """
     isprimitive(::AbstractMeasure)
@@ -27,9 +56,12 @@ isprimitive(::Type{M}) where {M} = istrait(IsPrimitive{T})
 """
     @primitive T
 
-Declare that every measure of type `T` should be considered "primitive". A measure is primitive is it is not defined in terms of another measure. Common examples are Lebesgue and Counting measures.
+Declare that every measure of type `T` should be considered "primitive". A
+measure is primitive is it is not defined in terms of another measure. Common
+examples are Lebesgue and Counting measures. 
 
-Note that this is not a general measure-theoretic term, but is specific to the MeasureTheory.jl implementation.
+Note that this is not a general measure-theoretic term, but is specific to the
+MeasureTheory.jl implementation. 
 """
 macro primitive(T)
     MT = MeasureTheory

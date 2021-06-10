@@ -21,6 +21,26 @@ function constructor(::Type{T}) where {T}
     return C.name.wrapper
 end
 
+macro trysupport(ex)
+    ex = esc(ex)
+    quote
+        result = nothing
+        try
+            result = $ex
+        catch e
+            if e isa DomainError
+                result = -Inf
+            else
+                rethrow()
+            end
+        end
+        result
+    end
+end
 
 export testvalue
 testvalue(μ::AbstractMeasure) = testvalue(basemeasure(μ))
+
+export rootmeasure
+
+rootmeasure(μ::AbstractMeasure) = fix(basemeasure, μ)
