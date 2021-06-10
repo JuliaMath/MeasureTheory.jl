@@ -38,6 +38,20 @@ leave it out of the second argument in the call to `density` or `logdensity`.
     julia> logdensity(ℓ, 2.0)
     -0.0
 
+With several parameters, things work as expected:
+    
+    julia> ℓ = Likelihood(Normal{(:μ,:σ)}, 2.0)
+    Likelihood(Normal{(:μ, :σ), T} where T, 2.0)
+    
+    julia> logdensity(ℓ, (μ=2, σ=3))
+    -1.0986122886681098
+    
+    julia> logdensity(ℓ, (2,3))
+    -1.0986122886681098
+    
+    julia> logdensity(ℓ, [2, 3])
+    -1.0986122886681098
+
 ---------
 
     Likelihood(M<:ParameterizedMeasure, constraint::NamedTuple, x)
