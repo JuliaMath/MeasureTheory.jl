@@ -9,6 +9,10 @@ Superposition of measures is analogous to mixture distributions, but (because
 measures need not be normalized) requires no scaling.
 
 The superposition of two measures μ and ν can be more concisely written as μ + ν.
+
+Superposition measures satisfy
+    
+    basemeasure(μ + ν) == basemeasure(μ) + basemeasure(ν)
 """
 struct SuperpositionMeasure{NT} <: AbstractMeasure
     components :: NT   
@@ -41,6 +45,8 @@ function Base.:+(μ::AbstractMeasure, ν::AbstractMeasure)
 end
 
 logdensity(μ::SuperpositionMeasure, x) = logsumexp((logdensity(m,x) for m in μ.components))
+
+basemeasure(μ::SuperpositionMeasure) = SuperpositionMeasure(map(basemeasure, μ.components))
 
 # TODO: Fix `rand` method (this one is wrong)
 # function Base.rand(μ::SuperpositionMeasure{X,N}) where {X,N}
