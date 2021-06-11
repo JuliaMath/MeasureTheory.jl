@@ -47,7 +47,7 @@ function ⊙(μ::M, ν::N) where {M <: AbstractMeasure, N <: AbstractMeasure}
     PointwiseProductMeasure(data...)
 end
 
-function ⊙(μ::AbstractMeasure, ℓ::LogLikelihood)
+function ⊙(μ::AbstractMeasure, ℓ::Likelihood)
     data = (μ, ℓ)
     PointwiseProductMeasure(data...)
 end

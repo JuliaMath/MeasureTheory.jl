@@ -1,6 +1,8 @@
 export Kernel
 
-struct Kernel{T,S}
+abstract type AbstractKernel <: AbstractMeasure end
+
+struct Kernel{T,S} <: AbstractKernel
     ops::S
 end
 
