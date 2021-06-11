@@ -1,4 +1,3 @@
-using MeasureTheory
 using Test
 using StatsFuns
 using Base.Iterators: take
@@ -6,6 +5,10 @@ using Random
 using LinearAlgebra
 using DynamicIterators: trace, TimeLift
 using TransformVariables: transform, as𝕀, inverse
+
+@testset "No warnings on import" begin
+    @test_nowarn @eval using MeasureTheory
+end
 
 function draw2(μ)
     x = rand(μ)
