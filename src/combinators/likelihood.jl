@@ -84,7 +84,7 @@ Finally, let's return to the expression for Bayes's Law,
 ``P(θ|x) ∝ P(θ) P(x|θ)``
 
 The product on the right side is computed pointwise. To work with this in
-MeaureTheory, we have a "pointwise product" `⊙`, which takes a measure and a
+MeasureTheory, we have a "pointwise product" `⊙`, which takes a measure and a
 likelihood, and returns a new measure.
 
 For example, say we have
