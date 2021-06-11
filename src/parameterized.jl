@@ -28,10 +28,12 @@ export asparams
 # julia> Normal{(:μ,)}(2)
 # Normal(μ = 2,)
 #
-function (M::Type{P})(args...) where {N, P <: ParameterizedMeasure{N}}
-    C = constructor(M)
+function (::Type{P})(args...) where {N, P <: ParameterizedMeasure{N}}
+    C = constructor(P)
     return C(NamedTuple{N}(args...))
 end
+
+(::Type{P})(;kwargs...) where {P <: ParameterizedMeasure} = P(NamedTuple(kwargs))
 
 """
 `asparams` build on `TransformVariables.as` to construct bijections to the
