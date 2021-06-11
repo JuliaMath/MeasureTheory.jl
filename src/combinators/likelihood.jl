@@ -13,7 +13,7 @@ measure to yield a new measure, the _posterior_. In Bayes's Law, we have
 Here ``P(θ)`` is the prior. If we consider ``P(x|θ)`` as a function on ``θ``,
 then it is called a likelihood.
 
-Since measures are mostly commonly manipulated using `density` and `logdensity`,
+Since measures are most commonly manipulated using `density` and `logdensity`,
 it's awkward to commit a (log-)likelihood to using one or the other. To evaluate
 a `Likelihood`, we therefore use `density` or `logdensity`, depending on the
 circumstances. In the latter case, it is of course acting as a log-density.
