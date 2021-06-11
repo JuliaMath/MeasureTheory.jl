@@ -7,7 +7,6 @@ export Laplace
 @parameterized Laplace(μ,σ) ≪ (1/2) * Lebesgue(ℝ)
 
 @kwstruct Laplace()
-@kwstruct Laplace(μ,σ)
 
 function logdensity(d::Laplace{()} , x)
     return -abs(x)

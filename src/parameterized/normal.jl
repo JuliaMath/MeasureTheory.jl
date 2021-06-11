@@ -84,10 +84,6 @@ logdensity(d::Normal{()} , x) = - x^2 / 2
 Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 
 ###############################################################################
-# We need a `@kwstruct` for each instance, including the one declared in the
-# `@parameterized` declaration. 
-@kwstruct Normal(μ,σ)
-
 # `μ` and `σ` parameterizations are so common, we have a macro to make them easy
 # to build. Note that `μ` and `σ` are *not* always mean and standard deviation,
 # but instead should be considered "location" and "scale" parameters,
@@ -115,10 +111,6 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 # The `@half` macro takes a symmetric univariate measure and efficiently creates
 # a truncated version. 
 @half Normal()
-
-
-@kwstruct HalfNormal()
-@kwstruct HalfNormal(σ)
 
 # @μσ_methods, without the μ.
 @σ_methods HalfNormal()

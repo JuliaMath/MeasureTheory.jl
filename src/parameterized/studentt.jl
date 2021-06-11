@@ -11,8 +11,6 @@ export StudentT
 
 @μσ_methods StudentT(ν)
 
-@kwstruct StudentT(ν, μ, σ)
-
 StudentT(ν, μ, σ) = StudentT((ν=ν, μ=μ, σ=σ))
 
 @kwalias StudentT [

@@ -89,8 +89,6 @@ function logdensity(d::LKJCholesky{k, (:logη,), T}, L::Union{LinearAlgebra.Abst
     return s
 end
 
-asparams(::Type{<:LKJCholesky}, ::Val{:logη}) = asℝ₊
-
 using TransformVariables
 
 TransformVariables.as(::LKJCholesky{k}) where {k} = CorrCholesky(k)
