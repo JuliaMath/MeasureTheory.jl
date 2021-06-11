@@ -3,7 +3,6 @@ module MeasureTheory
 using Random
 
 using ConcreteStructs
-using Tricks
 using MLStyle
 using NestedTuples
 using TransformVariables
@@ -36,8 +35,6 @@ sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 Compute the logdensity of the measure μ at the point x. This is the standard way
 to define `logdensity` for a new measure. the base measure is implicit here, and
 is understood to be `basemeasure(μ)`.
-
-Methods for computing density relative to other measures will be
 """
 function logdensity end
 
