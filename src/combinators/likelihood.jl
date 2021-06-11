@@ -125,18 +125,14 @@ function Likelihood(μ::M, constraint::NamedTuple, x) where {M<:AbstractMeasure}
     Likelihood((M, constraint), x)
 end
 
-function (ℓ::Likelihood{Tuple{M,NT}})(p::NamedTuple) where {M<:Type, NT <: NamedTuple}
+function logdensity(ℓ::Likelihood{Tuple{M,NT}}, p::NamedTuple) where {M<:Type, NT <: NamedTuple}
     (D, constraint) = ℓ.f
     return logdensity(D(merge(p, constraint)), ℓ.x)
 end
 
-function (ℓ::Likelihood{Tuple{M,NT}})(p) where {M<:Type, NT <: NamedTuple}
+function logdensity(ℓ::Likelihood{Tuple{M,NT}}, p) where {M<:Type, NT <: NamedTuple}
     freevar = params(ℓ.f...)
-    ℓ(NamedTuple{freevar}(p))
+    logdensity(ℓ, NamedTuple{freevar}(p))
 end
 
-logdensity(ℓ::Likelihood, p) = ℓ(p)
-
-(ℓ::Likelihood)(p) = logdensity(ℓ.f(p), ℓ.x)
-
-(ℓ::Likelihood)(;kwargs...) = ℓ((;kwargs...))
+logdensity(ℓ::Likelihood, p) = logdensity(ℓ.f(p), ℓ.x)
