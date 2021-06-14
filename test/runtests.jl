@@ -10,6 +10,8 @@ if Base.VERSION ≥ v"1.6"
     @testset "No warnings on import" begin
         @test_nowarn @eval using MeasureTheory
     end
+else
+    @eval using MeasureTheory
 end
 
 function draw2(μ)
