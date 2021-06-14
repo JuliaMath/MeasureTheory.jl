@@ -6,8 +6,10 @@ using LinearAlgebra
 using DynamicIterators: trace, TimeLift
 using TransformVariables: transform, as𝕀, inverse
 
-@testset "No warnings on import" begin
-    @test_nowarn @eval using MeasureTheory
+if Base.VERSION ≥ v"1.6"
+    @testset "No warnings on import" begin
+        @test_nowarn @eval using MeasureTheory
+    end
 end
 
 function draw2(μ)
