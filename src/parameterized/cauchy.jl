@@ -18,6 +18,8 @@ Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng
 
 ≪(::Cauchy, ::Lebesgue{X}) where X <: Real = true
 
+TV.as(::Cauchy) = asℝ
+
 @half Cauchy()
 
 distproxy(d::Cauchy{()}) = Dists.Cauchy()

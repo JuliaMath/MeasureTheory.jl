@@ -28,6 +28,8 @@ export Normal, HalfNormal
 @kwstruct Normal(μ,Σ)
 @kwstruct Normal(μ,Σ⁻¹)
 
+as(::Normal) = asℝ
+
 # `@kwalias` defines some alias names, giving users flexibility in the names
 # they use. For example, σ² is standard notation for the variance parameter, but
 # it's a lot to type. Some users might prefer to just use `var` and have us do
