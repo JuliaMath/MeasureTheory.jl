@@ -89,9 +89,8 @@ function logdensity(d::LKJCholesky{k, (:logη,), T}, L::Union{LinearAlgebra.Abst
     return s
 end
 
-using TransformVariables
 
-TransformVariables.as(::LKJCholesky{k}) where {k} = CorrCholesky(k)
+TV.as(::LKJCholesky{k}) where {k} = CorrCholesky(k)
 
 # Should satisfy
 # logdensity(basemeasure(d), rand(d)) == 0.0

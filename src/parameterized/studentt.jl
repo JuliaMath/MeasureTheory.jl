@@ -29,6 +29,8 @@ function logdensity(d::StudentT{(:ν,)}, x)
     return loggamma(halfνp1) - loggamma(ν/2) + ν * log(ν) - halfνp1 * log(x^2 + ν)
 end
 
+TV.as(::StudentT) = asℝ
+
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, T, Dists.TDist(μ.ν))
 
 distproxy(d::StudentT{(:ν, :μ, :σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.TDist(d.ν))

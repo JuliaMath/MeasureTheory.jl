@@ -23,6 +23,8 @@ const ∞ = InfiniteArrays.∞
 
 export ∞
 
+export as
+
 abstract type AbstractMeasure end
 
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))

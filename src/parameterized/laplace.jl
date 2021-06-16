@@ -16,5 +16,7 @@ Base.rand(rng::AbstractRNG, μ::Laplace{()}) = rand(rng, Dists.Laplace())
 
 ≪(::Laplace, ::Lebesgue{X}) where X <: Real = true
 
+TV.as(::Laplace) = asℝ
+
 @μσ_methods Laplace()
 @half Laplace()
