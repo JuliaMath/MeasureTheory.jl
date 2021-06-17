@@ -2,7 +2,6 @@
 
 export CorrCholesky
 
-const TV = TransformVariables
 
 """
     CorrCholesky(n)

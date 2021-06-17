@@ -7,7 +7,6 @@
 export LKJCholesky
 using PositiveFactorizations
 
-const TV = TransformVariables
 
 const CorrCholeskyUpper = TV.CorrCholeskyFactor
 

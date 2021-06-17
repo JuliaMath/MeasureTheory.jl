@@ -6,6 +6,8 @@ using ConcreteStructs
 using MLStyle
 using NestedTuples
 using TransformVariables
+const TV = TransformVariables
+
 import Base
 import Distributions
 const Dists = Distributions
