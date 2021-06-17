@@ -48,4 +48,6 @@ Base.:*(m::AbstractMeasure, k::Real) = k * m
 
 basemeasure(μ::WeightedMeasure) = μ.base
 
+TV.as(μ::WeightedMeasure) = TV.as(μ.base)
+
 sampletype(μ:: WeightedMeasure) = sampletype(μ.base)
