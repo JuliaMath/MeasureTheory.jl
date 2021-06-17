@@ -1,7 +1,6 @@
 using TransformVariables
 using TransformVariables: AbstractTransform, CallableTransform, CallableInverse
 
-const TV = TransformVariables
 
 export Pushforward
 export Pullback

@@ -1,6 +1,5 @@
 # Adapted from https://github.com/tpapp/TransformVariables.jl/blob/master/src/special_arrays.jl
 
-const TV = TransformVariables
 using LinearAlgebra
 const CorrCholeskyUpper = CorrCholeskyFactor
 
