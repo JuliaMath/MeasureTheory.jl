@@ -83,6 +83,11 @@ function For(f, base...) end
 
 ForArray{D,N,T,F} = ProductMeasure{ReadonlyMappedArray{D, N, T, F}} 
 
+function TV.as(d::ForArray)
+    d1 = d.data.f(first(d.data.data))
+    as(Array, as(d1), size(d.data)...)
+end
+
 function Base.show(io::IO, d::ForArray{D,N,T,F}) where {D,N,T,F}
     print(io, "For(")
     print(io, d.data.f, ", ")
@@ -142,6 +147,12 @@ basemeasure(μ::ForArray) = @inbounds basemeasure(μ.data[1])^size(μ.data)
 # ForGenerator
 
 ForGenerator{G} = ProductMeasure{G} where {G <: Base.Generator}
+
+function TV.as(d::ForGenerator)
+    d1 = d.data.f(first(d.data.iter))
+    as(Array, as(d1), size(d.data)...) 
+end
+
 
 For(f, dims::Base.Generator) = ProductMeasure(Base.Generator(f ∘ dims.f, dims.iter))
 
