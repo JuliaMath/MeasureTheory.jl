@@ -106,7 +106,7 @@ struct Likelihood{F,X}
     x::X
 end
 
-function Base.show(io::IO, ℓ::Likelihood{Tuple{M,NamedTuple{N,T}}}) where {M<:Type, N,T}
+function Base.show(io::IO, ℓ::Likelihood{Tuple{M,NamedTuple{N,T}}}) where {M<:Union{Type, Function}, N,T}
     (m,c) = ℓ.f
     println(io, "Likelihood(",m,", ",c,", ", ℓ.x, ")")
 end
@@ -125,14 +125,23 @@ function Likelihood(μ::M, constraint::NamedTuple, x) where {M<:AbstractMeasure}
     Likelihood((M, constraint), x)
 end
 
-function logdensity(ℓ::Likelihood{Tuple{M,NT}}, p::NamedTuple) where {M<:Type, NT <: NamedTuple}
+function logdensity(ℓ::Likelihood{Tuple{M,NT}}, p::NamedTuple) where {M<:Union{Type, Function}, NT <: NamedTuple}
     (D, constraint) = ℓ.f
     return logdensity(D(merge(p, constraint)), ℓ.x)
 end
 
-function logdensity(ℓ::Likelihood{Tuple{M,NT}}, p) where {M<:Type, NT <: NamedTuple}
+function logdensity(ℓ::Likelihood{Tuple{M,NT}}, p) where {M<:Union{Type, Function}, NT <: NamedTuple}
     freevar = params(ℓ.f...)
     logdensity(ℓ, NamedTuple{freevar}(p))
 end
 
 logdensity(ℓ::Likelihood, p) = logdensity(ℓ.f(p), ℓ.x)
+
+
+function Likelihood(p::PowerMeasure{D}, x) where {D}
+    n = size(x)
+    @show n
+    f(par) = D(par)^n
+    @show f
+    Likelihood(f,x)
+end

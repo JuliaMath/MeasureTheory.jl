@@ -27,9 +27,13 @@ import Base
 #     return nothing
 # end
 
-Base.:^(μ::AbstractMeasure, n::Integer) = For(_ -> μ, 1:n)
+export PowerMeasure
 
-Base.:^(μ::AbstractMeasure, size::NTuple{N,I}) where {N, I <: Integer} = For(_ -> μ, CartesianIndices(size))
+PowerMeasure{D,N,T,F} = ForArray{D,N,T,Const{D}}
+
+Base.:^(μ::AbstractMeasure, n::Integer) = For(Const(μ), 1:n)
+
+Base.:^(μ::AbstractMeasure, size::NTuple{N,I}) where {N, I <: Integer} = For(Const(μ), CartesianIndices(size))
 
 # sampletype(d::PowerMeasure{M,N}) where {M,N} = @inbounds Array{sampletype(first(d.data)), N}
 
@@ -38,4 +42,5 @@ function Base.:^(μ::WeightedMeasure, n::NTuple{N,Int}) where {N}
     return WeightedMeasure(k, μ.base^n)
 end
 
+    
 # basemeasure(μ::PowerMeasure) = @inbounds basemeasure(first(μ.data))^size(μ.data)
