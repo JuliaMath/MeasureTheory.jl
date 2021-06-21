@@ -42,6 +42,7 @@ is understood to be `basemeasure(μ)`.
 """
 function logdensity end
 
+include("const.jl")
 include("exp.jl")
 include("domains.jl")
 include("utils.jl")
