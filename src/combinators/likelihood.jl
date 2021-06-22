@@ -101,10 +101,13 @@ and we observe `x=3`. We can compute the posterior measure on `μ` as
     julia> logdensity(post, 2)
     -2.5
 """
-struct Likelihood{F,X}
+struct Likelihood{F, N, T, X}
     f::F
+    constraint::NamedTuple{N,T}
     x::X
 end
+
+params(ℓ::Likelihood{F,N}) where {F,N} = setdiff(params(ℓ.f), N)
 
 function Base.show(io::IO, ℓ::Likelihood{Tuple{M,NamedTuple{N,T}}}) where {M<:Union{Type, Function}, N,T}
     (m,c) = ℓ.f
@@ -115,33 +118,26 @@ function Base.show(io::IO, ℓ::Likelihood)
     println(io, "Likelihood(",ℓ.f, ", ", ℓ.x, ")")
 end
 
-Likelihood(μ::M, x) where {M<:AbstractMeasure} = Likelihood(M, x)
+Likelihood(f, x) = Likelihood(f, NamedTuple(), x)
 
-function Likelihood(::Type{M}, constraint::NamedTuple, x) where {M <: ParameterizedMeasure}
-    Likelihood((M, constraint), x)
-end
-
-function Likelihood(μ::M, constraint::NamedTuple, x) where {M<:AbstractMeasure}
-    Likelihood((M, constraint), x)
-end
-
-function logdensity(ℓ::Likelihood{Tuple{M,NT}}, p::NamedTuple) where {M<:Union{Type, Function}, NT <: NamedTuple}
-    (D, constraint) = ℓ.f
-    return logdensity(D(merge(p, constraint)), ℓ.x)
-end
-
-function logdensity(ℓ::Likelihood{Tuple{M,NT}}, p) where {M<:Union{Type, Function}, NT <: NamedTuple}
-    freevar = params(ℓ.f...)
-    logdensity(ℓ, NamedTuple{freevar}(p))
-end
-
-logdensity(ℓ::Likelihood, p) = logdensity(ℓ.f(p), ℓ.x)
+Likelihood(μ::M, constraint::NamedTuple, x) where {M<:AbstractMeasure} = Likelihood(M, constraint, x)
 
 
-function Likelihood(p::PowerMeasure{D}, x) where {D}
+function Likelihood(p::PowerMeasure{D}, constraint::NamedTuple, x) where {D}
     n = size(x)
-    @show n
     f(par) = D(par)^n
-    @show f
     Likelihood(f,x)
+end
+
+function _rebuild_measure(ℓ::Likelihood, p::NamedTuple)
+    par = merge(p, ℓ.constraint)
+    ℓ.f(par)
+end
+
+function _rebuild_measure(ℓ::Likelihood, p)
+    _rebuild_measure(ℓ, NamedTuple{(params(ℓ)...,)}(p))
+end
+
+function logdensity(ℓ::Likelihood, p) 
+    return logdensity(_rebuild_measure(ℓ, p), ℓ.x)
 end
