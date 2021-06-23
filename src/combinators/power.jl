@@ -42,5 +42,7 @@ function Base.:^(μ::WeightedMeasure, n::NTuple{N,Int}) where {N}
     return WeightedMeasure(k, μ.base^n)
 end
 
+params(::PowerMeasure{D})       where {D} = params(D)
+params(::Type{PowerMeasure{D}}) where {D} = params(D)
     
 # basemeasure(μ::PowerMeasure) = @inbounds basemeasure(first(μ.data))^size(μ.data)
