@@ -3,14 +3,64 @@ export ProductMeasure
 using MappedArrays
 using Base: @propagate_inbounds
 
-struct ProductMeasure{T} <: AbstractMeasure
-    data :: T
-
-    ProductMeasure(μs...) = new{typeof(μs)}(μs)
-    ProductMeasure(μs) = new{typeof(μs)}(μs)
+struct ProductMeasure{F,I} <: AbstractMeasure
+    f::F
+    inds::I
 end
 
-Base.size(μ::ProductMeasure) = size(μ.data)
+Base.size(μ::ProductMeasure) = size(marginals(μ))
+
+Base.length(m::ProductMeasure{T}) where {T} = length(marginals(μ))
+
+# TODO: Pull weights outside
+basemeasure(d::ProductMeasure) = ProductMeasure(basemeasure ∘ d.f, d.inds)
+
+
+export marginals
+
+
+testvalue(d::ProductMeasure) = map(testvalue, marginals(d))
+
+
+###############################################################################
+# I <: Tuple
+
+export ⊗
+⊗(μs::AbstractMeasure...) = ProductMeasure(identity, μs)
+
+marginals(d::ProductMeasure{F,T}) where {F, T<:Tuple} = map(d.f, d.inds)
+
+function Base.show(io::IO, μ::ProductMeasure{F,T}) where {F,T <: Tuple}
+    io = IOContext(io, :compact => true)
+    print(io, join(string.(marginals(μ)), " ⊗ "))
+end
+
+function logdensity(d::ProductMeasure{F,T}, x::Tuple) where {F,T<:Tuple}
+    mapreduce(logdensity, +, d.f.(d.inds), x)
+end
+
+###############################################################################
+# I <: AbstractArray
+
+marginals(d::ProductMeasure{F,A}) where {F,A<:AbstractArray} = mappedarray(d.f, d.inds)
+
+
+function logdensity(d::ProductMeasure, x::AbstractArray)
+    mar = marginals(d)
+    @boundscheck size(mar) == size(x) || throw(BoundsError)
+    s = 0.0
+    Δs(i) = logdensity(mar[i], x[i])
+    for i in eachindex(x)
+        s += Δs(i)
+    end
+    return s
+end
+
+
+###############################################################################
+# I <: Base.Generator
+
+###############################################################################
 
 function Base.show(io::IO, μ::ProductMeasure{NamedTuple{N,T}}) where {N,T}
     io = IOContext(io, :compact => true)
@@ -18,10 +68,7 @@ function Base.show(io::IO, μ::ProductMeasure{NamedTuple{N,T}}) where {N,T}
 end
 
 
-function Base.show(io::IO, μ::ProductMeasure{T}) where {T <: Tuple}
-    io = IOContext(io, :compact => true)
-    print(io, join(string.(μ.data), " ⊗ "))
-end
+
 
 function Base.show_unquoted(io::IO, μ::ProductMeasure, indent::Int, prec::Int)
     if Base.operator_precedence(:*) ≤ prec
@@ -36,52 +83,14 @@ end
 
 # ProductMeasure(m::NTuple{N, Measure{X}}) where {N,X} = ProductMeasure(m...)
 
-Base.length(m::ProductMeasure{T}) where {T} = length(m.data)
 
-function Base.:*(μ::ProductMeasure{Tuple{}}, ν::N) where {X, N <: AbstractMeasure}
-    ProductMeasure((ν,))
-end
 
-function Base.:*(μ::ProductMeasure{X}, ν::ProductMeasure{Y}) where {X,Y}
-    data = (μ.data..., ν.data...)
-    ProductMeasure(data...)
-end
 
-function Base.:*(μ, ν::ProductMeasure{Y}) where {Y}
-    data = (μ, ν.data...)
-    ProductMeasure(data...)
-end
-
-function Base.:*(μ::ProductMeasure{X}, ν::N) where {X, N <: AbstractMeasure}
-    data = (μ.data..., ν)
-    ProductMeasure(data...)
-end
-
-function Base.:*(μ::M, ν::N) where {M <: AbstractMeasure, N <: AbstractMeasure}
-    data = (μ, ν)
-    ProductMeasure(data...)
-end
 
 using Tullio
 
-function logdensity(d::ProductMeasure, x::NTuple)
-    mapreduce(logdensity, +, d.data, x)
-end
 
-function logdensity(d::ProductMeasure{A}, x::NTuple) where {A <: AbstractArray}
-    mapreduce(logdensity, +, d.data, x)
-end
 
-function logdensity(d::ProductMeasure{A}, x) where {T, A<:AbstractArray}
-    data = d.data
-    @boundscheck size(data) == size(x) || throw(BoundsError)
-    s = 0.0
-    Δs(i) = logdensity(data[i], x[i])
-    for i in eachindex(x)
-        s += Δs(i)
-    end
-    return s
-end
 
 # @propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure{A}, x) where{T, A<:AbstractArray{T,1}}
 #     data = d.data
@@ -153,18 +162,7 @@ function sampletype(d::ProductMeasure{<: Tuple})
     Tuple{sampletype.(d.data)...}
 end
 
-# TODO: Pull weights outside
-basemeasure(μ::ProductMeasure) = ProductMeasure(basemeasure.(μ.data))
 
 # function logdensity(μ::ProductMeasure{Aμ}, x::Ax) where {Aμ <: MappedArray, Ax <: AbstractArray}
 #     μ.data
 # end
-
-export marginals
-
-marginals(d::ProductMeasure) = d.data
-
-function testvalue(d::ProductMeasure{NamedTuple{N,T}}) where {N,T}
-    vals = values(d.data)
-    NamedTuple{N}(testvalue.(vals))
-end
