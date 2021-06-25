@@ -101,43 +101,19 @@ and we observe `x=3`. We can compute the posterior measure on `μ` as
     julia> logdensity(post, 2)
     -2.5
 """
-struct Likelihood{F, N, T, X}
-    f::F
-    constraint::NamedTuple{N,T}
+struct Likelihood{M,X}
+    μ::M
     x::X
 end
 
-params(ℓ::Likelihood{F,N}) where {F,N} = setdiff(params(ℓ.f), N)
+# params(ℓ::Likelihood{F,N}) where {F,N} = setdiff(params(ℓ.f), N)
 
-function Base.show(io::IO, ℓ::Likelihood{Tuple{M,NamedTuple{N,T}}}) where {M<:Union{Type, Function}, N,T}
-    (m,c) = ℓ.f
-    println(io, "Likelihood(",m,", ",c,", ", ℓ.x, ")")
+function Base.show(io::IO, ℓ::Likelihood) 
+    μ, x = ℓ.μ, ℓ.x
+    print(io, "Likelihood(",μ,", ", x, ")")
 end
 
-function Base.show(io::IO, ℓ::Likelihood)
-    println(io, "Likelihood(",ℓ.f, ", ", ℓ.x, ")")
-end
-
-Likelihood(f, x) = Likelihood(f, NamedTuple(), x)
-
-Likelihood(μ::M, constraint::NamedTuple, x) where {M<:AbstractMeasure} = Likelihood(M, constraint, x)
-
-
-function Likelihood(p::PowerMeasure{D}, constraint::NamedTuple, x) where {D}
-    n = size(x)
-    f(par) = D(par)^n
-    Likelihood(f,x)
-end
-
-function _rebuild_measure(ℓ::Likelihood, p::NamedTuple)
-    par = merge(p, ℓ.constraint)
-    ℓ.f(par)
-end
-
-function _rebuild_measure(ℓ::Likelihood, p)
-    _rebuild_measure(ℓ, NamedTuple{(params(ℓ)...,)}(p))
-end
 
 function logdensity(ℓ::Likelihood, p) 
-    return logdensity(_rebuild_measure(ℓ, p), ℓ.x)
+    return logdensity(set(ℓ.μ, params, p), ℓ.x)
 end

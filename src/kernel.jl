@@ -47,7 +47,7 @@ end
 
 
 
-# kernel(::Type{P}, op::O) where {O, N, P<:ParameterizedMeasure{N}} = Kernel{constructor(P),O}(op)
+# kernel(::Type{P}, op::O) where {O, N, P<:ParameterizedMeasure{N}} = Kernel{constructorof(P),O}(op)
 
 kernel(::Type{M}; ops...) where {M} = Kernel{Type{M},typeof(ops.data)}(M,ops.data)
 
@@ -72,19 +72,19 @@ end
 # export kernelize
 
 # function kernelize(μ::M) where {N, M <: ParameterizedMeasure{N}}
-#     C = constructor(M)
+#     C = constructorof(M)
 #     (Kernel{C,}(NamedTuple{N}, ), values(getfield(μ, :par)))
 # end
 
 function _kernelfactor(::Type{P}) where {N, P <: ParameterizedMeasure{N}}
-    (constructor(P), N)
+    (constructorof(P), N)
 end
 
 function _kernelfactor(::P) where {N, P <: ParameterizedMeasure{N}}
-    (constructor(P), N)
+    (constructorof(P), N)
 end
 
 function _kernelfactor(μ::P) where {N, D<:ParameterizedMeasure{N}, P <: PowerMeasure{D}}
-    C = constructor(D)
+    C = constructorof(D)
     (p -> C(p) ^ size(μ.data), N)
 end

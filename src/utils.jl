@@ -12,14 +12,14 @@ function fix(f, x)
     return y
 end
 
-function constructor(::Type{T}) where {T} 
-    C = T
-    while C isa UnionAll
-        C = C.body
-    end
+# function constructorof(::Type{T}) where {T} 
+#     C = T
+#     while C isa UnionAll
+#         C = C.body
+#     end
 
-    return C.name.wrapper
-end
+#     return C.name.wrapper
+# end
 
 macro trysupport(ex)
     ex = esc(ex)
@@ -57,3 +57,5 @@ using Tricks
 struct Iterable end
 struct NonIterable end
 isiterable(::Type{T}) where T = static_hasmethod(iterate, Tuple{T}) ? Iterable() : NonIterable()
+
+functioninstance(::Type{F}) where {F<:Function} = F.instance

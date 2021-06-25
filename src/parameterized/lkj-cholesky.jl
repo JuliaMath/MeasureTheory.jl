@@ -113,4 +113,4 @@ function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{k, (:logη,)}) where
     return cholesky(Positive, rand(rng, Dists.LKJ(k, exp(d.logη))))
 end;
 
-constructor(::Type{L}) where {k,L<:LKJCholesky{k}} = LKJCholesky{k}
+ConstructionBase.constructorof(::Type{L}) where {k,L<:LKJCholesky{k}} = LKJCholesky{k}

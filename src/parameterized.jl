@@ -29,7 +29,7 @@ export asparams
 # Normal(μ = 2,)
 #
 function (::Type{P})(args...) where {N, P <: ParameterizedMeasure{N}}
-    C = constructor(P)
+    C = constructorof(P)
     return C(NamedTuple{N}(args...))
 end
 
@@ -87,7 +87,7 @@ function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: Par
     # @show M
     thekeys = params(M, constraints)
     transforms = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
-    C = constructor(M)
+    C = constructorof(M)
     # @show C
     # @show constraints
     # @show transforms
@@ -104,5 +104,23 @@ export params
 params(μ::ParameterizedMeasure) = getfield(μ, :par)
 
 function params(::Type{M}, constraints::NamedTuple{N2}=NamedTuple()) where {N1, N2, M<: ParameterizedMeasure{N1}} 
-    thekeys = tuple((k for k in N1 if k ∉ N2)...)
+thekeys = tuple((k for k in N1 if k ∉ N2)...)
 end
+
+
+function ConstructionBase.setproperties(d::P, nt::NamedTuple) where {P<:ParameterizedMeasure}
+    return constructorof(P)(merge(params(d), nt)) 
+end
+
+function Accessors.set(d::ParameterizedMeasure, ::typeof(params), nt::NamedTuple)
+    setproperties(d, nt)
+end
+
+function Accessors.set(d::ParameterizedMeasure{N}, ::typeof(params), p) where {N}
+    setproperties(d, NamedTuple{N}(p...))
+end
+
+
+
+# using ConstructionBase
+# ConstructionBase.

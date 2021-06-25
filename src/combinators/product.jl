@@ -5,7 +5,7 @@ using Base: @propagate_inbounds
 
 struct ProductMeasure{F,I} <: AbstractMeasure
     f::F
-    inds::I
+    pars::I
 end
 
 Base.size(μ::ProductMeasure) = size(marginals(μ))
@@ -13,14 +13,14 @@ Base.size(μ::ProductMeasure) = size(marginals(μ))
 Base.length(m::ProductMeasure{T}) where {T} = length(marginals(μ))
 
 # TODO: Pull weights outside
-basemeasure(d::ProductMeasure) = ProductMeasure(basemeasure ∘ d.f, d.inds)
+basemeasure(d::ProductMeasure) = ProductMeasure(basemeasure ∘ d.f, d.pars)
 
 
 export marginals
 
 function marginals(d::ProductMeasure{F,I}) where {F,I}
     if Base.isiterable(I)
-        return (d.f(i) for i in d.inds)
+        return (d.f(i) for i in d.pars)
     else
         error("Type $I is not iterable. Add an `iterate` or `marginals` method to fix.")
     end
@@ -56,7 +56,7 @@ end
 export ⊗
 ⊗(μs::AbstractMeasure...) = ProductMeasure(identity, μs)
 
-marginals(d::ProductMeasure{F,T}) where {F, T<:Tuple} = map(d.f, d.inds)
+marginals(d::ProductMeasure{F,T}) where {F, T<:Tuple} = map(d.f, d.pars)
 
 function Base.show(io::IO, μ::ProductMeasure{F,T}) where {F,T <: Tuple}
     io = IOContext(io, :compact => true)
@@ -64,13 +64,13 @@ function Base.show(io::IO, μ::ProductMeasure{F,T}) where {F,T <: Tuple}
 end
 
 function logdensity(d::ProductMeasure{F,T}, x::Tuple) where {F,T<:Tuple}
-    mapreduce(logdensity, +, d.f.(d.inds), x)
+    mapreduce(logdensity, +, d.f.(d.pars), x)
 end
 
 ###############################################################################
 # I <: AbstractArray
 
-marginals(d::ProductMeasure{F,A}) where {F,A<:AbstractArray} = mappedarray(d.f, d.inds)
+marginals(d::ProductMeasure{F,A}) where {F,A<:AbstractArray} = mappedarray(d.f, d.pars)
 function logdensity(d::ProductMeasure, x)
     mapreduce(logdensity, +, marginals(d), x)
 end
@@ -84,7 +84,7 @@ end
 function Base.show(io::IO, d::ProductMeasure{F,A}) where {F,A<:AbstractArray}
     print(io, "For(")
     print(io, d.f, ", ")
-    print(io, d.inds, ")")
+    print(io, d.pars, ")")
 end
 
 
@@ -94,7 +94,7 @@ end
 function Base.show(io::IO, d::ProductMeasure{F,I}) where {F, I<:CartesianIndices}
     print(io, "For(")
     print(io, d.f, ", ")
-    join(io, size(d.inds), ", ")
+    join(io, size(d.pars), ", ")
     print(io, ")")
 end
 
@@ -206,3 +206,25 @@ end
 # function logdensity(μ::ProductMeasure{Aμ}, x::Ax) where {Aμ <: MappedArray, Ax <: AbstractArray}
 #     μ.data
 # end
+
+function ConstructionBase.constructorof(::Type{P}) where {F,I,P <: ProductMeasure{F,I}}
+    p -> ProductMeasure(d.f, p)
+end
+
+# function Accessors.set(d::ProductMeasure{N}, ::typeof(params), p) where {N}
+#     setproperties(d, NamedTuple{N}(p...))
+# end
+
+
+# function Accessors.set(d::ProductMeasure{F,T}, ::typeof(params), p::Tuple) where {F, T<:Tuple}
+#     set.(marginals(d), params, p)
+# end
+
+# e.g. set(Normal(μ=2)^5, params, randn(5))
+function Accessors.set(d::ProductMeasure{F,A}, ::typeof(params), p::AbstractArray) where {F,A<:AbstractArray}
+    set.(marginals(d), params, p)
+end
+
+function Accessors.set(d::ProductMeasure{F,A}, ::typeof(params), p) where {F,A<:AbstractArray}
+    ProductMeasure(d.f, mappedarray(Const(p), d.pars))
+end
