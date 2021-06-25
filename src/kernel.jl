@@ -49,14 +49,14 @@ end
 
 # kernel(::Type{P}, op::O) where {O, N, P<:ParameterizedMeasure{N}} = Kernel{constructor(P),O}(op)
 
-# kernel(::Type{M}; ops...) where {M} = Kernel{Type{M},typeof(ops.data)}(M,ops.data)
+kernel(::Type{M}; ops...) where {M} = Kernel{Type{M},typeof(ops.data)}(M,ops.data)
 
 # TODO: Would this benefit from https://github.com/tisztamo/FunctionWranglers.jl?
 mapcall(t, x) = map(func -> func(x), t)
 
 # (k::Kernel{Type{P},<:Tuple})(x) where {P<:ParameterizedMeasure} = k.f(mapcall(k.ops, x)...)
 
-# (k::Kernel{M,<:NamedTuple})(x) where {M} = k.f(;mapcall(k.ops, x)...)
+(k::Kernel{M,<:NamedTuple})(x) where {M} = k.f(;mapcall(k.ops, x)...)
 
 (k::Kernel)(x) = k.f(k.ops(x)...)
 

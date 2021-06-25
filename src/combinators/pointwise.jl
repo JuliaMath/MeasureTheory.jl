@@ -53,11 +53,11 @@ function ⊙(μ::AbstractMeasure, ℓ::Likelihood)
 end
 
 function logdensity(d::PointwiseProductMeasure, x)
-    sum((logdensity(dⱼ, x) for dⱼ in marginals(d)))
+    sum((logdensity(dⱼ, x) for dⱼ in d.data))
 end
 
 function sampletype(d::PointwiseProductMeasure) 
-    @inbounds sampletype(first(marginals(d)))
+    @inbounds sampletype(first(d.data))
 end
 
-basemeasure(μ::PointwiseProductMeasure) =  @inbounds basemeasure(first(marginals(d)))
+basemeasure(μ::PointwiseProductMeasure) =  @inbounds basemeasure(first(d.data))
