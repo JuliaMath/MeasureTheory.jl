@@ -45,9 +45,31 @@ struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
 end
 
 Base.IteratorSize(::Type{Rz}) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSize(T)
+Base.IteratorSize(r::Rz) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSize(r.iter)
 
-Base.iterate(E::Realized) = dyniterate(E, nothing)
-Base.iterate(E::Realized, value) = dyniterate(E, value)
+
+function Base.iterate(rv::Realized{R,S,T}) where {R,S,T}
+    if static_hasmethod(evolve, Tuple{T})
+        dyniterate(rv, nothing)
+    else
+        !isnothing(rv.seed) && Random.seed!(rv.rng, rv.seed)
+        μ,s = iterate(rv.iter)
+        x = rand(rv.rng, μ)
+        x,s
+    end
+end
+
+
+function Base.iterate(rv::Realized{R,S,T}, s) where {R,S,T}
+    if static_hasmethod(evolve, Tuple{T})
+        dyniterate(rv, s)
+    else
+        μ,s = iterate(rv.iter, s)
+        x = rand(rv.rng, μ)
+        x,s
+    end
+end
+
 
 function dyniterate(rv::Realized, ::Nothing)
     !isnothing(rv.seed) && Random.seed!(rv.rng, rv.seed)

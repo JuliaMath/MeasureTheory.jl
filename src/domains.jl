@@ -45,7 +45,7 @@ struct IntegerRange{lo, hi} <: AbstractDomain end
 Base.minimum(::IntegerRange{lo, hi}) where {lo, hi} = lo
 Base.maximum(::IntegerRange{lo, hi}) where {lo, hi} = hi
 
-iterate(r::IntegerRange{lo, hi}) where {lo, hi} = iterate(lo:hi)
+Base.iterate(r::IntegerRange{lo, hi}) where {lo, hi} = iterate(lo:hi)
 
 function Base.getindex(::Integers, r::AbstractUnitRange)
     IntegerRange{minimum(r), maximum(r)}()
