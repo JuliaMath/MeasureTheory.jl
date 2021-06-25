@@ -58,7 +58,7 @@ mapcall(t, x) = map(func -> func(x), t)
 
 # (k::Kernel{M,<:NamedTuple})(x) where {M} = k.f(;mapcall(k.ops, x)...)
 
-# (k::Kernel)(x) = k.f(k.ops(x)...)
+(k::Kernel)(x) = k.f(k.ops(x)...)
 
 (k::Kernel{F,S})(x...) where {F, N, S<:NTuple{N,Symbol}} = k(x)
 

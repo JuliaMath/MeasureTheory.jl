@@ -18,6 +18,14 @@ basemeasure(d::ProductMeasure) = ProductMeasure(basemeasure ∘ d.f, d.inds)
 
 export marginals
 
+function marginals(d::ProductMeasure{F,I}) where {F,I}
+    if Base.isiterable(I)
+        return (d.f(i) for i in d.inds)
+    else
+        error("Type $I is not iterable. Add an `iterate` or `marginals` method to fix.")
+    end
+end
+
 
 testvalue(d::ProductMeasure) = map(testvalue, marginals(d))
 
@@ -63,15 +71,8 @@ end
 # I <: AbstractArray
 
 marginals(d::ProductMeasure{F,A}) where {F,A<:AbstractArray} = mappedarray(d.f, d.inds)
-function logdensity(d::ProductMeasure, x::AbstractArray)
-    @boundscheck size(d.inds) == size(x) || throw(BoundsError)
-    mar = marginals(d)
-    s = 0.0
-    Δs(i) = logdensity(mar[i], x[i])
-    for i in eachindex(x)
-        s += Δs(i)
-    end
-    return s
+function logdensity(d::ProductMeasure, x)
+    mapreduce(logdensity, +, marginals(d), x)
 end
 
 
@@ -105,12 +106,10 @@ function TV.as(d::ProductMeasure{F,I}) where {F, I<:Base.Generator}
     as(Array, as(d1), size(marginals(d))...) 
 end
 
-
-
-# TODO Make this reproducible
 function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure{F,I}) where {F,I<:Base.Generator}
-    r(x) = rand(rng, T, x)
-    Base.Generator(r ∘ marginals(d).f, marginals(d).iter)
+    seed = rand(rng, UInt)
+    mar = marginals(d)
+    return Realized(seed, copy(rng), mar)
 end
 
 function logdensity(d::ProductMeasure{F,I}, x) where {F, I<:Base.Generator}

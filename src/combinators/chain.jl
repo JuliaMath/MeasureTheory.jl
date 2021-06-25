@@ -35,7 +35,7 @@ function DynamicIterators.dyniterate(r::Chain, (u,rng)::Sample)
     return u, Sample(u, rng)
 end
 Base.IteratorSize(::Chain) = IsInfinite()
-
+Base.IteratorSize(::Type{Chain}) = IsInfinite()
 
 
 struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
@@ -43,7 +43,9 @@ struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
     rng::S
     iter::T
 end
-Base.IteratorSize(::Realized) = IsInfinite()
+
+Base.IteratorSize(::Type{Rz}) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSize(T)
+
 Base.iterate(E::Realized) = dyniterate(E, nothing)
 Base.iterate(E::Realized, value) = dyniterate(E, value)
 

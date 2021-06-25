@@ -92,7 +92,7 @@ end
 end
 
 @testset "Kernel" begin
-    κ = MeasureTheory.kernel(identity, MeasureTheory.Dirac)
+    κ = MeasureTheory.kernel(MeasureTheory.Dirac, identity)
     @test rand(κ(1.1)) == 1.1
 end
 

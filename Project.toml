@@ -29,6 +29,7 @@ SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 StatsFuns = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
 TransformVariables = "84d833dd-6860-57f9-a1a7-6da5db126cff"
+Tricks = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 Tullio = "bc48ee85-29a4-5162-ae0b-a64e1601d4bc"
 
 [compat]
