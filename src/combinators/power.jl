@@ -29,13 +29,13 @@ import Base
 
 export PowerMeasure
 
-PowerMeasure{D,N,T,F} = ForArray{D,N,T,Const{D}}
+PowerMeasure{D,I} = ProductMeasure{Const{D},I}
 
 Base.:^(μ::AbstractMeasure, n::Integer) = For(Const(μ), 1:n)
 
 Base.:^(μ::AbstractMeasure, size::NTuple{N,I}) where {N, I <: Integer} = For(Const(μ), CartesianIndices(size))
 
-# sampletype(d::PowerMeasure{M,N}) where {M,N} = @inbounds Array{sampletype(first(d.data)), N}
+# sampletype(d::PowerMeasure{M,N}) where {M,N} = @inbounds Array{sampletype(first(marginals(d))), N}
 
 function Base.:^(μ::WeightedMeasure, n::NTuple{N,Int}) where {N}
     k = prod(n) * μ.logweight

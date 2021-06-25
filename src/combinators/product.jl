@@ -22,6 +22,26 @@ export marginals
 testvalue(d::ProductMeasure) = map(testvalue, marginals(d))
 
 
+function Base.show(io::IO, μ::ProductMeasure{NamedTuple{N,T}}) where {N,T}
+    io = IOContext(io, :compact => true)
+    print(io, "Product(",μ.data, ")")
+end
+
+
+
+
+function Base.show_unquoted(io::IO, μ::ProductMeasure, indent::Int, prec::Int)
+    if Base.operator_precedence(:*) ≤ prec
+        print(io, "(")
+        show(io, μ)
+        print(io, ")")
+    else
+        show(io, μ)
+    end
+    return nothing
+end
+
+
 ###############################################################################
 # I <: Tuple
 
@@ -43,11 +63,9 @@ end
 # I <: AbstractArray
 
 marginals(d::ProductMeasure{F,A}) where {F,A<:AbstractArray} = mappedarray(d.f, d.inds)
-
-
 function logdensity(d::ProductMeasure, x::AbstractArray)
+    @boundscheck size(d.inds) == size(x) || throw(BoundsError)
     mar = marginals(d)
-    @boundscheck size(mar) == size(x) || throw(BoundsError)
     s = 0.0
     Δs(i) = logdensity(mar[i], x[i])
     for i in eachindex(x)
@@ -57,29 +75,52 @@ function logdensity(d::ProductMeasure, x::AbstractArray)
 end
 
 
+function TV.as(d::ProductMeasure{F,A}) where {F,A<:AbstractArray}
+    d1 = marginals(d).f(first(marginals(d).data))
+    as(Array, as(d1), size(marginals(d))...)
+end
+
+function Base.show(io::IO, d::ProductMeasure{F,A}) where {F,A<:AbstractArray}
+    print(io, "For(")
+    print(io, d.f, ", ")
+    print(io, d.inds, ")")
+end
+
+
+###############################################################################
+# I <: CartesianIndices
+
+function Base.show(io::IO, d::ProductMeasure{F,I}) where {F, I<:CartesianIndices}
+    print(io, "For(")
+    print(io, d.f, ", ")
+    join(io, size(d.inds), ", ")
+    print(io, ")")
+end
+
 ###############################################################################
 # I <: Base.Generator
 
-###############################################################################
+function TV.as(d::ProductMeasure{F,I}) where {F, I<:Base.Generator}
+    d1 = marginals(d).f(first(marginals(d).iter))
+    as(Array, as(d1), size(marginals(d))...) 
+end
 
-function Base.show(io::IO, μ::ProductMeasure{NamedTuple{N,T}}) where {N,T}
-    io = IOContext(io, :compact => true)
-    print(io, "Product(",μ.data, ")")
+
+
+# TODO Make this reproducible
+function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure{F,I}) where {F,I<:Base.Generator}
+    r(x) = rand(rng, T, x)
+    Base.Generator(r ∘ marginals(d).f, marginals(d).iter)
+end
+
+function logdensity(d::ProductMeasure{F,I}, x) where {F, I<:Base.Generator}
+    sum((logdensity(dj, xj) for (dj, xj) in zip(marginals(d), x)))
 end
 
 
 
 
-function Base.show_unquoted(io::IO, μ::ProductMeasure, indent::Int, prec::Int)
-    if Base.operator_precedence(:*) ≤ prec
-        print(io, "(")
-        show(io, μ)
-        print(io, ")")
-    else
-        show(io, μ)
-    end
-    return nothing
-end
+
 
 # ProductMeasure(m::NTuple{N, Measure{X}}) where {N,X} = ProductMeasure(m...)
 
@@ -93,35 +134,35 @@ using Tullio
 
 
 # @propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure{A}, x) where{T, A<:AbstractArray{T,1}}
-#     data = d.data
+#     data = marginals(d)
 #     @boundscheck size(data) == size(x) || throw(BoundsError)
 #     @tullio s = logdensity(data[i], x[i])
 #     s
 # end
 
 # @propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure{A}, x) where{T, A<:AbstractArray{T,2}}
-#     data = d.data
+#     data = marginals(d)
 #     @boundscheck size(data) == size(x) || throw(BoundsError)
 #     @tullio s = @inbounds logdensity(data[i,j], x[i,j])
 #     s
 # end
 
 # @propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure{A}, x) where{T, A<:AbstractArray{T,3}}
-#     data = d.data
+#     data = marginals(d)
 #     @boundscheck size(data) == size(x) || throw(BoundsError)
 #     @tullio s = @inbounds logdensity(data[i,j,k], x[i,j,k])
 #     s
 # end
 
 # @propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure{A}, x) where{T, A<:AbstractArray{T,4}}
-#     data = d.data
+#     data = marginals(d)
 #     @boundscheck size(data) == size(x) || throw(BoundsError)
 #     @tullio s = @inbounds logdensity(data[i,j,k,l], x[i,j,k,l])
 #     s
 # end
 
 # @propagate_inbounds function MeasureTheory.logdensity(d::ProductMeasure{A}, x) where{T, A<:AbstractArray{T,5}}
-#     data = d.data
+#     data = marginals(d)
 #     @boundscheck size(data) == size(x) || throw(BoundsError)
 #     @tullio s = @inbounds logdensity(data[i,j,k,l,m], x[i,j,k,l,m])
 #     s
@@ -131,10 +172,10 @@ export rand!
 using Random: rand!, GLOBAL_RNG, AbstractRNG
 
 @propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
-    @boundscheck size(d.data) == size(x) || throw(BoundsError)
+    @boundscheck size(marginals(d)) == size(x) || throw(BoundsError)
 
     @inbounds for j in eachindex(x)
-        x[j] = rand(rng, eltype(x), d.data[j])
+        x[j] = rand(rng, eltype(x), marginals(d)[j])
     end
     x
 end
@@ -154,12 +195,12 @@ end
 # end
 
 function sampletype(d::ProductMeasure{A}) where {T,N,A <: AbstractArray{T,N}}
-    S = @inbounds sampletype(d.data[1])
+    S = @inbounds sampletype(marginals(d)[1])
     Array{S, N}
 end
 
 function sampletype(d::ProductMeasure{<: Tuple}) 
-    Tuple{sampletype.(d.data)...}
+    Tuple{sampletype.(marginals(d))...}
 end
 
 
