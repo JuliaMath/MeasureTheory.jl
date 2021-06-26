@@ -60,4 +60,4 @@ function sampletype(d::PointwiseProductMeasure)
     @inbounds sampletype(first(d.data))
 end
 
-basemeasure(μ::PointwiseProductMeasure) =  @inbounds basemeasure(first(d.data))
+basemeasure(d::PointwiseProductMeasure) =  @inbounds basemeasure(first(d.data))
