@@ -233,5 +233,6 @@ function Accessors.set(d::ProductMeasure{F,A}, ::typeof(params), p::AbstractArra
 end
 
 function Accessors.set(d::ProductMeasure{F,A}, ::typeof(params), p) where {F,A<:AbstractArray}
-    ProductMeasure(d.f, Fill(p, size(d.pars)))
+    par = typeof(d.pars[1])(p)
+    ProductMeasure(d.f, Fill(par, size(d.pars)))
 end
