@@ -6,13 +6,6 @@ Base.rand(rng::AbstractRNG, d::AbstractMeasure) = rand(rng, Float64, d)
 
 Base.rand(rng::AbstractRNG, T::Type, d::ParameterizedMeasure) = rand(rng, distproxy(d))
 
-# TODO: Make this easily configurable, e.g. we should be able to use `collect` or `tuple` at least
-# Maybe RandomExtensions can help here?
-function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure)
-    (rand(rng, T, dn) for dn in marginals(d))
-end
-
-
 @inline Random.rand!(d::AbstractMeasure, arr::AbstractArray) = rand!(GLOBAL_RNG, d, arr)
 
 
