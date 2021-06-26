@@ -44,6 +44,8 @@ struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
     iter::T
 end
 
+Base.size(r::Realized) = size(r.iter)
+
 Base.IteratorSize(::Type{Rz}) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSize(T)
 Base.IteratorSize(r::Rz) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSize(r.iter)
 
@@ -64,9 +66,11 @@ function Base.iterate(rv::Realized{R,S,T}, s) where {R,S,T}
     if static_hasmethod(evolve, Tuple{T})
         dyniterate(rv, s)
     else
-        μ,s = iterate(rv.iter, s)
+        μs = iterate(rv.iter, s)
+        isnothing(μs) && return nothing
+        (μ,s) = μs
         x = rand(rv.rng, μ)
-        x,s
+        return x,s
     end
 end
 
@@ -118,3 +122,20 @@ function dyniterate(fr::DynamicFor, state)
       u, state = ϕ
       fr.f(u), state
 end
+
+function Base.collect(r::Realized)
+    next = iterate(r)
+    isnothing(next) && return []
+    (x,s) = next
+    a = similar(r.iter, typeof(x))
+
+    i = 1
+    @inbounds a[i] = x
+    while !isnothing(next)
+        (x, s) = next
+        @inbounds a[i] = x
+        i += 1
+        next = iterate(r, s)
+    end
+    return a
+end 
