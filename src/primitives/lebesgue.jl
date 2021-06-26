@@ -6,7 +6,7 @@ struct Lebesgue{X} <: PrimitiveMeasure end
 
 @primitive Lebesgue
 
-function Base.show(io::IO, μ::Lebesgue{X}) where X
+function Base.show(io::IO, ::MIME"text/plain", μ::Lebesgue{X}) where X
     io = IOContext(io, :compact => true)
     print(io, "Lebesgue(", X, ")")
 end

@@ -10,7 +10,7 @@ import Base
 # """
 # PowerMeasure{M,N,D} = ProductMeasure{Fill{M,N,D}}
 
-# function Base.show(io::IO, μ::PowerMeasure)
+# function Base.show(io::IO, ::MIME"text/plain", μ::PowerMeasure)
 #     io = IOContext(io, :compact => true)
 #     print(io, μ.data.value, " ^ ", size(μ.data))
 # end

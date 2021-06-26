@@ -15,7 +15,7 @@ end
 
 logweight(μ::WeightedMeasure) = μ.logweight
 
-function Base.show(io::IO, μ::WeightedMeasure)
+function Base.show(io::IO, ::MIME"text/plain", μ::WeightedMeasure)
     io = IOContext(io, :compact => true)
     print(io, exp(μ.logweight), " * ", μ.base)
 end

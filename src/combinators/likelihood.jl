@@ -114,7 +114,7 @@ Likelihood(::Type{M}, x) where {M<:AbstractMeasure} = Likelihood(kernel(M),x)
 
 # params(ℓ::Likelihood{F,N}) where {F,N} = setdiff(params(ℓ.f), N)
 
-function Base.show(io::IO, ℓ::Likelihood) 
+function Base.show(io::IO, ::MIME"text/plain", ℓ::Likelihood) 
     k, x = ℓ.k, ℓ.x
     print(io, "Likelihood(",k,", ", x, ")")
 end

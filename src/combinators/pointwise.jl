@@ -9,7 +9,7 @@ end
 
 Base.size(μ::PointwiseProductMeasure) = size(μ.data)
 
-function Base.show(io::IO, μ::PointwiseProductMeasure)
+function Base.show(io::IO, ::MIME"text/plain", μ::PointwiseProductMeasure)
     io = IOContext(io, :compact => true)
     print(io, join(string.(μ.data), " ⊙ "))
 end
