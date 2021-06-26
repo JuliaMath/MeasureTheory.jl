@@ -211,12 +211,12 @@ using TransformVariables
 @testset "Likelihood" begin
     dps = [
         (Normal()                             ,    2.0  )
-        (Pushforward(as((μ=asℝ,)), Normal()^1), (μ=2.0,))
+        # (Pushforward(as((μ=asℝ,)), Normal()^1), (μ=2.0,))
     ]
 
     ℓs = [
         Likelihood(Normal{(:μ,)},              3.0)
-        Likelihood(Normal{(:μ, :σ)}, (σ=2.0,), 3.0)
+        Likelihood(kernel(Normal, x -> (μ=x, σ=2.0)), 3.0)
     ]
 
     for (d,p) in dps

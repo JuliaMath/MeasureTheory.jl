@@ -39,6 +39,8 @@ function kernel(μ::P) where {P <: AbstractMeasure}
     Kernel{instance_type(f), typeof(ops)}(f,ops)
 end
 
+
+
 # kernel(Normal{(:μ,), Tuple{Int64}})
 function kernel(::Type{P}) where {P <: AbstractMeasure}
     (f, ops) = _kernelfactor(P)
@@ -87,4 +89,8 @@ end
 function _kernelfactor(μ::P) where {N, D<:ParameterizedMeasure{N}, P <: PowerMeasure{D}}
     C = constructorof(D)
     (p -> C(p) ^ size(μ.data), N)
+end
+
+function _kernelfactor(μ::ProductMeasure{F,A}) where {F,A<:AbstractArray}
+    p -> set.(marginals(d), params, p)
 end

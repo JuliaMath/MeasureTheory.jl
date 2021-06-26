@@ -101,19 +101,25 @@ and we observe `x=3`. We can compute the posterior measure on `μ` as
     julia> logdensity(post, 2)
     -2.5
 """
-struct Likelihood{M,X}
-    μ::M
+struct Likelihood{F,S,X}
+    k::Kernel{F,S}
     x::X
 end
+
+# Likelihood(k::Kernel{F,S},x::X) where {F,S,X} = Likelihood{F,S,X}(k,x)
+
+Likelihood(μ::AbstractMeasure, x) = Likelihood(kernel(μ),x)
+
+Likelihood(::Type{M}, x) where {M<:AbstractMeasure} = Likelihood(kernel(M),x)
 
 # params(ℓ::Likelihood{F,N}) where {F,N} = setdiff(params(ℓ.f), N)
 
 function Base.show(io::IO, ℓ::Likelihood) 
-    μ, x = ℓ.μ, ℓ.x
-    print(io, "Likelihood(",μ,", ", x, ")")
+    k, x = ℓ.k, ℓ.x
+    print(io, "Likelihood(",k,", ", x, ")")
 end
 
 
 function logdensity(ℓ::Likelihood, p) 
-    return logdensity(set(ℓ.μ, params, p), ℓ.x)
+    return logdensity(ℓ.k(p), ℓ.x)
 end

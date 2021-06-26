@@ -64,11 +64,12 @@ include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("combinators/for.jl")
 include("combinators/power.jl")
-include("combinators/likelihood.jl")
-include("combinators/pointwise.jl")
 include("combinators/transforms.jl")
 include("combinators/spikemixture.jl")
 include("combinators/chain.jl")
+include("kernel.jl")
+include("combinators/likelihood.jl")
+include("combinators/pointwise.jl")
 
 include("distributions.jl")
 include("rand.jl")
@@ -93,6 +94,6 @@ include("transforms/corrcholesky.jl")
 
 include("density.jl")
 # include("pushforward.jl")
-include("kernel.jl")
+
 include("distproxy.jl")
 end # module
