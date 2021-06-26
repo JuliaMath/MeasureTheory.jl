@@ -90,7 +90,7 @@ function For(f, inds::AbstractArray...)
 end
 
 function Base.eltype(d::ProductMeasure{F,I}) where {F,I<:AbstractArray}
-    return eltype(d.f(first(d.inds)))
+    return eltype(d.f(first(d.pars)))
 end
 
 
