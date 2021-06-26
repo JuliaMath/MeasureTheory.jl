@@ -31,15 +31,23 @@ export PowerMeasure
 
 PowerMeasure{D,I} = ProductMeasure{Const{D},I}
 
-Base.:^(μ::AbstractMeasure, n::Integer) = For(Const(μ), 1:n)
+function Base.:^(μ::AbstractMeasure, dims::Integer...) where {N, I<:Integer}
+    return μ^dims
+end
 
-Base.:^(μ::AbstractMeasure, size::NTuple{N,I}) where {N, I <: Integer} = For(Const(μ), CartesianIndices(size))
+function Base.:^(μ::M, dims::NTuple{N,I}) where {M <: AbstractMeasure, N, I<:Integer}
+    C = constructorof(M)
+    p = params(μ)
+
+    For(C, Fill(p, dims...))
+end
+
 
 # sampletype(d::PowerMeasure{M,N}) where {M,N} = @inbounds Array{sampletype(first(marginals(d))), N}
 
-function Base.:^(μ::WeightedMeasure, n::NTuple{N,Int}) where {N}
-    k = prod(n) * μ.logweight
-    return WeightedMeasure(k, μ.base^n)
+function Base.:^(μ::WeightedMeasure, dims::NTuple{N,I}) where {N, I<:Integer}
+    k = prod(dims) * μ.logweight
+    return WeightedMeasure(k, μ.base^dims)
 end
 
 params(::PowerMeasure{D})       where {D} = params(D)
