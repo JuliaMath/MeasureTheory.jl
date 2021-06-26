@@ -71,6 +71,7 @@ end
 # I <: AbstractArray
 
 marginals(d::ProductMeasure{F,A}) where {F,A<:AbstractArray} = mappedarray(d.f, d.pars)
+
 function logdensity(d::ProductMeasure, x)
     mapreduce(logdensity, +, marginals(d), x)
 end
@@ -106,7 +107,13 @@ function TV.as(d::ProductMeasure{F,I}) where {F, I<:Base.Generator}
     as(Array, as(d1), size(marginals(d))...) 
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure{F,I}) where {F,I<:Base.Generator}
+function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure)
+    seed = rand(rng, UInt)
+    mar = marginals(d)
+    return Realized(seed, copy(rng), mar)
+end
+
+function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure{F,I}) where {F,I<:AbstractArray}
     seed = rand(rng, UInt)
     mar = marginals(d)
     return Realized(seed, copy(rng), mar)
@@ -226,5 +233,5 @@ function Accessors.set(d::ProductMeasure{F,A}, ::typeof(params), p::AbstractArra
 end
 
 function Accessors.set(d::ProductMeasure{F,A}, ::typeof(params), p) where {F,A<:AbstractArray}
-    ProductMeasure(d.f, mappedarray(Const(p), d.pars))
+    ProductMeasure(d.f, Fill(p, size(d.pars)))
 end
