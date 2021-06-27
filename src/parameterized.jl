@@ -107,6 +107,8 @@ function params(::Type{M}, constraints::NamedTuple{N2}=NamedTuple()) where {N1, 
 thekeys = tuple((k for k in N1 if k ∉ N2)...)
 end
 
+params(μ) = ()
+
 
 function ConstructionBase.setproperties(d::P, nt::NamedTuple) where {P<:ParameterizedMeasure}
     return constructorof(P)(merge(params(d), nt)) 
