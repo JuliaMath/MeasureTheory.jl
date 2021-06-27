@@ -8,6 +8,8 @@ struct ProductMeasure{F,I} <: AbstractMeasure
     pars::I
 end
 
+ProductMeasure(nt::NamedTuple) = ProductMeasure(identity, nt)
+
 Base.size(μ::ProductMeasure) = size(marginals(μ))
 
 Base.length(m::ProductMeasure{T}) where {T} = length(marginals(μ))
