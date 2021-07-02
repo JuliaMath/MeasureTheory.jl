@@ -66,6 +66,24 @@ function _parameterized(__module__, expr)
         
         return q
     end
+
+    @capture $μ($(p...)) expr begin
+        μ = esc(μ)
+
+        q = quote
+            struct $μ{N,T} <: MeasureTheory.ParameterizedMeasure{N}
+                par :: NamedTuple{N,T}
+            end
+        end   
+        
+        if !isempty(p)
+            # e.g. Normal(μ,σ) = Normal((μ=μ, σ=σ))
+            pnames = QuoteNode.(p)
+            push!(q.args, :($μ($(p...)) = $μ(NamedTuple{($(pnames...),)}(($(p...),)))))
+        end
+        
+        return q
+    end
 end
 
 """
