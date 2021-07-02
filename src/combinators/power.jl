@@ -29,7 +29,7 @@ import Base
 
 export PowerMeasure
 
-PowerMeasure{D,I} = ProductMeasure{Const{D},I}
+const PowerMeasure{F,N,T,I} = ProductMeasure{F, Fill{N,T,I}}
 
 function Base.:^(μ::AbstractMeasure, dims::Integer...) where {N, I<:Integer}
     return μ^dims
@@ -37,9 +37,9 @@ end
 
 function Base.:^(μ::M, dims::NTuple{N,I}) where {M <: AbstractMeasure, N, I<:Integer}
     C = constructorof(M)
-    p = params(μ)
 
-    For(C, Fill(p, dims...))
+    pars = Fill(params(μ), dims...)
+    ProductMeasure{instance_type(C), typeof(pars)}(C, pars)
 end
 
 
@@ -50,7 +50,7 @@ function Base.:^(μ::WeightedMeasure, dims::NTuple{N,I}) where {N, I<:Integer}
     return WeightedMeasure(k, μ.base^dims)
 end
 
-params(::PowerMeasure{D})       where {D} = params(D)
+params(d::PowerMeasure{D})       where {D} = params(first(marginals(d)))
 params(::Type{PowerMeasure{D}}) where {D} = params(D)
     
 # basemeasure(μ::PowerMeasure) = @inbounds basemeasure(first(μ.data))^size(μ.data)

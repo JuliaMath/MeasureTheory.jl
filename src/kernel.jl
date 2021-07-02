@@ -35,7 +35,7 @@ kernel(μ, op) = Kernel(μ, op)
 
 # kernel(Normal(μ=2))
 function kernel(μ::P) where {P <: AbstractMeasure}
-    (f, ops) = _kernelfactor(μ)
+    (f, ops) = kernelfactor(μ)
     Kernel{instance_type(f), typeof(ops)}(f,ops)
 end
 
@@ -43,7 +43,7 @@ end
 
 # kernel(Normal{(:μ,), Tuple{Int64}})
 function kernel(::Type{P}) where {P <: AbstractMeasure}
-    (f, ops) = _kernelfactor(P)
+    (f, ops) = kernelfactor(P)
     Kernel{instance_type(f), typeof(ops)}(f,ops)
 end
 
@@ -51,7 +51,10 @@ end
 
 # kernel(::Type{P}, op::O) where {O, N, P<:ParameterizedMeasure{N}} = Kernel{constructorof(P),O}(op)
 
-kernel(::Type{M}; ops...) where {M} = Kernel{Type{M},typeof(ops.data)}(M,ops.data)
+function kernel(::Type{M}; ops...) where {M}
+    nt = NamedTuple(ops)
+    Kernel{Type{M},typeof(nt)}(M,nt)
+end
 
 # TODO: Would this benefit from https://github.com/tisztamo/FunctionWranglers.jl?
 mapcall(t, x) = map(func -> func(x), t)
@@ -78,19 +81,21 @@ end
 #     (Kernel{C,}(NamedTuple{N}, ), values(getfield(μ, :par)))
 # end
 
-function _kernelfactor(::Type{P}) where {N, P <: ParameterizedMeasure{N}}
+export kernelfactor
+
+function kernelfactor(::Type{P}) where {N, P <: ParameterizedMeasure{N}}
     (constructorof(P), N)
 end
 
-function _kernelfactor(::P) where {N, P <: ParameterizedMeasure{N}}
+function kernelfactor(::P) where {N, P <: ParameterizedMeasure{N}}
     (constructorof(P), N)
 end
 
-function _kernelfactor(μ::P) where {N, D<:ParameterizedMeasure{N}, P <: PowerMeasure{D}}
-    C = constructorof(D)
-    (p -> C(p) ^ size(μ.data), N)
+function kernelfactor(μ::PowerMeasure)
+    k = kernel(first(marginals(μ)))
+    (p -> k.f(p)^size(μ), k.ops)
 end
 
-function _kernelfactor(μ::ProductMeasure{F,A}) where {F,A<:AbstractArray}
-    p -> set.(marginals(d), params, p)
+function kernelfactor(μ::ProductMeasure{F,A}) where {F,A<:AbstractArray}
+    (p -> set.(marginals(μ), params, p), μ.pars)
 end
