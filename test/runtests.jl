@@ -5,14 +5,7 @@ using Random
 using LinearAlgebra
 using DynamicIterators: trace, TimeLift
 using TransformVariables: transform, as𝕀, inverse
-
-if Base.VERSION ≥ v"1.6"
-    @testset "No warnings on import" begin
-        @test_nowarn @eval using MeasureTheory
-    end
-else
-    @eval using MeasureTheory
-end
+using MeasureTheory
 
 function draw2(μ)
     x = rand(μ)
