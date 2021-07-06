@@ -21,13 +21,16 @@ basemeasure(d::ProductMeasure) = ProductMeasure(basemeasure ∘ d.f, d.pars)
 export marginals
 
 function marginals(d::ProductMeasure{F,I}) where {F,I}
-    if isiterable(I)
-        return (d.f(i) for i in d.pars)
-    else
-        error("Type $I is not iterable. Add an `iterate` or `marginals` method to fix.")
-    end
+    _marginals(d, isiterable(I))
 end
 
+function _marginals(d::ProductMeasure{F,I}, ::Iterable) where {F,I}
+    return (d.f(i) for i in d.pars)
+end
+
+function _marginals(d::ProductMeasure{F,I}, ::NonIterable) where {F,I}
+    error("Type $I is not iterable. Add an `iterate` or `marginals` method to fix.")
+end
 
 testvalue(d::ProductMeasure) = map(testvalue, marginals(d))
 
