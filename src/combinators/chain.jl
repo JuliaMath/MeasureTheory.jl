@@ -6,10 +6,18 @@ import DynamicIterators: dyniterate, evolve
 
 export Chain
 
-@concrete terse struct Chain <: AbstractMeasure
-    κ
-    μ
+@concrete terse struct Chain{K,M} <: AbstractMeasure
+    κ::K
+    μ::M
 end
+
+function basemeasure(mc::Chain)
+    Chain(identity, mc.μ)
+end
+
+Base.IteratorEltype(mc::Chain) = Base.HasEltype()
+
+Base.eltype(::Type{C}) where {K,M,C<:Chain{K,M}} = eltype(M)
 
 function logdensity(mc::Chain, x)
     μ = mc.μ
@@ -43,6 +51,14 @@ struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
     rng::S
     iter::T
 end
+
+Base.IteratorEltype(mc::Realized) = Base.HasEltype()
+
+function Base.eltype(::Type{Rz}) where {R,S,T,Rz <: Realized{R,S,T}}
+    eltype(T)
+end
+
+Base.length(r::Realized) = length(r.iter)
 
 Base.size(r::Realized) = size(r.iter)
 
@@ -95,10 +111,34 @@ end
 
 # A `DynamicFor` is produced when `For` is called on a `DynamicIterator`.
 
-@concrete terse struct DynamicFor <: AbstractMeasure
-    κ
-    sampler
+@concrete terse struct DynamicFor{T,K,S} <: AbstractMeasure
+    κ ::K
+    sampler :: S        
 end
+
+function DynamicFor(κ::K,sampler::S) where {K,S}
+    T = typeof(κ(first(sampler)))
+    DynamicFor{T,K,S}(κ,sampler)
+end
+
+Base.eltype(::Type{D}) where {T,D<:DynamicFor{T}} = eltype(T)
+
+Base.IteratorEltype(d::DynamicFor) = Base.HasEltype()
+
+Base.IteratorSize(d::DynamicFor) = Base.IteratorSize(d.sampler)
+
+function Base.iterate(d::DynamicFor)
+    (x,s) = iterate(d.sampler)
+    (d.κ(x), s)
+end
+
+function Base.iterate(d::DynamicFor, s)
+    (x,s) = iterate(d.sampler, s)
+    (d.κ(x), s)
+end
+
+Base.length(d::DynamicFor) = length(d.sampler)
+
 
 For(f, r::Realized) = DynamicFor(f,r)
 
