@@ -21,7 +21,7 @@ basemeasure(d::ProductMeasure) = ProductMeasure(basemeasure ∘ d.f, d.pars)
 export marginals
 
 function marginals(d::ProductMeasure{F,I}) where {F,I}
-    if Base.isiterable(I)
+    if isiterable(I)
         return (d.f(i) for i in d.pars)
     else
         error("Type $I is not iterable. Add an `iterate` or `marginals` method to fix.")
