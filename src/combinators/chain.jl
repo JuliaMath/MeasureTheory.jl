@@ -46,7 +46,7 @@ Base.IteratorSize(::Chain) = IsInfinite()
 Base.IteratorSize(::Type{Chain}) = IsInfinite()
 
 
-struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
+@concrete terse struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
     seed::R
     rng::S
     iter::T
