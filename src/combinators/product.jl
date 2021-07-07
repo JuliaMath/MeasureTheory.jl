@@ -112,17 +112,31 @@ function TV.as(d::ProductMeasure{F,I}) where {F, I<:Base.Generator}
     as(Array, as(d1), size(marginals(d))...) 
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure)
-    seed = rand(rng, UInt)
+
+export rand!
+using Random: rand!, GLOBAL_RNG, AbstractRNG
+
+@propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
     mar = marginals(d)
-    return Realized(seed, copy(rng), mar)
+    @boundscheck size(mar) == size(x) || throw(BoundsError)
+
+    @inbounds for j in eachindex(x)
+        x[j] = rand(rng, eltype(x), mar[j])
+    end
+    x
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure{F,I}) where {F,I<:AbstractArray}
-    seed = rand(rng, UInt)
-    mar = marginals(d)
-    return Realized(seed, copy(rng), mar)
-end
+# function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure)
+#     seed = rand(rng, UInt)
+#     mar = marginals(d)
+#     return Realized(seed, copy(rng), mar)
+# end
+
+# function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure{F,I}) where {F,I<:AbstractArray}
+#     seed = rand(rng, UInt)
+#     mar = marginals(d)
+#     return Realized(seed, copy(rng), mar)
+# end
 
 function logdensity(d::ProductMeasure{F,I}, x) where {F, I<:Base.Generator}
     sum((logdensity(dj, xj) for (dj, xj) in zip(marginals(d), x)))
@@ -183,14 +197,23 @@ export rand!
 using Random: rand!, GLOBAL_RNG, AbstractRNG
 
 @propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
-    @boundscheck size(marginals(d)) == size(x) || throw(BoundsError)
+    mar = marginals(d)
+    @boundscheck size(mar) == size(x) || throw(BoundsError)
 
     @inbounds for j in eachindex(x)
-        x[j] = rand(rng, eltype(x), marginals(d)[j])
+        x[j] = rand(rng, eltype(x), mar[j])
     end
     x
 end
 
+function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure)
+    mar = marginals(d)
+    elT = typeof(rand(first(mar)))
+
+    sz = size(mar)
+    x = Array{elT, length(sz)}(undef, sz)
+    rand!(rng, d, x)
+end
 
 # function Base.rand(rng::AbstractRNG, d::ProductMeasure)
 #     return rand(rng, sampletype(d), d)
