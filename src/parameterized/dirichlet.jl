@@ -5,7 +5,7 @@ export Dirichlet
 
 @parameterized Dirichlet(α)
 
-TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(α))
+TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
 
 function basemeasure(μ::Dirichlet{(:α,)})
     t = as(μ)
