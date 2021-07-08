@@ -116,15 +116,6 @@ end
 export rand!
 using Random: rand!, GLOBAL_RNG, AbstractRNG
 
-@propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
-    mar = marginals(d)
-    @boundscheck size(mar) == size(x) || throw(BoundsError)
-
-    @inbounds for j in eachindex(x)
-        x[j] = rand(rng, eltype(x), mar[j])
-    end
-    x
-end
 
 # function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure)
 #     seed = rand(rng, UInt)
@@ -143,6 +134,15 @@ function logdensity(d::ProductMeasure{F,I}, x) where {F, I<:Base.Generator}
 end
 
 
+
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure{F,I}) where {T,F,I<:Base.Generator}
+    mar = marginals(d)
+    elT = typeof(rand(rng, T, first(mar)))
+
+    sz = size(mar)
+    r = ResettableRNG(rng, rand(rng, UInt))
+    Base.Generator(s -> rand(r, d.pars.f(s)), d.pars.iter)
+end
 
 
 
@@ -206,15 +206,16 @@ using Random: rand!, GLOBAL_RNG, AbstractRNG
     x
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure)
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure) where {T}
     mar = marginals(d)
-    elT = typeof(rand(first(mar)))
+    elT = typeof(rand(rng, T, first(mar)))
 
     sz = size(mar)
     x = Array{elT, length(sz)}(undef, sz)
     rand!(rng, d, x)
 end
 
+# TODO: 
 # function Base.rand(rng::AbstractRNG, d::ProductMeasure)
 #     return rand(rng, sampletype(d), d)
 # end

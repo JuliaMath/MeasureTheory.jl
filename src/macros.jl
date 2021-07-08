@@ -226,7 +226,6 @@ function _half(ex)
         :($dist($(args...))) => begin
             halfdist = Symbol(:Half, dist)
 
-            TV = TransformVariables
             quote
                 struct $halfdist{N,T} <: ParameterizedMeasure{N}
                     par :: NamedTuple{N,T}
@@ -249,8 +248,6 @@ function _half(ex)
                     return abs(rand(rng, T, unhalf(μ)))
                 end
 
-                $TV.as(::$halfdist) = asℝ₊
-                
                 (::$halfdist ≪ ::Lebesgue{ℝ₊}) = true
             end
         end

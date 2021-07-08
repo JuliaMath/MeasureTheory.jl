@@ -75,6 +75,13 @@ julia> For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end |> marginals |> colle
 ```
 
 """
+For(f, dims...) = ProductMeasure(f, dims)
+
+
+
+# ForArray
+
+
 For(f, inds) = ProductMeasure(f, inds)
 
 For(f, inds::AbstractArray) = ProductMeasure(f, inds)
@@ -82,11 +89,11 @@ For(f, inds::AbstractArray) = ProductMeasure(f, inds)
 
 For(f, dims::Int...) = ProductMeasure(i -> f(Tuple(i)...), CartesianIndices(dims))
 
-For(f, dims...) = ProductMeasure(f, dims)
+
 
 function For(f, inds::AbstractArray...)
     g(x) = f(x...)
-    For(g, zip(inds...))
+    For(g, mappedarray(tuple, inds...))
 end
 
 function Base.eltype(d::ProductMeasure{F,I}) where {F,I<:AbstractArray}
@@ -128,3 +135,20 @@ end
 # function basemeasure(μ::ForArray{D,N,T,F}) where {F,T<:AbstractArray,D,X}
 
 # ForGenerator
+
+# ForGenerator{G} = ProductMeasure{G} where {G <: Base.Generator}
+
+# For(f, dims::Base.Generator) = ProductMeasure(Base.Generator(f ∘ dims.f, dims.iter))
+
+# sampletype(::ForGenerator) = Base.Generator
+
+# function Base.rand(rng::AbstractRNG, T::Type, d::ForGenerator)
+#     r(x) = rand(rng, T, x)
+#     Base.Generator(r ∘ d.data.f, d.data.iter)
+# end
+
+# function logdensity(d::ForGenerator, x)
+#     sum((logdensity(dj, xj) for (dj, xj) in zip(d.data, x)))
+# end
+
+# testvalue(μ::ProductMeasure) = mappedarray(testvalue, μ.data)

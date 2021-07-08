@@ -47,8 +47,7 @@ Base.IteratorSize(::Type{Chain}) = IsInfinite()
 
 
 @concrete terse struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
-    seed::R
-    rng::S
+    rng::ResettableRNG{R,S}
     iter::T
 end
 
@@ -70,7 +69,7 @@ function Base.iterate(rv::Realized{R,S,T}) where {R,S,T}
     if static_hasmethod(evolve, Tuple{T})
         dyniterate(rv, nothing)
     else
-        !isnothing(rv.seed) && Random.seed!(rv.rng, rv.seed)
+        !isnothing(rv.rng.seed) && reset!(rv.rng)
         μ,s = iterate(rv.iter)
         x = rand(rv.rng, μ)
         x,s
@@ -92,7 +91,7 @@ end
 
 
 function dyniterate(rv::Realized, ::Nothing)
-    !isnothing(rv.seed) && Random.seed!(rv.rng, rv.seed)
+    !isnothing(rv.rng.seed) && reset!(rv.rng)
     μ = evolve(rv.iter)
     x = rand(rv.rng, μ)
     x, Sample(x, rv.rng)
@@ -103,7 +102,8 @@ end
 
 function Base.rand(rng::AbstractRNG, T::Type, chain::Chain)
     seed = rand(rng, UInt)
-    return Realized(seed, copy(rng), chain)
+    r = ResettableRNG(rng, seed)
+    return Realized(r, chain)
 end
 
 ###############################################################################

@@ -6,13 +6,10 @@ using LinearAlgebra
 using DynamicIterators: trace, TimeLift
 using TransformVariables: transform, as𝕀, inverse
 
-if Base.VERSION ≥ v"1.6"
-    @testset "No warnings on import" begin
-        @test_nowarn @eval using MeasureTheory
-    end
-else
-    @eval using MeasureTheory
-end
+using MeasureTheory
+using Aqua
+Aqua.test_all(MeasureTheory; ambiguities=false, unbound_args=false)
+# Aqua.test_ambiguities(MeasureTheory; recursive=false, color=true, ambiguous_bottom=false)
 
 function draw2(μ)
     x = rand(μ)

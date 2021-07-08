@@ -31,7 +31,7 @@ export PowerMeasure
 
 const PowerMeasure{F,N,T,I} = ProductMeasure{F, Fill{N,T,I}}
 
-function Base.:^(μ::AbstractMeasure, dims::Integer...) where {N, I<:Integer}
+function Base.:^(μ::AbstractMeasure, dims::Integer...) 
     return μ^dims
 end
 

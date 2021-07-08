@@ -106,16 +106,13 @@ struct Likelihood{F,S,X}
     x::X
 end
 
-# Likelihood(k::Kernel{F,S},x::X) where {F,S,X} = Likelihood{F,S,X}(k,x)
-
 Likelihood(μ::AbstractMeasure, x) = Likelihood(kernel(μ),x)
 
 Likelihood(::Type{M}, x) where {M<:AbstractMeasure} = Likelihood(kernel(M),x)
 
-# params(ℓ::Likelihood{F,N}) where {F,N} = setdiff(params(ℓ.f), N)
-
 function Base.show(io::IO, ::MIME"text/plain", ℓ::Likelihood) 
     k, x = ℓ.k, ℓ.x
+    io = IOContext(io, :compact => true)
     print(io, "Likelihood(",k,", ", x, ")")
 end
 

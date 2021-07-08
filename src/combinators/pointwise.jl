@@ -32,12 +32,12 @@ function ⊙(μ::PointwiseProductMeasure{X}, ν::PointwiseProductMeasure{Y}) whe
     PointwiseProductMeasure(data...)
 end
 
-function ⊙(μ, ν::PointwiseProductMeasure{Y}) where {Y}
+function ⊙(μ::AbstractMeasure, ν::PointwiseProductMeasure)
     data = (μ, ν.data...)
     PointwiseProductMeasure(data...)
 end
 
-function ⊙(μ::PointwiseProductMeasure{X}, ν::N) where {X, N <: AbstractMeasure}
+function ⊙(μ::PointwiseProductMeasure, ν::N) where {N <: AbstractMeasure}
     data = (μ.data..., ν)
     PointwiseProductMeasure(data...)
 end

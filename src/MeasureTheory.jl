@@ -52,6 +52,7 @@ include("traits.jl")
 include("absolutecontinuity.jl")
 include("parameterized.jl")
 include("macros.jl")
+include("resettablerng.jl")
 
 include("primitive.jl")
 include("primitives/counting.jl")
