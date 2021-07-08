@@ -12,7 +12,7 @@ export Chain
 end
 
 function basemeasure(mc::Chain)
-    Chain(identity, mc.μ)
+    Chain(basemeasure ∘ mc.κ, basemeasure(mc.μ))
 end
 
 Base.IteratorEltype(mc::Chain) = Base.HasEltype()
