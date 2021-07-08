@@ -44,6 +44,7 @@ end
 
 
 function Base.show_unquoted(io::IO, μ::ProductMeasure, indent::Int, prec::Int)
+    io = IOContext(io, :compact => true)
     if Base.operator_precedence(:*) ≤ prec
         print(io, "(")
         show(io, μ)
@@ -88,6 +89,7 @@ function TV.as(d::ProductMeasure{F,A}) where {F,A<:AbstractArray}
 end
 
 function Base.show(io::IO, ::MIME"text/plain", d::ProductMeasure{F,A}) where {F,A<:AbstractArray}
+    io = IOContext(io, :compact => true)
     print(io, "For(")
     print(io, d.f, ", ")
     print(io, d.pars, ")")
@@ -98,6 +100,7 @@ end
 # I <: CartesianIndices
 
 function Base.show(io::IO, ::MIME"text/plain", d::ProductMeasure{F,I}) where {F, I<:CartesianIndices}
+    io = IOContext(io, :compact => true)
     print(io, "For(")
     print(io, d.f, ", ")
     join(io, size(d.pars), ", ")

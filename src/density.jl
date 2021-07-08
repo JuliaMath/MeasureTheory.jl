@@ -55,6 +55,7 @@ struct DensityMeasure{F,B,L} <: AbstractMeasure
 end
 
 function Base.show(io::IO, ::MIME"text/plain", μ::DensityMeasure{F,B,Val{L}}) where {F,B,L}
+    io = IOContext(io, :compact => true)
     print(io, "DensityMeasure ")
     print(io, "∫(", μ.f)
     print(io, ", ", μ.base)

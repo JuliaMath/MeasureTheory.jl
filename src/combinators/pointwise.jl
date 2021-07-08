@@ -15,6 +15,7 @@ function Base.show(io::IO, ::MIME"text/plain", μ::PointwiseProductMeasure)
 end
 
 function Base.show_unquoted(io::IO, μ::PointwiseProductMeasure, indent::Int, prec::Int)
+    io = IOContext(io, :compact => true)
     if Base.operator_precedence(:*) ≤ prec
         print(io, "(")
         show(io, μ)

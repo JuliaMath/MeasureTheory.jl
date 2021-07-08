@@ -111,8 +111,8 @@ Likelihood(μ::AbstractMeasure, x) = Likelihood(kernel(μ),x)
 Likelihood(::Type{M}, x) where {M<:AbstractMeasure} = Likelihood(kernel(M),x)
 
 function Base.show(io::IO, ::MIME"text/plain", ℓ::Likelihood) 
-    k, x = ℓ.k, ℓ.x
     io = IOContext(io, :compact => true)
+    k, x = ℓ.k, ℓ.x
     print(io, "Likelihood(",k,", ", x, ")")
 end
 

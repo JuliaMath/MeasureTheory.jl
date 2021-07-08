@@ -52,6 +52,7 @@ function Base.getindex(::Integers, r::AbstractUnitRange)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", r::IntegerRange{lo, hi}) where {lo, hi}
+    io = IOContext(io, :compact => true)
     print(io, "ℤ[", lo, ":", hi, "]")
 end
 

@@ -56,6 +56,7 @@ LKJCholesky(k::Integer) = LKJCholesky(k, 1)
 LKJCholesky{k}(η) where {k} = LKJCholesky{k, (:η,), Tuple{typeof(η)}}((η=η,))
 
 function Base.show(io::IO, ::MIME"text/plain", d::LKJCholesky{k}) where {k}
+    io = IOContext(io, :compact => true)
     println(io, "LKJCholesky{$k}(", getfield(d, :par), ")")
 end
 
