@@ -9,7 +9,6 @@ using TransformVariables: transform, as𝕀, inverse
 using MeasureTheory
 using Aqua
 Aqua.test_all(MeasureTheory; ambiguities=false, unbound_args=false)
-# Aqua.test_ambiguities(MeasureTheory; recursive=false, color=true, ambiguous_bottom=false)
 
 function draw2(μ)
     x = rand(μ)
