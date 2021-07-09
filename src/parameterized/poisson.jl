@@ -21,5 +21,6 @@ end
 sampletype(::Poisson) = Int
 
 Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:λ,)}) = rand(rng, Dists.Poisson(d.λ))
+Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:logλ,)}) = rand(rng, Dists.Poisson(exp(d.logλ)))
 
 ≪(::Poisson, ::IntegerRange{lo,hi}) where {lo, hi} = lo ≤ 0 && isinf(hi)

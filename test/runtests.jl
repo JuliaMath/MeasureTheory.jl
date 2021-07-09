@@ -52,6 +52,12 @@ end
         @test_broken logdensity(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
     end
 
+    @testset "Poisson" begin
+        sample1 = rand(MersenneTwister(123), Poisson(;logλ = log(100)))
+        sample2 = rand(MersenneTwister(123), Poisson(;λ = 100))
+        @test sample1 == sample2
+    end
+
     @testset "Normal" begin
         D = Normal{(:μ,:σ)}
         par = transform(asparams(D), randn(2))
