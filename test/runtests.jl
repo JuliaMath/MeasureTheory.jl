@@ -57,8 +57,8 @@ end
     end
 
     @testset "Poisson" begin
-        sample1 = rand(MersenneTwister(123), Poisson{(:logλ,)}(log(100)))
-        sample2 = rand(MersenneTwister(123), Poisson{(:λ,)}(100))
+        sample1 = rand(MersenneTwister(123), Poisson(;logλ = log(100)))
+        sample2 = rand(MersenneTwister(123), Poisson(;λ = 100))
         @test sample1 == sample2
     end
 
