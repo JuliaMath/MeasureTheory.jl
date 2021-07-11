@@ -10,16 +10,16 @@ using PositiveFactorizations
 
 const CorrCholeskyUpper = TV.CorrCholeskyFactor
 
-"""
-    LKJCholesky{k}(η=1.0)
-    LKJCholesky{k}(logη=0.0)
+@doc """
+    LKJCholesky(k=3, η=1.0)
+    LKJCholesky(k=3, logη=0.0)
 
-`LKJCholesky{k}` gives the `k×k` LKJ distribution (Lewandowski et al 2009)
+`LKJCholesky(k, ...)` gives the `k×k` LKJ distribution (Lewandowski et al 2009)
 expressed as a Cholesky decomposition. As a special case, for
-`C = rand(LKJCholesky{k}(η=1.0))` (or equivalently
-`C=rand(LKJCholesky{k}(logη=0.0))`), `C.L * C.U` is uniform over the set of all
-`k×k` correlation matrices. NOte, however, that in this case `C.L` and `C.U` are
-**not** sampled uniformly (because the multiplication is nonlinear).
+`C = rand(LKJCholesky(k=K, η=1.0))` (or equivalently
+`C=rand(LKJCholesky{k}(k=K, logη=0.0))`), `C.L * C.U` is uniform over the set of
+all `K×K` correlation matrices. Note, however, that in this case `C.L` and `C.U`
+are **not** sampled uniformly (because the multiplication is nonlinear).
 
 The `logdensity` method for this measure applies for `LowerTriangular`,
 `UpperTriangular`, or `Diagonal` matrices, and will "do the right thing". The
@@ -30,35 +30,15 @@ peak at `I`, while ``0 < η < 1`` yields a trough. ``η = 2`` is recommended as 
 
 Adapted from
 https://github.com/tpapp/AltDistributions.jl
-"""
-struct LKJCholesky{k, N, T} <: ParameterizedMeasure{N}
-    par :: NamedTuple{N,T}
+""" LKJCholesky
 
-    function LKJCholesky{k,N,T}(nt) where {k,N,T}
-        @warn """
-        WORK IN PROGRESS
-        
-        `LKJCholesky` does not yet have the correct base measure
-        """
+@parameterized LKJCholesky(k,η)
 
-        new{k,N,T}(nt)
-    end
-end
 
-LKJCholesky{k}(;kw...) where {k} = LKJCholesky{k}(NamedTuple(kw))
+@kwstruct LKJCholesky(k,η)
+@kwstruct LKJCholesky(k,logη)
 
-LKJCholesky{k}(nt::NamedTuple{N,T}) where {k,N,T} = LKJCholesky{k,N,T}(nt)
-
-LKJCholesky(k,η) = LKJCholesky{k}(η)
-
-LKJCholesky(k::Integer) = LKJCholesky(k, 1)
-
-LKJCholesky{k}(η) where {k} = LKJCholesky{k, (:η,), Tuple{typeof(η)}}((η=η,))
-
-function Base.show(io::IO, ::MIME"text/plain", d::LKJCholesky{k}) where {k}
-    io = IOContext(io, :compact => true)
-    println(io, "LKJCholesky{$k}(", getfield(d, :par), ")")
-end
+LKJCholesky(k::Integer) = LKJCholesky(k, 1.0)
 
 asparams(::Type{<:LKJCholesky}, ::Val{:η}) = asℝ₊
 asparams(::Type{<:LKJCholesky}, ::Val{:logη}) = asℝ
@@ -72,32 +52,39 @@ using Tullio
 
 logdensity(d::LKJCholesky, C::Cholesky) = logdensity(d, C.UL)
 
-function logdensity(d::LKJCholesky{k, (:η,), T}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal}) where {k,T}
+function logdensity(d::LKJCholesky{(:k, :η,)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal})
     η = d.η
     # z = diag(L)
     # sum(log.(z) .* ((k:-1:1) .+ 2*(η-1)))
 
     # Note: https://github.com/cscherrer/MeasureTheory.jl/issues/100#issuecomment-852428192
-    c = k + 2(η - 1)
+    c = d.k + 2(η - 1)
     @tullio s = (c - i) * log(L[i,i])
     return s
 end
 
-function logdensity(d::LKJCholesky{k, (:logη,), T}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal}) where {k,T}
-    c = k + 2 * expm1(d.logη)
+function logdensity(d::LKJCholesky{(:k, :logη)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal})
+    c = d.k + 2 * expm1(d.logη)
     @tullio s = (c - i) * log(L[i,i])
     return s
 end
 
 
-TV.as(::LKJCholesky{k}) where {k} = CorrCholesky(k)
+TV.as(d::LKJCholesky) = CorrCholesky(d.k)
 
-# Should satisfy
-# logdensity(basemeasure(d), rand(d)) == 0.0
-function basemeasure(μ::LKJCholesky{k}) where {k}
+function basemeasure(μ::LKJCholesky{(:k,:η)})
     t = as(μ)
-    d = dimension(t)
-    return Pushforward(t, Lebesgue(ℝ)^d, false)
+    f(par) = Dists.lkj_logc0(par.k, par.η)
+    base = Pushforward(t, Lebesgue(ℝ)^dimension(t), false)
+    ParamWeightedMeasure(f, (k= μ.k, η= μ.η), base)
+end
+
+function basemeasure(μ::LKJCholesky{(:k,:logη)})
+    t = as(μ)
+    η = exp(μ.logη)
+    f(par) = Dists.lkj_logc0(par.k, exp(par.logη))
+    base = Pushforward(t, Lebesgue(ℝ)^dimension(t), false)
+    ParamWeightedMeasure(f, (k= μ.k, logη= logη), base)
 end
 
 # Note (from @sethaxen): this can be done without the cholesky decomposition, by randomly
@@ -106,12 +93,12 @@ end
 # implements* this. But that can be for a future PR. 
 #
 # * https://github.com/stan-dev/math/blob/develop/stan/math/prim/prob/lkj_corr_cholesky_rng.hpp
-function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{k, (:η,)}) where {k}
-    return cholesky(Positive, rand(rng, Dists.LKJ(k, d.η)))
+function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{(:k, :η,)})
+    return cholesky(Positive, rand(rng, Dists.LKJ(d.k, d.η)))
 end;
 
-function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{k, (:logη,)}) where {k}
-    return cholesky(Positive, rand(rng, Dists.LKJ(k, exp(d.logη))))
+function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{(:k, :logη)})
+    return cholesky(Positive, rand(rng, Dists.LKJ(d.k, exp(d.logη))))
 end;
 
-ConstructionBase.constructorof(::Type{L}) where {k,L<:LKJCholesky{k}} = LKJCholesky{k}
+ConstructionBase.constructorof(::Type{L}) where {L<:LKJCholesky} = LKJCholesky

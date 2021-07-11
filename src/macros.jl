@@ -1,7 +1,6 @@
 
 using MLStyle
 using Random: AbstractRNG
-
 export @parameterized
 
 # A fold over ASTs. Example usage in `replace`
@@ -51,11 +50,10 @@ function _parameterized(__module__, expr)
         q = quote
             struct $μ{N,T} <: MeasureTheory.ParameterizedMeasure{N}
                 par :: NamedTuple{N,T}
-            end
 
-            const $μbase = $base
+            end
             
-            MeasureTheory.basemeasure(::$μ) = $μbase
+            MeasureTheory.basemeasure(::$μ) = $base
         end   
         
         if !isempty(p)
