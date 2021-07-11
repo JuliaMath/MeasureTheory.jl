@@ -14,7 +14,7 @@ function logdensity(d::Poisson{(:λ,)}, y)
 end
 
 function logdensity(d::Poisson{(:logλ,)}, y)
-    return y * logλ + exp(logλ) - logfactorial(y)
+    return y * d.logλ + exp(d.logλ) - logfactorial(y)
 end
 
 
