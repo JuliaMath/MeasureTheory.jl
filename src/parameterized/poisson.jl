@@ -6,23 +6,21 @@ using SpecialFunctions: logfactorial
 
 @parameterized Poisson(λ) ≪ CountingMeasure(ℤ[0:∞])
 
+Base.eltype(::Type{P}) where {P<:Poisson} = Int
+
 function logdensity(d::Poisson{(:λ,)}, y)
     λ = d.λ
     return y * log(λ) - λ - logfactorial(y)
 end
 
-# function logdensity(d::Poisson{(:log_λ,)}, y)
-#     log_λ = d.log_λ
-#     return y * log(log_λ) + (1 - y) * log(1 - log_λ)
-# end
+function logdensity(d::Poisson{(:logλ,)}, y)
+    return y * d.logλ + exp(d.logλ) - logfactorial(y)
+end
 
-# function density(d::Poisson{(:log_λ,)}, y)
-#     log_λ = d.log_λ
-#     return 2*log_λ*y - log_λ - y + 1
-# end
 
 sampletype(::Poisson) = Int
 
-Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:λ,)}) = rand(rng, T, Dists.Poisson(d.λ))
+Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:λ,)}) = rand(rng, Dists.Poisson(d.λ))
+Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:logλ,)}) = rand(rng, Dists.Poisson(exp(d.logλ)))
 
 ≪(::Poisson, ::IntegerRange{lo,hi}) where {lo, hi} = lo ≤ 0 && isinf(hi)

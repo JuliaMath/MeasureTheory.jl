@@ -20,6 +20,8 @@ using InfiniteArrays
 using ConcreteStructs
 using DynamicIterators
 using KeywordCalls
+using ConstructionBase
+using Accessors
 
 const ∞ = InfiniteArrays.∞
 
@@ -42,6 +44,7 @@ is understood to be `basemeasure(μ)`.
 """
 function logdensity end
 
+include("const.jl")
 include("exp.jl")
 include("domains.jl")
 include("utils.jl")
@@ -49,6 +52,7 @@ include("traits.jl")
 include("absolutecontinuity.jl")
 include("parameterized.jl")
 include("macros.jl")
+include("resettablerng.jl")
 
 include("primitive.jl")
 include("primitives/counting.jl")
@@ -61,11 +65,12 @@ include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("combinators/for.jl")
 include("combinators/power.jl")
-include("combinators/likelihood.jl")
-include("combinators/pointwise.jl")
 include("combinators/transforms.jl")
 include("combinators/spikemixture.jl")
 include("combinators/chain.jl")
+include("kernel.jl")
+include("combinators/likelihood.jl")
+include("combinators/pointwise.jl")
 
 include("distributions.jl")
 include("rand.jl")
@@ -76,13 +81,15 @@ include("parameterized/cauchy.jl")
 include("parameterized/laplace.jl")
 include("parameterized/uniform.jl")
 include("parameterized/beta.jl")
+include("parameterized/dirichlet.jl")
 include("parameterized/gumbel.jl")
 include("parameterized/exponential.jl")
 include("parameterized/mvnormal.jl")
-include("parameterized/inverse-gamma.jl")
+# include("parameterized/inverse-gamma.jl")
 include("parameterized/bernoulli.jl")
 include("parameterized/poisson.jl")
 include("parameterized/binomial.jl")
+include("parameterized/multinomial.jl")
 include("parameterized/lkj-cholesky.jl")
 include("parameterized/negativebinomial.jl")
 
@@ -90,6 +97,6 @@ include("transforms/corrcholesky.jl")
 
 include("density.jl")
 # include("pushforward.jl")
-include("kernel.jl")
+
 include("distproxy.jl")
 end # module

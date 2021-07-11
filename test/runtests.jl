@@ -5,7 +5,10 @@ using Random
 using LinearAlgebra
 using DynamicIterators: trace, TimeLift
 using TransformVariables: transform, as𝕀, inverse
+
 using MeasureTheory
+using Aqua
+Aqua.test_all(MeasureTheory; ambiguities=false, unbound_args=false)
 
 function draw2(μ)
     x = rand(μ)
@@ -49,6 +52,12 @@ end
         @test_broken logdensity(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
     end
 
+    @testset "Poisson" begin
+        sample1 = rand(MersenneTwister(123), Poisson(;logλ = log(100)))
+        sample2 = rand(MersenneTwister(123), Poisson(;λ = 100))
+        @test sample1 == sample2
+    end
+
     @testset "Normal" begin
         D = Normal{(:μ,:σ)}
         par = transform(asparams(D), randn(2))
@@ -69,23 +78,23 @@ end
     end
 
     @testset "LKJCholesky" begin
-        D = LKJCholesky{4}{(:η,)}
-        par = transform(asparams(D), randn(1))
-        d = D(par)
-        @test params(d) == par
+        D = LKJCholesky{(:k,:η)}
+        par = transform(asparams(D, (k=4,)), randn(1))
+        d = D(merge((k=4,),par))
+        # @test params(d) == par
 
         η  = par.η
         logη = log(η)
 
         y = rand(d)
         η = par.η
-        ℓ = logdensity(LKJCholesky{4}(η), y)
-        @test ℓ ≈ logdensity(LKJCholesky{4}(logη=logη), y)
+        ℓ = logdensity(LKJCholesky(4,η), y)
+        @test ℓ ≈ logdensity(LKJCholesky(k=4,logη=logη), y)
     end
 end
 
 @testset "Kernel" begin
-    κ = MeasureTheory.kernel(identity, MeasureTheory.Dirac)
+    κ = MeasureTheory.kernel(MeasureTheory.Dirac, identity)
     @test rand(κ(1.1)) == 1.1
 end
 
@@ -204,12 +213,12 @@ using TransformVariables
 @testset "Likelihood" begin
     dps = [
         (Normal()                             ,    2.0  )
-        (Pushforward(as((μ=asℝ,)), Normal()^1), (μ=2.0,))
+        # (Pushforward(as((μ=asℝ,)), Normal()^1), (μ=2.0,))
     ]
 
     ℓs = [
         Likelihood(Normal{(:μ,)},              3.0)
-        Likelihood(Normal{(:μ, :σ)}, (σ=2.0,), 3.0)
+        Likelihood(kernel(Normal, x -> (μ=x, σ=2.0)), 3.0)
     ]
 
     for (d,p) in dps

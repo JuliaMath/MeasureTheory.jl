@@ -14,7 +14,7 @@ For example, `@domain ℝ RealNumbers` is equivalent to
 
     ℝ = RealNumbers()
 
-    Base.show(io::IO, ::RealNumbers) = print(io, "ℝ")
+    Base.show(io::IO, ::MIME"text/plain", ::RealNumbers) = print(io, "ℝ")
 """
 macro domain(name, T)
     sname = String(name)
@@ -24,7 +24,7 @@ macro domain(name, T)
         struct $T <: AbstractDomain end
         export $name
         $name = $T()
-        Base.show(io::IO, ::$T) = print(io, $sname)
+        Base.show(io::IO, ::MIME"text/plain", ::$T) = print(io, $sname)
     end
 end
 
@@ -45,13 +45,14 @@ struct IntegerRange{lo, hi} <: AbstractDomain end
 Base.minimum(::IntegerRange{lo, hi}) where {lo, hi} = lo
 Base.maximum(::IntegerRange{lo, hi}) where {lo, hi} = hi
 
-iterate(r::IntegerRange{lo, hi}) where {lo, hi} = iterate(lo:hi)
+Base.iterate(r::IntegerRange{lo, hi}) where {lo, hi} = iterate(lo:hi)
 
 function Base.getindex(::Integers, r::AbstractUnitRange)
     IntegerRange{minimum(r), maximum(r)}()
 end
 
-function Base.show(io::IO, r::IntegerRange{lo, hi}) where {lo, hi}
+function Base.show(io::IO, ::MIME"text/plain", r::IntegerRange{lo, hi}) where {lo, hi}
+    io = IOContext(io, :compact => true)
     print(io, "ℤ[", lo, ":", hi, "]")
 end
 

@@ -5,17 +5,29 @@ export WeightedMeasure
         logweight :: R
         base :: M
     end
-
-
 """
-struct WeightedMeasure{R,M} <: AbstractMeasure
+
+
+abstract type AbstractWeightedMeasure <: AbstractMeasure end
+
+logweight(μ::AbstractWeightedMeasure) = μ.logweight
+basemeasure(μ::AbstractWeightedMeasure) = μ.base
+
+
+TV.as(μ::AbstractWeightedMeasure) = TV.as(μ.base)
+
+function logdensity(sm::AbstractWeightedMeasure, x)
+    logdensity(sm.base, x) + sm.logweight
+end
+
+###############################################################################
+
+struct WeightedMeasure{R,M} <: AbstractWeightedMeasure
     logweight :: R
     base :: M
 end
 
-logweight(μ::WeightedMeasure) = μ.logweight
-
-function Base.show(io::IO, μ::WeightedMeasure)
+function Base.show(io::IO, ::MIME"text/plain", μ::WeightedMeasure)
     io = IOContext(io, :compact => true)
     print(io, exp(μ.logweight), " * ", μ.base)
 end
@@ -32,10 +44,6 @@ function Base.show_unquoted(io::IO, μ::WeightedMeasure, indent::Int, prec::Int)
     return nothing
 end
 
-function logdensity(sm::WeightedMeasure{R,M}, x::X) where {X, R, M <: AbstractMeasure}
-    logdensity(sm.base, x) + sm.logweight
-end
-
 function Base.:*(k::T, m::AbstractMeasure) where {T <: Number}
     logk = log(k)
     return WeightedMeasure{typeof(logk), typeof(m)}(logk,m)
@@ -46,8 +54,26 @@ Base.:*(m::AbstractMeasure, k::Real) = k * m
 ≪(::M, ::WeightedMeasure{R,M}) where {R,M} = true
 ≪(::WeightedMeasure{R,M}, ::M) where {R,M} = true
 
-basemeasure(μ::WeightedMeasure) = μ.base
 
-TV.as(μ::WeightedMeasure) = TV.as(μ.base)
+
+
 
 sampletype(μ:: WeightedMeasure) = sampletype(μ.base)
+
+###############################################################################
+struct ParamWeightedMeasure{F,N,T,R,B} <: AbstractWeightedMeasure 
+    f::F
+    par::NamedTuple{N,T}
+    logweight::R
+    base::B
+
+    function ParamWeightedMeasure(f::F, par::NamedTuple{N,T}, base::B) where {F,N,T,B}
+        ℓ = f(par)
+        new{F,N,T,typeof(ℓ),B}(f,par,ℓ,base)
+    end
+end
+
+function show(io::IO, ::MIME"text/plain", d::ParamWeightedMeasure)
+    io = IOContext(io, :compact => true)
+    print(io, "ParamWeighted(",d.f, ", ", d.par,", ", d.base, ")")
+end

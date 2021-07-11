@@ -10,7 +10,7 @@ import Base
 # """
 # PowerMeasure{M,N,D} = ProductMeasure{Fill{M,N,D}}
 
-# function Base.show(io::IO, μ::PowerMeasure)
+# function Base.show(io::IO, ::MIME"text/plain", μ::PowerMeasure)
 #     io = IOContext(io, :compact => true)
 #     print(io, μ.data.value, " ^ ", size(μ.data))
 # end
@@ -27,15 +27,30 @@ import Base
 #     return nothing
 # end
 
-Base.:^(μ::AbstractMeasure, n::Integer) = For(_ -> μ, 1:n)
+export PowerMeasure
 
-Base.:^(μ::AbstractMeasure, size::NTuple{N,I}) where {N, I <: Integer} = For(_ -> μ, CartesianIndices(size))
+const PowerMeasure{F,N,T,I} = ProductMeasure{F, Fill{N,T,I}}
 
-# sampletype(d::PowerMeasure{M,N}) where {M,N} = @inbounds Array{sampletype(first(d.data)), N}
-
-function Base.:^(μ::WeightedMeasure, n::NTuple{N,Int}) where {N}
-    k = prod(n) * μ.logweight
-    return WeightedMeasure(k, μ.base^n)
+function Base.:^(μ::AbstractMeasure, dims::Integer...) 
+    return μ^dims
 end
 
+function Base.:^(μ::M, dims::NTuple{N,I}) where {M <: AbstractMeasure, N, I<:Integer}
+    C = constructorof(M)
+
+    pars = Fill(params(μ), dims...)
+    ProductMeasure{instance_type(C), typeof(pars)}(C, pars)
+end
+
+
+# sampletype(d::PowerMeasure{M,N}) where {M,N} = @inbounds Array{sampletype(first(marginals(d))), N}
+
+function Base.:^(μ::WeightedMeasure, dims::NTuple{N,I}) where {N, I<:Integer}
+    k = prod(dims) * μ.logweight
+    return WeightedMeasure(k, μ.base^dims)
+end
+
+params(d::PowerMeasure{D})       where {D} = params(first(marginals(d)))
+params(::Type{PowerMeasure{D}}) where {D} = params(D)
+    
 # basemeasure(μ::PowerMeasure) = @inbounds basemeasure(first(μ.data))^size(μ.data)

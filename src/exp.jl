@@ -6,7 +6,7 @@ Base.iszero(::Exp) = false
 
 Base.log(x::Exp) = x.log
 
-function Base.show(io::IO, x::Exp)
+function Base.show(io::IO, ::MIME"text/plain", x::Exp)
     io = IOContext(io, :compact => true)
     print(io, "Exp(", log(x), ")")
 end
@@ -22,6 +22,7 @@ Base.:^(a::Exp, b::Number) = Exp(b * log(a))
 Base.:^(a::Exp, b::Integer) = Exp(b * log(a))
 
 Base.:^(a::Exp, b) = Exp(b * log(a))
+Base.:^(a::Exp, b::Rational) = Exp(b * log(a))
 
 Base.promote_rule(T::Type{<:Real}, ::Type{Exp}) = T
 Base.promote_rule(::Type{Exp}, T::Type{<:Real}) = T

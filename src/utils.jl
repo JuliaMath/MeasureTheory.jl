@@ -21,6 +21,8 @@ function constructor(::Type{T}) where {T}
     return C.name.wrapper
 end
 
+constructor(::T) where {T} = constructor(T)
+
 macro trysupport(ex)
     ex = esc(ex)
     quote
@@ -51,3 +53,11 @@ It's sometimes important to be able to find the fix point of a measure under
 repeatedly until there's no change. That's what this does.
 """
 rootmeasure(μ::AbstractMeasure) = fix(basemeasure, μ)
+
+# Base on the Tricks.jl README
+using Tricks
+struct Iterable end
+struct NonIterable end
+isiterable(::Type{T}) where T = static_hasmethod(iterate, Tuple{T}) ? Iterable() : NonIterable()
+
+functioninstance(::Type{F}) where {F<:Function} = F.instance

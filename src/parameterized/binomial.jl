@@ -22,7 +22,7 @@ function logdensity(d::Binomial{(:n, :p)}, y)
     return -log1p(n) - logbeta(n - y + 1, y + 1) + y * log(p) + (n - y) * log1p(-p)
 end
 
-function Base.rand(rng::AbstractRNG, d::Binomial{(:n,:p)})
+function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n,:p)})
     rand(rng, Dists.Binomial(d.n, d.p))
 end
 

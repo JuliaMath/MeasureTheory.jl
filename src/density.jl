@@ -20,17 +20,24 @@ end
 
 export 𝒹
 
-"""
-    𝒹(μ::AbstractMeasure, base::AbstractMeasure; log=true)
+export log𝒹
 
-Compute the Radom-Nikodym derivative (or its log, if `log=true`) of μ with
+log𝒹(μ, base) = Density(μ, base, Val{true}())
+
+"""
+    𝒹(μ::AbstractMeasure, base::AbstractMeasure; log=false)
+
+Compute the Radom-Nikodym derivative (or its log, if `log=false`) of μ with
 respect to `base`.
 """
-function 𝒹(μ::AbstractMeasure, base::AbstractMeasure; log=true)
+function 𝒹(μ::AbstractMeasure, base::AbstractMeasure; log = false)
     return Density(μ, base, Val(log))
 end
 
-(f::Density{M,B,Val{true}})(x) where {M,B} = logdensity(f.μ, f.base, x) 
+(f::Density{M,B,Val{true}})(x) where {M,B} = logdensity(f.μ, f.base, x)
+
+
+(f::Density{M,B,Val{false}})(x) where {M,B} = density(f.μ, f.base, x)
 
 """
     struct DensityMeasure{F,B} <: AbstractMeasure
@@ -47,7 +54,8 @@ struct DensityMeasure{F,B,L} <: AbstractMeasure
     log  :: L
 end
 
-function Base.show(io::IO, μ::DensityMeasure{F,B,Val{L}}) where {F,B,L}
+function Base.show(io::IO, ::MIME"text/plain", μ::DensityMeasure{F,B,Val{L}}) where {F,B,L}
+    io = IOContext(io, :compact => true)
     print(io, "DensityMeasure ")
     print(io, "∫(", μ.f)
     print(io, ", ", μ.base)
@@ -66,18 +74,21 @@ logdensity(μ::DensityMeasure{F,B,Val{true}}, x) where {F,B} = μ.f(x)
 export ∫
 
 """
-    ∫(f, base::AbstractMeasure; log=true)
+    ∫(f, base::AbstractMeasure; log=false)
 
 Define a new measure in terms of a density `f` over some measure `base`. If
-`log=true` (the default), `f` is considered as a log-density.
+`log=true` (`false` is the default), `f` is considered as a log-density.
 """
-∫(f, base::AbstractMeasure; log=true) = DensityMeasure(f, base, Val(log))
+∫(f, base::AbstractMeasure; log=false) = DensityMeasure(f, base, Val(log))
 
-∫(μ::AbstractMeasure, base::AbstractMeasure; log=true) = ∫(𝒹(μ,base), base; log=log)
+∫(μ::AbstractMeasure, base::AbstractMeasure; log=false) = ∫(𝒹(μ, base), base; log = log)
+
+export ∫exp
+∫exp(f,μ) = DensityMeasure(f,μ,Val{true}())
 
 # TODO: `density` and `logdensity` functions for `DensityMeasure`
 
-function logdensity(μ::T, ν::T, x) where {T <: AbstractMeasure}
+function logdensity(μ::T, ν::T, x) where {T<:AbstractMeasure}
     μ==ν && return 0.0
     invoke(logdensity, Tuple{AbstractMeasure, AbstractMeasure, typeof(x)}, μ, ν, x)
 end

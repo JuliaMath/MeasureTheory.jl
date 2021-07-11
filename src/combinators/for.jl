@@ -75,41 +75,31 @@ julia> For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end |> marginals |> colle
 ```
 
 """
-function For(f, base...) end
+For(f, dims...) = ProductMeasure(f, dims)
 
 
 
 # ForArray
 
-ForArray{D,N,T,F} = ProductMeasure{ReadonlyMappedArray{D, N, T, F}} 
 
-function TV.as(d::ForArray)
-    d1 = d.data.f(first(d.data.data))
-    as(Array, as(d1), size(d.data)...)
+For(f, inds) = ProductMeasure(f, inds)
+
+For(f, inds::AbstractArray) = ProductMeasure(f, inds)
+
+
+For(f, dims::Int...) = ProductMeasure(i -> f(Tuple(i)...), CartesianIndices(dims))
+
+
+
+function For(f, inds::AbstractArray...)
+    g(x) = f(x...)
+    For(g, mappedarray(tuple, inds...))
 end
 
-function Base.show(io::IO, d::ForArray{D,N,T,F}) where {D,N,T,F}
-    print(io, "For(")
-    print(io, d.data.f, ", ")
-    print(io, d.data.data, ")")
+function Base.eltype(d::ProductMeasure{F,I}) where {F,I<:AbstractArray}
+    return eltype(d.f(first(d.pars)))
 end
 
-function Base.show(io::IO, d::ForArray{D,N,T,F}) where {D,N,T <: CartesianIndices,F}
-    print(io, "For(")
-    print(io, d.data.f, ", ")
-    join(io, size(d.data), ", ")
-    print(io, ")")
-end
-
-For(f, dims::AbstractArray...) = ProductMeasure(mappedarray(f, dims...))
-
-For(f, dims::Int...) = ProductMeasure(mappedarray(i -> f(Tuple(i)...), CartesianIndices(dims))) 
-
-function Base.eltype(::ForArray{D,N,T,F}) where {D,N,T,F}
-    return eltype(D)
-end
-
-basemeasure(μ::ForArray) = @inbounds basemeasure(μ.data[1])^size(μ.data)
 
 # """
 #     indexstyle(a::AbstractArray, b::AbstractArray)
@@ -146,25 +136,19 @@ basemeasure(μ::ForArray) = @inbounds basemeasure(μ.data[1])^size(μ.data)
 
 # ForGenerator
 
-ForGenerator{G} = ProductMeasure{G} where {G <: Base.Generator}
+# ForGenerator{G} = ProductMeasure{G} where {G <: Base.Generator}
 
-function TV.as(d::ForGenerator)
-    d1 = d.data.f(first(d.data.iter))
-    as(Array, as(d1), size(d.data)...) 
-end
+# For(f, dims::Base.Generator) = ProductMeasure(Base.Generator(f ∘ dims.f, dims.iter))
 
+# sampletype(::ForGenerator) = Base.Generator
 
-For(f, dims::Base.Generator) = ProductMeasure(Base.Generator(f ∘ dims.f, dims.iter))
+# function Base.rand(rng::AbstractRNG, T::Type, d::ForGenerator)
+#     r(x) = rand(rng, T, x)
+#     Base.Generator(r ∘ d.data.f, d.data.iter)
+# end
 
-sampletype(::ForGenerator) = Base.Generator
+# function logdensity(d::ForGenerator, x)
+#     sum((logdensity(dj, xj) for (dj, xj) in zip(d.data, x)))
+# end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::ForGenerator)
-    r(x) = rand(rng, T, x)
-    Base.Generator(r ∘ d.data.f, d.data.iter)
-end
-
-function logdensity(d::ForGenerator, x)
-    sum((logdensity(dj, xj) for (dj, xj) in zip(d.data, x)))
-end
-
-testvalue(μ::ProductMeasure) = mappedarray(testvalue, μ.data)
+# testvalue(μ::ProductMeasure) = mappedarray(testvalue, μ.data)

@@ -101,38 +101,22 @@ and we observe `x=3`. We can compute the posterior measure on `μ` as
     julia> logdensity(post, 2)
     -2.5
 """
-struct Likelihood{F,X}
-    f::F
+struct Likelihood{F,S,X}
+    k::Kernel{F,S}
     x::X
 end
 
-function Base.show(io::IO, ℓ::Likelihood{Tuple{M,NamedTuple{N,T}}}) where {M<:Type, N,T}
-    (m,c) = ℓ.f
-    println(io, "Likelihood(",m,", ",c,", ", ℓ.x, ")")
+Likelihood(μ::AbstractMeasure, x) = Likelihood(kernel(μ),x)
+
+Likelihood(::Type{M}, x) where {M<:AbstractMeasure} = Likelihood(kernel(M),x)
+
+function Base.show(io::IO, ::MIME"text/plain", ℓ::Likelihood) 
+    io = IOContext(io, :compact => true)
+    k, x = ℓ.k, ℓ.x
+    print(io, "Likelihood(",k,", ", x, ")")
 end
 
-function Base.show(io::IO, ℓ::Likelihood)
-    println(io, "Likelihood(",ℓ.f, ", ", ℓ.x, ")")
+
+function logdensity(ℓ::Likelihood, p) 
+    return logdensity(ℓ.k(p), ℓ.x)
 end
-
-Likelihood(μ::M, x) where {M<:AbstractMeasure} = Likelihood(M, x)
-
-function Likelihood(::Type{M}, constraint::NamedTuple, x) where {M <: ParameterizedMeasure}
-    Likelihood((M, constraint), x)
-end
-
-function Likelihood(μ::M, constraint::NamedTuple, x) where {M<:AbstractMeasure}
-    Likelihood((M, constraint), x)
-end
-
-function logdensity(ℓ::Likelihood{Tuple{M,NT}}, p::NamedTuple) where {M<:Type, NT <: NamedTuple}
-    (D, constraint) = ℓ.f
-    return logdensity(D(merge(p, constraint)), ℓ.x)
-end
-
-function logdensity(ℓ::Likelihood{Tuple{M,NT}}, p) where {M<:Type, NT <: NamedTuple}
-    freevar = params(ℓ.f...)
-    logdensity(ℓ, NamedTuple{freevar}(p))
-end
-
-logdensity(ℓ::Likelihood, p) = logdensity(ℓ.f(p), ℓ.x)
