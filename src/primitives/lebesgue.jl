@@ -24,3 +24,7 @@ testvalue(::Lebesgue{ℝ₊}) = 1.0
 testvalue(::Lebesgue{<:Real}) = 0.0
 
 logdensity(::Lebesgue, x) = zero(x)
+
+
+
+Base.:∘(::typeof(basemeasure), ::Type{Lebesgue}) = Lebesgue
