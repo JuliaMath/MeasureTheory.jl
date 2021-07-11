@@ -61,3 +61,5 @@ struct NonIterable end
 isiterable(::Type{T}) where T = static_hasmethod(iterate, Tuple{T}) ? Iterable() : NonIterable()
 
 functioninstance(::Type{F}) where {F<:Function} = F.instance
+
+Base.:∘(::typeof(basemeasure), ::Type{Lebesgue}) = Lebesgue
