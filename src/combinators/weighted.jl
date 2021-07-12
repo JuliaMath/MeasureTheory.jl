@@ -73,7 +73,7 @@ struct ParamWeightedMeasure{F,N,T,R,B} <: AbstractWeightedMeasure
     end
 end
 
-function show(io::IO, ::MIME"text/plain", d::ParamWeightedMeasure)
+function Base.show(io::IO, ::MIME"text/plain", d::ParamWeightedMeasure)
     io = IOContext(io, :compact => true)
     print(io, "ParamWeighted(",d.f, ", ", d.par,", ", d.base, ")")
 end
