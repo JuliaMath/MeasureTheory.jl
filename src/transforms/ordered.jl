@@ -9,6 +9,8 @@
 
 using MeasureTheory
 
+export Ordered
+
 using TransformVariables
 const TV = TransformVariables
 
@@ -64,17 +66,21 @@ function TV.inverse_at!(x::AbstractVector, index, t::Ordered, y::AbstractVector)
     index += 1
 
     @inbounds for i in 2:length(y)
-        @show x[index]
-        @show y[i-1]
         x[index] = inverse(as(Real, y[i-1], hi), y[i]) - OrderedΔx
         index += 1
     end
     return index
 end
 
-x = Float64[1:2;]
-y = transform(Ordered(2), x)
-inverse(Ordered(2), y)
+export Sorted
+struct Sorted{M} <: AbstractMeasure
+    μ::M
+    n::Int
+end
+
+logdensity(s::Sorted, x) = logdensity(s.μ ^ s.n, x)
+
+TV.as(s::Sorted) = Ordered(as(s.μ), s.n)
 
 # logdensity(d, rand(d))
 
