@@ -227,3 +227,81 @@ using TransformVariables
         end
     end
 end
+
+@testset "Reproducibility" begin
+
+    function repro(D, args)
+        t = asparams(D{args})
+        d = D(transform(t, randn(t.dimension)))
+        r(d) = rand(Random.MersenneTwister(1), d)
+        logdensity(d, r(d)) == logdensity(d, r(d))
+    end
+
+    @testset "Bernoulli" begin
+        @test repro(Bernoulli, (:p,))
+    end
+    @testset "Binomial" begin
+        @test repro(Binomial, (:n,:p))
+    end
+
+    @testset "Beta" begin
+        @test repro(Beta, (:α,:β))
+    end
+
+    @testset "Cauchy" begin
+        @test repro(Cauchy, (:μ,:σ))
+    end
+
+    @testset "Dirichlet" begin
+        @test repro(Dirichlet, (:p,))
+    end
+
+    @testset "Exponential" begin
+        @test repro(Exponential, (:λ,))
+    end
+
+    @testset "Gumbel" begin
+        @test repro(Gumbel, (:μ,:σ))
+    end
+
+    @testset "InverseGamma" begin
+        @test repro(InverseGamma, (:p,))
+    end
+
+    @testset "Laplace" begin
+        @test repro(Laplace, (:μ,:σ))
+    end
+
+    @testset "LKJCholesky" begin
+        @test repro(LKJCholesky{(:p,)})
+    end
+
+    @testset "Multinomial" begin
+        @test repro(Multinomial, (:p,))
+    end
+
+    @testset "MvNormal" begin
+        @test repro(MvNormal, (:p,))
+    end
+
+    @testset "NegativeBinomial" begin
+        @test repro(NegativeBinomial, (:r, :p))
+    end
+
+    @testset "Normal" begin
+        @test repro(Normal, (:μ,:σ))
+    end
+
+    @testset "Poisson" begin
+        @test repro(Poisson, (:λ,))
+    end
+
+    @testset "StudentT" begin
+        @test repro(StudentT, (:ν, :μ))
+    end
+
+    @testset "Uniform" begin
+        @test repro(Uniform, ())
+    end
+
+end

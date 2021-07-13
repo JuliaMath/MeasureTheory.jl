@@ -30,3 +30,6 @@ function logdensity(d::Exponential{(:λ,)}, x)
 end
 
 distproxy(d::Exponential{(:λ,)}) = Dists.Exponential(d.λ)
+
+asparams(::Type{<:Exponential}, ::Val{:λ}) = asℝ₊
+asparams(::Type{<:Exponential}, ::Val{:logλ}) = asℝ

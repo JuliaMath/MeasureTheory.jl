@@ -79,7 +79,7 @@ TransformVariables.TransformTuple{NamedTuple{(:μ, :σ), Tuple{TransformVariable
 """
 function asparams end
 
-asparams(μ::ParameterizedMeasure, v::Val) = asparams(typeof(μ), v)
+asparams(μ::ParameterizedMeasure, v::Val) = asparams(constructor(μ), v)
 asparams(μ, s::Symbol) = asparams(μ, Val(s))
 
 asparams(M::Type{PM}) where {PM<:ParameterizedMeasure} = asparams(M, NamedTuple())
@@ -98,7 +98,7 @@ function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: Par
 end
 
 
-asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(typeof(μ), nt)
+asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(constructor(μ), nt)
 
 export params
 

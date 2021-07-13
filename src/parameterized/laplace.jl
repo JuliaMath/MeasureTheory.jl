@@ -20,3 +20,5 @@ TV.as(::Laplace) = asℝ
 
 @μσ_methods Laplace()
 @half Laplace()
+
+distproxy(::Laplace{()}) = Dists.Laplace()

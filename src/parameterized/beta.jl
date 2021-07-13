@@ -23,3 +23,6 @@ end
 Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Beta(μ.α, μ.β))
 
 distproxy(d::Beta{(:α, :β)}) = Dists.Beta(d.α, d.β)
+
+asparams(::Type{<:Beta}, ::Val{:α}) = asℝ₊
+asparams(::Type{<:Beta}, ::Val{:β}) = asℝ₊
