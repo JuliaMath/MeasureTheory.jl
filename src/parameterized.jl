@@ -87,14 +87,15 @@ asparams(M::Type{PM}) where {PM<:ParameterizedMeasure} = asparams(M, NamedTuple(
 function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: ParameterizedMeasure{N1}} 
     # @show M
     thekeys = params(M, constraints)
-    transforms = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
+    t1 = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
+    t2 = NamedTuple{N2}(map(asConst, values(constraints)))
     C = constructorof(M)
     # @show C
     # @show constraints
     # @show transforms
     # Make sure we end up with a consistent ordering
-    ordered_transforms = NamedTuple{thekeys}(params(C(merge(constraints, transforms))))
-    return as(ordered_transforms)
+    ordered_transforms = params(C(merge(t1, t2)))
+    return TV.as(ordered_transforms)
 end
 
 
