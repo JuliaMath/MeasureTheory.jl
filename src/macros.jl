@@ -82,6 +82,24 @@ function _parameterized(__module__, expr)
         
         return q
     end
+
+    @capture $μ($(p...)) expr begin
+        μ = esc(μ)
+
+        q = quote
+            struct $μ{N,T} <: MeasureTheory.ParameterizedMeasure{N}
+                par :: NamedTuple{N,T}
+            end
+        end   
+        
+        if !isempty(p)
+            # e.g. Normal(μ,σ) = Normal((μ=μ, σ=σ))
+            pnames = QuoteNode.(p)
+            push!(q.args, :($μ($(p...)) = $μ(NamedTuple{($(pnames...),)}(($(p...),)))))
+        end
+        
+        return q
+    end
 end
 
 """
@@ -224,6 +242,7 @@ function _half(ex)
         :($dist($(args...))) => begin
             halfdist = Symbol(:Half, dist)
 
+            TV = TransformVariables
             quote
                 struct $halfdist{N,T} <: ParameterizedMeasure{N}
                     par :: NamedTuple{N,T}
@@ -246,6 +265,8 @@ function _half(ex)
                     return abs(rand(rng, T, unhalf(μ)))
                 end
 
+                $TV.as(::$halfdist) = asℝ₊
+                
                 (::$halfdist ≪ ::Lebesgue{ℝ₊}) = true
             end
         end

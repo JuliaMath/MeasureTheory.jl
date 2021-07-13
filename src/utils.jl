@@ -12,14 +12,14 @@ function fix(f, x)
     return y
 end
 
-function constructor(::Type{T}) where {T} 
-    C = T
-    while C isa UnionAll
-        C = C.body
-    end
+# function constructorof(::Type{T}) where {T} 
+#     C = T
+#     while C isa UnionAll
+#         C = C.body
+#     end
 
-    return C.name.wrapper
-end
+#     return C.name.wrapper
+# end
 
 constructor(::T) where {T} = constructor(T)
 

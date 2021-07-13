@@ -43,11 +43,17 @@ end
         (r,p) = (par.r, par.p)
         logitp = logit(p)
         λ = p * r / (1 - p)
+        logλ = log(λ)
         y = rand(d)
 
         ℓ = logdensity(NegativeBinomial(;r, p), y)
         @test ℓ ≈ logdensity(NegativeBinomial(;r, logitp), y)
         @test ℓ ≈ logdensity(NegativeBinomial(;r, λ), y)
+        @test ℓ ≈ logdensity(NegativeBinomial(;r, logλ), y)
+
+        sample1 = rand(MersenneTwister(123), NegativeBinomial(;r, λ))
+        sample2 = rand(MersenneTwister(123), NegativeBinomial(;r, logλ))
+        @test sample1 == sample2
 
         @test_broken logdensity(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
     end

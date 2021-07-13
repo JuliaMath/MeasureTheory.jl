@@ -105,7 +105,7 @@ export params
 params(μ::ParameterizedMeasure) = getfield(μ, :par)
 
 function params(::Type{M}, constraints::NamedTuple{N2}=NamedTuple()) where {N1, N2, M<: ParameterizedMeasure{N1}} 
-    thekeys = tuple((k for k in N1 if k ∉ N2)...)
+thekeys = tuple((k for k in N1 if k ∉ N2)...)
 end
 
 params(μ) = ()

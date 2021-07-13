@@ -30,13 +30,22 @@ function logdensity(d::NegativeBinomial{(:r, :logitp)}, y)
 end
 
 ###############################################################################
-@kwstruct NegativeBinomial(r,λ) 
+@kwstruct NegativeBinomial(r, λ)
 # mean λ, as in Poisson
 # Converges to Poisson as r→∞
 
 function logdensity(d::NegativeBinomial{(:r, :λ)}, y)
     (r, λ) = (d.r, d.λ)
     return -log(y + r) - logbeta(r, y+1) + y * log(λ) + r * log(r) - (y + r) * log(r + λ)
+end
+
+###############################################################################
+@kwstruct NegativeBinomial(r, logλ)
+
+function logdensity(d::NegativeBinomial{(:r, :logλ)}, y)
+    (r, logλ) = (d.r, d.logλ)
+    λ = exp(logλ)
+    return -log(y + r) - logbeta(r, y+1) + y * logλ + r * log(r) - (y + r) * log(r + λ)
 end
 
 distproxy(d::NegativeBinomial{(:r, :p)}) = Dists.NegativeBinomial(d.r, d.p)
@@ -54,6 +63,8 @@ function Base.rand(rng::AbstractRNG, d::NegativeBinomial{(:r,:λ)})
     μ = rand(rng, Dists.Gamma(r, λ/r))
     return rand(rng, Dists.Poisson(μ))
 end
+
+Base.rand(rng::AbstractRNG, d::NegativeBinomial{(:r,:logλ)}) = rand(rng, NegativeBinomial{(:r, :λ)}(d.r, exp(d.logλ)))
 
 asparams(::Type{<:NegativeBinomial}, ::Val{:p}) = as𝕀
 asparams(::Type{<:NegativeBinomial}, ::Val{:logitp}) = asℝ
