@@ -71,7 +71,6 @@ function distproxy(d::NegativeBinomial{(:r,:logλ)})
     return Dists.NegativeBinomial(d.r, p)
 end
 
-Base.rand(rng::AbstractRNG, d::NegativeBinomial{(:r,:logλ)}) = rand(rng, NegativeBinomial{(:r, :λ)}(d.r, exp(d.logλ)))
 
 ###############################################################################
 
