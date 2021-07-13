@@ -59,9 +59,6 @@ TV.as(::Normal) = asℝ
 #
 # And of course, you can apply `Normal` to any one of the above.
 #
-asparams(::Type{<:Normal}, ::Val{:μ}) = asℝ
-asparams(::Type{<:Normal}, ::Val{:σ}) = asℝ₊
-asparams(::Type{<:Normal}, ::Val{:logσ}) = asℝ
 asparams(::Type{<:Normal}, ::Val{:σ²}) = asℝ₊
 asparams(::Type{<:Normal}, ::Val{:τ}) = asℝ₊
 asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ

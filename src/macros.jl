@@ -148,6 +148,7 @@ function _μσ_methods(__module__, ex)
             method_μ  = KeywordCalls._kwstruct(__module__, :($dist($(args...), μ)))
             method_σ  = KeywordCalls._kwstruct(__module__, :($dist($(args...), σ)))
 
+            C = constructorof(getproperty(__module__, dist))
             q = quote
 
                  $method_μσ
@@ -180,6 +181,11 @@ function _μσ_methods(__module__, ex)
                     z = x - d.μ
                     return logdensity($dist($(d_args...)), z)
                 end
+
+                
+                MeasureTheory.asparams(::Type{<: $C}, ::Val{:μ}) = asℝ
+                MeasureTheory.asparams(::Type{<: $C}, ::Val{:σ}) = asℝ₊
+                MeasureTheory.asparams(::Type{<: $C}, ::Val{:logσ}) = asℝ
             end 
 
             return q

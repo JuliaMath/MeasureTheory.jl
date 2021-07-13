@@ -33,6 +33,9 @@ Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logitp,)}) = rand(rng, T) < 
 
 ≪(::Bernoulli, ::IntegerRange{lo,hi}) where {lo, hi} = lo ≤ 0 && 1 ≤ hi
 
+asparams(::Type{<:Bernoulli}, ::Val{:p}) = as𝕀
+asparams(::Type{<:Bernoulli}, ::Val{:logitp}) = asℝ
+
 
 distproxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
 distproxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))

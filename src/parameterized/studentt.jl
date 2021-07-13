@@ -31,8 +31,10 @@ end
 
 TV.as(::StudentT) = asℝ
 
-Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, T, Dists.TDist(μ.ν))
+Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 
 distproxy(d::StudentT{(:ν, :μ, :σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.TDist(d.ν))
 
 @half StudentT(ν)
+
+asparams(::Type{<:StudentT}, ::Val{:ν}) = asℝ₊
