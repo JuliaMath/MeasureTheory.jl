@@ -230,8 +230,8 @@ end
 
 @testset "Reproducibility" begin
 
-    function repro(D, args)
-        t = asparams(D{args})
+    function repro(D, args, nt=NamedTuple())
+        t = asparams(D{args}, nt)
         d = D(transform(t, randn(t.dimension)))
         r(d) = rand(Random.MersenneTwister(1), d)
         logdensity(d, r(d)) == logdensity(d, r(d))
@@ -241,7 +241,7 @@ end
         @test repro(Bernoulli, (:p,))
     end
     @testset "Binomial" begin
-        @test repro(Binomial, (:n,:p))
+        @test repro(Binomial, (:n,:p), (n=10,))
     end
 
     @testset "Beta" begin
@@ -253,7 +253,7 @@ end
     end
 
     @testset "Dirichlet" begin
-        @test repro(Dirichlet, (:p,))
+        @test_broken repro(Dirichlet, (:p,))
     end
 
     @testset "Exponential" begin
@@ -265,7 +265,7 @@ end
     end
 
     @testset "InverseGamma" begin
-        @test repro(InverseGamma, (:p,))
+        @test_broken repro(InverseGamma, (:p,))
     end
 
     @testset "Laplace" begin
@@ -273,15 +273,15 @@ end
     end
 
     @testset "LKJCholesky" begin
-        @test repro(LKJCholesky{(:p,)})
+        @test repro(LKJCholesky, (:k,:η,), (k=3,))
     end
 
     @testset "Multinomial" begin
-        @test repro(Multinomial, (:p,))
+        @test_broken repro(Multinomial, (:n,:p,))
     end
 
     @testset "MvNormal" begin
-        @test repro(MvNormal, (:p,))
+        @test_broken repro(MvNormal, (:μ,))
     end
 
     @testset "NegativeBinomial" begin
