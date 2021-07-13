@@ -30,7 +30,7 @@ log𝒹(μ, base) = Density(μ, base, Val{true}())
 Compute the Radom-Nikodym derivative (or its log, if `log=false`) of μ with
 respect to `base`.
 """
-function 𝒹(μ::AbstractMeasure, base::AbstractMeasure; log = false)
+function 𝒹(μ::AbstractMeasure, base::AbstractMeasure; log=false)
     return Density(μ, base, Val(log))
 end
 
@@ -81,7 +81,7 @@ Define a new measure in terms of a density `f` over some measure `base`. If
 """
 ∫(f, base::AbstractMeasure; log=false) = DensityMeasure(f, base, Val(log))
 
-∫(μ::AbstractMeasure, base::AbstractMeasure; log=false) = ∫(𝒹(μ, base), base; log = log)
+∫(μ::AbstractMeasure, base::AbstractMeasure; log=false) = ∫(𝒹(μ, base), base; log=log)
 
 export ∫exp
 ∫exp(f,μ) = DensityMeasure(f,μ,Val{true}())

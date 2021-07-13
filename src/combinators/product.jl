@@ -34,7 +34,6 @@ end
 
 testvalue(d::ProductMeasure) = map(testvalue, marginals(d))
 
-
 function Base.show(io::IO, ::MIME"text/plain", μ::ProductMeasure{NamedTuple{N,T}}) where {N,T}
     io = IOContext(io, :compact => true)
     print(io, "Product(",μ.data, ")")
@@ -120,22 +119,9 @@ export rand!
 using Random: rand!, GLOBAL_RNG, AbstractRNG
 
 
-# function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure)
-#     seed = rand(rng, UInt)
-#     mar = marginals(d)
-#     return Realized(seed, copy(rng), mar)
-# end
-
-# function Base.rand(rng::AbstractRNG, T::Type, d::ProductMeasure{F,I}) where {F,I<:AbstractArray}
-#     seed = rand(rng, UInt)
-#     mar = marginals(d)
-#     return Realized(seed, copy(rng), mar)
-# end
-
 function logdensity(d::ProductMeasure{F,I}, x) where {F, I<:Base.Generator}
     sum((logdensity(dj, xj) for (dj, xj) in zip(marginals(d), x)))
 end
-
 
 
 function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure{F,I}) where {T,F,I<:Base.Generator}
@@ -147,13 +133,15 @@ function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure{F,I}) where {T
     Base.Generator(s -> rand(r, d.pars.f(s)), d.pars.iter)
 end
 
+@propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
+    mar = marginals(d)
+    @boundscheck size(mar) == size(x) || throw(BoundsError)
 
-
-
-# ProductMeasure(m::NTuple{N, Measure{X}}) where {N,X} = ProductMeasure(m...)
-
-
-
+    @inbounds for j in eachindex(x)
+        x[j] = rand(rng, eltype(x), mar[j])
+    end
+    x
+end
 
 
 using Tullio
