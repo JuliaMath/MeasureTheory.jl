@@ -82,16 +82,6 @@ For(f, inds::AbstractArray) = ProductMeasure(f, inds)
 
 For(f, dims::Int...) = ProductMeasure(i -> f(Tuple(i)...), CartesianIndices(dims))
 
-
-For(f, inds) = ProductMeasure(f, inds)
-
-For(f, inds::AbstractArray) = ProductMeasure(f, inds)
-
-
-For(f, dims::Int...) = ProductMeasure(i -> f(Tuple(i)...), CartesianIndices(dims))
-
-
-
 function For(f, inds::AbstractArray...)
     g(x) = f(x...)
     For(g, mappedarray(tuple, inds...))
