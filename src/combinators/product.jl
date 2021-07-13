@@ -187,16 +187,6 @@ using Tullio
 export rand!
 using Random: rand!, GLOBAL_RNG, AbstractRNG
 
-@propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
-    mar = marginals(d)
-    @boundscheck size(mar) == size(x) || throw(BoundsError)
-
-    @inbounds for j in eachindex(x)
-        x[j] = rand(rng, eltype(x), mar[j])
-    end
-    x
-end
-
 function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure) where {T}
     mar = marginals(d)
     elT = typeof(rand(rng, T, first(mar)))
