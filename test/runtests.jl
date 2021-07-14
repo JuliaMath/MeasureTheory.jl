@@ -7,6 +7,8 @@ using DynamicIterators: trace, TimeLift
 using TransformVariables: transform, as𝕀, inverse
 
 using MeasureTheory
+using MeasureTheory: Const
+
 using Aqua
 Aqua.test_all(MeasureTheory; ambiguities=false, unbound_args=false)
 
@@ -140,18 +142,6 @@ function ⋅(μ::Normal, kernel)
     m = kernel(μ)
     Normal(μ = m.μ.μ, σ = sqrt(m.μ.σ^2 + m.σ^2))
 end
-
-"""
-    ConstantMap(β)
-Represents a function `f = ConstantMap(β)`
-such that `f(x) == β`.
-"""
-struct ConstantMap{T}
-    x::T
-end
-(a::ConstantMap)(x) = a.x
-(a::ConstantMap)() = a.x
-
 struct AffineMap{S,T}
     B::S
     β::T
@@ -183,7 +173,7 @@ end
     Q = 0.2
 
     μ = Normal(μ=ξ0, σ=sqrt(P0))
-    kernel = MeasureTheory.kernel(Normal; μ=AffineMap(Φ, β), σ=ConstantMap(Q))
+    kernel = MeasureTheory.kernel(Normal; μ=AffineMap(Φ, β), σ=Const(Q))
     
     @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
     

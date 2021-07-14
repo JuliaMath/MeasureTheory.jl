@@ -134,13 +134,11 @@ function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure{F,I}) where {T
 end
 
 @propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
-    mar = marginals(d)
-    @boundscheck size(mar) == size(x) || throw(BoundsError)
-
-    @inbounds for j in eachindex(x)
-        x[j] = rand(rng, eltype(x), mar[j])
+    T = eltype(x)
+    for(j,m) in zip(eachindex(x), marginals(d))
+        @inbounds x[j] = rand(rng, T, m)
     end
-    x
+    return x
 end
 
 
@@ -186,16 +184,6 @@ using Tullio
 
 export rand!
 using Random: rand!, GLOBAL_RNG, AbstractRNG
-
-@propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
-    mar = marginals(d)
-    @boundscheck size(mar) == size(x) || throw(BoundsError)
-
-    @inbounds for j in eachindex(x)
-        x[j] = rand(rng, eltype(x), mar[j])
-    end
-    x
-end
 
 function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure) where {T}
     mar = marginals(d)

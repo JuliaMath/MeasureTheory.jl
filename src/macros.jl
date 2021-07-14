@@ -250,6 +250,9 @@ function _half(ex)
 
             TV = TransformVariables
             quote
+
+                export $halfdist
+                
                 struct $halfdist{N,T} <: ParameterizedMeasure{N}
                     par :: NamedTuple{N,T}
                 end

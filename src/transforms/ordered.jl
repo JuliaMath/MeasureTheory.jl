@@ -9,6 +9,8 @@
 
 using MeasureTheory
 
+export Ordered
+
 using TransformVariables
 const TV = TransformVariables
 
@@ -43,6 +45,7 @@ function TV.transform_with(flag::TV.LogJacFlag, t::Ordered, x, index::T) where {
     x = mappedarray(xj -> xj + OrderedΔx, x)
 
     @inbounds (y[1], ℓ, _) = TV.transform_with(flag, as(Real, lo, hi), x, index)
+    index += 1
 
     @inbounds for i in 2:len
         (y[i], Δℓ, _) =  TV.transform_with(flag, as(Real, y[i-1], hi), x, index)
@@ -64,17 +67,32 @@ function TV.inverse_at!(x::AbstractVector, index, t::Ordered, y::AbstractVector)
     index += 1
 
     @inbounds for i in 2:length(y)
-        @show x[index]
-        @show y[i-1]
         x[index] = inverse(as(Real, y[i-1], hi), y[i]) - OrderedΔx
         index += 1
     end
     return index
 end
 
-x = Float64[1:2;]
-y = transform(Ordered(2), x)
-inverse(Ordered(2), y)
+export Sorted
+struct Sorted{M} <: AbstractMeasure
+    μ::M
+    n::Int
+end
+
+logdensity(s::Sorted, x) = logdensity(s.μ ^ s.n, x)
+
+TV.as(s::Sorted) = Ordered(as(s.μ), s.n)
+
+function Random.rand!(rng::AbstractRNG, d::Sorted, x::AbstractArray)
+    rand!(rng, d.μ ^ d.n, x)
+    sort!(x)
+    return x
+end
+
+function Base.rand(rng::AbstractRNG, T::Type, d::Sorted)
+    x = Vector{T}(undef, d.n)
+    rand!(rng, d, x)
+end
 
 # logdensity(d, rand(d))
 
