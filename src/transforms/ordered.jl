@@ -90,7 +90,9 @@ function Random.rand!(rng::AbstractRNG, d::Sorted, x::AbstractArray)
 end
 
 function Base.rand(rng::AbstractRNG, T::Type, d::Sorted)
-    x = Vector{T}(undef, d.n)
+    # TODO: Use `sampletype` for this
+    elT = typeof(rand(rng, T, d.μ))
+    x = Vector{elT}(undef, d.n)
     rand!(rng, d, x)
 end
 
