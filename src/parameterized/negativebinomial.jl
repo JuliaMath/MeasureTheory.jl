@@ -78,4 +78,4 @@ asparams(::Type{<:NegativeBinomial}, ::Val{:p}) = as𝕀
 asparams(::Type{<:NegativeBinomial}, ::Val{:logitp}) = asℝ
 asparams(::Type{<:NegativeBinomial}, ::Val{:r}) = asℝ₊
 asparams(::Type{<:NegativeBinomial}, ::Val{:λ}) = asℝ₊
-asparams(::Type{<:NegativeBinomial}, ::Val{:asparams(::Type{<:NegativeBinomial}, ::Val{:λ}) = asℝ₊}) = asℝ
+asparams(::Type{<:NegativeBinomial}, ::Val{:logλ}) = asℝ
