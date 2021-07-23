@@ -257,6 +257,8 @@ function _half(ex)
                     par :: NamedTuple{N,T}
                 end
                 
+                KeywordCalls._kwstruct(__module__, :($halfdist($(args...))))
+
                 unhalf(μ::$halfdist) = $dist(getfield(μ, :par))
 
                 function MeasureTheory.basemeasure(μ::$halfdist) 
