@@ -24,4 +24,8 @@ TV.as(::Cauchy) = asℝ
 
 @kwstruct HalfCauchy()
 
+@σ_methods HalfCauchy()
+
+HalfCauchy(σ) = HalfCauchy(σ=σ)
+
 distproxy(d::Cauchy{()}) = Dists.Cauchy()
