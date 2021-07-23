@@ -38,4 +38,7 @@ distproxy(d::StudentT{(:ν, :μ, :σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.
 @half StudentT(ν)
 @kwstruct StudentT()
 
+@σ_methods HalfLaplace(ν)
+HalfLaplace(ν,σ) = HalfLaplace(ν=ν,σ=σ)
+
 asparams(::Type{<:StudentT}, ::Val{:ν}) = asℝ₊

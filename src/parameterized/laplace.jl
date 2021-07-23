@@ -22,4 +22,7 @@ TV.as(::Laplace) = asℝ
 @half Laplace()
 @kwstruct HalfLaplace()
 
+@σ_methods HalfLaplace()
+HalfLaplace(σ) = HalfLaplace(σ=σ)
+
 distproxy(::Laplace{()}) = Dists.Laplace()
