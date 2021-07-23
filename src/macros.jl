@@ -240,15 +240,16 @@ creates `HalfNormal()`, and
 creates `HalfStudentT(ν)`.
 """
 macro half(ex)
-    esc(_half(ex))
+    esc(_half(__module__, ex))
 end
 
-function _half(ex)
+function _half(__module__, ex)
     @match ex begin
         :($dist($(args...))) => begin
             halfdist = Symbol(:Half, dist)
 
             TV = TransformVariables
+
             quote
 
                 export $halfdist
@@ -256,8 +257,6 @@ function _half(ex)
                 struct $halfdist{N,T} <: ParameterizedMeasure{N}
                     par :: NamedTuple{N,T}
                 end
-                
-                KeywordCalls._kwstruct(__module__, :($halfdist($(args...))))
 
                 unhalf(μ::$halfdist) = $dist(getfield(μ, :par))
 
