@@ -5,10 +5,10 @@ using SpecialFunctions
 using StatsFuns
 export InverseGamma
 
-@parameterized InverseGamma(shape) ≃ Lebesgue(ℝ₊)
+@parameterized InverseGamma(α) ≃ Lebesgue(ℝ₊)
 
-function logdensity(μ::InverseGamma{(:shape,)}, x) 
-    α = μ.shape
+function logdensity(μ::InverseGamma{(:α,)}, x) 
+    α = μ.α
     xinv = 1/x
 
     return (α + 1) * log(xinv) - xinv - loggamma(α) 
@@ -20,4 +20,6 @@ Base.rand(rng::AbstractRNG, T::Type, μ::InverseGamma{(:shape,)}) = rand(rng, Di
 
 TV.as(::InverseGamma) = asℝ₊
 
-@μσ_methods InverseGamma(shape)
+asparams(::Type{<:InverseGamma}, ::Val{:α}) = asℝ₊
+
+@μσ_methods InverseGamma(α)
