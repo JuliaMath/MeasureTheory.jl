@@ -27,8 +27,10 @@ TV.dimension(t::CorrCholesky) = TV.dimension(CorrCholeskyUpper(t.n))
 # consider whether it can help performance to implement this directly for the
 # lower triangular case
 function TV.transform_with(flag::TV.LogJacFlag, t::CorrCholesky, x::AbstractVector, index)
-    U, ℓ, index = TV.transform_with(flag, CorrCholeskyUpper(t.n), x, index)
-    return Cholesky(U, 'U', 0), ℓ, index
+    n = t.n
+    U, ℓ, index = TV.transform_with(flag, CorrCholeskyUpper(n), x, index)
+    L = LowerTriangular(SizedMatrix{n,n}(transpose!(U).data))
+    return Cholesky(L,'L', 0), ℓ, index
 end
 
 TV.inverse_eltype(t::CorrCholesky, x::AbstractMatrix) = TV.extended_eltype(x)
