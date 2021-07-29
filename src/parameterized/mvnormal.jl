@@ -58,7 +58,7 @@ using StaticArrays
 end
 
 function logdensity(d::MvNormal{(:μ, :L)}, y::AbstractArray{T}) where {T}
-    x = StrideArray{T}(undef, size(y))
+    x = StrideArray{T}(undef, ArrayInterface.size(y))
     @inbounds for j in eachindex(y)
         x[j] = y[j] - d.μ[j]
     end
@@ -71,7 +71,7 @@ using StrideArrays, StaticArrays, LoopVectorization, LinearAlgebra
     if k > 16
         quote
             # k = StaticInt($K)
-
+            L = d.L
             z = StrideArray{$T}(undef, (k,))
 
             # Solve `y = Lz` for `z`. We need this only as a way to calculate `z ⋅ z`
@@ -86,7 +86,7 @@ using StrideArrays, StaticArrays, LoopVectorization, LinearAlgebra
                 z[i] = zi
             end
 
-            $(T(-k / 2 * log2π)) + logdet_pos(L) - z_dot_z / 2
+            $(T(-k / 2 * log2π)) - logdet_pos(L) - z_dot_z / 2
         end
     else # replace `for i in 1:K` with `Base.Cartesian.@nexprs $K i -> begin`
         quote
