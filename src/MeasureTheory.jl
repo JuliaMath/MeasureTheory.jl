@@ -1,5 +1,8 @@
 module MeasureTheory
 
+using LoopVectorization: ArrayInterface
+using InlineTest
+
 using Random
 
 using ConcreteStructs
@@ -22,6 +25,7 @@ using DynamicIterators
 using KeywordCalls
 using ConstructionBase
 using Accessors
+using ArrayInterface
 
 const ∞ = InfiniteArrays.∞
 

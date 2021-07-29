@@ -9,17 +9,17 @@ import Base
 using Tullio
 using LoopVectorization
 
-@parameterized MvNormal(μ,Σ)
+@parameterized MvNormal(μ, Σ)
 
 @kwstruct MvNormal(Σ)
 
-@kwstruct MvNormal(μ,Σ)
+@kwstruct MvNormal(μ, Σ)
 
 @kwstruct MvNormal(L)
 
-@kwstruct MvNormal(μ,L)
+@kwstruct MvNormal(μ, L)
 
-@kwstruct MvNormal(μ,Ω)
+@kwstruct MvNormal(μ, Ω)
 
 @kwstruct MvNormal(Ω)
 
@@ -34,12 +34,12 @@ function logdensity(d::MvNormal{(:L2,)}, y::AbstractVector{T}) where {T}
     @simd for j ∈ 1:k
         zj = zero(T)
         for i ∈ j:k
-            @inbounds zj += L[i,j] * y[i]
+            @inbounds zj += L[i, j] * y[i]
         end
-        z_dot_z += zj ^ 2
+        z_dot_z += zj^2
     end
 
-    -k/2 * log2π + logdet_pos(L) - z_dot_z/2
+    -k / 2 * log2π + logdet_pos(L) - z_dot_z / 2
 end
 
 @kwstruct MvNormal(L2)
@@ -48,86 +48,66 @@ using StrideArrays
 using StaticArrays
 
 
-@inline function logdet_pos(A::Union{UpperTriangular{T},LowerTriangular{T}}) where T
-  abs_det = zero(real(T))
-  @turbo for i in 1:size(A,1)
-    diag_i = A.data[i,i]
-    abs_det += log(diag_i)
-  end
-  return abs_det
+@inline function logdet_pos(A::Union{UpperTriangular{T},LowerTriangular{T}}) where {T}
+    result = zero(real(T))
+    @turbo for i = 1:ArrayInterface.size(A, 1)
+        diag_i = A.data[i, i]
+        result += log(diag_i)
+    end
+    return result
 end
 
-function logdensity(d::MvNormal{(:μ,:L)}, y::AbstractArray{T}) where {T}
+function logdensity(d::MvNormal{(:μ, :L)}, y::AbstractArray{T}) where {T}
     x = StrideArray{T}(undef, size(y))
     @inbounds for j in eachindex(y)
         x[j] = y[j] - d.μ[j]
     end
-    GC.@preserve x logdensity(MvNormal(L=d.L), x)
+    GC.@preserve x logdensity(MvNormal(L = d.L), x)
 end
+using StrideArrays, StaticArrays, LoopVectorization, LinearAlgebra
 
-@inline function logdensity(d::MvNormal{(:L,)}, y::AbstractVector{T}) where {T}
-    L = d.L
-    k = length(y)
-    z = StrideArray{T}(undef, (k,))
+@generated function logdensity(d::MvNormal{(:L,), Tuple{LowerTriangular{T2, S}}}, y::AbstractArray{T}) where {k,T,T2, S<:SizedMatrix{k,k}}
+    log2π = log(big(2) * π)
+    if k > 16
+        quote
+            # k = StaticInt($K)
 
-    # Solve `y = Lz` for `z`. We need this only as a way to calculate `z ⋅ z`
-    z_dot_z = zero(T)
-    @inbounds for i ∈ 1:k
-        tmp = zero(T)
-        for j in 1:(i-1)
-            tmp += L[i,j] * z[j]
+            z = StrideArray{$T}(undef, (k,))
+
+            # Solve `y = Lz` for `z`. We need this only as a way to calculate `z ⋅ z`
+            z_dot_z = zero($T)
+            @inbounds @fastmath for i ∈ 1:k
+                tmp = zero($T)
+                for j = 1:(i-1)
+                    tmp += L[i, j] * z[j]
+                end
+                zi = (y[i] - tmp) / L[i, i]
+                z_dot_z += zi^2
+                z[i] = zi
+            end
+
+            $(T(-k / 2 * log2π)) + logdet_pos(L) - z_dot_z / 2
         end
-        zi = (y[i] - tmp) / L[i,i]
-        z_dot_z += zi ^ 2
-        z[i] = zi
-    end
+    else # replace `for i in 1:K` with `Base.Cartesian.@nexprs $K i -> begin`
+        quote
+            L = d.L
+            # Solve `y = Lz` for `z`. We need this only as a way to calculate `z ⋅ z`
+            z_dot_z = zero($T)
 
-    -k/2 * log2π - logdet_pos(L) - z_dot_z/2
-end
+            @inbounds begin # `@fastmath` needs to be moved inside the `@nexprs`
+                Base.Cartesian.@nexprs $k i -> begin
+                    tmp_i = zero($T)
+                    Base.Cartesian.@nexprs i - 1 j -> begin
+                        @fastmath tmp_i += L[i, j] * z_j
+                    end
+                    @fastmath z_i = (y[i] - tmp_i) / L[i, i]
+                    @fastmath z_dot_z += z_i^2
+                end
+            end
 
-@generated function logdensity(d::MvNormal{(:L,)}, y::SizedVector{K,T}) where {K,T}
-  log2π = log(big(2)*π)
-  if K > 16
-    quote
-      L = parent(d.L)
-      k = StaticInt($K)
-
-      z = StrideArray{$T}(undef, (k,))
-
-      # Solve `y = Lz` for `z`. We need this only as a way to calculate `z ⋅ z`
-      z_dot_z = zero($T)
-      @inbounds @fastmath for i ∈ 1:k
-        tmp = zero($T)
-        for j in 1:(i-1)
-          tmp += L[i,j] * z[j]
+            $(T(-k / 2 * log2π)) - logdet_pos(L) - z_dot_z / 2
         end
-        zi = (y[i] - tmp) / L[i,i]
-        z_dot_z += zi ^ 2
-        z[i] = zi
-      end
-
-      $(T(-K/2 * log2π)) - logdet_pos(L) - z_dot_z/2
     end
-  else # replace `for i in 1:K` with `Base.Cartesian.@nexprs $K i -> begin`
-    quote
-      L = d.L
-      # Solve `y = Lz` for `z`. We need this only as a way to calculate `z ⋅ z`
-      z_dot_z = zero($T)
-
-      @inbounds begin # `@fastmath` needs to be moved inside the `@nexprs`
-        Base.Cartesian.@nexprs $K i -> begin
-          tmp_i = zero($T)
-          Base.Cartesian.@nexprs i-1 j -> begin
-            @fastmath tmp_i += L[i,j] * z_j
-          end
-          @fastmath z_i = (y[i] - tmp_i) / L[i,i]
-          @fastmath z_dot_z += z_i ^ 2
-        end
-      end
-
-      $(T(-K/2 * log2π)) - logdet_pos(L) - z_dot_z/2
-    end
-  end
 end
 
 # S = @MMatrix(randn(10,15)) |> x -> Symmetric(x * x',:L);
@@ -167,3 +147,12 @@ end
 # end
 
 # mvnormaldims(nt::NamedTuple{(:Σ⁻¹,)}) = size(nt.Σ⁻¹)
+
+@testset "MvNormal" begin
+    @testset "MvNormal(L)" begin
+        n = 5
+        t = CorrCholesky(5)
+        L = transform(t, randn(dimension(t)))
+
+    end
+end
