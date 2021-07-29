@@ -17,20 +17,28 @@ If
 then `Diagonal(σ) * C.L * z` is a zero-centered multivariate normal variate with the standard deviations `σ` and
 correlation matrix `C.L * C.U`.
 """
-struct CorrCholesky <: TV.VectorTransform
-    n::Int
+struct CorrCholesky{N} <: TV.VectorTransform 
+    n::N
 end
 
-TV.dimension(t::CorrCholesky) = TV.dimension(CorrCholeskyUpper(t.n))
+TV.dimension(t::CorrCholesky{Int}) = TV.dimension(CorrCholeskyUpper(t.n))
+
+TV.dimension(t::CorrCholesky{StaticInt{n}}) where {n} = TV.dimension(CorrCholeskyUpper(t.n))
 
 # TODO: For now we just transpose the CorrCholeskyUpper result. We should
 # consider whether it can help performance to implement this directly for the
 # lower triangular case
+function TV.transform_with(flag::TV.LogJacFlag, t::CorrCholesky{StaticInt{n}}, x::AbstractVector, index) where {n}
+    @nospecialize t
+    U, ℓ, index = TV.transform_with(flag, CorrCholeskyUpper(n), x, index)
+    U = UpperTriangular(SizedMatrix{n,n}(U.data))
+    return Cholesky(U,'U', 0), ℓ, index
+end
+
 function TV.transform_with(flag::TV.LogJacFlag, t::CorrCholesky, x::AbstractVector, index)
     n = t.n
     U, ℓ, index = TV.transform_with(flag, CorrCholeskyUpper(n), x, index)
-    L = LowerTriangular(SizedMatrix{n,n}(transpose!(U).data))
-    return Cholesky(L,'L', 0), ℓ, index
+    return Cholesky(U,'U', 0), ℓ, index
 end
 
 TV.inverse_eltype(t::CorrCholesky, x::AbstractMatrix) = TV.extended_eltype(x)
