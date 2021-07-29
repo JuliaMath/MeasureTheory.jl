@@ -68,15 +68,15 @@ using StrideArrays, StaticArrays, LoopVectorization, LinearAlgebra
 
 @generated function logdensity(d::MvNormal{(:L,), Tuple{LowerTriangular{T2, S}}}, y::AbstractArray{T}) where {k,T,T2, S<:SizedMatrix{k,k}}
     log2π = log(big(2) * π)
+    k = StaticInt(k)
     if k > 16
         quote
-            # k = StaticInt($K)
             L = d.L
-            z = StrideArray{$T}(undef, (k,))
+            z = StrideArray{$T}(undef, ($k,))
 
             # Solve `y = Lz` for `z`. We need this only as a way to calculate `z ⋅ z`
             z_dot_z = zero($T)
-            @inbounds @fastmath for i ∈ 1:k
+            @inbounds @fastmath for i ∈ 1:$k
                 tmp = zero($T)
                 for j = 1:(i-1)
                     tmp += L[i, j] * z[j]
