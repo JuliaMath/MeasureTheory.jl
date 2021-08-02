@@ -301,3 +301,26 @@ end
     end
 
 end
+
+@testset "ProductMeasure" begin
+    d = For(1:10) do j Poisson(exp(j)) end
+    x = Vector{Int16}(undef, 10)
+    @test rand!(d,x) isa Vector
+    @test rand(d) isa Vector
+
+    @testset "Indexed by Generator" begin
+        d = For((j^2 for j in 1:10)) do i Poisson(i) end
+        x = Vector{Int16}(undef, 10)
+        @test rand!(d,x) isa Vector
+        @test_broken rand(d) isa Base.Generator
+    end
+
+    @testset "Indexed by multiple Ints" begin
+        d = For(2,3) do μ,σ Normal(μ,σ) end
+        x = Matrix{Float16}(undef, 2, 3)
+        @test rand!(d, x) isa Matrix
+        @test_broken rand(d) isa Matrix{Float16}
+    end
+
+
+end
