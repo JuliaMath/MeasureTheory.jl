@@ -23,7 +23,7 @@ macro domain(name, T)
     quote
         struct $T <: AbstractDomain end
         export $name
-        $name = $T()
+        const $name = $T()
         Base.show(io::IO, ::MIME"text/plain", ::$T) = print(io, $sname)
     end
 end

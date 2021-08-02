@@ -134,7 +134,7 @@ function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure{F,I}) where {T
 end
 
 @propagate_inbounds function Random.rand!(rng::AbstractRNG, d::ProductMeasure, x::AbstractArray)
-    T = eltype(x)
+    T = float(eltype(x))
     for(j,m) in zip(eachindex(x), marginals(d))
         @inbounds x[j] = rand(rng, T, m)
     end
@@ -186,12 +186,31 @@ export rand!
 using Random: rand!, GLOBAL_RNG, AbstractRNG
 
 function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure) where {T}
+    d1 = d.f(first(d.pars))
+    rand(rng, T, d, d1)
+end
+
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure, d1::AbstractMeasure) where {T}
     mar = marginals(d)
     elT = typeof(rand(rng, T, first(mar)))
 
     sz = size(mar)
     x = Array{elT, length(sz)}(undef, sz)
     rand!(rng, d, x)
+end
+
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure, d1::Dists.Distribution) where {T}
+    mar = marginals(d)
+    
+    # Distributions doens't (yet) have the three-argument form
+    elT = typeof(rand(rng, first(mar)))
+
+    sz = size(mar)
+    x = Array{elT, length(sz)}(undef, sz)
+    for (j,parj) in enumerate(d.pars)
+        x[j] = rand(rng, d.f(parj))
+    end
+    x
 end
 
 # TODO: 
