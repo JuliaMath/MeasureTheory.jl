@@ -26,17 +26,11 @@ constructor(::T) where {T} = constructor(T)
 macro trysupport(ex)
     ex = esc(ex)
     quote
-        result = nothing
         try
-            result = $ex
-        catch e
-            if e isa DomainError
-                result = -Inf
-            else
-                rethrow()
-            end
+            return $ex
+        catch 
+            return -Inf
         end
-        result
     end
 end
 

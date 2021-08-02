@@ -47,13 +47,14 @@ function _parameterized(__module__, expr)
         μ = esc(μ)
         base = esc(base)
 
+        # @gensym basename
         q = quote
             struct $μ{N,T} <: MeasureTheory.ParameterizedMeasure{N}
                 par :: NamedTuple{N,T}
-
             end
             
-            MeasureTheory.basemeasure(::$μ) = $base
+            const $μbase = $base
+            MeasureTheory.basemeasure(::$μ) = $μbase
         end   
         
         if !isempty(p)
