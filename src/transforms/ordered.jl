@@ -81,7 +81,7 @@ end
 
 logdensity(s::Sorted, x) = logdensity(s.μ ^ s.n, x)
 
-TV.as(s::Sorted) = Ordered(as(s.μ), s.n)
+# TV.as(s::Sorted) = Ordered(as(s.μ), s.n)
 
 function Random.rand!(rng::AbstractRNG, d::Sorted, x::AbstractArray)
     rand!(rng, d.μ ^ d.n, x)

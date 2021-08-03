@@ -18,6 +18,6 @@ Base.rand(rng::AbstractRNG, T::Type, μ::InverseGamma{(:shape,)}) = rand(rng, Di
 
 ≪(::InverseGamma, ::Lebesgue{X}) where X <: Real = true
 
-TV.as(::InverseGamma) = asℝ₊
+# TV.as(::InverseGamma) = asℝ₊
 
 @μσ_methods InverseGamma(shape)

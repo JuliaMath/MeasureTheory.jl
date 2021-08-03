@@ -249,7 +249,7 @@ function _half(__module__, ex)
         :($dist($(args...))) => begin
             halfdist = Symbol(:Half, dist)
 
-            TV = TransformVariables
+            # TV = TransformVariables
 
             quote
 
@@ -276,7 +276,7 @@ function _half(__module__, ex)
                     return abs(rand(rng, T, unhalf(μ)))
                 end
 
-                $TV.as(::$halfdist) = asℝ₊
+                # $TV.as(::$halfdist) = asℝ₊
                 
                 (::$halfdist ≪ ::Lebesgue{ℝ₊}) = true
             end

@@ -70,7 +70,7 @@ function logdensity(d::LKJCholesky{(:k, :logη)}, L::Union{LinearAlgebra.Abstrac
 end
 
 
-TV.as(d::LKJCholesky) = CorrCholesky(d.k)
+# TV.as(d::LKJCholesky) = CorrCholesky(d.k)
 
 function basemeasure(μ::LKJCholesky{(:k,:η)})
     t = as(μ)

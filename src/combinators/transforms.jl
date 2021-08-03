@@ -64,11 +64,11 @@ basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν), false)
 
 basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ), false)
 
-TV.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
+# TV.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
 
-TV.as(μ::Pullback) = inverse(μ.f) ∘ μ.ν
+# TV.as(μ::Pullback) = inverse(μ.f) ∘ μ.ν
 
-TV.as(::Lebesgue) = asℝ
+# TV.as(::Lebesgue) = asℝ
 
 
 basemeasure(::Pushforward{TV.CallableTransform{T}, Lebesgue{ℝ}}) where {T <: TV.ScalarTransform} = Lebesgue(ℝ)

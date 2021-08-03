@@ -1,4 +1,4 @@
-using TransformVariables
+# using TransformVariables
 
 export ParameterizedMeasure
 abstract type ParameterizedMeasure{N} <: AbstractMeasure end
@@ -77,29 +77,31 @@ julia> asparams(Normal{(:μ,:σ)})
 TransformVariables.TransformTuple{NamedTuple{(:μ, :σ), Tuple{TransformVariables.Identity, TransformVariables.ShiftedExp{true, Float64}}}}((μ = asℝ, σ = asℝ₊), 2)
 ```
 """
-function asparams end
-
-asparams(μ::ParameterizedMeasure, v::Val) = asparams(constructor(μ), v)
-asparams(μ, s::Symbol) = asparams(μ, Val(s))
-
-asparams(M::Type{PM}) where {PM<:ParameterizedMeasure} = asparams(M, NamedTuple())
-
-function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: ParameterizedMeasure{N1}} 
-    # @show M
-    thekeys = params(M, constraints)
-    t1 = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
-    t2 = NamedTuple{N2}(map(asConst, values(constraints)))
-    C = constructorof(M)
-    # @show C
-    # @show constraints
-    # @show transforms
-    # Make sure we end up with a consistent ordering
-    ordered_transforms = params(C(merge(t1, t2)))
-    return TV.as(ordered_transforms)
-end
 
 
-asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(constructor(μ), nt)
+# function asparams end
+
+# asparams(μ::ParameterizedMeasure, v::Val) = asparams(constructor(μ), v)
+# asparams(μ, s::Symbol) = asparams(μ, Val(s))
+
+# asparams(M::Type{PM}) where {PM<:ParameterizedMeasure} = asparams(M, NamedTuple())
+
+# function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: ParameterizedMeasure{N1}} 
+#     # @show M
+#     thekeys = params(M, constraints)
+#     t1 = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
+#     t2 = NamedTuple{N2}(map(asConst, values(constraints)))
+#     C = constructorof(M)
+#     # @show C
+#     # @show constraints
+#     # @show transforms
+#     # Make sure we end up with a consistent ordering
+#     ordered_transforms = params(C(merge(t1, t2)))
+#     return TV.as(ordered_transforms)
+# end
+
+
+# asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(constructor(μ), nt)
 
 export params
 

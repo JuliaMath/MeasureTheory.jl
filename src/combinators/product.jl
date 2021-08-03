@@ -82,10 +82,10 @@ function logdensity(d::ProductMeasure, x)
 end
 
 
-function TV.as(d::ProductMeasure{F,A}) where {F,A<:AbstractArray}
-    d1 = marginals(d).f(first(marginals(d).data))
-    as(Array, as(d1), size(marginals(d))...)
-end
+# function TV.as(d::ProductMeasure{F,A}) where {F,A<:AbstractArray}
+#     d1 = marginals(d).f(first(marginals(d).data))
+#     as(Array, as(d1), size(marginals(d))...)
+# end
 
 function Base.show(io::IO, ::MIME"text/plain", d::ProductMeasure{F,A}) where {F,A<:AbstractArray}
     io = IOContext(io, :compact => true)
@@ -109,10 +109,10 @@ end
 ###############################################################################
 # I <: Base.Generator
 
-function TV.as(d::ProductMeasure{F,I}) where {F, I<:Base.Generator}
-    d1 = marginals(d).f(first(marginals(d).iter))
-    as(Array, as(d1), size(marginals(d))...) 
-end
+# function TV.as(d::ProductMeasure{F,I}) where {F, I<:Base.Generator}
+#     d1 = marginals(d).f(first(marginals(d).iter))
+#     as(Array, as(d1), size(marginals(d))...) 
+# end
 
 
 export rand!

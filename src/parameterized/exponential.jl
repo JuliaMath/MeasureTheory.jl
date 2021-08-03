@@ -22,7 +22,7 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Exponential{(:λ,)})
     randexp(rng, T) / d.λ
 end
 
-TV.as(::Exponential) = asℝ₊
+# TV.as(::Exponential) = asℝ₊
 
 function logdensity(d::Exponential{(:λ,)}, x)
     z = x * d.λ
