@@ -29,7 +29,7 @@ function logdensity(d::StudentT{(:ν,)}, x)
     return loggamma(halfνp1) - loggamma(ν/2) + ν * log(ν) - halfνp1 * log(x^2 + ν)
 end
 
-TV.as(::StudentT) = asℝ
+# TV.as(::StudentT) = asℝ
 
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 

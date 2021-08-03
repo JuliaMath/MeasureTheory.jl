@@ -14,7 +14,7 @@ logweight(μ::AbstractWeightedMeasure) = μ.logweight
 basemeasure(μ::AbstractWeightedMeasure) = μ.base
 
 
-TV.as(μ::AbstractWeightedMeasure) = TV.as(μ.base)
+# TV.as(μ::AbstractWeightedMeasure) = TV.as(μ.base)
 
 function logdensity(sm::AbstractWeightedMeasure, x)
     logdensity(sm.base, x) + sm.logweight

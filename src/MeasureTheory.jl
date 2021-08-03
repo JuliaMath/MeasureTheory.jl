@@ -5,8 +5,8 @@ using Random
 using ConcreteStructs
 using MLStyle
 using NestedTuples
-using TransformVariables
-const TV = TransformVariables
+# using TransformVariables
+# const TV = TransformVariables
 
 import Base
 import Distributions
@@ -44,7 +44,7 @@ is understood to be `basemeasure(μ)`.
 """
 function logdensity end
 
-include("const.jl")
+# include("const.jl")
 include("exp.jl")
 include("domains.jl")
 include("utils.jl")
@@ -65,7 +65,7 @@ include("combinators/superpose.jl")
 include("combinators/product.jl")
 include("combinators/for.jl")
 include("combinators/power.jl")
-include("combinators/transforms.jl")
+# include("combinators/transforms.jl")
 include("combinators/spikemixture.jl")
 include("combinators/chain.jl")
 include("kernel.jl")
@@ -90,11 +90,11 @@ include("parameterized/bernoulli.jl")
 include("parameterized/poisson.jl")
 include("parameterized/binomial.jl")
 include("parameterized/multinomial.jl")
-include("parameterized/lkj-cholesky.jl")
+# include("parameterized/lkj-cholesky.jl")
 include("parameterized/negativebinomial.jl")
 
-include("transforms/corrcholesky.jl")
-include("transforms/ordered.jl")
+# include("transforms/corrcholesky.jl")
+# include("transforms/ordered.jl")
 
 include("density.jl")
 # include("pushforward.jl")
