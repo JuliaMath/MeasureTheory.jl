@@ -15,34 +15,39 @@ using LoopVectorization
 
 @kwstruct MvNormal(μ, Σ)
 
-@kwstruct MvNormal(L)
+@kwstruct MvNormal(σ)
 
-@kwstruct MvNormal(μ, L)
+@kwstruct MvNormal(μ, σ)
 
 @kwstruct MvNormal(μ, Ω)
 
 @kwstruct MvNormal(Ω)
 
+@kwstruct MvNormal(ω)
 
-function logdensity(d::MvNormal{(:L2,)}, y::AbstractVector{T}) where {T}
-    L = d.L2
-    k = first(size(L))
+const LowerCholesky{T} = Cholesky{T, <:LowerTriangular} 
+const UpperCholesky{T} = Cholesky{T, <:UpperTriangular} 
+
+logdensity(d::MvNormal{(:ω,), <:Tuple{<:Cholesky}}, y) = logdensity_mvnormal_ω(d.ω.UL, y)
+
+function logdensity_mvnormal_ω(U::UpperTriangular, y::AbstractVector{T}) where {T}
+    k = first(size(U))
     @assert length(y) == k
 
-    # if z = Lᵗy, the logdensity depends on `det(L)` and `z ⋅ z`. So we find `z`
+    # if z = Lᵗy, the logdensity depends on `det(U)` and `z ⋅ z`. So we find `z`
     z_dot_z = zero(T)
-    @simd for j ∈ 1:k
+    for j ∈ 1:k
         zj = zero(T)
-        for i ∈ j:k
-            @inbounds zj += L[i, j] * y[i]
+        for i ∈ 1:j
+            @inbounds zj += U[i, j] * y[i]
         end
         z_dot_z += zj^2
     end
 
-    -k / 2 * log2π + logdet_pos(L) - z_dot_z / 2
+    -k / 2 * log2π + logdet_pos(U) - z_dot_z / 2
 end
 
-@kwstruct MvNormal(L2)
+
 
 using StrideArrays
 using StaticArrays
