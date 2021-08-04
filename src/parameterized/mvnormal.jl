@@ -42,12 +42,12 @@ end
     prod_ai = one(real(T))
     sum_bi = zero(real(T))
 
-    @inbounds @fastmath for i = 1:ArrayInterface.size(A,1)
+    @turbo for i = 1:ArrayInterface.size(A,1)
         diag_i = A.data[i, i]
         ai = significand(diag_i)
         prod_ai *= ai
     end
-    @inbounds @fastmath for i = 1:ArrayInterface.size(A,1)
+    @turbo for i = 1:ArrayInterface.size(A,1)
         diag_i = A.data[i, i]
         bi = exponent(diag_i)
         sum_bi += bi
