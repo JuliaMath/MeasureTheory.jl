@@ -44,13 +44,10 @@ end
 
     @turbo for i = 1:ArrayInterface.size(A,1)
         diag_i = A.data[i, i]
-        ai = significand(diag_i)
-        prod_ai *= ai
-    end
-    @turbo for i = 1:ArrayInterface.size(A,1)
-        diag_i = A.data[i, i]
         bi = exponent(diag_i)
         sum_bi += bi
+        ai = significand(diag_i)
+        prod_ai *= ai
     end
     return log(prod_ai) + logtwo * sum_bi      
 end
