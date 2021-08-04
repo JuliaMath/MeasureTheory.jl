@@ -16,14 +16,14 @@ export ≪
 export sampletype
 
 export AbstractMeasure
-using InfiniteArrays
+using Infinities
 using ConcreteStructs
 using DynamicIterators
 using KeywordCalls
 using ConstructionBase
 using Accessors
 
-const ∞ = InfiniteArrays.∞
+const ∞ = Infinities.∞
 
 export ∞
 export basemeasure
