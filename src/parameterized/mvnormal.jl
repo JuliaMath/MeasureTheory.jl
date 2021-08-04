@@ -35,13 +35,24 @@ const UpperCholesky{T} = Cholesky{T, <:UpperTriangular}
     logdet_pos(getfield(C, :factors))
 end
 
+
 @inline function logdet_pos(A::Union{UpperTriangular{T},LowerTriangular{T}}) where {T}
-    exp_result = one(real(T))                   # result = zero(real(T))
-    @turbo for i = 1:ArrayInterface.size(A,1)
+    # ∑ᵢ log(aᵢ * 2^bᵢ) = log(∏ᵢ aᵢ) + log2 * ∑ᵢ bᵢ
+
+    prod_ai = one(real(T))
+    sum_bi = zero(real(T))
+
+    @inbounds @fastmath for i = 1:ArrayInterface.size(A,1)
         diag_i = A.data[i, i]
-        exp_result *= diag_i                    # result += log(diag_i)
+        ai = significand(diag_i)
+        prod_ai *= ai
     end
-    return log(exp_result)                      # return result
+    @inbounds @fastmath for i = 1:ArrayInterface.size(A,1)
+        diag_i = A.data[i, i]
+        bi = exponent(diag_i)
+        sum_bi += bi
+    end
+    return log(prod_ai) + logtwo * sum_bi      
 end
 
 
@@ -153,10 +164,31 @@ end
 # MvNormal(ω)
 
 
-logdensity(d::MvNormal{(:ω,), <:Tuple{<:Cholesky}}, y) = logdensity_mvnormal_ω(d.ω.UL, y)
 
+logdensity(d::MvNormal{(:ω,), <:Tuple{<:Cholesky}}, y) = logdensity_mvnormal_ω(getfield(d.ω, :factors), y)
 
-function logdensity_mvnormal_ω(U::UpperTriangular, y::AbstractVector{T}) where {T}
+logdensity_mvnormal_ω(UL::Union{UpperTriangular, LowerTriangular}, y::AbstractVector) = logdensity_mvnormal_ω(KnownSize(UL), y)
+
+@inline @generated function logdensity_mvnormal_ω(U::KnownSize{Tuple{k,k}, <:UpperTriangular}, y::AbstractVector{T}) where {k,T}
+    log2π = log(big(2) * π)
+    quote
+        U = U.value
+        Udata = U.data
+        # if z = Lᵗy, the logdensity depends on `det(U)` and `z ⋅ z`. So we find `z`
+        z_dot_z = zero(T)
+        @fastmath for j ∈ 1:$k
+            zj = zero(T)
+            for i ∈ 1:j
+                @inbounds zj += Udata[i, j] * y[i]
+            end
+            z_dot_z += zj^2
+        end
+
+        $(T(-k / 2 * log2π)) + logdet_pos(U) - z_dot_z / 2
+    end
+end
+
+@inline function logdensity_mvnormal_ω(U::KnownSize{Tuple{nothing, nothing}, <:UpperTriangular}, y::AbstractVector{T}) where {T}
     k = first(size(U))
     @assert length(y) == k
 
