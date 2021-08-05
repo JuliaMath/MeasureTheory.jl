@@ -1,7 +1,6 @@
 module MeasureTheory
 
 using LoopVectorization: ArrayInterface
-using InlineTest
 
 using Random
 
