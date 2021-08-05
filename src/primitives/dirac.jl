@@ -5,8 +5,6 @@ struct Dirac{X} <: PrimitiveMeasure
     x::X
 end
 
-@primitive Dirac
-
 sampletype(μ::Dirac{X}) where {X} = X
 
 function (μ::Dirac{X})(s) where {X}

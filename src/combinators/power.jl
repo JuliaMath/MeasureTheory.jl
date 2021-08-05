@@ -1,5 +1,5 @@
 import Base
-
+using FillArrays: Fill
 # """
 # A power measure is a product of a measure with itself. The number of elements in
 # the product determines the dimensionality of the resulting support.

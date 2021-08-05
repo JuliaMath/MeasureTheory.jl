@@ -26,6 +26,7 @@ using Accessors
 const ∞ = InfiniteArrays.∞
 
 export ∞
+export basemeasure
 
 export as
 
@@ -48,7 +49,7 @@ include("const.jl")
 include("exp.jl")
 include("domains.jl")
 include("utils.jl")
-include("traits.jl")
+# include("traits.jl")
 include("absolutecontinuity.jl")
 include("parameterized.jl")
 include("macros.jl")

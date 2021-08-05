@@ -6,7 +6,6 @@ using LinearAlgebra
 export MvNormal
 using Random
 import Base
-using Tullio
 
 
 struct MvNormal{N, T, I, J} <: ParameterizedMeasure{N}
@@ -55,9 +54,9 @@ end
 
 ≪(::MvNormal, ::Lebesgue{ℝ}) = true
 
-function logdensity(d::MvNormal{(:Σ⁻¹,)}, x)
-    @tullio ℓ = -0.5 * x[i] * d.Σ⁻¹[i,j] * x[j]
-    return ℓ
-end
+# function logdensity(d::MvNormal{(:Σ⁻¹,)}, x)
+#     @tullio ℓ = -0.5 * x[i] * d.Σ⁻¹[i,j] * x[j]
+#     return ℓ
+# end
 
 mvnormaldims(nt::NamedTuple{(:Σ⁻¹,)}) = size(nt.Σ⁻¹)
