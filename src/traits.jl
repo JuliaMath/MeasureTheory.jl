@@ -37,7 +37,7 @@ Tests whether a given measure has been declared scalar. See `@scalar`.
 function isscalar end
 
 isscalar(::M) where {M} = isscalar(M)
-isscalar(::Type{M}) where {M} = istrait(IsScalar{T})
+isscalar(::Type{M}) where {M} = istrait(IsScalar{M})
 
 """
     isprimitive(::AbstractMeasure)

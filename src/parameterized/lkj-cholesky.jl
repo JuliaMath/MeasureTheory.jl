@@ -48,7 +48,6 @@ asparams(::Type{<:LKJCholesky}, ::Val{:logη}) = asℝ
 
 
 using LinearAlgebra
-using Tullio
 
 logdensity(d::LKJCholesky, C::Cholesky) = logdensity(d, C.UL)
 
@@ -59,13 +58,19 @@ function logdensity(d::LKJCholesky{(:k, :η,)}, L::Union{LinearAlgebra.AbstractT
 
     # Note: https://github.com/cscherrer/MeasureTheory.jl/issues/100#issuecomment-852428192
     c = d.k + 2(η - 1)
-    @tullio s = (c - i) * log(L[i,i])
+    n = size(L,1)
+    s = sum(1:n) do i 
+        (c - i) * @inbounds log(L[i,i]) 
+    end
     return s
 end
 
 function logdensity(d::LKJCholesky{(:k, :logη)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal})
     c = d.k + 2 * expm1(d.logη)
-    @tullio s = (c - i) * log(L[i,i])
+    n = size(L,1)
+    s = sum(1:n) do i
+        (c - i) * @inbounds log(L[i,i])
+    end
     return s
 end
 

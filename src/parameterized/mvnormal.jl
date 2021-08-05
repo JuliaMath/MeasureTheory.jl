@@ -6,7 +6,6 @@ using LinearAlgebra
 export MvNormal
 using Random
 import Base
-using Tullio
 using LoopVectorization
 
 @parameterized MvNormal(μ, Σ)
@@ -201,12 +200,3 @@ end
 # end
 
 # mvnormaldims(nt::NamedTuple{(:Σ⁻¹,)}) = size(nt.Σ⁻¹)
-
-@testset "MvNormal" begin
-    @testset "MvNormal(L)" begin
-        n = 5
-        t = CorrCholesky(5)
-        L = transform(t, randn(dimension(t)))
-
-    end
-end
