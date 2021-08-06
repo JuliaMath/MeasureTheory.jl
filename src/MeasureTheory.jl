@@ -1,7 +1,5 @@
 module MeasureTheory
 
-using LoopVectorization: ArrayInterface
-
 using Random
 
 using ConcreteStructs
