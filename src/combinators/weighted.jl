@@ -20,6 +20,8 @@ function logdensity(sm::AbstractWeightedMeasure, x)
     logdensity(sm.base, x) + sm.logweight
 end
 
+logmass(d::AbstractWeightedMeasure) = logmass(d.base) + d.logweight
+
 ###############################################################################
 
 struct WeightedMeasure{R,M} <: AbstractWeightedMeasure

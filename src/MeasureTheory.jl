@@ -30,6 +30,8 @@ export basemeasure
 
 export as
 
+export mass, logmass, is_probability_measure, normalize
+
 abstract type AbstractMeasure end
 
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
@@ -54,6 +56,7 @@ include("absolutecontinuity.jl")
 include("parameterized.jl")
 include("macros.jl")
 include("resettablerng.jl")
+include("mass.jl")
 
 include("primitive.jl")
 include("primitives/counting.jl")

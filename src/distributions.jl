@@ -35,6 +35,10 @@ end
 
 ∫(::typeof(identity), ::Dists.Distribution) = 1.0
 
+# all Distributions distributions are probability measures
+logmass(μ::DistributionMeasure) = true
+is_probability_measure(μ::DistributionMeasure; kwargs...) = true
+
 logdensity(μ::Dists.Distribution, x) = Dists.logpdf(μ,x)
 Dists.logpdf(d::AbstractMeasure, x) = logdensity(d,x)
 
