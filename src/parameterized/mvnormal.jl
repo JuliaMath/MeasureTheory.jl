@@ -43,11 +43,12 @@ end
 
     @turbo for i = 1:ArrayInterface.size(A,1)
         diag_i = A.data[i, i]
-        bi = exponent(diag_i)
-        sum_bi += bi
         ai = significand(diag_i)
+        bi = exponent(diag_i)
         prod_ai *= ai
+        sum_bi += bi
     end
+
     return log(prod_ai) + logtwo * sum_bi      
 end
 
@@ -55,106 +56,64 @@ end
 ###############################################################################
 # MvNormal(σ)
 
+
 logdensity(d::MvNormal{(:σ,), <:Tuple{<:Cholesky}}, y) = logdensity_mvnormal_σ(getfield(d.σ, :factors), y)
 
-@generated function logdensity(
-    d::MvNormal{(:σ,),Tuple{LowerTriangular{T2,S}}},
-    y::AbstractArray{T},
-) where {k,T,T2,S<:SizedMatrix{k,k}}
-    log2π = log(big(2) * π)
-    k = StaticInt(k)
-    if k > 16
-        quote
-            σ = d.σ
-            z = StrideArray{$T}(undef, ($k,))
+logdensity_mvnormal_σ(UL::Union{UpperTriangular, LowerTriangular}, y::AbstractVector) = logdensity_mvnormal_σ(KnownSize(UL), y)
 
-            # Solve `y = σz` for `z`. We need this only as a way to calculate `z ⋅ z`
-            z_dot_z = zero($T)
-            @inbounds @fastmath for i ∈ 1:$k
+
+@inline @generated function logdensity_mvnormal_σ(U::KnownSize{Tuple{k,k}, <:UpperTriangular}, y::AbstractVector{T}) where {k,T}
+    log2π = log(big(2) * π)
+
+    # Solve `y = σz` for `z`. We need this only as a way to calculate `z ⋅ z`
+
+    header = quote
+        U = U.value
+        Udata = U.data
+        z_dot_z = zero($T)
+    end
+
+    body = if k > 20
+        quote
+            z = StrideArray{$T}(undef, ($(StaticInt(k)),))
+
+            @inbounds @fastmath for j ∈ 1:$k
                 tmp = zero($T)
-                for j = 1:(i-1)
-                    tmp += σ[i, j] * z[j]
+                for i = 1:(j-1)
+                    tmp += Udata[i, j] * z[i]
                 end
-                zi = (y[i] - tmp) / σ[i, i]
-                z_dot_z += zi^2
-                z[i] = zi
+                zj = (y[j] - tmp) / Udata[j, j]
+                z_dot_z += zj^2
+                z[j] = zj
             end
-
-            $(T(-k / 2 * log2π)) - logdet_pos(σ) - z_dot_z / 2
         end
-    else # replace `for i in 1:K` with `Base.Cartesian.@nexprs $K i -> begin`
+    else
         quote
-            σ = d.σ
-            # Solve `y = σz` for `z`. We need this only as a way to calculate `z ⋅ z`
-            z_dot_z = zero($T)
-
-            @inbounds begin # `@fastmath` needs to be moved inside the `@nexprs`
-                Base.Cartesian.@nexprs $k i -> begin
-                    tmp_i = zero($T)
-                    Base.Cartesian.@nexprs i - 1 j -> begin
-                        @fastmath tmp_i += σ[i, j] * z_j
+            @inbounds begin # `@fastmath` needs to be moved inside the `@nexprs`          
+                Base.Cartesian.@nexprs $k j -> begin
+                    tmp = zero($T)
+                    z_j = zero($T)
+                    Base.Cartesian.@nexprs j - 1 i -> begin
+                        @fastmath tmp += Udata[i, j] * z_i
                     end
-                    @fastmath z_i = (y[i] - tmp_i) / σ[i, i]
-                    @fastmath z_dot_z += z_i^2
+                    @fastmath z_j = (y[j] - tmp) / Udata[j, j]
+                    @fastmath z_dot_z += z_j^2
                 end
             end
-
-            $(T(-k / 2 * log2π)) - logdet_pos(σ) - z_dot_z / 2
         end
     end
-end
 
-@generated function logdensity2(
-    d::MvNormal{(:σ,),Tuple{LowerTriangular{T2,S}}},
-    y::AbstractArray{T},
-) where {k,T,T2,S<:StaticMatrix{k,k}}
-    log2π = log(big(2) * π)
-    if k > 16
-        quote
-            # k = StaticInt($K)
-            σ = d.σ
-            P = parent(σ)
-            tmp = StrideArray{$T}(undef, (StaticInt{$k}(),))
-            @turbo for i ∈ eachindex(tmp)
-                tmp[i] = zero($T)
-            end
-            # Solve `y = σz` for `z`. We need this only as a way to calculate `z ⋅ z`
-            z_dot_z = zero($T)
-            @inbounds for i ∈ 1:$k
-                @fastmath z_i = (y[i] - tmp[i]) / σ[i, i]
-                @fastmath z_dot_z += z_i * z_i
-                @turbo check_empty = true for j ∈ i+1:$k
-                    tmp[j] += P[j, i] * z_i
-                end
-            end
-            $(T(-k / 2 * log2π)) - logdet_pos(σ) - z_dot_z / 2
-        end
-    else # replace `for i in 1:K` with `Base.Cartesian.@nexprs $K i -> begin`
-        quote
-            σ = d.σ
-            # Solve `y = σz` for `z`. We need this only as a way to calculate `z ⋅ z`
-            z_dot_z = zero($T)
-
-            @inbounds begin # `@fastmath` needs to be moved inside the `@nexprs`
-                Base.Cartesian.@nexprs $k i -> tmp_i = zero($T)
-                Base.Cartesian.@nexprs $k i -> begin
-                    # tmp_i = zero($T)
-                    # Base.Cartesian.@nexprs i - 1 j -> begin
-                    # @fastmath tmp_i += σ[i, j] * z_j
-                    # end
-                    @fastmath z_i = (y[i] - tmp_i) / σ[i, i]
-                    Base.Cartesian.@nexprs $k - i j -> begin
-                        @fastmath tmp_{j + i} += σ[j+i, i] * z_i
-                    end
-                    @fastmath z_dot_z += z_i^2
-                end
-            end
-
-            $(T(-k / 2 * log2π)) - logdet_pos(σ) - z_dot_z / 2
-        end
+    footer = quote
+        $(T(-k / 2 * log2π)) - logdet_pos(U) - z_dot_z / 2
     end
-end
 
+    return quote
+        $(header.args...)
+        $(body.args...)
+        $(footer.args...)
+    end
+
+end
 
 ###############################################################################
 # MvNormal(ω)
@@ -167,20 +126,46 @@ logdensity_mvnormal_ω(UL::Union{UpperTriangular, LowerTriangular}, y::AbstractV
 
 @inline @generated function logdensity_mvnormal_ω(U::KnownSize{Tuple{k,k}, <:UpperTriangular}, y::AbstractVector{T}) where {k,T}
     log2π = log(big(2) * π)
-    quote
+
+    header = quote
         U = U.value
         Udata = U.data
         # if z = Lᵗy, the logdensity depends on `det(U)` and `z ⋅ z`. So we find `z`
         z_dot_z = zero(T)
-        @fastmath for j ∈ 1:$k
-            zj = zero(T)
-            for i ∈ 1:j
-                @inbounds zj += Udata[i, j] * y[i]
-            end
-            z_dot_z += zj^2
-        end
+    end
 
+    body = if k > 20
+        quote
+            @fastmath for j ∈ 1:$k
+                zj = zero(T)
+                for i ∈ 1:j
+                    @inbounds zj += Udata[i, j] * y[i]
+                end
+                z_dot_z += zj^2
+            end
+        end
+    else
+        quote
+            @inbounds begin
+                Base.Cartesian.@nexprs $k j -> begin
+                    zj = zero(T)
+                    Base.Cartesian.@nexprs j i -> begin
+                        zj += Udata[i, j] * y[i]
+                    end
+                    z_dot_z += zj^2
+                end
+            end
+        end
+    end
+
+    footer = quote
         $(T(-k / 2 * log2π)) + logdet_pos(U) - z_dot_z / 2
+    end
+
+    return quote
+        $(header.args...)
+        $(body.args...)
+        $(footer.args...)
     end
 end
 
