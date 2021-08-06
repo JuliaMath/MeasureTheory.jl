@@ -56,12 +56,3 @@ isiterable(::Type{T}) where T = static_hasmethod(iterate, Tuple{T}) ? Iterable()
 
 functioninstance(::Type{F}) where {F<:Function} = F.instance
 
-using Static
-using ArrayInterface
-using StaticArrays
-
-struct KnownSize{S, T}
-    value::T
-end
-
-KnownSize(x::T) where {T} = KnownSize{Tuple{ArrayInterface.known_size(T)...}, T}(x)
