@@ -3,9 +3,9 @@ using MeasureTheory, Static, BenchmarkTools, LinearAlgebra, StaticArrays
 x = randn(200,200);
 Σ = x' * x;
 
+using PositiveFactorizations
 CΣ = cholesky(Positive, Σ)
 
-using PositiveFactorizations
 
 function benchmark()
     σtimes = Float64[]
@@ -24,6 +24,12 @@ end
 
 (σtimes, ωtimes) = benchmark()
 
+# using PDMats
+# C = cholesky(Σ[1:20,1:20])
+# Dists.MvNormal(PDMat(C))
+
+# @btime Dists.logpdf(Dists.MvNormalCanon(PDMat($C)), $y)
+# @btime Dists.logpdf(Dists.MvNormal(PDMat($C)), $y)
 
 plot(σtimes[1:end] .* 1e6; dpi=300, legend=150, label="σ parameterization")
 plot!(ωtimes[1:end] .* 1e6, label="ω parameterization")
