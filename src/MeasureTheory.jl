@@ -91,7 +91,7 @@ include("parameterized/bernoulli.jl")
 include("parameterized/poisson.jl")
 include("parameterized/binomial.jl")
 include("parameterized/multinomial.jl")
-include("parameterized/lkj-cholesky.jl")
+# include("parameterized/lkj-cholesky.jl")
 include("parameterized/negativebinomial.jl")
 
 include("transforms/corrcholesky.jl")
