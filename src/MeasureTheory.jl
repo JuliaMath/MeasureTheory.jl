@@ -94,7 +94,7 @@ include("parameterized/multinomial.jl")
 # include("parameterized/lkj-cholesky.jl")
 include("parameterized/negativebinomial.jl")
 
-include("transforms/corrcholesky.jl")
+# include("transforms/corrcholesky.jl")
 include("transforms/ordered.jl")
 
 include("density.jl")
