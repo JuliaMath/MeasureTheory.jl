@@ -254,9 +254,6 @@ end
         @test repro(Laplace, (:μ,:σ))
     end
 
-    @testset "LKJCholesky" begin
-        @test repro(LKJCholesky, (:k,:η,), (k=3,))
-    end
 
     @testset "Multinomial" begin
         @test_broken repro(Multinomial, (:n,:p,))
