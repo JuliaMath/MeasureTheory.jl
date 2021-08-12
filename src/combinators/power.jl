@@ -36,12 +36,13 @@ function Base.:^(μ::AbstractMeasure, dims::Integer...)
 end
 
 function Base.:^(μ::M, dims::NTuple{N,I}) where {M <: AbstractMeasure, N, I<:Integer}
-    C = constructorof(M)
-
-    pars = Fill(params(μ), dims...)
-    ProductMeasure{instance_type(C), typeof(pars)}(C, pars)
+    ProductMeasure(identity, Fill(μ, dims))
 end
 
+function Base.show(io::IO,::MIME"text/plain", d::PowerMeasure)
+    io = IOContext(io, :compact => true)
+    print(io, d.f(first(d.pars)), " ^ ", size(d.pars))
+end
 
 # sampletype(d::PowerMeasure{M,N}) where {M,N} = @inbounds Array{sampletype(first(marginals(d))), N}
 
