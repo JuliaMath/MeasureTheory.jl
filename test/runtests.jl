@@ -321,6 +321,12 @@ end
         @test rand!(d, x) isa Matrix
         @test_broken rand(d) isa Matrix{Float16}
     end
-
+    
+@testset "Show methods" begin
+    @testset "PowerMeasure" begin
+        @test repr(Lebesgue(ℝ) ^ 5) == "Lebesgue(ℝ) ^ 5"
+        @test repr(Lebesgue(ℝ) ^ (3, 2)) == "Lebesgue(ℝ) ^ (3, 2)"
+    end
+end
 
 end
