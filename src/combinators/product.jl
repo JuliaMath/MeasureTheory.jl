@@ -34,7 +34,7 @@ end
 
 testvalue(d::ProductMeasure) = map(testvalue, marginals(d))
 
-function Base.show(io::IO, ::MIME"text/plain", μ::ProductMeasure{NamedTuple{N,T}}) where {N,T}
+function Base.show(io::IO, μ::ProductMeasure{NamedTuple{N,T}}) where {N,T}
     io = IOContext(io, :compact => true)
     print(io, "Product(",μ.data, ")")
 end
@@ -63,7 +63,7 @@ export ⊗
 
 marginals(d::ProductMeasure{F,T}) where {F, T<:Tuple} = map(d.f, d.pars)
 
-function Base.show(io::IO, ::MIME"text/plain", μ::ProductMeasure{F,T}) where {F,T <: Tuple}
+function Base.show(io::IO, μ::ProductMeasure{F,T}) where {F,T <: Tuple}
     io = IOContext(io, :compact => true)
     print(io, join(string.(marginals(μ)), " ⊗ "))
 end
@@ -87,7 +87,7 @@ end
 #     as(Array, as(d1), size(marginals(d))...)
 # end
 
-function Base.show(io::IO, ::MIME"text/plain", d::ProductMeasure{F,A}) where {F,A<:AbstractArray}
+function Base.show(io::IO, d::ProductMeasure{F,A}) where {F,A<:AbstractArray}
     io = IOContext(io, :compact => true)
     print(io, "For(")
     print(io, d.f, ", ")
@@ -98,7 +98,7 @@ end
 ###############################################################################
 # I <: CartesianIndices
 
-function Base.show(io::IO, ::MIME"text/plain", d::ProductMeasure{F,I}) where {F, I<:CartesianIndices}
+function Base.show(io::IO, d::ProductMeasure{F,I}) where {F, I<:CartesianIndices}
     io = IOContext(io, :compact => true)
     print(io, "For(")
     print(io, d.f, ", ")
@@ -142,7 +142,6 @@ end
 end
 
 
-using Tullio
 
 
 

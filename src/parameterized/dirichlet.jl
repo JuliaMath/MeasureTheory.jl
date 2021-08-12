@@ -1,6 +1,5 @@
 # Dirichlet distribution
 
-import StatsFuns
 export Dirichlet
 
 @parameterized Dirichlet(α)

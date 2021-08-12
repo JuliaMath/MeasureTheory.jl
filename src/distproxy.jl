@@ -1,7 +1,7 @@
 export distproxy
 function distproxy end
 
-import MonteCarloMeasurements
+# import MonteCarloMeasurements
 
 PROXIES = Dict(
     :Distributions => [
@@ -10,9 +10,9 @@ PROXIES = Dict(
         :entropy
         :cdf
         ],
-    :MonteCarloMeasurements => [
-        :Particles
-    ]
+    # :MonteCarloMeasurements => [
+    #     :Particles
+    # ]
 )
 
 for m in keys(PROXIES)
@@ -25,7 +25,7 @@ for m in keys(PROXIES)
     end
 end
 
-MonteCarloMeasurements.Particles(N::Int, d::AbstractMeasure) = MonteCarloMeasurements.Particles(N, distproxy(d))
+# MonteCarloMeasurements.Particles(N::Int, d::AbstractMeasure) = MonteCarloMeasurements.Particles(N, distproxy(d))
 
 # using MonteCaroMeasurements
 

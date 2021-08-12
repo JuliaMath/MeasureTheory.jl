@@ -1,8 +1,6 @@
 
 # StudentT distribution
 
-using SpecialFunctions
-using StatsFuns
 export StudentT
 
 @parameterized StudentT(ν) ≪ (1/sqrtπ) * Lebesgue(ℝ)

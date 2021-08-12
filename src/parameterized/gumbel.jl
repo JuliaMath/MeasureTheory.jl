@@ -1,6 +1,5 @@
 # Gumbel distribution
 
-import StatsFuns
 export Gumbel
 
 @parameterized Gumbel(μ,σ) ≃ Lebesgue(ℝ)

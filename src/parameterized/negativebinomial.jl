@@ -2,8 +2,6 @@
 
 export NegativeBinomial
 import Base
-using StatsFuns
-using SpecialFunctions
 
 @parameterized NegativeBinomial(r,p) ≪ CountingMeasure(ℤ[0:∞])
 

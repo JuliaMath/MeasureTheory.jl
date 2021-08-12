@@ -1,8 +1,6 @@
 
 # InverseGamma distribution
 
-using SpecialFunctions
-using StatsFuns
 export InverseGamma
 
 @parameterized InverseGamma(shape) ≃ Lebesgue(ℝ₊)

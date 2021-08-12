@@ -1,6 +1,5 @@
 # Beta distribution
 
-import StatsFuns
 export Beta
 
 @parameterized Beta(α,β) ≃ Lebesgue(𝕀)
