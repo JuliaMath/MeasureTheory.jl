@@ -6,7 +6,7 @@ Base.iszero(::Exp) = false
 
 Base.log(x::Exp) = x.log
 
-function Base.show(io::IO, ::MIME"text/plain", x::Exp)
+function Base.show(io::IO, x::Exp)
     io = IOContext(io, :compact => true)
     print(io, "Exp(", log(x), ")")
 end

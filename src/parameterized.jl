@@ -11,12 +11,12 @@ function Base.propertynames(μ::ParameterizedMeasure{N}) where {N}
     return N
 end
 
-function Base.show(io::IO, ::MIME"text/plain", μ::ParameterizedMeasure{()}) 
+function Base.show(io::IO, μ::ParameterizedMeasure{()}) 
     io = IOContext(io, :compact => true)
     print(io, nameof(typeof(μ)), "()")
 end
 
-function Base.show(io::IO, ::MIME"text/plain", μ::ParameterizedMeasure{N}) where {N}
+function Base.show(io::IO, μ::ParameterizedMeasure{N}) where {N}
     io = IOContext(io, :compact => true)
     print(io, nameof(typeof(μ)))
     print(io, getfield(μ,:par))

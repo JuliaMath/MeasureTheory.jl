@@ -2,7 +2,7 @@ export CountingMeasure
 
 struct CountingMeasure{X} <: PrimitiveMeasure end
 
-function Base.show(io::IO, ::MIME"text/plain", μ::CountingMeasure{X}) where {X}
+function Base.show(io::IO, μ::CountingMeasure{X}) where {X}
     io = IOContext(io, :compact => true)
     print(io, "CountingMeasure(", X, ")")
 end

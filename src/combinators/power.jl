@@ -10,7 +10,7 @@ using FillArrays: Fill
 # """
 # PowerMeasure{M,N,D} = ProductMeasure{Fill{M,N,D}}
 
-# function Base.show(io::IO, ::MIME"text/plain", μ::PowerMeasure)
+# function Base.show(io::IO, μ::PowerMeasure)
 #     io = IOContext(io, :compact => true)
 #     print(io, μ.data.value, " ^ ", size(μ.data))
 # end
@@ -39,7 +39,7 @@ function Base.:^(μ::M, dims::NTuple{N,I}) where {M <: AbstractMeasure, N, I<:In
     ProductMeasure(identity, Fill(μ, dims))
 end
 
-function Base.show(io::IO,::MIME"text/plain", d::PowerMeasure)
+function Base.show(io::IO,d::PowerMeasure)
     io = IOContext(io, :compact => true)
     print(io, d.f(first(d.pars)), " ^ ", size(d.pars))
 end
