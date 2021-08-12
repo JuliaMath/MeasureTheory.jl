@@ -68,5 +68,10 @@ struct RealInterval{lo, hi} <: AbstractDomain end
 ###########################################################
 # Euclidean space
 
-struct EuclideanSpace{D} <: AbstractDomain end
-export EuclideanSpace
+struct EuclideanSpace{T} <: AbstractDomain
+    dimension::T
+end
+
+dimension(es::EuclideanSpace) = es.dimension
+
+export EuclideanSpace, dimension

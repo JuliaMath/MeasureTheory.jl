@@ -22,7 +22,7 @@ using DynamicIterators
 using KeywordCalls
 using ConstructionBase
 using Accessors
-using StaticArrays
+using Static
 
 const ∞ = InfiniteArrays.∞
 
