@@ -1,7 +1,6 @@
 
 # Laplace distribution
 
-import StatsFuns
 export Laplace
 
 @parameterized Laplace(μ,σ) ≪ (1/2) * Lebesgue(ℝ)

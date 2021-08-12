@@ -1,7 +1,5 @@
 # Multinomial distribution
 
-using SpecialFunctions
-import StatsFuns
 export Multinomial
 
 

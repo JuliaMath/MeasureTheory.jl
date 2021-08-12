@@ -1,7 +1,6 @@
 
 # Exponential distribution
 
-import StatsFuns
 export Exponential
 
 @parameterized Exponential(λ) ≃ Lebesgue(ℝ₊)
