@@ -1,7 +1,6 @@
 
 # Multivariate Normal distribution
 
-import StatsFuns
 using LinearAlgebra
 export MvNormal
 using Random

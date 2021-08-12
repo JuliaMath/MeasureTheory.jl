@@ -27,7 +27,7 @@ struct WeightedMeasure{R,M} <: AbstractWeightedMeasure
     base :: M
 end
 
-function Base.show(io::IO, ::MIME"text/plain", μ::WeightedMeasure)
+function Base.show(io::IO, μ::WeightedMeasure)
     io = IOContext(io, :compact => true)
     print(io, exp(μ.logweight), " * ", μ.base)
 end
@@ -73,7 +73,7 @@ struct ParamWeightedMeasure{F,N,T,R,B} <: AbstractWeightedMeasure
     end
 end
 
-function Base.show(io::IO, ::MIME"text/plain", d::ParamWeightedMeasure)
+function Base.show(io::IO, d::ParamWeightedMeasure)
     io = IOContext(io, :compact => true)
     print(io, "ParamWeighted(",d.f, ", ", d.par,", ", d.base, ")")
 end

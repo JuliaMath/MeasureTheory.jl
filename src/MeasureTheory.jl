@@ -22,6 +22,8 @@ using DynamicIterators
 using KeywordCalls
 using ConstructionBase
 using Accessors
+using StatsFuns
+using SpecialFunctions
 
 const ∞ = InfiniteArrays.∞
 

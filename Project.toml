@@ -1,7 +1,7 @@
 name = "MeasureTheory"
 uuid = "eadaa1a4-d27c-401d-8699-e962e1bbc33b"
 authors = ["Chad Scherrer <chad.scherrer@gmail.com> and contributors"]
-version = "0.10.0"
+version = "0.10.1"
 
 [deps]
 Accessors = "7d9f7c33-5ae7-4f3b-8dc6-eff91059b697"
