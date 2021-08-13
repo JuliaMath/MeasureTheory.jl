@@ -43,7 +43,7 @@ measures = [
     # InverseGamma(2)
     Laplace()
     LKJCholesky(3,2.0)
-    # Multinomial(n=10,p=[0.2,0.3,0.5])
+    Multinomial(n=10,p=[0.2,0.3,0.5])
     # MvNormal
     NegativeBinomial(5,0.2)
     Normal(2,3)
