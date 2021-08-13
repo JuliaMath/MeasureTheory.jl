@@ -37,7 +37,7 @@ measures = [
     Beta(2,3)
     Binomial(10,0.3)
     Cauchy()
-    # Dirichlet(ones(3))
+    Dirichlet(ones(3))
     Exponential()
     Gumbel()
     # InverseGamma(2)
