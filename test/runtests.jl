@@ -58,7 +58,7 @@ measures = [
 
 @testset "testvalue" begin
     for μ in measures
-        @eval @test logdensity($μ, testvalue($μ)) isa Float64
+        @test logdensity(μ, testvalue(μ)) isa Float64
     end
 end
 
