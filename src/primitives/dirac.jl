@@ -32,3 +32,5 @@ function logdensity(μ::Dirac{M}, ν::Dirac{M}, x) where {M}
         return -Inf
     end
 end
+
+testvalue(d::Dirac) = d.x

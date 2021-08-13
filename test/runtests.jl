@@ -51,7 +51,7 @@ measures = [
     StudentT(ν=2.1)    
     Uniform()
     # CountingMeasure(Float64)
-    # Dirac(π)
+    Dirac(π)
     Lebesgue(ℝ)
     # TrivialMeasure()
 ]
