@@ -21,6 +21,47 @@ function draw2(μ)
     return (x,y)
 end
 
+measures = [
+    # Chain(x -> Normal(μ=x), Normal(μ=0.0))
+    For(3) do j Normal(σ=j) end
+    For(2,3) do i,j Normal(i,j) end
+    # Likelihood
+    # Pointwise
+    Normal() ^ 3
+    Normal() ^ (2,3)
+    # SpikeMixture(Normal(), 2)
+    # Dirac(0.0) + Normal()
+    # transforms
+    3 * Normal()
+    Bernoulli(0.2)
+    Beta(2,3)
+    Binomial(10,0.3)
+    Cauchy()
+    # Dirichlet(ones(3))
+    Exponential()
+    Gumbel()
+    # InverseGamma(2)
+    Laplace()
+    LKJCholesky(3,2.0)
+    # Multinomial(n=10,p=[0.2,0.3,0.5])
+    # MvNormal
+    NegativeBinomial(5,0.2)
+    Normal(2,3)
+    Poisson(3.1)
+    StudentT(ν=2.1)    
+    Uniform()
+    # CountingMeasure(Float64)
+    # Dirac(π)
+    Lebesgue(ℝ)
+    # TrivialMeasure()
+]
+
+@testset "testvalue" begin
+    for μ in measures
+        @eval @test logdensity($μ, testvalue($μ)) isa Float64
+    end
+end
+
 @testset "Parameterized Measures" begin
     @testset "Binomial" begin
         D = Binomial{(:n, :p)}
