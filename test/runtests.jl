@@ -60,6 +60,12 @@ measures = [
     for μ in measures
         @test logdensity(μ, testvalue(μ)) isa Float64
     end
+    
+    @testset "testvalue(::Chain)" begin
+        mc =  Chain(x -> Normal(μ=x), Normal(μ=0.0))
+        r = testvalue(mc)
+        @test logdensity(mc, Iterators.take(r, 10)) isa Float64
+    end
 end
 
 @testset "Parameterized Measures" begin
