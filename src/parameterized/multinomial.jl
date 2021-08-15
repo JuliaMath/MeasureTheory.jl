@@ -36,3 +36,12 @@ function logmultinomial(k)
     end
     result
 end
+
+function testvalue(d::Multinomial{(:n,:p)})
+    n = d.n
+    l = length(d.p)
+    q,r = divrem(n, l)
+    x = fill(q, l)
+    x[1] += r
+    return x
+end
