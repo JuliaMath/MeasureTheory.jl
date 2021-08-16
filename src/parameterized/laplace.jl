@@ -18,10 +18,8 @@ Base.rand(rng::AbstractRNG, μ::Laplace{()}) = rand(rng, Dists.Laplace())
 TV.as(::Laplace) = asℝ
 
 @μσ_methods Laplace()
-@half Laplace()
-@kwstruct HalfLaplace()
+@half Laplace
 
-@σ_methods HalfLaplace()
 HalfLaplace(σ) = HalfLaplace(σ=σ)
 
 distproxy(::Laplace{()}) = Dists.Laplace()

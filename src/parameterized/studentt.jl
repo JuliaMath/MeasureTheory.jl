@@ -33,10 +33,9 @@ Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDi
 
 distproxy(d::StudentT{(:ν, :μ, :σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.TDist(d.ν))
 
-@half StudentT(ν)
+@half StudentT
 @kwstruct StudentT()
 
-@σ_methods HalfStudentT(ν)
 HalfStudentT(ν,σ) = HalfStudentT(ν=ν,σ=σ)
 
 asparams(::Type{<:StudentT}, ::Val{:ν}) = asℝ₊

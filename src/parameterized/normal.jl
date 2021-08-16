@@ -111,11 +111,6 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 # The `@half` macro takes a symmetric univariate measure and efficiently creates
 # a truncated version. 
 @half Normal()
-@kwstruct HalfNormal()
-
-
-# @μσ_methods, without the μ.
-@σ_methods HalfNormal()
 
 
 

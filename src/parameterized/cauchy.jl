@@ -19,11 +19,7 @@ Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng
 
 TV.as(::Cauchy) = asℝ
 
-@half Cauchy()
-
-@kwstruct HalfCauchy()
-
-@σ_methods HalfCauchy()
+@half Cauchy
 
 HalfCauchy(σ) = HalfCauchy(σ=σ)
 
