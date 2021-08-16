@@ -66,3 +66,5 @@ end
 
 
 asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(constructor(μ), nt)
+
+as(::Half) = asℝ₊

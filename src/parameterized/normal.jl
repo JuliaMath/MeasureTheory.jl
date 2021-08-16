@@ -63,6 +63,7 @@ asparams(::Type{<:Normal}, ::Val{:σ²}) = asℝ₊
 asparams(::Type{<:Normal}, ::Val{:τ}) = asℝ₊
 asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 
+
 # Rather than try to reimplement everything in Distributions, measures can have
 # a `distproxy` method. This just delegates some methods to the corresponding
 # Distributions.jl methods. For example,
