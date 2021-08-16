@@ -2,6 +2,7 @@ module MeasureTheory
 
 using Random
 
+using MeasureBase
 using ConcreteStructs
 using MLStyle
 using NestedTuples
@@ -49,7 +50,6 @@ function logdensity end
 
 include("const.jl")
 include("exp.jl")
-include("domains.jl")
 include("utils.jl")
 # include("traits.jl")
 include("absolutecontinuity.jl")
