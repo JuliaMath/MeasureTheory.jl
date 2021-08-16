@@ -1,5 +1,6 @@
 using TransformVariables
 
+export asparams
 
 """
 `asparams` build on `TransformVariables.as` to construct bijections to the
