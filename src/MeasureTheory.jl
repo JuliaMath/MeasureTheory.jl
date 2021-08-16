@@ -49,34 +49,16 @@ is understood to be `basemeasure(μ)`.
 function logdensity end
 
 include("const.jl")
-include("exp.jl")
-include("utils.jl")
 # include("traits.jl")
-include("absolutecontinuity.jl")
 include("parameterized.jl")
-include("macros.jl")
-include("resettablerng.jl")
-
-include("primitive.jl")
-include("primitives/counting.jl")
-include("primitives/lebesgue.jl")
-include("primitives/dirac.jl")
-include("primitives/trivial.jl")
+# include("resettablerng.jl")
 
 include("combinators/weighted.jl")
-include("combinators/superpose.jl")
 include("combinators/product.jl")
-include("combinators/for.jl")
-include("combinators/power.jl")
 include("combinators/transforms.jl")
-include("combinators/spikemixture.jl")
 include("combinators/chain.jl")
-include("kernel.jl")
-include("combinators/likelihood.jl")
-include("combinators/pointwise.jl")
 
 include("distributions.jl")
-include("rand.jl")
 
 include("parameterized/normal.jl")
 include("parameterized/studentt.jl")
@@ -98,9 +80,6 @@ include("parameterized/negativebinomial.jl")
 
 include("transforms/corrcholesky.jl")
 include("transforms/ordered.jl")
-
-include("density.jl")
-# include("pushforward.jl")
 
 include("distproxy.jl")
 end # module
