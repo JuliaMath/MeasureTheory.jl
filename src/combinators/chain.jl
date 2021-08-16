@@ -4,6 +4,8 @@ using DynamicIterators: dub
 using Base.Iterators: SizeUnknown, IsInfinite
 import DynamicIterators: dyniterate, evolve
 
+import MeasureBase: For
+
 export Chain
 
 @concrete terse struct Chain{K,M} <: AbstractMeasure

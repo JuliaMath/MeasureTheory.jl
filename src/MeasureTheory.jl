@@ -15,8 +15,19 @@ const Dists = Distributions
 
 export ≪
 export sampletype
+export For
 
 export AbstractMeasure
+export Dirac
+export Lebesgue
+export ℝ, ℝ₊, 𝕀
+export ⊙
+export SpikeMixture
+export CountingMeasure
+export TrivialMeasure
+export Likelihood
+export testvalue
+
 using InfiniteArrays
 using ConcreteStructs
 using DynamicIterators
@@ -26,14 +37,14 @@ using Accessors
 using StatsFuns
 using SpecialFunctions
 
+import MeasureBase: testvalue, logdensity, density
+using Tricks: static_hasmethod
 const ∞ = InfiniteArrays.∞
 
 export ∞
 export basemeasure
 
 export as
-
-abstract type AbstractMeasure end
 
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
