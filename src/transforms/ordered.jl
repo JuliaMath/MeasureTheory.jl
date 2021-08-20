@@ -36,7 +36,7 @@ const OrderedΔx = -8.0
 # See https://mc-stan.org/docs/2_27/reference-manual/ordered-vector.html
 function TV.transform_with(flag::TV.LogJacFlag, t::Ordered, x, index::T) where {T}
     transformation, len = (t.transformation, t.dim)
-    @assert dimension(transformation) == 1
+    @assert TV.dimension(transformation) == 1
     y = similar(x, len)
         
     (lo,hi) = bounds(transformation)

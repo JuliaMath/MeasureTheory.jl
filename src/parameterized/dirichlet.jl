@@ -8,7 +8,7 @@ TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
 
 function basemeasure(μ::Dirichlet{(:α,)})
     t = as(μ)
-    d = dimension(t)
+    d = TV.dimension(t)
     return Pushforward(t, Lebesgue(ℝ)^d, false)
 end
 

@@ -80,7 +80,7 @@ TV.as(d::LKJCholesky) = CorrCholesky(d.k)
 function basemeasure(μ::LKJCholesky{(:k,:η)})
     t = as(μ)
     f(par) = Dists.lkj_logc0(par.k, par.η)
-    base = Pushforward(t, Lebesgue(ℝ)^dimension(t), false)
+    base = Pushforward(t, Lebesgue(ℝ) ^ TV.dimension(t), false)
     ParamWeightedMeasure(f, (k= μ.k, η= μ.η), base)
 end
 
@@ -88,7 +88,7 @@ function basemeasure(μ::LKJCholesky{(:k,:logη)})
     t = as(μ)
     η = exp(μ.logη)
     f(par) = Dists.lkj_logc0(par.k, exp(par.logη))
-    base = Pushforward(t, Lebesgue(ℝ)^dimension(t), false)
+    base = Pushforward(t, Lebesgue(ℝ) ^ TV.dimension(t), false)
     ParamWeightedMeasure(f, (k= μ.k, logη= logη), base)
 end
 
@@ -104,7 +104,7 @@ end;
 
 function testvalue(d::LKJCholesky)
     t = CorrCholesky(d.k)
-    return transform(t, zeros(dimension(t)))
+    return transform(t, zeros(TV.dimension(t)))
 end
 
 function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{(:k, :logη)})
