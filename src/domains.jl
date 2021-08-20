@@ -72,6 +72,10 @@ struct EuclideanSpace{T} <: AbstractDomain
     dimension::T
 end
 
+function Base.show(io::IO, es::EuclideanSpace) 
+    print(io, "ℝ ^ ", dimension(es))
+end
+
 Base.:^(::RealNumbers, n::Integer) = EuclideanSpace(n) 
 
 dimension(es::EuclideanSpace) = es.dimension
