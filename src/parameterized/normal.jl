@@ -81,7 +81,7 @@ asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 #     julia> entropy(Normal(2,4))
 #     2.805232894324563
 #
-distproxy(d::Normal{(:μ, :σ)}) = Dists.Normal(d.μ, d.σ)
+distproxy(d::Normal{()}) = Dists.Normal()
 
 ###############################################################################
 # Some distributions have a "standard" version that takes no parameters
