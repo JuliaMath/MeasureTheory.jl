@@ -1,5 +1,8 @@
 # Gamma distribution
-
+# REFERENCES
+# https://mc-stan.org/docs/2_27/functions-reference/gamma-distribution.html
+# https://en.wikipedia.org/wiki/Gamma_distribution
+# https://juliastats.org/Distributions.jl/stable/univariate/#Distributions.Gamma
 export Gamma
 
 @parameterized Gamma(α,β) ≪ Lebesgue(ℝ₊)
