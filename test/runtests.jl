@@ -50,6 +50,7 @@ test_measures = [
     Dirac(π)
     Lebesgue(ℝ)
     Normal() ⊙ Cauchy()
+    Dirac(0.0) + Normal()
 ]
 
 testbroken_measures = [
@@ -59,17 +60,17 @@ testbroken_measures = [
     # MvNormal(I(3)) # Entirely broken for now
     CountingMeasure(Float64)
     Likelihood
-    Dirac(0.0) + Normal()
-
     TrivialMeasure()
 ]
 
 @testset "testvalue" begin
     for μ in test_measures
+        @info "testing $μ"
         @test test_measure(μ)
     end
 
     for μ in testbroken_measures
+        @info "testing $μ"
         @test_broken test_measure(μ)
     end
     
