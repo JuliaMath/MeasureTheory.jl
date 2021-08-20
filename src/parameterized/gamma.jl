@@ -19,7 +19,7 @@ function logdensity(d::Gamma{(:α, :β)}, x)
     return d.α * log(d.β) + (d.α - 1) * log(x) - d.β * x - loggamma(d.α)
 end
 
-# Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Gamma(μ.α, 1/μ.β))
+Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Gamma(μ.α, 1/μ.β))
 
 distproxy(d::Gamma{(:α, :β)}) = Dists.Gamma(d.α, 1/d.β)
 
