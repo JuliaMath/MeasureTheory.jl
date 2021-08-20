@@ -5,7 +5,7 @@ struct ResettableRNG{R,S} <: Random.AbstractRNG
     seed::S
 end
 
-function Base.show(io::IO, ::MIME"text/plain", r::ResettableRNG)
+function Base.show(io::IO, r::ResettableRNG)
     io = IOContext(io, :compact => true)
     print(io, "ResettableRNG(::", constructor(r.rng), ", ", r.seed, ")")
 end

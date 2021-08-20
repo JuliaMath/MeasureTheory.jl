@@ -7,7 +7,7 @@ struct SpikeMixture{T,S} <: AbstractMeasure
 end
 SpikeMixture(m, w) = SpikeMixture(m, w, one(w))
 
-function Base.show(io::IO, ::MIME"text/plain", μ::SpikeMixture)
+function Base.show(io::IO, μ::SpikeMixture)
     io = IOContext(io, :compact => true)
     print(io, "(", μ.s*μ.w, "*", string(μ.m), " + ", μ.s*(1-μ.w), "Dirac(0))")
 end

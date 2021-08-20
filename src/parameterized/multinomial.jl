@@ -1,7 +1,5 @@
 # Multinomial distribution
 
-using SpecialFunctions
-import StatsFuns
 export Multinomial
 
 
@@ -37,4 +35,13 @@ function logmultinomial(k)
         result += Δresult
     end
     result
+end
+
+function testvalue(d::Multinomial{(:n,:p)})
+    n = d.n
+    l = length(d.p)
+    q,r = divrem(n, l)
+    x = fill(q, l)
+    x[1] += r
+    return x
 end

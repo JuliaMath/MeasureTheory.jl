@@ -1,6 +1,5 @@
 # Dirichlet distribution
 
-import StatsFuns
 export Dirichlet
 
 @parameterized Dirichlet(α)
@@ -27,3 +26,8 @@ end
 Base.rand(rng::AbstractRNG, T::Type, μ::Dirichlet) = rand(rng, Dists.Dirichlet(μ.α))
 
 distproxy(d::Dirichlet{(:α,)}) = Dists.Dirichlet(d.α)
+
+function testvalue(d::Dirichlet{(:α,)})
+    n = length(d.α)
+    Fill(1/n, n)
+end

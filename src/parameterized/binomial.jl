@@ -2,7 +2,6 @@
 
 export Binomial
 import Base
-using StatsFuns
 using SpecialFunctions
 
 probit(p) = sqrt2 * erfinv(2p - 1)

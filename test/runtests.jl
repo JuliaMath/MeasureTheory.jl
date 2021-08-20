@@ -21,6 +21,65 @@ function draw2(μ)
     return (x,y)
 end
 
+function test_measure(μ)
+    logdensity(μ, testvalue(μ)) isa AbstractFloat
+end
+
+test_measures = [
+    # Chain(x -> Normal(μ=x), Normal(μ=0.0))
+    For(3) do j Normal(σ=j) end
+    For(2,3) do i,j Normal(i,j) end
+    Normal() ^ 3
+    Normal() ^ (2,3)
+    3 * Normal()
+    Bernoulli(0.2)
+    Beta(2,3)
+    Binomial(10,0.3)
+    Cauchy()
+    Dirichlet(ones(3))
+    Exponential()
+    Gumbel()
+    Laplace()
+    LKJCholesky(3,2.0)
+    Multinomial(n=10,p=[0.2,0.3,0.5])
+    NegativeBinomial(5,0.2)
+    Normal(2,3)
+    Poisson(3.1)
+    StudentT(ν=2.1)    
+    Uniform()
+    Dirac(π)
+    Lebesgue(ℝ)
+    Normal() ⊙ Cauchy()
+]
+
+testbroken_measures = [
+    Pushforward(as𝕀, Normal())
+    SpikeMixture(Normal(), 2)
+    # InverseGamma(2) # Not defined yet
+    # MvNormal(I(3)) # Entirely broken for now
+    CountingMeasure(Float64)
+    Likelihood
+    Dirac(0.0) + Normal()
+
+    TrivialMeasure()
+]
+
+@testset "testvalue" begin
+    for μ in test_measures
+        @test test_measure(μ)
+    end
+
+    for μ in testbroken_measures
+        @test_broken test_measure(μ)
+    end
+    
+    @testset "testvalue(::Chain)" begin
+        mc =  Chain(x -> Normal(μ=x), Normal(μ=0.0))
+        r = testvalue(mc)
+        @test logdensity(mc, Iterators.take(r, 10)) isa AbstractFloat
+    end
+end
+
 @testset "Parameterized Measures" begin
     @testset "Binomial" begin
         D = Binomial{(:n, :p)}
@@ -321,6 +380,30 @@ end
         @test rand!(d, x) isa Matrix
         @test_broken rand(d) isa Matrix{Float16}
     end
+end
 
+@testset "Show methods" begin
+    @testset "PowerMeasure" begin
+        @test repr(Lebesgue(ℝ) ^ 5) == "Lebesgue(ℝ) ^ 5"
+        @test repr(Lebesgue(ℝ) ^ (3, 2)) == "Lebesgue(ℝ) ^ (3, 2)"
+    end
+end
 
+@testset "Density measures and Radon-Nikodym" begin
+    x = randn()
+    let d = ∫(𝒹(Cauchy(), Normal()), Normal())
+        @test logdensity(d, x) ≈ logdensity(Cauchy(), x) 
+    end
+
+    let f = 𝒹(∫(x -> x^2, Normal()), Normal())
+        @test f(x) ≈ x^2
+    end
+
+    let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
+        @test logdensity(d, x) ≈ logdensity(Cauchy(), x) 
+    end
+
+    let f = log𝒹(∫exp(x -> x^2, Normal()), Normal())
+        @test f(x) ≈ x^2
+    end
 end
