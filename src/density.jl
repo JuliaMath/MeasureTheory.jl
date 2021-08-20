@@ -54,7 +54,7 @@ struct DensityMeasure{F,B,L} <: AbstractMeasure
     log  :: L
 end
 
-function Base.show(io::IO, ::MIME"text/plain", μ::DensityMeasure{F,B,Val{L}}) where {F,B,L}
+function Base.show(io::IO, μ::DensityMeasure{F,B,Val{L}}) where {F,B,L}
     io = IOContext(io, :compact => true)
     print(io, "DensityMeasure ")
     print(io, "∫(", μ.f)
@@ -71,19 +71,29 @@ basemeasure(μ::DensityMeasure) = μ.base
 
 logdensity(μ::DensityMeasure{F,B,Val{true}}, x) where {F,B} = μ.f(x)
 
+density(μ::DensityMeasure{F,B,Val{false}}, x) where {F,B} = μ.f(x)
+
+logdensity(μ::DensityMeasure{F,B,Val{false}}, x) where {F,B} = log(density(μ,x))
+
 export ∫
 
 """
-    ∫(f, base::AbstractMeasure; log=false)
+    ∫(f, base::AbstractMeasure)
 
-Define a new measure in terms of a density `f` over some measure `base`. If
-`log=true` (`false` is the default), `f` is considered as a log-density.
+Define a new measure in terms of a density `f` over some measure `base`.
 """
-∫(f, base::AbstractMeasure; log=false) = DensityMeasure(f, base, Val(log))
+∫(f, base::AbstractMeasure) = DensityMeasure(f, base, Val(false))
 
-∫(μ::AbstractMeasure, base::AbstractMeasure; log=false) = ∫(𝒹(μ, base), base; log=log)
+∫(μ::AbstractMeasure, base::AbstractMeasure) = ∫exp(log𝒹(μ, base), base)
+
 
 export ∫exp
+
+"""
+    ∫exp(f, base::AbstractMeasure; log=false)
+
+Define a new measure in terms of a density `f` over some measure `base`.
+"""
 ∫exp(f,μ) = DensityMeasure(f,μ,Val{true}())
 
 # TODO: `density` and `logdensity` functions for `DensityMeasure`

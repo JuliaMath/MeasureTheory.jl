@@ -102,6 +102,11 @@ function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{(:k, :η,)})
     return cholesky(Positive, rand(rng, Dists.LKJ(d.k, d.η)))
 end;
 
+function testvalue(d::LKJCholesky)
+    t = CorrCholesky(d.k)
+    return transform(t, zeros(dimension(t)))
+end
+
 function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{(:k, :logη)})
     return cholesky(Positive, rand(rng, Dists.LKJ(d.k, exp(d.logη))))
 end;

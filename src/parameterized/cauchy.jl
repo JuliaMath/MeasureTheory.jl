@@ -1,7 +1,6 @@
 
 # Cauchy distribution
 
-import StatsFuns
 export Cauchy
 
 @parameterized Cauchy(μ,σ) ≃ (1/π) * Lebesgue(ℝ)

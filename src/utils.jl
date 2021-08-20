@@ -23,6 +23,8 @@ end
 
 constructor(::T) where {T} = constructor(T)
 
+constructor(::Type{T}) where {T} = constructorof(T)
+
 macro trysupport(ex)
     ex = esc(ex)
     quote
