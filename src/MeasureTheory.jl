@@ -23,6 +23,7 @@ using KeywordCalls
 using ConstructionBase
 using Accessors
 using StatsFuns
+using Static
 using SpecialFunctions
 
 const ∞ = InfiniteArrays.∞
