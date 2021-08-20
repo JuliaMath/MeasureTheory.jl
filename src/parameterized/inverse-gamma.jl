@@ -18,4 +18,4 @@ Base.rand(rng::AbstractRNG, T::Type, μ::InverseGamma{(:shape,)}) = rand(rng, Di
 
 TV.as(::InverseGamma) = asℝ₊
 
-@μσ_methods InverseGamma(shape)
+# @μσ_methods InverseGamma(shape)

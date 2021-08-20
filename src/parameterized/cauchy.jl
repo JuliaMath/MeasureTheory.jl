@@ -7,7 +7,13 @@ export Cauchy
 
 @kwstruct Cauchy()
 
-@μσ_methods Cauchy()
+Cauchy(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Cauchy())
+Cauchy(nt::NamedTuple{(:μ,:ω)}) = Affine(nt, Cauchy())
+Cauchy(nt::NamedTuple{(:σ,)}) = Affine(nt, Cauchy())
+Cauchy(nt::NamedTuple{(:ω,)}) = Affine(nt, Cauchy())
+Cauchy(nt::NamedTuple{(:μ,)}) = Affine(nt, Cauchy())
+
+@affinepars Cauchy
 
 function logdensity(d::Cauchy{()} , x) 
     return -log(1 + x^2)

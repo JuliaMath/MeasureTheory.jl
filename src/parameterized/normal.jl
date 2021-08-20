@@ -23,7 +23,17 @@ export Normal, HalfNormal
 #
 #    Normal(μ, σ) = Normal((μ=μ, σ=σ))
 #
-@parameterized Normal(μ,σ) ≪ (1/sqrt2π) * Lebesgue(ℝ)
+@parameterized Normal() ≪ (1/sqrt2π) * Lebesgue(ℝ)
+
+Normal(μ,σ) = Affine((;μ,σ), Normal())
+
+Normal(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Normal())
+Normal(nt::NamedTuple{(:μ,:ω)}) = Affine(nt, Normal())
+Normal(nt::NamedTuple{(:σ,)}) = Affine(nt, Normal())
+Normal(nt::NamedTuple{(:ω,)}) = Affine(nt, Normal())
+Normal(nt::NamedTuple{(:μ,)}) = Affine(nt, Normal())
+
+@affinepars Normal
 
 @kwstruct Normal(μ,Σ)
 @kwstruct Normal(μ,Σ⁻¹)
@@ -105,7 +115,7 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 #     julia> rand(Normal(μ,σ))
 #     μ + 1.2517620265570832σ
 #
-@μσ_methods Normal()
+# @μσ_methods Normal()
 
 ###############################################################################
 # The `@half` macro takes a symmetric univariate measure and efficiently creates

@@ -2,11 +2,14 @@
 
 export Gumbel
 
-@parameterized Gumbel(μ,σ) ≃ Lebesgue(ℝ)
+@parameterized Gumbel() ≃ Lebesgue(ℝ)
 
 @kwstruct Gumbel()
 
-@μσ_methods Gumbel()
+Gumbel(nt::NamedTuple{(:σ,)}) = Affine(nt, Gumbel())
+
+@affinepars Gumbel
+
 
 function logdensity(d::Gumbel{()} , x)
     return -exp(-x) - x

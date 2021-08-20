@@ -7,7 +7,13 @@ export StudentT
 
 @kwstruct StudentT(ν)
 
-@μσ_methods StudentT(ν)
+StudentT(nt::NamedTuple{(:ν,:μ,:σ)}) = Affine(nt, StudentT())
+StudentT(nt::NamedTuple{(:ν,:μ,:ω)}) = Affine(nt, StudentT())
+StudentT(nt::NamedTuple{(:ν,:σ,)}) = Affine(nt, StudentT())
+StudentT(nt::NamedTuple{(:ν,:ω,)}) = Affine(nt, StudentT())
+StudentT(nt::NamedTuple{(:ν,:μ,)}) = Affine(nt, StudentT())
+
+@affinepars StudentT
 
 StudentT(ν, μ, σ) = StudentT((ν=ν, μ=μ, σ=σ))
 
