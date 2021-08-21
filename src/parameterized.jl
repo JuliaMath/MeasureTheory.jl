@@ -48,13 +48,13 @@ function asparams end
 asparams(μ::ParameterizedMeasure, v::Val) = asparams(constructor(μ), v)
 asparams(μ, s::Symbol) = asparams(μ, Val(s))
 
-asparams(M::Type{PM}) where {PM<:ParameterizedMeasure} = asparams(M, NamedTuple())
+asparams(M::Type{A}) where {A<:AbstractMeasure} = asparams(M, NamedTuple())
 
-function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: ParameterizedMeasure{N1}} 
+function asparams(::Type{M}, constraints::NamedTuple{N}) where {N, M<: ParameterizedMeasure} 
     # @show M
     thekeys = params(M, constraints)
     t1 = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
-    t2 = NamedTuple{N2}(map(asConst, values(constraints)))
+    t2 = NamedTuple{N}(map(asConst, values(constraints)))
     C = constructorof(M)
     # @show C
     # @show constraints
@@ -64,7 +64,32 @@ function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: Par
     return TV.as(ordered_transforms)
 end
 
+# TODO: Make this work for Affine measures
+# function asparams(::Type{M}, constraints::NamedTuple{N}) where {N, M<: Affine} 
+#     ...
+# end
+
+export params
+
+params(μ::ParameterizedMeasure) = getfield(μ, :par)
+
+function params(::Type{M}, constraints::NamedTuple{N2}=NamedTuple()) where {N1, N2, M<: ParameterizedMeasure{N1}} 
+thekeys = tuple((k for k in N1 if k ∉ N2)...)
+end
+
+params(μ) = ()
+
+params(::Type{PM}) where {N, PM<:ParameterizedMeasure{N}} = N
+
+params(::Type{PM}, ::NamedTuple{C}) where {N, C, PM<:ParameterizedMeasure{N}} = tuple(setdiff(N,C)...)
 
 asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(constructor(μ), nt)
 
 as(::Half) = asℝ₊
+
+asparams(::Affine, ::Val{:μ}) = asℝ
+asparams(::Affine, ::Val{:σ}) = asℝ₊
+asparams(::Type{A}, ::Val{:μ}) where {A<:Affine} = asℝ
+asparams(::Type{A}, ::Val{:σ}) where {A<:Affine} = asℝ₊
+
+params(::Type{A}, nt::NamedTuple{C}) where {A<:Affine{N,M}} where {N,M,C} = tuple(setdiff(union(N, params(M)),C)...)

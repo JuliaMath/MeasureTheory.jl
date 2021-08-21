@@ -37,14 +37,16 @@ using Accessors
 using StatsFuns
 using SpecialFunctions
 
-import MeasureBase: testvalue, logdensity, density
+import MeasureBase: testvalue, logdensity, density, basemeasure, kernel
 using Tricks: static_hasmethod
 const ∞ = InfiniteArrays.∞
 
 export ∞
-export basemeasure
+export testvalue, logdensity, density, basemeasure, kernel
 
 export as
+export Affine
+export AffineTransform
 
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 

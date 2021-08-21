@@ -25,6 +25,8 @@ export Normal, HalfNormal
 #
 @parameterized Normal() ≪ (1/sqrt2π) * Lebesgue(ℝ)
 
+params(::Type{N}) where {N<:Normal} = ()
+
 Normal(μ,σ) = Affine((;μ,σ), Normal())
 
 Normal(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Normal())
