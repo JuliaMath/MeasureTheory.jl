@@ -69,19 +69,6 @@ end
 #     ...
 # end
 
-export params
-
-params(μ::ParameterizedMeasure) = getfield(μ, :par)
-
-function params(::Type{M}, constraints::NamedTuple{N2}=NamedTuple()) where {N1, N2, M<: ParameterizedMeasure{N1}} 
-thekeys = tuple((k for k in N1 if k ∉ N2)...)
-end
-
-params(μ) = ()
-
-params(::Type{PM}) where {N, PM<:ParameterizedMeasure{N}} = N
-
-params(::Type{PM}, ::NamedTuple{C}) where {N, C, PM<:ParameterizedMeasure{N}} = tuple(setdiff(N,C)...)
 
 asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(constructor(μ), nt)
 
@@ -91,5 +78,3 @@ asparams(::Affine, ::Val{:μ}) = asℝ
 asparams(::Affine, ::Val{:σ}) = asℝ₊
 asparams(::Type{A}, ::Val{:μ}) where {A<:Affine} = asℝ
 asparams(::Type{A}, ::Val{:σ}) where {A<:Affine} = asℝ₊
-
-params(::Type{A}, nt::NamedTuple{C}) where {A<:Affine{N,M}} where {N,M,C} = tuple(setdiff(union(N, params(M)),C)...)
