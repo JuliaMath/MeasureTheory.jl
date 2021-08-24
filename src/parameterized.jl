@@ -52,7 +52,7 @@ asparams(M::Type{A}) where {A<:AbstractMeasure} = asparams(M, NamedTuple())
 
 function asparams(::Type{M}, constraints::NamedTuple{N}) where {N, M<: ParameterizedMeasure} 
     # @show M
-    thekeys = params(M, constraints)
+    thekeys = paramnames(M, constraints)
     t1 = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
     t2 = NamedTuple{N}(map(asConst, values(constraints)))
     C = constructorof(M)

@@ -38,11 +38,14 @@ using StatsFuns
 using SpecialFunctions
 
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params
+
+using Reexport
+@reexport using MeasureBase
+
 using Tricks: static_hasmethod
 const ∞ = InfiniteArrays.∞
 
 export ∞
-export testvalue, logdensity, density, basemeasure, kernel, params
 
 export as
 export Affine
