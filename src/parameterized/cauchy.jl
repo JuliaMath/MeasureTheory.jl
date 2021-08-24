@@ -19,6 +19,10 @@ function logdensity(d::Cauchy{()} , x)
     return -log(1 + x^2)
 end
 
+function density(d::Cauchy{()} , x) 
+    return inv(1 + x^2)
+end
+
 Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng, T)
 
 ≪(::Cauchy, ::Lebesgue{X}) where X <: Real = true
