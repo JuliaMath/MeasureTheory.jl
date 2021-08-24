@@ -8,6 +8,7 @@ using TransformVariables: transform, as𝕀, inverse
 
 using MeasureTheory
 using MeasureTheory: Const
+import Distributions
 
 using Aqua
 Aqua.test_all(MeasureTheory; ambiguities=false, unbound_args=false)
@@ -45,7 +46,7 @@ test_measures = [
     NegativeBinomial(5,0.2)
     Normal(2,3)
     Poisson(3.1)
-    StudentT(ν=2.1)    
+    StudentT(ν=2.1)
     Uniform()
     Dirac(π)
     Lebesgue(ℝ)
@@ -72,7 +73,7 @@ testbroken_measures = [
     for μ in testbroken_measures
         @test_broken test_measure(μ)
     end
-    
+
     @testset "testvalue(::Chain)" begin
         mc =  Chain(x -> Normal(μ=x), Normal(μ=0.0))
         r = testvalue(mc)
@@ -142,6 +143,25 @@ end
         @test ℓ ≈ logdensity(Normal(;μ,σ²), y)
         @test ℓ ≈ logdensity(Normal(;μ,τ), y)
         @test ℓ ≈ logdensity(Normal(;μ,logσ), y)
+
+        m = Normal(μ=0, τ=1)
+        @inferred distproxy(m)
+        @inferred rand(m)
+        @inferred std(m)
+        function isapprox_normals(m1, m2)
+            d1 = @inferred(distproxy(m1))::Distributions.Normal
+            d2 = @inferred(distproxy(m2))::Distributions.Normal
+            (std(d1) ≈ std(d2)) && (mean(d1) ≈ mean(d2))
+        end
+        mu = randn()
+        logσ = randn()
+        σ = exp(logσ)
+        σ² = σ^2
+        τ = 1/σ^2
+        @test isapprox_normals(Normal(;μ,σ), Normal(;μ,τ))
+        @test isapprox_normals(Normal(;μ,σ), Normal(;μ,logσ))
+        @test isapprox_normals(Normal(;μ,σ), Normal(;μ,σ²))
+        @test distproxy(Normal(;μ,σ)) === Distributions.Normal(μ, σ)
     end
 
     @testset "LKJCholesky" begin
@@ -197,7 +217,7 @@ end
 end
 
 import MeasureTheory.:⋅
-function ⋅(μ::Normal, kernel) 
+function ⋅(μ::Normal, kernel)
     m = kernel(μ)
     Normal(μ = m.μ.μ, σ = sqrt(m.μ.σ^2 + m.σ^2))
 end
@@ -211,11 +231,11 @@ end
 @testset "DynamicFor" begin
     mc = Chain(Normal(μ=0.0)) do x Normal(μ=x) end
     r = rand(mc)
-   
+
     # Check that `r` is now deterministic
     @test logdensity(mc, take(r, 100)) == logdensity(mc, take(r, 100))
-    
-    d2 = For(r) do x Normal(μ=x) end  
+
+    d2 = For(r) do x Normal(μ=x) end
 
     @test_broken let r2 = rand(d2)
         logdensity(d2, take(r2, 100)) == logdensity(d2, take(r2, 100))
@@ -233,13 +253,13 @@ end
 
     μ = Normal(μ=ξ0, σ=sqrt(P0))
     kernel = MeasureTheory.kernel(Normal; μ=AffineMap(Φ, β), σ=Const(Q))
-    
-    @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
-    
-    chain = Chain(kernel, μ)
-    
 
-    dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing) 
+    @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
+
+    chain = Chain(kernel, μ)
+
+
+    dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing)
     tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
     tr2 = trace(TimeLift(rand(Random.GLOBAL_RNG, chain)), nothing, u -> u[1] > 15)
     collect(Iterators.take(chain, 10))
@@ -392,7 +412,7 @@ end
 @testset "Density measures and Radon-Nikodym" begin
     x = randn()
     let d = ∫(𝒹(Cauchy(), Normal()), Normal())
-        @test logdensity(d, x) ≈ logdensity(Cauchy(), x) 
+        @test logdensity(d, x) ≈ logdensity(Cauchy(), x)
     end
 
     let f = 𝒹(∫(x -> x^2, Normal()), Normal())
@@ -400,7 +420,7 @@ end
     end
 
     let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
-        @test logdensity(d, x) ≈ logdensity(Cauchy(), x) 
+        @test logdensity(d, x) ≈ logdensity(Cauchy(), x)
     end
 
     let f = log𝒹(∫exp(x -> x^2, Normal()), Normal())

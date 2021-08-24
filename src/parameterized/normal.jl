@@ -2,14 +2,14 @@ using StatsFuns
 export Normal, HalfNormal
 
 # The `@parameterized` macro below does three things:
-# 1. Defines the `Normal` struct 
+# 1. Defines the `Normal` struct
 #
 #    struct Normal{N, T} <: (ParameterizedMeasure){N}
 #        par::MeasureTheory.NamedTuple{N, T}
 #    end
 #
 #    (Note that this is the same form required by the `@kwstruct` in the
-#    KeywordCalls package.)  
+#    KeywordCalls package.)
 #
 # 2. Sets the base measure
 #
@@ -18,7 +18,7 @@ export Normal, HalfNormal
 #    This just means that (log-)densities will be defined relative to this.
 #    Including the `(1 / sqrt2π)` in the base measure allows us to avoid
 #    carrying around the normalization constant.
-#   
+#
 # 3. Sets up a method for a call with two unnamed arguments,
 #
 #    Normal(μ, σ) = Normal((μ=μ, σ=σ))
@@ -52,7 +52,7 @@ TV.as(::Normal) = asℝ
 #
 # julia> transform(asparams(Normal(μ=-3,logσ=2)))(randn(2))
 # (μ = 0.3995295982002209, logσ = -1.3902312393777492)
-# 
+#
 # Or using types:
 # julia> transform(asparams(Normal{(:μ,:σ²)}))(randn(2))
 # (μ = -0.4548087051528626, σ² = 11.920775478312793)
@@ -70,7 +70,60 @@ asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 #     julia> entropy(Normal(2,4))
 #     2.805232894324563
 #
-distproxy(d::Normal{(:μ, :σ)}) = Dists.Normal(d.μ, d.σ)
+distproxy(d::Normal) = Dists.Normal(get_mean(d), get_std(d))
+
+get_mean(d::Normal) = get_mean(getfield(d, :par))
+function get_mean(nt::NamedTuple)
+    μ = get(nt, :μ, nothing)
+    if μ !== nothing
+        return μ
+    else
+        return 0
+    end
+end
+
+get_std(d::Normal) = get_std(getfield(d, :par))
+function get_std(nt::NamedTuple)
+    σ = get(nt, :σ, nothing)
+    logσ = get(nt, :logσ, nothing)
+    σ² = get(nt, :σ², nothing)
+    τ = get(nt, :τ, nothing)
+    if σ !== nothing
+        return σ
+    elseif logσ !== nothing
+        return exp(logσ)
+    elseif σ² !== nothing
+        return √(σ²)
+    elseif τ !== nothing
+        return √(inv(τ))
+    else
+        return 1
+    end
+end
+
+###############################################################################
+@kwstruct Normal(μ,τ)
+
+function logdensity(d::Normal{(:τ)}, x)
+    τ = d.τ
+    0.5 * (log(τ) - τ * x^2)
+end
+
+function logdensity(d::Normal{(:μ,:τ)}, x)
+    μ = d.μ
+    τ = d.τ
+    0.5 * (log(τ) - τ * (x - μ)^2)
+end
+
+
+###############################################################################
+@kwstruct Normal(μ, logσ)
+
+function logdensity(d::Normal{(:μ,:logσ)}, x)
+    μ = d.μ
+    logσ = d.logσ
+    -logσ - 0.5(exp(-2logσ)*((x - μ)^2))
+end
 
 ###############################################################################
 # Some distributions have a "standard" version that takes no parameters
@@ -78,7 +131,7 @@ distproxy(d::Normal{(:μ, :σ)}) = Dists.Normal(d.μ, d.σ)
 
 # Instead of setting default values, the `@kwstruct` call above makes a
 # parameter-free instance available. The log-density for this is very efficient.
-logdensity(d::Normal{()} , x) = - x^2 / 2 
+logdensity(d::Normal{()} , x) = - x^2 / 2
 
 Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 
@@ -92,15 +145,15 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 #
 # This defines methods for `logdensity` and `Base.rand`. The latter works out
 # especially nicely, because it lets us do things like
-#    
+#
 #     julia> using Symbolics
 #     [ Info: Precompiling Symbolics [0c5d862f-8b57-4792-8d23-62f2024744c7]
-#    
+#
 #     julia> @variables μ σ
 #     2-element Vector{Num}:
 #      μ
 #      σ
-#    
+#
 #     julia> rand(Normal(μ,σ))
 #     μ + 1.2517620265570832σ
 #
@@ -108,7 +161,7 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 
 ###############################################################################
 # The `@half` macro takes a symmetric univariate measure and efficiently creates
-# a truncated version. 
+# a truncated version.
 @half Normal()
 @kwstruct HalfNormal()
 
