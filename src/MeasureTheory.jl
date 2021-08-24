@@ -37,7 +37,7 @@ using Accessors
 using StatsFuns
 using SpecialFunctions
 
-import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params
+import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
 
 using Reexport
 @reexport using MeasureBase
