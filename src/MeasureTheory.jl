@@ -2,6 +2,7 @@ module MeasureTheory
 
 using Random
 
+using MeasureBase
 using ConcreteStructs
 using MLStyle
 using NestedTuples
@@ -14,8 +15,19 @@ const Dists = Distributions
 
 export ≪
 export sampletype
+export For
 
 export AbstractMeasure
+export Dirac
+export Lebesgue
+export ℝ, ℝ₊, 𝕀
+export ⊙
+export SpikeMixture
+export CountingMeasure
+export TrivialMeasure
+export Likelihood
+export testvalue
+
 using InfiniteArrays
 using ConcreteStructs
 using DynamicIterators
@@ -25,14 +37,19 @@ using Accessors
 using StatsFuns
 using SpecialFunctions
 
+import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
+
+using Reexport
+@reexport using MeasureBase
+
+using Tricks: static_hasmethod
 const ∞ = InfiniteArrays.∞
 
 export ∞
-export basemeasure
 
 export as
-
-abstract type AbstractMeasure end
+export Affine
+export AffineTransform
 
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
@@ -48,35 +65,16 @@ is understood to be `basemeasure(μ)`.
 function logdensity end
 
 include("const.jl")
-include("exp.jl")
-include("domains.jl")
-include("utils.jl")
 # include("traits.jl")
-include("absolutecontinuity.jl")
 include("parameterized.jl")
-include("macros.jl")
-include("resettablerng.jl")
-
-include("primitive.jl")
-include("primitives/counting.jl")
-include("primitives/lebesgue.jl")
-include("primitives/dirac.jl")
-include("primitives/trivial.jl")
+# include("resettablerng.jl")
 
 include("combinators/weighted.jl")
-include("combinators/superpose.jl")
 include("combinators/product.jl")
-include("combinators/for.jl")
-include("combinators/power.jl")
 include("combinators/transforms.jl")
-include("combinators/spikemixture.jl")
 include("combinators/chain.jl")
-include("kernel.jl")
-include("combinators/likelihood.jl")
-include("combinators/pointwise.jl")
 
 include("distributions.jl")
-include("rand.jl")
 
 include("parameterized/normal.jl")
 include("parameterized/studentt.jl")
@@ -98,9 +96,6 @@ include("parameterized/negativebinomial.jl")
 
 include("transforms/corrcholesky.jl")
 include("transforms/ordered.jl")
-
-include("density.jl")
-# include("pushforward.jl")
 
 include("distproxy.jl")
 end # module

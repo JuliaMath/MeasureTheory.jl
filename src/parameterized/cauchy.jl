@@ -7,10 +7,20 @@ export Cauchy
 
 @kwstruct Cauchy()
 
-@μσ_methods Cauchy()
+Cauchy(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Cauchy())
+Cauchy(nt::NamedTuple{(:μ,:ω)}) = Affine(nt, Cauchy())
+Cauchy(nt::NamedTuple{(:σ,)}) = Affine(nt, Cauchy())
+Cauchy(nt::NamedTuple{(:ω,)}) = Affine(nt, Cauchy())
+Cauchy(nt::NamedTuple{(:μ,)}) = Affine(nt, Cauchy())
+
+@affinepars Cauchy
 
 function logdensity(d::Cauchy{()} , x) 
     return -log(1 + x^2)
+end
+
+function density(d::Cauchy{()} , x) 
+    return inv(1 + x^2)
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng, T)
@@ -19,11 +29,7 @@ Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng
 
 TV.as(::Cauchy) = asℝ
 
-@half Cauchy()
-
-@kwstruct HalfCauchy()
-
-@σ_methods HalfCauchy()
+@half Cauchy
 
 HalfCauchy(σ) = HalfCauchy(σ=σ)
 

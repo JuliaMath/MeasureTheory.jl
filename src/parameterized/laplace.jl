@@ -3,9 +3,16 @@
 
 export Laplace
 
-@parameterized Laplace(μ,σ) ≪ (1/2) * Lebesgue(ℝ)
+@parameterized Laplace() ≪ (1/2) * Lebesgue(ℝ)
 
-@kwstruct Laplace()
+Laplace(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Laplace())
+Laplace(nt::NamedTuple{(:μ,:ω)}) = Affine(nt, Laplace())
+Laplace(nt::NamedTuple{(:σ,)}) = Affine(nt, Laplace())
+Laplace(nt::NamedTuple{(:ω,)}) = Affine(nt, Laplace())
+Laplace(nt::NamedTuple{(:μ,)}) = Affine(nt, Laplace())
+
+@affinepars Laplace
+
 
 function logdensity(d::Laplace{()} , x)
     return -abs(x)
@@ -17,11 +24,9 @@ Base.rand(rng::AbstractRNG, μ::Laplace{()}) = rand(rng, Dists.Laplace())
 
 TV.as(::Laplace) = asℝ
 
-@μσ_methods Laplace()
-@half Laplace()
-@kwstruct HalfLaplace()
+# @μσ_methods Laplace()
+@half Laplace
 
-@σ_methods HalfLaplace()
 HalfLaplace(σ) = HalfLaplace(σ=σ)
 
 distproxy(::Laplace{()}) = Dists.Laplace()
