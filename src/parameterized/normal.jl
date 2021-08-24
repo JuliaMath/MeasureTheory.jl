@@ -102,30 +102,6 @@ function get_std(nt::NamedTuple)
 end
 
 ###############################################################################
-@kwstruct Normal(μ,τ)
-
-function logdensity(d::Normal{(:τ)}, x)
-    τ = d.τ
-    0.5 * (log(τ) - τ * x^2)
-end
-
-function logdensity(d::Normal{(:μ,:τ)}, x)
-    μ = d.μ
-    τ = d.τ
-    0.5 * (log(τ) - τ * (x - μ)^2)
-end
-
-
-###############################################################################
-@kwstruct Normal(μ, logσ)
-
-function logdensity(d::Normal{(:μ,:logσ)}, x)
-    μ = d.μ
-    logσ = d.logσ
-    -logσ - 0.5(exp(-2logσ)*((x - μ)^2))
-end
-
-###############################################################################
 # Some distributions have a "standard" version that takes no parameters
 @kwstruct Normal()
 
