@@ -23,7 +23,19 @@ export Normal, HalfNormal
 #
 #    Normal(μ, σ) = Normal((μ=μ, σ=σ))
 #
-@parameterized Normal(μ,σ) ≪ (1/sqrt2π) * Lebesgue(ℝ)
+@parameterized Normal() ≪ (1/sqrt2π) * Lebesgue(ℝ)
+
+params(::Type{N}) where {N<:Normal} = ()
+
+Normal(μ,σ) = Affine((;μ,σ), Normal())
+
+Normal(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Normal())
+Normal(nt::NamedTuple{(:μ,:ω)}) = Affine(nt, Normal())
+Normal(nt::NamedTuple{(:σ,)}) = Affine(nt, Normal())
+Normal(nt::NamedTuple{(:ω,)}) = Affine(nt, Normal())
+Normal(nt::NamedTuple{(:μ,)}) = Affine(nt, Normal())
+
+@affinepars Normal
 
 @kwstruct Normal(μ,Σ)
 @kwstruct Normal(μ,Σ⁻¹)
@@ -63,6 +75,7 @@ asparams(::Type{<:Normal}, ::Val{:σ²}) = asℝ₊
 asparams(::Type{<:Normal}, ::Val{:τ}) = asℝ₊
 asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 
+
 # Rather than try to reimplement everything in Distributions, measures can have
 # a `distproxy` method. This just delegates some methods to the corresponding
 # Distributions.jl methods. For example,
@@ -70,7 +83,7 @@ asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 #     julia> entropy(Normal(2,4))
 #     2.805232894324563
 #
-distproxy(d::Normal{(:μ, :σ)}) = Dists.Normal(d.μ, d.σ)
+distproxy(d::Normal{()}) = Dists.Normal()
 
 ###############################################################################
 # Some distributions have a "standard" version that takes no parameters
@@ -104,17 +117,12 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 #     julia> rand(Normal(μ,σ))
 #     μ + 1.2517620265570832σ
 #
-@μσ_methods Normal()
+# @μσ_methods Normal()
 
 ###############################################################################
 # The `@half` macro takes a symmetric univariate measure and efficiently creates
 # a truncated version. 
 @half Normal()
-@kwstruct HalfNormal()
-
-
-# @μσ_methods, without the μ.
-@σ_methods HalfNormal()
 
 
 

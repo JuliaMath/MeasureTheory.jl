@@ -4,6 +4,8 @@ using DynamicIterators: dub
 using Base.Iterators: SizeUnknown, IsInfinite
 import DynamicIterators: dyniterate, evolve
 
+import MeasureBase: For
+
 export Chain
 
 @concrete terse struct Chain{K,M} <: AbstractMeasure
@@ -179,3 +181,9 @@ function Base.collect(r::Realized)
     end
     return a
 end 
+
+function testvalue(mc::Chain)
+    μ = mc.μ
+    κ = mc.κ
+    rand(Chain(Dirac ∘ testvalue ∘ κ, (Dirac ∘ testvalue)(μ)))
+end

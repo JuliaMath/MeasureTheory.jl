@@ -3,11 +3,17 @@
 
 export StudentT
 
-@parameterized StudentT(ν) ≪ (1/sqrtπ) * Lebesgue(ℝ)
+@parameterized StudentT(ν)
 
 @kwstruct StudentT(ν)
 
-@μσ_methods StudentT(ν)
+StudentT(nt::NamedTuple{(:ν,:μ,:σ)}) = Affine(nt, StudentT())
+StudentT(nt::NamedTuple{(:ν,:μ,:ω)}) = Affine(nt, StudentT())
+StudentT(nt::NamedTuple{(:ν,:σ,)}) = Affine(nt, StudentT())
+StudentT(nt::NamedTuple{(:ν,:ω,)}) = Affine(nt, StudentT())
+StudentT(nt::NamedTuple{(:ν,:μ,)}) = Affine(nt, StudentT())
+
+@affinepars StudentT
 
 StudentT(ν, μ, σ) = StudentT((ν=ν, μ=μ, σ=σ))
 
@@ -23,8 +29,15 @@ StudentT(ν, μ, σ) = StudentT((ν=ν, μ=μ, σ=σ))
 
 function logdensity(d::StudentT{(:ν,)}, x) 
     ν = d.ν
-    halfνp1 = (ν+1)/2
-    return loggamma(halfνp1) - loggamma(ν/2) + ν * log(ν) - halfνp1 * log(x^2 + ν)
+    return - (ν+1)/2 * log(x^2 + ν)
+end
+
+function basemeasure(d::StudentT{(:ν,)})
+    function ℓ(nt)
+        ν = nt.ν
+        loggamma((ν+1)/2) - loggamma(ν/2) + ν * log(ν)
+    end
+    return ParamWeightedMeasure(ℓ, params(d), (1/sqrtπ) * Lebesgue(ℝ))
 end
 
 # TV.as(::StudentT) = asℝ
@@ -33,10 +46,9 @@ Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDi
 
 distproxy(d::StudentT{(:ν, :μ, :σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.TDist(d.ν))
 
-@half StudentT(ν)
+@half StudentT
 @kwstruct StudentT()
 
-@σ_methods HalfStudentT(ν)
 HalfStudentT(ν,σ) = HalfStudentT(ν=ν,σ=σ)
 
 asparams(::Type{<:StudentT}, ::Val{:ν}) = asℝ₊

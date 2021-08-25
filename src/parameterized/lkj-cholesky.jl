@@ -79,17 +79,17 @@ TV.as(d::LKJCholesky) = CorrCholesky(d.k)
 
 function basemeasure(μ::LKJCholesky{(:k,:η)})
     t = as(μ)
-    f(par) = Dists.lkj_logc0(par.k, par.η)
+    ℓ(par) = Dists.lkj_logc0(par.k, par.η)
     base = Pushforward(t, Lebesgue(ℝ)^dimension(t), false)
-    ParamWeightedMeasure(f, (k= μ.k, η= μ.η), base)
+    ParamWeightedMeasure(ℓ, (k= μ.k, η= μ.η), base)
 end
 
 function basemeasure(μ::LKJCholesky{(:k,:logη)})
     t = as(μ)
     η = exp(μ.logη)
-    f(par) = Dists.lkj_logc0(par.k, exp(par.logη))
+    ℓ(par) = Dists.lkj_logc0(par.k, exp(par.logη))
     base = Pushforward(t, Lebesgue(ℝ)^dimension(t), false)
-    ParamWeightedMeasure(f, (k= μ.k, logη= logη), base)
+    ParamWeightedMeasure(ℓ, (k= μ.k, logη= logη), base)
 end
 
 # Note (from @sethaxen): this can be done without the cholesky decomposition, by randomly
@@ -101,6 +101,11 @@ end
 function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{(:k, :η,)})
     return cholesky(Positive, rand(rng, Dists.LKJ(d.k, d.η)))
 end;
+
+function testvalue(d::LKJCholesky)
+    t = CorrCholesky(d.k)
+    return transform(t, zeros(dimension(t)))
+end
 
 function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{(:k, :logη)})
     return cholesky(Positive, rand(rng, Dists.LKJ(d.k, exp(d.logη))))

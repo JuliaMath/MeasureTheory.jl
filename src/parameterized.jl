@@ -1,40 +1,6 @@
 # using TransformVariables
 
-export ParameterizedMeasure
-abstract type ParameterizedMeasure{N} <: AbstractMeasure end
-
-function Base.getproperty(μ::ParameterizedMeasure{N}, prop::Symbol) where {N}
-    return getproperty(getfield(μ, :par), prop)
-end
-
-function Base.propertynames(μ::ParameterizedMeasure{N}) where {N}
-    return N
-end
-
-function Base.show(io::IO, μ::ParameterizedMeasure{()}) 
-    io = IOContext(io, :compact => true)
-    print(io, nameof(typeof(μ)), "()")
-end
-
-function Base.show(io::IO, μ::ParameterizedMeasure{N}) where {N}
-    io = IOContext(io, :compact => true)
-    print(io, nameof(typeof(μ)))
-    print(io, getfield(μ,:par))
-end
-
 export asparams
-
-# Allow things like
-#
-# julia> Normal{(:μ,)}(2)
-# Normal(μ = 2,)
-#
-function (::Type{P})(args...) where {N, P <: ParameterizedMeasure{N}}
-    C = constructorof(P)
-    return C(NamedTuple{N}(args...))
-end
-
-(::Type{P})(;kwargs...) where {P <: ParameterizedMeasure} = P(NamedTuple(kwargs))
 
 """
 `asparams` build on `TransformVariables.as` to construct bijections to the
@@ -77,51 +43,37 @@ julia> asparams(Normal{(:μ,:σ)})
 TransformVariables.TransformTuple{NamedTuple{(:μ, :σ), Tuple{TransformVariables.Identity, TransformVariables.ShiftedExp{true, Float64}}}}((μ = asℝ, σ = asℝ₊), 2)
 ```
 """
+function asparams end
 
+asparams(μ::ParameterizedMeasure, v::Val) = asparams(constructor(μ), v)
+asparams(μ, s::Symbol) = asparams(μ, Val(s))
 
-# function asparams end
+asparams(M::Type{A}) where {A<:AbstractMeasure} = asparams(M, NamedTuple())
 
-# asparams(μ::ParameterizedMeasure, v::Val) = asparams(constructor(μ), v)
-# asparams(μ, s::Symbol) = asparams(μ, Val(s))
+function asparams(::Type{M}, constraints::NamedTuple{N}) where {N, M<: ParameterizedMeasure} 
+    # @show M
+    thekeys = paramnames(M, constraints)
+    t1 = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
+    t2 = NamedTuple{N}(map(asConst, values(constraints)))
+    C = constructorof(M)
+    # @show C
+    # @show constraints
+    # @show transforms
+    # Make sure we end up with a consistent ordering
+    ordered_transforms = params(C(merge(t1, t2)))
+    return TV.as(ordered_transforms)
+end
 
-# asparams(M::Type{PM}) where {PM<:ParameterizedMeasure} = asparams(M, NamedTuple())
-
-# function asparams(::Type{M}, constraints::NamedTuple{N2}) where {N1, N2, M<: ParameterizedMeasure{N1}} 
-#     # @show M
-#     thekeys = params(M, constraints)
-#     t1 = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
-#     t2 = NamedTuple{N2}(map(asConst, values(constraints)))
-#     C = constructorof(M)
-#     # @show C
-#     # @show constraints
-#     # @show transforms
-#     # Make sure we end up with a consistent ordering
-#     ordered_transforms = params(C(merge(t1, t2)))
-#     return TV.as(ordered_transforms)
+# TODO: Make this work for Affine measures
+# function asparams(::Type{M}, constraints::NamedTuple{N}) where {N, M<: Affine} 
+#     ...
 # end
 
+asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(constructor(μ), nt)
 
-# asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(constructor(μ), nt)
+TV.as(::Half) = asℝ₊
 
-export params
-
-params(μ::ParameterizedMeasure) = getfield(μ, :par)
-
-function params(::Type{M}, constraints::NamedTuple{N2}=NamedTuple()) where {N1, N2, M<: ParameterizedMeasure{N1}} 
-thekeys = tuple((k for k in N1 if k ∉ N2)...)
-end
-
-params(μ) = ()
-
-
-function ConstructionBase.setproperties(d::P, nt::NamedTuple) where {P<:ParameterizedMeasure}
-    return constructorof(P)(merge(params(d), nt)) 
-end
-
-function Accessors.set(d::ParameterizedMeasure, ::typeof(params), nt::NamedTuple)
-    setproperties(d, nt)
-end
-
-function Accessors.set(d::ParameterizedMeasure{N}, ::typeof(params), p) where {N}
-    setproperties(d, NamedTuple{N}(p...))
-end
+asparams(::Affine, ::Val{:μ}) = asℝ
+asparams(::Affine, ::Val{:σ}) = asℝ₊
+asparams(::Type{A}, ::Val{:μ}) where {A<:Affine} = asℝ
+asparams(::Type{A}, ::Val{:σ}) where {A<:Affine} = asℝ₊
