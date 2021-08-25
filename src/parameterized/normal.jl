@@ -1,5 +1,6 @@
 using StatsFuns
 export Normal, HalfNormal
+import Statistics
 
 # The `@parameterized` macro below does three things:
 # 1. Defines the `Normal` struct
@@ -70,24 +71,17 @@ asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 #     julia> entropy(Normal(2,4))
 #     2.805232894324563
 #
-distproxy(d::Normal) = Dists.Normal(get_mean(d), get_std(d))
-
-Statistics.mean(d::Normal) = get(params(d), :μ, zero(sampletype(d)))
-function get_mean(nt::NamedTuple)
-    μ = get(nt, :μ, nothing)
-    if μ !== nothing
-        return μ
-    else
-        return 0
-    end
+function distproxy(d::Normal)
+    d0 = reparam(d)
+    return Dists.Normal(d0.μ,d0.σ)
 end
 
+reparam(d::Normal) = Normal(μ=mean(d), σ=std(d))
+
+Statistics.mean(d::Normal) = get(params(d), :μ, zero(sampletype(d)))
 Statistics.std(d::Normal) = get_normal_std(params(d))
 function get_normal_std(nt::NamedTuple)
-    # σ parameterization becomes `Affine`    
-    # σ = get(nt, :σ, nothing)
-    # isnothing(σ) || return σ
-    
+
     logσ = get(nt, :logσ, nothing)
     isnothing(logσ) || return exp(logσ)
 
@@ -97,6 +91,9 @@ function get_normal_std(nt::NamedTuple)
     τ = get(nt, :τ, nothing)
     isnothing(τ) || return √(inv(τ))
 
+    # σ parameterization becomes `Affine`
+    σ = get(nt, :σ, nothing)
+    isnothing(σ) || return σ
     return 1.0
 end
 
