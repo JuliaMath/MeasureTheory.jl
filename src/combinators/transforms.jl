@@ -70,6 +70,12 @@ TV.as(μ::Pullback) = inverse(μ.f) ∘ μ.ν
 
 TV.as(::Lebesgue) = asℝ
 
+# TODO: Make this work for affine embeddings
+TV.as(d::Affine) = _as_affine(_firstval(d))
+
+_firstval(d::Affine) = first(values(getfield(getfield(d, :f), :par)))
+_as_affine(x::Real) = asℝ
+_as_affine(x::AbstractArray) = as(Vector, size(x,1))
 
 basemeasure(::Pushforward{TV.CallableTransform{T}, Lebesgue{ℝ}}) where {T <: TV.ScalarTransform} = Lebesgue(ℝ)
 basemeasure(::Pullback{TV.CallableTransform{T}, Lebesgue{ℝ}}) where {T <: TV.ScalarTransform} = Lebesgue(ℝ)
