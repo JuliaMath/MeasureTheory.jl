@@ -82,7 +82,7 @@ function get_mean(nt::NamedTuple)
     end
 end
 
-get_std(d::Normal) = get_std(getfield(d, :par))
+Statistics.std(d::Normal) = get_normal_std(params(d))
 function get_std(nt::NamedTuple)
     σ = get(nt, :σ, nothing)
     logσ = get(nt, :logσ, nothing)
