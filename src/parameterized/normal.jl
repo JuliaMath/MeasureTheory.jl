@@ -83,22 +83,21 @@ function get_mean(nt::NamedTuple)
 end
 
 Statistics.std(d::Normal) = get_normal_std(params(d))
-function get_std(nt::NamedTuple)
-    σ = get(nt, :σ, nothing)
+function get_normal_std(nt::NamedTuple)
+    # σ parameterization becomes `Affine`    
+    # σ = get(nt, :σ, nothing)
+    # isnothing(σ) || return σ
+    
     logσ = get(nt, :logσ, nothing)
+    isnothing(logσ) || return exp(logσ)
+
     σ² = get(nt, :σ², nothing)
+    isnothing(σ²) || return √(σ²)
+
     τ = get(nt, :τ, nothing)
-    if σ !== nothing
-        return σ
-    elseif logσ !== nothing
-        return exp(logσ)
-    elseif σ² !== nothing
-        return √(σ²)
-    elseif τ !== nothing
-        return √(inv(τ))
-    else
-        return 1
-    end
+    isnothing(τ) || return √(inv(τ))
+
+    return 1.0
 end
 
 ###############################################################################
