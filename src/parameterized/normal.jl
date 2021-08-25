@@ -72,7 +72,7 @@ asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 #
 distproxy(d::Normal) = Dists.Normal(get_mean(d), get_std(d))
 
-get_mean(d::Normal) = get_mean(getfield(d, :par))
+Statistics.mean(d::Normal) = get(params(d), :μ, zero(sampletype(d)))
 function get_mean(nt::NamedTuple)
     μ = get(nt, :μ, nothing)
     if μ !== nothing
