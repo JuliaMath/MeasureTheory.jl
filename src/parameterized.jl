@@ -72,7 +72,7 @@ end
 
 asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(constructor(μ), nt)
 
-as(::Half) = asℝ₊
+TV.as(::Half) = asℝ₊
 
 asparams(::Affine, ::Val{:μ}) = asℝ
 asparams(::Affine, ::Val{:σ}) = asℝ₊
