@@ -19,9 +19,22 @@ ncategories(d::Categorical) = length(d.p)
 
 logdensity(d::Categorical{(:p)}, y) = log(d.p[y])
 
-# Very inefficient because of the heavy implementation of Dists.DiscreteNonParametric
+# The implementation of Dists.DiscreteNonParametric has heavy argument checks
+# But I think since the values of Categorical are 1:n the sortperm has no effect
+# So it might be OK
 distproxy(d::Categorical{(:p)}) = Dists.Categorical(d.p)
 
 Base.rand(rng::AbstractRNG, T::Type, d::Categorical{(:p)}) = rand(rng, distproxy(d))
 
 asparams(::Type{<:Categorical}, ::Val{:p}) = as𝕀
+
+###############################################################################
+@kwstruct Categorical(logp)
+
+logdensity(d::Categorical{(:logp)}, y) = d.logp[y]
+
+distproxy(d::Categorical{(:logp)}) = Dists.Categorical(exp.(d.logp))  # inefficient
+
+Base.rand(rng::AbstractRNG, T::Type, d::Categorical{(:logp)}) = rand(rng, distproxy(d))
+
+asparams(::Type{<:Categorical}, ::Val{:logp}) = asℝ
