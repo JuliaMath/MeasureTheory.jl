@@ -16,7 +16,10 @@ export Beta
 TV.as(::Beta) = as𝕀
 
 function logdensity(d::Beta{(:α, :β)}, x)
-    return (d.α - 1) * log(x) + (d.β - 1) * log(1 - x) - logbeta(d.α, d.β)
+    if 0 ≤ x ≤ 1
+        return (d.α - 1) * log(x) + (d.β - 1) * log(1 - x) - logbeta(d.α, d.β)
+    end
+    return -Inf
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Beta(μ.α, μ.β))
