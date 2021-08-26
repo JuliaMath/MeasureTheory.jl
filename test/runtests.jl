@@ -381,7 +381,7 @@ end
 @testset "Density measures and Radon-Nikodym" begin
     x = randn()
     let d = ∫(𝒹(Cauchy(), Normal()), Normal())
-        @test logdensity(d, x) ≈ logdensity(Cauchy(), x) 
+        @test logdensity(d, Lebesgue(ℝ), x) ≈ logdensity(Cauchy(), Lebesgue(ℝ), x) 
     end
 
     let f = 𝒹(∫(x -> x^2, Normal()), Normal())
