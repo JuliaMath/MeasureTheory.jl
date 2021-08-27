@@ -14,6 +14,8 @@ end
 
 @kwstruct Dirichlet(α)
 
+Dirichlet(k::Integer, α) = Dirichlet(Fill(α, k))
+
 function logdensity(d::Dirichlet{(:α,)}, x)
     α = d.α
     s = 0.0
