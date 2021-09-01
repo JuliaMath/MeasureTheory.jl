@@ -63,7 +63,7 @@ export pdf, logpdf
 
 @inline function logpdf(d::AbstractMeasure, x)
     β = basemeasure(d)
-    d === β && return 0.0
+    d === β && return zero(Float64)
 
     logdensity(d,x) + logpdf(β,x)
 end
