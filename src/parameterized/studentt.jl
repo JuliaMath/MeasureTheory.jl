@@ -3,7 +3,7 @@
 
 export StudentT
 
-@parameterized StudentT(ν) ≪ Lebesgue(ℝ)
+@parameterized StudentT(ν)
 
 @kwstruct StudentT(ν)
 
@@ -29,8 +29,15 @@ StudentT(ν, μ, σ) = StudentT((ν=ν, μ=μ, σ=σ))
 
 function logdensity(d::StudentT{(:ν,)}, x) 
     ν = d.ν
-    halfνp1 = (ν+1)/2
-    return loggamma(halfνp1) - loggamma(ν/2) - log(π * ν) / 2 - halfνp1 * log1p(x^2 / ν)
+    return  - (ν + 1) / 2 * log1p(x^2 / ν)
+end
+
+function basemeasure(d::StudentT{(:ν,)})
+    inbounds(x) = true
+    constℓ = 0.0
+    varℓ = loggamma((d.ν+1)/2) - loggamma(d.ν/2) - log(π * d.ν) / 2
+    base = Lebesgue(ℝ)
+    FactoredBase(inbounds, constℓ, varℓ, base)
 end
 
 TV.as(::StudentT) = asℝ
