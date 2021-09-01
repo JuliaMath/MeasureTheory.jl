@@ -13,6 +13,7 @@ import Base
 import Distributions
 const Dists = Distributions
 
+export TV
 export ≪
 export sampletype
 export For
@@ -54,6 +55,20 @@ export AffineTransform
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
 # sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
+
+import Distributions: pdf, logpdf
+
+
+export pdf, logpdf
+
+@inline function logpdf(d::AbstractMeasure, x)
+    β = basemeasure(d)
+    d === β && return 0.0
+
+    logdensity(d,x) + logpdf(β,x)
+end
+
+pdf(d::AbstractMeasure, x) = exp(logpdf(d, x))
 
 """
     logdensity(μ::AbstractMeasure [, ν::AbstractMeasure], x::X)
