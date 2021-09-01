@@ -1,6 +1,3 @@
-using TransformVariables
-const TV = TransformVariables
-
 struct Const{T} <: Function
     value::T
 end
