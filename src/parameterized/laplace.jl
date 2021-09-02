@@ -1,7 +1,7 @@
 
 # Laplace distribution
 
-export Laplace, HalfLaplace
+export Laplace
 
 @parameterized Laplace() ≪ (1/2) * Lebesgue(ℝ)
 
@@ -23,10 +23,5 @@ Base.rand(rng::AbstractRNG, μ::Laplace{()}) = rand(rng, Dists.Laplace())
 ≪(::Laplace, ::Lebesgue{X}) where X <: Real = true
 
 TV.as(::Laplace) = asℝ
-
-# @μσ_methods Laplace()
-@half Laplace
-
-HalfLaplace(σ) = HalfLaplace(σ=σ)
 
 distproxy(::Laplace{()}) = Dists.Laplace()
