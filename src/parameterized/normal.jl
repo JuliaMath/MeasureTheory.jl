@@ -122,8 +122,7 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 ###############################################################################
 # The `@half` macro takes a symmetric univariate measure and efficiently creates
 # a truncated version. 
-@half Normal()
-
+@half Normal
 
 
 # A single unnamed parameter for `HalfNormal` should be interpreted as a `σ`

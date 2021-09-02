@@ -1,17 +1,20 @@
 
 # StudentT distribution
 
-export StudentT
+export StudentT, HalfStudentT
 
 @parameterized StudentT(ν) ≪ Lebesgue(ℝ)
 
 @kwstruct StudentT(ν)
+@kwstruct StudentT(ν,μ)
+@kwstruct StudentT(ν,σ)
+@kwstruct StudentT(ν,μ,σ)
 
-StudentT(nt::NamedTuple{(:ν,:μ,:σ)}) = Affine(nt, StudentT())
-StudentT(nt::NamedTuple{(:ν,:μ,:ω)}) = Affine(nt, StudentT())
-StudentT(nt::NamedTuple{(:ν,:σ,)}) = Affine(nt, StudentT())
-StudentT(nt::NamedTuple{(:ν,:ω,)}) = Affine(nt, StudentT())
-StudentT(nt::NamedTuple{(:ν,:μ,)}) = Affine(nt, StudentT())
+StudentT(nt::NamedTuple{(:ν,:μ,:σ)}) = Affine(NamedTuple{(:μ,:σ)}(nt), StudentT(ν=nt.ν))
+StudentT(nt::NamedTuple{(:ν,:μ,:ω)}) = Affine(NamedTuple{(:μ,:ω)}(nt), StudentT(ν=nt.ν))
+StudentT(nt::NamedTuple{(:ν,:σ,)}) = Affine(NamedTuple{(:σ,)}(nt), StudentT(ν=nt.ν))
+StudentT(nt::NamedTuple{(:ν,:ω,)}) = Affine(NamedTuple{(:ω,)}(nt), StudentT(ν=nt.ν))
+StudentT(nt::NamedTuple{(:ν,:μ,)}) = Affine(NamedTuple{(:μ,)}(nt), StudentT(ν=nt.ν))
 
 @affinepars StudentT
 
@@ -37,11 +40,10 @@ TV.as(::StudentT) = asℝ
 
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 
-distproxy(d::StudentT{(:ν, :μ, :σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.TDist(d.ν))
+distproxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
 
 @half StudentT
-@kwstruct StudentT()
 
-HalfStudentT(ν,σ) = HalfStudentT(ν=ν,σ=σ)
+HalfStudentT(ν, σ) = HalfStudentT((ν=ν, σ=σ))
 
 asparams(::Type{<:StudentT}, ::Val{:ν}) = asℝ₊
