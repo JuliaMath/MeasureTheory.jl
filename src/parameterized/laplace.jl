@@ -1,7 +1,7 @@
 
 # Laplace distribution
 
-export Laplace
+export Laplace, HalfLaplace
 
 @parameterized Laplace() ≪ (1/2) * Lebesgue(ℝ)
 

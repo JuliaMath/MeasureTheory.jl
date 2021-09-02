@@ -1,7 +1,7 @@
 
 # StudentT distribution
 
-export StudentT
+export StudentT, HalfStudentT
 
 @parameterized StudentT(ν) ≪ Lebesgue(ℝ)
 
