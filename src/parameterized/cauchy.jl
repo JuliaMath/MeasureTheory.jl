@@ -1,7 +1,7 @@
 
 # Cauchy distribution
 
-export Cauchy
+export Cauchy, HalfCauchy
 
 @parameterized Cauchy(μ,σ) ≃ (1/π) * Lebesgue(ℝ)
 

@@ -396,3 +396,26 @@ end
         @test f(x) ≈ x^2
     end
 end
+
+@testset "Half measures" begin
+    @testset "HalfNormal" begin
+        d = Normal(σ=3)
+        h = HalfNormal(3)
+        x = rand(h)
+        @test density(h, Lebesgue(ℝ), x) ≈ 2 * density(d, Lebesgue(ℝ), x)
+    end
+
+    @testset "HalfCauchy" begin
+        d = Cauchy(σ=3)
+        h = HalfCauchy(3)
+        x = rand(h)
+        @test density(h, Lebesgue(ℝ), x) ≈ 2 * density(d, Lebesgue(ℝ), x)
+    end
+
+    @testset "HalfStudentT" begin
+        d = StudentT(ν=2, σ=3)
+        h = HalfStudentT(2, 3)
+        x = rand(h)
+        @test density(h, Lebesgue(ℝ), x) ≈ 2 * density(d, Lebesgue(ℝ), x)
+    end
+end
