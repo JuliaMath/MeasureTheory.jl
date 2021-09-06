@@ -13,7 +13,7 @@ export Uniform
 function basemeasure(::Uniform{()})
     inbounds(x) = 0 < x < 1
     constℓ = 0.0
-    varℓ = 0.0
+    varℓ() = 0.0
     base = Lebesgue(ℝ)
     FactoredBase(inbounds, constℓ, varℓ, base)
 end

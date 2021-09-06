@@ -61,12 +61,17 @@ import Distributions: pdf, logpdf
 
 export pdf, logpdf
 
-@inline function logpdf(d::AbstractMeasure, x)
-    β = basemeasure(d)
-    d === β && return zero(Float64)
-
-    logdensity(d,x) + logpdf(β,x)
+function logpdf(d::AbstractMeasure, x)
+    _logpdf(d, x, logdensity(d,x))
 end
+
+function _logpdf(d::AbstractMeasure, x, acc::Float64)
+    β = basemeasure(d)
+    d === β && return acc
+
+    _logpdf(β, x, acc + logdensity(β, x))
+end
+
 
 pdf(d::AbstractMeasure, x) = exp(logpdf(d, x))
 

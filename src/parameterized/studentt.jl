@@ -38,7 +38,7 @@ end
 function basemeasure(d::StudentT{(:ν,)})
     inbounds(x) = true
     constℓ = 0.0
-    varℓ = loggamma((d.ν+1)/2) - loggamma(d.ν/2) - log(π * d.ν) / 2
+    varℓ() = loggamma((d.ν+1)/2) - loggamma(d.ν/2) - log(π * d.ν) / 2
     base = Lebesgue(ℝ)
     FactoredBase(inbounds, constℓ, varℓ, base)
 end
