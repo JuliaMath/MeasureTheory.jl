@@ -53,6 +53,10 @@ export as
 export Affine
 export AffineTransform
 
+if VERSION < v"1.7.0-beta1.0"
+    @eval Returns(x) = _ -> x
+end
+
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
 # sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))

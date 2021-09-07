@@ -7,7 +7,6 @@ using DynamicIterators: trace, TimeLift
 using TransformVariables: transform, as𝕀, inverse
 
 using MeasureTheory
-using MeasureTheory: Const
 
 using Aqua
 Aqua.test_all(MeasureTheory; ambiguities=false, unbound_args=false)
