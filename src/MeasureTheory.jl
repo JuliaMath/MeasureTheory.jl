@@ -13,6 +13,7 @@ import Base
 import Distributions
 const Dists = Distributions
 
+# export TV
 export ≪
 export sampletype
 export For
@@ -36,6 +37,7 @@ using ConstructionBase
 using Accessors
 using StatsFuns
 using SpecialFunctions
+using LogExpFunctions 
 
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
 
@@ -51,9 +53,38 @@ export as
 export Affine
 export AffineTransform
 
+if VERSION < v"1.7.0-beta1.0"
+    @eval begin
+        struct Returns{T}
+            value::T
+        end
+
+        (f::Returns)(x) = f.value
+    end
+end
+
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
 # sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
+
+import Distributions: pdf, logpdf
+
+
+export pdf, logpdf
+
+function logpdf(d::AbstractMeasure, x)
+    _logpdf(d, x, logdensity(d,x))
+end
+
+function _logpdf(d::AbstractMeasure, x, acc::Float64)
+    β = basemeasure(d)
+    d === β && return acc
+
+    _logpdf(β, x, acc + logdensity(β, x))
+end
+
+
+pdf(d::AbstractMeasure, x) = exp(logpdf(d, x))
 
 """
     logdensity(μ::AbstractMeasure [, ν::AbstractMeasure], x::X)

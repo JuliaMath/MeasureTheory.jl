@@ -10,10 +10,6 @@
 using MeasureTheory
 
 export Ordered
-
-using TransformVariables
-const TV = TransformVariables
-
 struct Ordered{T <: TV.AbstractTransform} <: TV.VectorTransform
     transformation::T
     dim::Int

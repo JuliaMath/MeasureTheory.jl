@@ -36,7 +36,6 @@ end
 ∫(::typeof(identity), ::Dists.Distribution) = 1.0
 
 logdensity(μ::Dists.Distribution, x) = Dists.logpdf(μ,x)
-Dists.logpdf(d::AbstractMeasure, x) = logdensity(d,x)
 
 density(μ::Dists.Distribution, x) = Dists.pdf(μ,x)
 

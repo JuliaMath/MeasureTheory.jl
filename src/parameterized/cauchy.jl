@@ -16,7 +16,7 @@ Cauchy(nt::NamedTuple{(:μ,)}) = Affine(nt, Cauchy())
 @affinepars Cauchy
 
 function logdensity(d::Cauchy{()} , x) 
-    return -log(1 + x^2)
+    return -log1p(x^2)
 end
 
 function density(d::Cauchy{()} , x) 

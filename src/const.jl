@@ -1,10 +1,3 @@
-using TransformVariables
-const TV = TransformVariables
-
-struct Const{T} <: Function
-    value::T
-end
-
 export asConst
 struct AsConst{T} <: TV.VectorTransform
     value::T
@@ -12,15 +5,15 @@ end
 
 asConst(x) = AsConst(x)
 
-TV.as(c::Const) = AsConst(c.value)
+TV.as(c::Returns) = AsConst(c.value)
 
-function Base.show(io::IO, c::Const)
+function Base.show(io::IO, c::Returns)
     io = IOContext(io, :compact => true)
     print(io, "_ -> ")
     print(io, c.t)
 end
 
-(c::Const)(x) = c.value
+(c::Returns)(x) = c.value
 
 TV.dimension(t::AsConst) = 0
 
