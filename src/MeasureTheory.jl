@@ -13,7 +13,7 @@ import Base
 import Distributions
 const Dists = Distributions
 
-export TV
+# export TV
 export ≪
 export sampletype
 export For
