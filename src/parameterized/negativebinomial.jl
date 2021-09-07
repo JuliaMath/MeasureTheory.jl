@@ -16,7 +16,7 @@ import Base
     
 function logdensity(d::NegativeBinomial{(:r, :p)}, y)
     (r, p) = (d.r, d.p)
-    return -log(y + r) - logbeta(r, y+1) + y * log(p) + r * log1p(-p)
+    return -log(y + r) - logbeta(r, y+1) + xlogy(y, p) + xlog1py(r, -p)
 end
 
 distproxy(d::NegativeBinomial{(:r, :p)}) = Dists.NegativeBinomial(d.r, d.p)
@@ -38,7 +38,7 @@ distproxy(d::NegativeBinomial{(:n,:logitp)}) = Dists.NegativeBinomial(d.n, logis
 
 function logdensity(d::NegativeBinomial{(:r, :λ)}, y)
     (r, λ) = (d.r, d.λ)
-    return -log(y + r) - logbeta(r, y+1) + y * log(λ) + r * log(r) - (y + r) * log(r + λ)
+    return -log(y + r) - logbeta(r, y+1) + xlogy(y, λ) + xlogx(r) - xlogy(y + r, r + λ)
 end
 
 function distproxy(d::NegativeBinomial{(:r,:λ)})
@@ -60,7 +60,7 @@ end
 function logdensity(d::NegativeBinomial{(:r, :logλ)}, y)
     (r, logλ) = (d.r, d.logλ)
     λ = exp(logλ)
-    return -log(y + r) - logbeta(r, y+1) + y * logλ + r * log(r) - (y + r) * log(r + λ)
+    return -log(y + r) - logbeta(r, y+1) + y * logλ + xlogx(r) - xlogy(y + r, r + λ)
 end
 
 function distproxy(d::NegativeBinomial{(:r,:logλ)})

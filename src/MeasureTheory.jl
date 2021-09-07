@@ -37,6 +37,7 @@ using ConstructionBase
 using Accessors
 using StatsFuns
 using SpecialFunctions
+using LogExpFunctions 
 
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
 
