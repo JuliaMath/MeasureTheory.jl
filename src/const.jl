@@ -7,14 +7,6 @@ asConst(x) = AsConst(x)
 
 TV.as(c::Returns) = AsConst(c.value)
 
-function Base.show(io::IO, c::Returns)
-    io = IOContext(io, :compact => true)
-    print(io, "_ -> ")
-    print(io, c.t)
-end
-
-(c::Returns)(x) = c.value
-
 TV.dimension(t::AsConst) = 0
 
 
