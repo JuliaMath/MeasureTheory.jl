@@ -14,7 +14,7 @@ function MvNormal(nt::NamedTuple{(:σ,)})
 end
 
 function MvNormal(nt::NamedTuple{(:ω,)})
-    dim = size(nt.σ, 1)
+    dim = size(nt.ω, 1)
     Affine(nt, Normal() ^ dim)
 end
 
@@ -24,6 +24,6 @@ function MvNormal(nt::NamedTuple{(:μ, :σ,)})
 end
 
 function MvNormal(nt::NamedTuple{(:μ, :ω,)})
-    dim = size(nt.σ, 1)
+    dim = size(nt.ω, 1)
     Affine(nt, Normal() ^ dim)
 end
