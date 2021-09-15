@@ -26,7 +26,7 @@ for m in keys(PROXIES)
 end
 
 
-Base.rand(rng::AbstractRNG, T::Type, d::ParameterizedMeasure) = rand(rng, distproxy(d))
+Base.rand(rng::AbstractRNG, ::Type{T}, d::ParameterizedMeasure) where {T} = rand(rng, distproxy(d))
 
 # MonteCarloMeasurements.Particles(N::Int, d::AbstractMeasure) = MonteCarloMeasurements.Particles(N, distproxy(d))
 

@@ -107,6 +107,7 @@ include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
 include("combinators/chain.jl")
+include("combinators/affine.jl")
 
 include("distributions.jl")
 

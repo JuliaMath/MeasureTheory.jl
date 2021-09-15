@@ -122,6 +122,7 @@ end
         @test sample1 == sample2
     end
 
+    # Fails because we need `asparams` for `::Affine`
     # @testset "Normal" begin
     #     D = Affine{(:μ,:σ), Normal}
     #     par = transform(asparams(D), randn(2))
@@ -162,20 +163,19 @@ end
     @test rand(κ(1.1)) == 1.1
 end
 
-# TODO: FIX THIS TEST BEFORE MERGING
-# @testset "For" begin
-#     FORDISTS = [
-#         For(1:10) do j Normal(μ=j) end
-#         For(4,3) do μ,σ Normal(μ,σ) end
-#         For(1:4, 1:4) do μ,σ Normal(μ,σ) end
-#         For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end
-#         For(rand(4), rand(4)) do μ,σ Normal(μ,σ) end
-#     ]
+@testset "For" begin
+    FORDISTS = [
+        For(1:10) do j Normal(μ=j) end
+        For(4,3) do μ,σ Normal(μ,σ) end
+        For(1:4, 1:4) do μ,σ Normal(μ,σ) end
+        For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end
+        For(rand(4), rand(4)) do μ,σ Normal(μ,σ) end
+    ]
 
-#     for d in FORDISTS
-#         @test logdensity(d, rand(d)) isa Float64
-#     end
-# end
+    for d in FORDISTS
+        @test logdensity(d, rand(d)) isa Float64
+    end
+end
 
 import MeasureTheory.:⋅
 function ⋅(μ::Normal, kernel) 
@@ -189,20 +189,19 @@ end
 (a::AffineMap)(x) = a.B*x + a.β
 (a::AffineMap)(p::Normal) = Normal(μ = a.B*mean(p) + a.β, σ = sqrt(a.B*p.σ^2*a.B'))
 
-# TODO: FIX THIS BEFORE MERGING
-# @testset "DynamicFor" begin
-#     mc = Chain(Normal(μ=0.0)) do x Normal(μ=x) end
-#     r = rand(mc)
+@testset "DynamicFor" begin
+    mc = Chain(Normal(μ=0.0)) do x Normal(μ=x) end
+    r = rand(mc)
    
-#     # Check that `r` is now deterministic
-#     @test logdensity(mc, take(r, 100)) == logdensity(mc, take(r, 100))
+    # Check that `r` is now deterministic
+    @test logdensity(mc, take(r, 100)) == logdensity(mc, take(r, 100))
     
-#     d2 = For(r) do x Normal(μ=x) end  
+    d2 = For(r) do x Normal(μ=x) end  
 
-#     @test_broken let r2 = rand(d2)
-#         logdensity(d2, take(r2, 100)) == logdensity(d2, take(r2, 100))
-#     end
-# end
+    @test_broken let r2 = rand(d2)
+        logdensity(d2, take(r2, 100)) == logdensity(d2, take(r2, 100))
+    end
+end
 
 # @testset "Univariate chain" begin
 #     ξ0 = 1.
@@ -364,13 +363,12 @@ end
         @test_broken rand(d) isa Base.Generator
     end
 
-    # TODO: FIX THIS BEFORE MERGING
-    # @testset "Indexed by multiple Ints" begin
-    #     d = For(2,3) do μ,σ Normal(μ,σ) end
-    #     x = Matrix{Float16}(undef, 2, 3)
-    #     @test rand!(d, x) isa Matrix
-    #     @test_broken rand(d) isa Matrix{Float16}
-    # end
+    @testset "Indexed by multiple Ints" begin
+        d = For(2,3) do μ,σ Normal(μ,σ) end
+        x = Matrix{Float16}(undef, 2, 3)
+        @test rand!(d, x) isa Matrix
+        @test_broken rand(d) isa Matrix{Float16}
+    end
 end
 
 @testset "Show methods" begin
