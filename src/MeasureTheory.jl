@@ -67,27 +67,16 @@ sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
 # sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
 
-import Distributions: pdf, logpdf
+
 
 
 export pdf, logpdf
 
-function logpdf(d::AbstractMeasure, x)
-    ℓ = logdensity(d,x)
-    # @show ℓ
-    _logpdf(d, x, ℓ)
-end
+import Distributions: logpdf, pdf
 
-@inline function _logpdf(d::AbstractMeasure, x, acc::Float64)
-    β = basemeasure(d)
-    d === β && return acc
-    ℓ = logdensity(β, x)
-    # @show ℓ
-    _logpdf(β, x, acc + ℓ)
-end
+Distributions.logpdf(d::AbstractMeasure, x) = MeasureBase.logpdf(d, x)
 
-
-pdf(d::AbstractMeasure, x) = exp(logpdf(d, x))
+Distributions.pdf(d::AbstractMeasure, x) = exp(Dists.logpdf(d, x))
 
 """
     logdensity(μ::AbstractMeasure [, ν::AbstractMeasure], x::X)
