@@ -227,6 +227,11 @@ end
 #     collect(Iterators.take(rand(Random.GLOBAL_RNG, chain), 10))
 # end
 
+@testset "rootmeasure/logpdf" begin
+    x = rand(Normal())
+    @test logdensity(Normal(), rootmeasure(Normal()), x) ≈ logpdf(Normal(), x)
+end
+
 @testset "Transforms" begin
     t = as𝕀
     @testset "Pushforward" begin
