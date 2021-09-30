@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{struct} \PYG{n}{NegativeBinomial}\PYG{p}{\PYGZob{}}\PYG{n}{N}\PYG{p}{,}\PYG{n}{T}\PYG{p}{\PYGZcb{}} \PYG{o}{\PYGZlt{}:} \PYG{n}{ParameterizedMeasure}\PYG{p}{\PYGZob{}}\PYG{n}{N}\PYG{p}{\PYGZcb{}}
+    \PYG{n}{par} \PYG{o}{::} \PYG{n}{NamedTuple}\PYG{p}{\PYGZob{}}\PYG{n}{N}\PYG{p}{,}\PYG{n}{T}\PYG{p}{\PYGZcb{}}
+\PYG{k}{end}
+\end{Verbatim}

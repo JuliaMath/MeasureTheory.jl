@@ -1,0 +1,20 @@
+title: "Applied Measure Theory for Probabilistic Modeling"
+keywords:
+  - Julia
+  - Measure theory
+  - Probability
+  - Statistics
+authors:
+  - name: Chad Scherrer
+    orcid: 0000-0002-1490-0304
+    affiliation: 1
+  - name: Moritz Schauer
+    orcid: 0000-0003-3310-7915
+    affiliation: 2
+affiliations:
+  - name: Informative Prior
+    index: 1
+  - name: Chalmers and Gothenburg University, Sweden
+    index: 2
+date: 30 September 2021
+bibliography: ref.bib

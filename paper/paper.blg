@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2019)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: paper.aux
+The style file: juliacon.bst
+Database file #1: ref.bib
+Warning--empty booktitle in scherrer2020soss
+You've used 24 entries,
+            2314 wiz_defined-function locations,
+            674 strings with 8756 characters,
+and the built_in function-call counts, 8230 in all, are:
+= -- 773
+> -- 463
+< -- 4
++ -- 185
+- -- 158
+* -- 543
+:= -- 1365
+add.period$ -- 81
+call.type$ -- 24
+change.case$ -- 148
+chr.to.int$ -- 0
+cite$ -- 25
+duplicate$ -- 285
+empty$ -- 674
+format.name$ -- 158
+if$ -- 1753
+int.to.chr$ -- 0
+int.to.str$ -- 24
+missing$ -- 15
+newline$ -- 130
+num.names$ -- 50
+pop$ -- 234
+preamble$ -- 1
+purify$ -- 126
+quote$ -- 0
+skip$ -- 227
+stack$ -- 0
+substring$ -- 277
+swap$ -- 54
+text.length$ -- 4
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 90
+warning$ -- 1
+while$ -- 64
+width$ -- 26
+write$ -- 268
+(There was 1 warning)

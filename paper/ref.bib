@@ -1,0 +1,428 @@
+@book{Elstrodt2011,
+  doi = {10.1007/978-3-642-17905-1},
+  url = {https://doi.org/10.1007/978-3-642-17905-1},
+  year = {2011},
+  publisher = {Springer Berlin Heidelberg},
+  author = {J\"{u}rgen Elstrodt},
+  title = {Ma{\ss}- und {I}ntegrationstheorie}
+}
+
+@book{Bauer_Heinz1982-01-01,
+title={Probability Theory and Elements of Measure Theory (PROBABILITY AND MATHEMATICAL STATISTICS)},
+author={Bauer, Heinz},
+publisher={Academic Pr},
+year={1982},
+month={1},
+date={1},
+edition={Hardcover},
+language={English},
+pages={460},
+isbn={978-0120828203},
+isbn10={0120828200},
+}
+
+@book{Shiryaev1996,
+  doi = {10.1007/978-1-4757-2539-1},
+  url = {https://doi.org/10.1007/978-1-4757-2539-1},
+  year = {1996},
+  publisher = {Springer New York},
+  author = {A. N. Shiryaev},
+  title = {Probability}
+}
+
+@article{bezanson2017julia,
+  title={Julia: {A} fresh approach to numerical computing},
+  author={Bezanson, Jeff and Edelman, Alan and Karpinski, Stefan and Shah, Viral B},
+  journal={SIAM review},
+  volume={59},
+  number={1},
+  pages={65--98},
+  year={2017},
+  publisher={SIAM}
+}
+
+@misc{arxiv2103.08478,
+Author = {Joris Bierkens and Sebastiano Grazzi and Frank van der Meulen and Moritz Schauer},
+Title = {Sticky {PDMP} samplers for sparse and local inference problems},
+Year = {2021},
+Eprint = {arXiv:2103.08478},
+}
+
+@misc{https://doi.org/10.5281/zenodo.1005091,
+  doi = {10.5281/ZENODO.1005091},
+  url = {https://zenodo.org/record/1005091},
+  author = {Schauer,  Moritz and Keller,  Martin},
+  title = {{mschauer/CausalInference.jl: v0.6.0}},
+  publisher = {Zenodo},
+  year = {2021},
+  copyright = {Open Access}
+}
+
+@misc{https://doi.org/10.5281/zenodo.3931118,
+  doi = {10.5281/ZENODO.3931118},
+  url = {https://zenodo.org/record/3931118},
+  author = {Schauer,  Moritz and Grazzi,  Sebastiano},
+  title = {{mschauer/ZigZagBoomerang.jl: v0.10.0}},
+  publisher = {Zenodo},
+  year = {2021},
+  copyright = {Open Access}
+}
+
+
+@Article{distr-package,
+    title = {General Purpose Convolution Algorithm in {S}4 Classes by Means of {FFT}},
+    author = {Peter Ruckdeschel and Matthias Kohl},
+    journal = {Journal of Statistical Software},
+    year = {2014},
+    volume = {59},
+    number = {4},
+    pages = {1--25},
+    url = {http://www.jstatsoft.org/v59/i04/},
+}
+
+@article{JSSv098i16,
+   author = {Mathieu Besançon and Theodore Papamarkou and David Anthoff and Alex Arslan and Simon Byrne and Dahua Lin and John Pearson},
+   title = {Distributions.jl: Definition and Modeling of Probability Distributions in the JuliaStats Ecosystem},
+   journal = {Journal of Statistical Software},
+   volume = {98},
+   number = {16},
+   year = {2021},
+   keywords = {Julia; distributions; modeling; interface; mixture; KDE; sampling; probabilistic programming; inference},
+   issn = {1548-7660},
+   pages = {1--30},
+   doi = {10.18637/jss.v098.i16},
+   url = {https://www.jstatsoft.org/v098/i16}
+}
+
+@misc{tavares2019language,
+  title={A language for counterfactual generative models},
+  author={Tavares, Zenna and Koppel, James and Zhang, Xin and Solar-Lezama, Armando},
+  year={2019}
+}
+
+% reference for the software itself
+@misc{Distributions.jl-2019,
+  author       = {Dahua Lin and
+                  John Myles White and
+                  Simon Byrne and
+                  Douglas Bates and
+                  Andreas Noack and
+                  John Pearson and
+                  Alex Arslan and
+                  Kevin Squire and
+                  David Anthoff and
+                  Theodore Papamarkou and
+                  Mathieu Besançon and
+                  Jan Drugowitsch and
+                  Moritz Schauer and
+                  other contributors},
+  title        = {{JuliaStats/Distributions.jl: a Julia package for probability distributions and associated functions}},
+  month        = {Jul},
+  year         = 2019,
+  doi          = {10.5281/zenodo.2647458},
+  url          = {https://doi.org/10.5281/zenodo.2647458}
+}
+
+%% references from zigzagboomerang.jl
+
+
+
+@InProceedings{pmlr-v119-bierkens20a,
+  title = 	 {The {B}oomerang Sampler},
+  author =       {Bierkens, Joris and Grazzi, Sebastiano and Kamatani, Kengo and Roberts, Gareth},
+  booktitle = 	 {Proceedings of the 37th International Conference on Machine Learning},
+  pages = 	 {908--918},
+  year = 	 {2020},
+  editor = 	 {III, Hal Daumé and Singh, Aarti},
+  volume = 	 {119},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {13--18 Jul},
+  publisher =    {PMLR},
+  pdf = 	 {http://proceedings.mlr.press/v119/bierkens20a/bierkens20a.pdf},
+  url = 	 {https://proceedings.mlr.press/v119/bierkens20a.html},
+  abstract = 	 {This paper introduces the boomerang sampler as a novel class of continuous-time non-reversible Markov chain Monte Carlo algorithms. The methodology begins by representing the target density as a density, $e^{-U}$, with respect to a prescribed (usually) Gaussian measure and constructs a continuous trajectory consisting of a piecewise circular path. The method moves from one circular orbit to another according to a rate function which can be written in terms of $U$. We demonstrate that the method is easy to implement and demonstrate empirically that it can out-perform existing benchmark piecewise deterministic Markov processes such as the bouncy particle sampler and the Zig-Zag. In the Bayesian statistics context, these competitor algorithms are of substantial interest in the large data context due to the fact that they can adopt data subsampling techniques which are exact (ie induce no error in the stationary distribution). We demonstrate theoretically and empirically that we can also construct a control-variate subsampling boomerang sampler which is also exact, and which possesses remarkable scaling properties in the large data limit. We furthermore illustrate a factorised version on the simulation of diffusion bridges.}
+}
+
+@misc{arxiv2010.03509,
+Author = {Frank van der Meulen and Moritz Schauer},
+Title = {Automatic Backward Filtering Forward Guiding for {M}arkov processes and graphical models},
+Year = {2020},
+Eprint = {arXiv:2010.03509},
+}
+
+
+@article{10.1214/18-AOS1715,
+author = {Joris Bierkens and Paul Fearnhead and Gareth Roberts},
+title = {{The Zig-Zag process and super-efficient sampling for {B}ayesian analysis of big data}},
+volume = {47},
+journal = {The Annals of Statistics},
+number = {3},
+publisher = {Institute of Mathematical Statistics},
+pages = {1288 -- 1320},
+keywords = {exact sampling, MCMC, nonreversible Markov process, Piecewise deterministic Markov process, stochastic gradient Langevin dynamics, sub-sampling},
+year = {2019},
+doi = {10.1214/18-AOS1715},
+URL = {https://doi.org/10.1214/18-AOS1715}
+}
+
+@ARTICLE{10.3389/fphy.2021.663457,
+  
+AUTHOR={Krauth, Werner},   
+	 
+TITLE={Event-Chain {M}onte {C}arlo: Foundations, Applications, and Prospects},      
+	
+JOURNAL={Frontiers in Physics},      
+	
+VOLUME={9},      
+
+PAGES={229},     
+	
+YEAR={2021},      
+	  
+URL={https://www.frontiersin.org/article/10.3389/fphy.2021.663457},       
+	
+DOI={10.3389/fphy.2021.663457},      
+	
+ISSN={2296-424X},   
+   
+ABSTRACT={This review treats the mathematical and algorithmic foundations of non-reversible Markov chains in the context of event-chain Monte Carlo (ECMC), a continuous-time lifted Markov chain that employs the factorized Metropolis algorithm. It analyzes a number of model applications and then reviews the formulation as well as the performance of ECMC in key models in statistical physics. Finally, the review reports on an ongoing initiative to apply ECMC to the sampling problem in molecular simulation, i.e., to real-world models of peptides, proteins, and polymers in aqueous solution.}
+}
+
+@article{Bierkens2021,
+  doi = {10.1007/s11222-021-10008-8},
+  url = {https://doi.org/10.1007/s11222-021-10008-8},
+  year = {2021},
+  month = apr,
+  publisher = {Springer Science and Business Media {LLC}},
+  volume = {31},
+  number = {3},
+  author = {Joris Bierkens and Sebastiano Grazzi and Frank van der Meulen and Moritz Schauer},
+  title = {A piecewise deterministic {M}onte {C}arlo method for diffusion bridges},
+  journal = {Statistics and Computing}
+}
+
+
+@misc{bierkens2021sticky,
+      title={Sticky {PDMP} samplers for sparse and local inference problems}, 
+      author={Joris Bierkens and Sebastiano Grazzi and Frank van der Meulen and Moritz Schauer},
+      year={2021},
+      eprint={2103.08478},
+      archivePrefix={arXiv},
+      primaryClass={stat.CO}
+}
+
+@article{Bierkens2018,
+  doi = {10.1016/j.spl.2018.02.021},
+  url = {https://doi.org/10.1016/j.spl.2018.02.021},
+  year = {2018},
+  month = may,
+  publisher = {Elsevier {BV}},
+  volume = {136},
+  pages = {148--154},
+  author = {Joris Bierkens and Alexandre Bouchard-C{\^{o}}t{\'{e}} and Arnaud Doucet and Andrew B. Duncan and Paul Fearnhead and Thibaut Lienart and Gareth Roberts and Sebastian J. Vollmer},
+  title = {Piecewise deterministic Markov processes for scalable {Monte Carlo} on restricted domains},
+  journal = {Statistics {\&} Probability Letters}
+}
+
+@inproceedings{ge2018t,
+  author    = {Hong Ge and
+               Kai Xu and
+               Zoubin Ghahramani},
+  title     = {Turing: a language for flexible probabilistic inference},
+  booktitle = {International Conference on Artificial Intelligence and Statistics,
+               {AISTATS} 2018, 9-11 April 2018, Playa Blanca, Lanzarote, Canary Islands,
+               Spain},
+  pages     = {1682--1690},
+  year      = {2018},
+  url       = {http://proceedings.mlr.press/v84/ge18b.html},
+  biburl    = {https://dblp.org/rec/bib/conf/aistats/GeXG18},
+}
+
+@article{Radul2020,
+  author    = {Alexey Radul and
+               Boris Alexeev},
+  title     = {The Base Measure Problem and its Solution},
+  journal   = {CoRR},
+  volume    = {abs/2010.09647},
+  year      = {2020},
+  url       = {https://arxiv.org/abs/2010.09647},
+  eprinttype = {arXiv},
+  eprint    = {2010.09647},
+  timestamp = {Wed, 21 Oct 2020 12:11:48 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2010-09647.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{Borgstr_m_2013,
+   title={Measure Transformer Semantics for Bayesian Machine Learning},
+   volume={9},
+   ISSN={1860-5974},
+   url={http://dx.doi.org/10.2168/LMCS-9(3:11)2013},
+   DOI={10.2168/lmcs-9(3:11)2013},
+   number={3},
+   journal={Logical Methods in Computer Science},
+   publisher={Centre pour la Communication Scientifique Directe (CCSD)},
+   author={Borgström, Johannes and Gordon, Andrew and Greenberg, Michael and Margetson, James and Van Gael, Jurgen},
+   editor={Barthe, GillesEditor},
+   year={2013},
+   month={Sep}
+}
+
+@article{Narayanan2020,
+author = {Narayanan, Praveen and Shan, Chung-chieh},
+title = {Symbolic Disintegration with a Variety of Base Measures},
+year = {2020},
+issue_date = {May 2020},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {42},
+number = {2},
+issn = {0164-0925},
+url = {https://doi.org/10.1145/3374208},
+doi = {10.1145/3374208},
+abstract = {Disintegration is a relation on measures and a transformation on probabilistic programs
+that generalizes density calculation and conditioning, two operations widely used
+for exact and approximate inference. Existing program transformations that find a
+disintegration or density automatically are limited to a fixed base measure that is
+an independent product of Lebesgue and counting measures, so they are of no help in
+practical cases that require tricky reasoning about other base measures. We present
+the first disintegrator that handles variable base measures, including discrete-continuous
+mixtures, dependent products, and disjoint sums. By analogy with type inference, our
+disintegrator can check a given base measure as well as infer an unknown one that
+is principal. We derive the disintegrator and prove it sound by equational reasoning
+from semantic specifications. It succeeds in a variety of applications where disintegration
+and density calculation had not been previously mechanized.},
+journal = {ACM Trans. Program. Lang. Syst.},
+month = may,
+articleno = {9},
+numpages = {60},
+keywords = {measure kernels, conditional distributions, Probabilistic programs, density functions}
+}
+
+  
+
+@article{Papaspiliopoulos2007,
+  doi = {10.1214/088342307000000014},
+  url = {https://doi.org/10.1214/088342307000000014},
+  year = {2007},
+  month = feb,
+  publisher = {Institute of Mathematical Statistics},
+  volume = {22},
+  number = {1},
+  author = {Omiros Papaspiliopoulos and Gareth O. Roberts and Martin Sk\"{o}ld},
+  title = {A General Framework for the Parametrization of Hierarchical Models},
+  journal = {Statistical Science}
+}
+
+@article{LEWANDOWSKI20091989,
+abstract = {We extend and improve two existing methods of generating random correlation matrices, the onion method of Ghosh and Henderson [S. Ghosh, S.G. Henderson, Behavior of the norta method for correlated random vector generation as the dimension increases, ACM Transactions on Modeling and Computer Simulation (TOMACS) 13 (3) (2003) 276–294] and the recently proposed method of Joe [H. Joe, Generating random correlation matrices based on partial correlations, Journal of Multivariate Analysis 97 (2006) 2177–2189] based on partial correlations. The latter is based on the so-called D-vine. We extend the methodology to any regular vine and study the relationship between the multiple correlation and partial correlations on a regular vine. We explain the onion method in terms of elliptical distributions and extend it to allow generating random correlation matrices from the same joint distribution as the vine method. The methods are compared in terms of time necessary to generate 5000 random correlation matrices of given dimensions.},
+author = {Lewandowski, Daniel and Kurowicka, Dorota and Joe, Harry},
+doi = {https://doi.org/10.1016/j.jmva.2009.04.008},
+issn = {0047-259X},
+journal = {Journal of Multivariate Analysis},
+keywords = { Correlation matrix, Onion method, Partial correlation,Dependence vines},
+number = {9},
+pages = {1989--2001},
+title = {{Generating random correlation matrices based on vines and extended onion method}},
+url = {https://www.sciencedirect.com/science/article/pii/S0047259X09000876},
+volume = {100},
+year = {2009}
+}
+
+@misc{wu2018discretecontinuous,
+      title={Discrete-Continuous Mixtures in Probabilistic Programming: Generalized Semantics and Inference Algorithms}, 
+      author={Yi Wu and Siddharth Srivastava and Nicholas Hay and Simon Du and Stuart Russell},
+      year={2018},
+      eprint={1806.02027},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI}
+}
+
+@inproceedings{narayanan2016probabilistic,
+    title = {Probabilistic inference by program transformation in {H}akaru (system description)},
+    author = {Narayanan, Praveen and Carette, Jacques and Romano, Wren and Shan, Chung{-}chieh and Zinkov, Robert},
+    booktitle = {International Symposium on Functional and Logic Programming - 13th International Symposium, {FLOPS} 2016, Kochi, Japan, March 4-6, 2016, Proceedings},
+    pages = {62--79},
+    year = {2016},
+    organization = {Springer},
+    url = {http://dx.doi.org/10.1007/978-3-319-29604-3_5},
+    doi = {10.1007/978-3-319-29604-3\_5},
+}
+
+@inproceedings{scherrer2020soss, 
+  title={Soss: Declarative Probabilistic Programming via Runtime Code Generation}, 
+  DOI={10.5281/zenodo.5520061}, 
+  abstractNote={0 <p>We present Soss, a declarative probabilistic programming language embedded in the Julia language. Soss represents statistical models in terms of abstract syntax trees, and uses staged compilation for on-demand generation of ``inference primitives&#39;&#39; (random sampling, log-density, etc) without requiring casual users to worry about such details.</p> <p>&nbsp;</p> <p>The approach taken by Soss makes it easy to extend to take advantage of other packages in the rapidly-growing Julia ecosystem. At the time of this writing, Soss users can choose from several inference back-ends and connect easily with larger systems SymPy and Gen.</p>}, 
+  publisher={Zenodo}, 
+  author={Scherrer, Chad and Zhao, Taine}, 
+  year={2020}, 
+  month={Oct} 
+}
+
+
+
+@article{Stan,
+   author = {Bob Carpenter and Andrew Gelman and Matthew D. Hoffman and Daniel Lee and Ben Goodrich and Michael Betancourt and Marcus Brubaker and Jiqiang Guo and Peter Li and Allen Riddell},
+   title = {Stan: A Probabilistic Programming Language},
+   journal = {Journal of Statistical Software, Articles},
+   volume = {76},
+   number = {1},
+   year = {2017},
+   keywords = {probabilistic programming; Bayesian inference; algorithmic differentiation; Stan},
+   abstract = {Stan is a probabilistic programming language for specifying statistical models. A Stan program imperatively defines a log probability function over parameters conditioned on specified data and constants. As of version 2.14.0, Stan provides full Bayesian inference for continuous-variable models through Markov chain Monte Carlo methods such as the No-U-Turn sampler, an adaptive form of Hamiltonian Monte Carlo sampling. Penalized maximum likelihood estimates are calculated using optimization methods such as the limited memory Broyden-Fletcher-Goldfarb-Shanno algorithm. Stan is also a platform for computing log densities and their gradients and Hessians, which can be used in alternative algorithms such as variational Bayes, expectation propagation, and marginal inference using approximate integration. To this end, Stan is set up so that the densities, gradients, and Hessians, along with intermediate quantities of the algorithm such as acceptance probabilities, are easily accessible. Stan can be called from the command line using the cmdstan package, through R using the rstan package, and through Python using the pystan package. All three interfaces support sampling and optimization-based inference with diagnostics and posterior analysis. rstan and pystan also provide access to log probabilities, gradients, Hessians, parameter transforms, and specialized plotting.},
+   issn = {1548-7660},
+   pages = {1--32},
+   doi = {10.18637/jss.v076.i01},
+   url = {https://www.jstatsoft.org/v076/i01}
+}
+
+@inproceedings{ramsey2002stochastic,
+  title={Stochastic lambda calculus and monads of probability distributions},
+  author={Ramsey, Norman and Pfeffer, Avi},
+  booktitle={Proceedings of the 29th ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
+  pages={154--165},
+  year={2002}
+}
+
+@misc{Dalle_PointProcesses.jl,
+    author = {Dalle, Guillaume},
+    title = {{PointProcesses.jl}},
+    howpublished = "\url{https://github.com/gdalle/PointProcesses.jl}",
+    year = 2021
+}
+
+@misc{KeywordCalls.jl,
+    author = {Scherrer, Chad and Lucas, Miles and Fourquet, Rafael and Schaub, Simeon},
+    title = {{KeywordCalls.jl}},
+    howpublished = "\url{https://github.com/cscherrer/KeywordCalls.jl}",
+    year = 2021
+}
+
+@misc{DynamicIterators.jl,
+    author = {Schauer, Moritz},
+    title = {{DynamicIterators.jl}},
+    howpublished = "\url{https://github.com/mschauer/DynamicIterators.jl}",
+    year = 2021
+}
+
+@misc{manifoldmeasures,
+  author = {Axen, Seth D.},
+  title = {{ManifoldMeasures.jl}},
+  howpublished = "\url{https://github.com/JuliaManifolds/ManifoldMeasures.jl}",
+  year = {2021},
+}
+
+@misc{multivariatemeasures,
+  author = {Scherrer, Chad and Elrod, Christopher},
+  title = {{MultivariateMeasures.jl}},
+  howpublished = "\url{https://github.com/cscherrer/MultivariateMeasures.jl}",
+  year = {2021},
+}
+
+@misc{loopvectorization,
+  author = {Elrod, Christopher},
+  title = {{LoopVectorization.jl}},
+  howpublished = "\url{https://github.com/JuliaSIMD/LoopVectorization.jl}",
+  year = {2021},
+}
+

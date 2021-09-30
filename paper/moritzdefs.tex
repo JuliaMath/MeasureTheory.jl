@@ -1,0 +1,49 @@
+% Make math fonts
+
+\makeatletter
+\def\lstAZ{A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z}
+\def\lstaz{a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z}
+
+\def\lstAZBB{B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, T, U, V, W, X, Y, Z}
+
+\newcommand{\MkBf}[1]{\expandafter\def\csname b#1\endcsname{\mathbf{#1}}}
+\newcommand{\MkScr}[1]{\expandafter\def\csname s#1\endcsname{\mathscr{#1}}}
+\newcommand{\MkUp}[1]{\expandafter\def\csname u#1\endcsname{\mathrm{#1}}}
+\newcommand{\MkFrak}[1]{\expandafter\def\csname f#1\endcsname{\mathfrak{#1}}}
+\newcommand{\MkCal}[1]{\expandafter\def\csname c#1\endcsname{\mathcal{#1}}}
+\newcommand{\MkBB}[1]{\expandafter\def\csname #1#1\endcsname{\mathbb{#1}}}
+
+\@for\i:=\lstAZ\do{%
+	\expandafter\MkBf \i  %  
+	\expandafter\MkScr \i  %  
+	\expandafter\MkFrak \i  %
+	\expandafter\MkUp \i %
+	\expandafter\MkCal \i  %
+		  }    
+\@for\i:=\lstaz\do{%
+	\expandafter\MkUp \i   }    
+	
+\@for\i:=\lstAZBB\do{%
+	\expandafter\MkBB \i     }
+	    
+\makeatother
+
+\renewcommand{\P}{\mathrm{P}}
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\e}{\mathrm{e}}
+
+\newcommand{\nm}[1]{\mathoperator{#1}}
+
+\newcommand{\ind}{\mathbf{1}}
+
+\newcommand{\ds}{\frac{\partial}{\partial s}}
+\newcommand{\dt}{\frac{\partial}{\partial t}}
+\newcommand{\dr}{\frac{\partial}{\partial r}}
+
+\newcommand{\dd}{ \mathrm{d}}
+%\DeclareMathOperator{\sgn}{sgn} 
+%\DeclareMathOperator*{\argmax}{argmax}
+%\DeclareMathOperator*{\argmin}{argmin}
+
+ \newcommand{\ip}[2]{\langle #1,#2\rangle}
+
