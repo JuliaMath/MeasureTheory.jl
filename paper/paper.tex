@@ -76,6 +76,7 @@
 %     morekeywords = [2]{Beta, Distributions}, % define more types and modules
 % }
 
+\usepackage{inconsolata}
 \usepackage[normalem]{ulem} %\sout
 \usepackage{centernot} %\centernot
 %\usepackage[colorinlistoftodos]{todonotes}
@@ -122,7 +123,8 @@ The need to preserve this computationally so important locality leads to the new
 
 \emph{Distributions are an insufficient abstraction for probabilistic modeling.}
 
-Let's first consider Bayesian modeling. In the posterior density of the parameter given the observation or data,
+Let's first consider Bayesian modeling. In the posterior density of the
+parameter $\theta$ given the observation or data $x$,
 \[
 p(\theta \mid x) = \frac{p(\theta)\ p(x \mid \theta)}{p(x)}\ ,
 \]
@@ -179,7 +181,7 @@ Some parts of our approach can been seen in existing systems, though these are s
 We'll now describe some foundations to help the reader get a deeper understanding of our approach, in particular what measures and probability distributions are and how they relate to notions such as the probability of something happening in the real world or the notion of volume of the space we are living in. 
 
 Throughout this discussion, it's important to keep in mind that for us the measure-theoretic abstractions are only means to an end.% 
-\footnote{The stackoverflow discussion \url{https://mathoverflow.net/q/11591} discusses books on measure theory, M.S.~likes \cite{Shiryaev1996} as starting point and uses \cite{Elstrodt2011} and \cite{Bauer_Heinz1982-01-01} as reference. As we anticipate interest in connecting with the actual theory, we give some pointers to more technical details in the footnotes.}
+\footnote{The stackoverflow discussion \url{https://mathoverflow.net/q/11591} discusses books on measure theory; M.S.~likes \cite{Shiryaev1996} as starting point and uses \cite{Elstrodt2011} and \cite{Bauer_Heinz1982-01-01} as reference. As we anticipate interest in connecting with the actual theory, we give some pointers to more technical details in the footnotes.}
 
 Our primary interest, and the goal of \verb|MeasureTheory|, is to offer support for \emph{applied probabilistic modeling}.
 
@@ -195,10 +197,17 @@ One further such space that deserves mention is traditionally denoted $\Omega$. 
 
 Computationally, $\Omega$ can be considered to be the set of possible states of a random number generator \verb|rng::AbstractRNG|, which is the source of computational randomness.
 
-It has a special role of tying random quantities a program produces and their distributions together, through the notion of random variables, which are functions $\bX$, $\bY$ from $\Omega$ taking values in spaces $X$, $Y$ such as $\{1,2,3,4,5,6\}$ or $\RR^3$.\footnote{Additionally, one requires that random variables are \href{https://en.wikipedia.org/wiki/Measurable_function}{\emph{measurable function}} to be one for which the inverse image of an event $\subset X$ is also an event of $\Omega$.
-
+$\Omega$ has a special role of tying random quantities a program produces and their
+distributions together, through the notion of random variables, which are
+functions $\bX$, $\bY$ from $\Omega$ taking values in spaces $X$, $Y$ such as
+$\{1,2,3,4,5,6\}$ or $\RR^3$.\footnote{Additionally, one requires a random
+variable to be a \href{https://en.wikipedia.org/wiki/Measurable_function}{\emph{measurable
+function}}, that is, one for which the inverse image of an event $\subset X$ is
+also an event of $\Omega$.
 This is a similar, but much weaker requirement to the definition of a continuous function (``the inverse image of an open set is also open'').}
-The package \verb|Omega.jl| \cite{tavares2019language} uses random variables derived from $\Omega$ as  core principle. 
+The package \verb|Omega.jl| \cite{tavares2019language} uses random variables
+derived from $\Omega$ as  core principle. 
+
 From a computational perspective,
 a Julia function taking only an \verb|rng::AbstractRNG| argument, making a number of calls to \verb|rand(rng)|, and returning a value $x\in X$ is a random variable $\bX \colon \Omega\to X$.
 A simple example is  \verb|X(rng=Random.GLOBAL_RNG) = rand(rng, 1:6)|.
@@ -214,7 +223,7 @@ In the example,
 \[\operatorname{Prob}(\bX \in A) = D(A) =  \dfrac{|A|}{6}\]
 where $|A|$ denotes the number of elements of $A \subset \{1,2,\cdots,6\}$.
 
-In \verb|MeasureTheory|, measures have abstract super-type `AbstractMeasure`. 
+In \verb|MeasureTheory|, measures have abstract super-type \verb|AbstractMeasure|. 
 
 
 \subsection*{Kolmogorov's axioms}
@@ -350,7 +359,7 @@ There are several benefits to working in log-space. Results are much less likely
 
 Working locally and in log-space also gives us a convenient \emph{antisymmetry},
 \begin{verbatim}
-    logdensity(μ, ν, x) == -logdensity(ν, μ, x)
+logdensity(μ, ν, x) == -logdensity(ν, μ, x)
 \end{verbatim}
 
 In particular, \verb|logdensity(μ, ν, x)| takes special values in some common cases:
@@ -423,9 +432,9 @@ In \verb|MeasureTheory|, our approach avoids this problem. A \emph{parameterized
 
 %\inputminted{julia}{structNormal.jl}
 \begin{verbatim}
-    struct NegativeBinomial{N,T} <: ParameterizedMeasure{N}
-        par :: NamedTuple{N,T}
-    end
+struct NegativeBinomial{N,T} <: ParameterizedMeasure{N}
+    par :: NamedTuple{N,T}
+end
 \end{verbatim}
 
 We can then write 
@@ -498,27 +507,27 @@ Some kernels $\kappa$ map elements of a state space $X$ to measures on the same 
 In this case, repeated application of the kernel ``walks'' through $X$, yielding the law of a \href{https://en.wikipedia.org/wiki/Markov_chain}{\emph{Markov chain}}. We support this in \verb|MeasureTheory| through the \verb|Chain| combinator. This takes a kernel (or function) and a starting measure, and can be used with Julia's convenient \verb|do| notation. For example, we can write a Gaussian random walk as
 
 \begin{verbatim}
-mc = Chain(Normal(μ=0.0)) do x Normal(μ=x) end
+    mc = Chain(Normal(μ=0.0)) do x Normal(μ=x) end
 \end{verbatim}
 
 A random sample from a \verb|Chain| is an infinite sequence expressed as a iterator, e.g.
 
 \begin{verbatim}
-julia> r = rand(mc);
+    julia> r = rand(mc);
 
-julia> x = Iterators.take(r, 3) |> collect
-3-element Vector{Any}:
- -0.4931543737034523
- -0.5661895116186417
- -1.3286977670590228
+    julia> x = Iterators.take(r, 3) |> collect
+    3-element Vector{Any}:
+     -0.4931543737034523
+     -0.5661895116186417
+     -1.3286977670590228
 \end{verbatim}
 
 
 
 Thus, for example, we can evaluate \verb|mc| on the \verb|x| we just computed:
 \begin{verbatim}
-julia> logdensity(mc, x)
--0.4149771036439342
+    julia> logdensity(mc, x)
+    -0.4149771036439342
 \end{verbatim}
 
 Crucially, the call to \verb|rand| builds a struct containing a random seed, to ensure that repeated realizations of \verb|r| will be identical.
@@ -697,13 +706,11 @@ In addition, it's common to have an ``argument check'' to be sure $x$ is in the 
 Depending on the application, we can often ignore some of these. For example, we may know $x$ is in the support by construction, or from a previous check. In these cases, any use of resources to check arguments is wasteful.
 
 There are many cases where it's important for performance to have constant and parameter-dependent terms separated from data-dependent ones. Suppose $\mu$ is a measure with log-density of the form
-
 \[
 \log \frac{\dd\mu}{\dd\nu}(x) = \ell(x; \theta) = f(x,\theta) + g(\theta) + C\ .
 \]
 
 If we instead observe an iid product of $N$ observations, the log-density is
-
 \[
 \begin{aligned}
 \sum_{j=1}^N\ell(x_j; \theta) 
@@ -730,8 +737,8 @@ end
 
 So for example, in 10 dimensions with $\eta=2.0$ this gives
 \begin{verbatim}
-julia> relative_normcost(10, 2.0)
-0.76428528899935    
+    julia> relative_normcost(10, 2.0)
+    0.76428528899935    
 \end{verbatim}
 
 That is, 76\% of the time is spent in normalization. If our application doesn't need it, three-fourths of the computation time is simply wasted.
@@ -858,7 +865,7 @@ Despite it being a very new package, \verb|MeasureTheory.jl| there is already ac
 
 \verb|ManifoldMeasures.jl|\cite{manifoldmeasures} implement measures on a \href{https://en.wikipedia.org/wiki/Manifold}{\emph{manifold}}, using \href{https://en.wikipedia.org/wiki/Hausdorff_measure}{\emph{Hausdorff measure}} as the base measure.
 
-\verb|MultivariateMeausures.jl|\cite{multivariatemeasures} gives high-performance implementations of \verb|logdensity| for multivariate measures, using \verb|LoopVectorization.jl|\cite{loopvectorization}.
+\verb|MultivariateMeasures.jl|\cite{multivariatemeasures} gives high-performance implementations of \verb|logdensity| for multivariate measures, using \verb|LoopVectorization.jl|\cite{loopvectorization}.
 
 \verb|Soss.jl|\cite{scherrer2020soss} is a \href{https://en.wikipedia.org/wiki/Probabilistic_programming}{\emph{probabilistic programming language}} that has recently adopted \verb|MeasureTheory.jl| as a foundation. In particular, every Soss \verb|Model| is an instance of \verb|AbstractMeasure|, and has another Soss model as its base measure.
 
@@ -910,5 +917,3 @@ We welcome discussion and community involvement with this package, as well as ad
 \input{bib.tex}
 
 \end{document}
-
-
