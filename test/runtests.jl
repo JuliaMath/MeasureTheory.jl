@@ -94,6 +94,20 @@ end
         @test_broken logdensity(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
     end
 
+    @testset "Exponential" begin
+        r = rand(MersenneTwister(123), Exponential(2))
+        @test r ≈ rand(MersenneTwister(123), Exponential(β=2))
+        @test r ≈ rand(MersenneTwister(123), Exponential(λ=0.5))
+        @test r ≈ rand(MersenneTwister(123), Exponential(logβ=log(2)))
+        @test r ≈ rand(MersenneTwister(123), Exponential(logλ=log(0.5)))
+
+        ℓ = logdensity(Exponential(2), r)
+        @test ℓ ≈ logdensity(Exponential(β=2), r)
+        @test ℓ ≈ logdensity(Exponential(λ=0.5), r)
+        @test ℓ ≈ logdensity(Exponential(logβ=log(2)), r)
+        @test ℓ ≈ logdensity(Exponential(logλ=log(0.5)), r)
+    end
+
     @testset "NegativeBinomial" begin
         D = NegativeBinomial{(:r, :p)}
         par = transform(asparams(D), randn(2))

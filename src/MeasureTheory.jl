@@ -76,7 +76,7 @@ function logpdf(d::AbstractMeasure, x)
     _logpdf(d, x, logdensity(d,x))
 end
 
-function _logpdf(d::AbstractMeasure, x, acc::Float64)
+function _logpdf(d::AbstractMeasure, x, acc::Real)
     β = basemeasure(d)
     d === β && return acc
 
@@ -104,6 +104,7 @@ include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
 include("combinators/chain.jl")
+# include("combinators/basemeasure.jl")
 
 include("distributions.jl")
 
