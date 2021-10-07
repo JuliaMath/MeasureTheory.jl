@@ -71,18 +71,6 @@ import Distributions: logpdf, pdf
 
 export pdf, logpdf
 
-function logpdf(d::AbstractMeasure, x)
-    _logpdf(d, x, logdensity(d,x))
-end
-
-function _logpdf(d::AbstractMeasure, x, acc::Real)
-    β = basemeasure(d)
-    d === β && return acc
-
-    _logpdf(β, x, acc + logdensity(β, x))
-end
-
-
 Distributions.logpdf(d::AbstractMeasure, x) = MeasureBase.logpdf(d, x)
 
 Distributions.pdf(d::AbstractMeasure, x) = exp(Dists.logpdf(d, x))
