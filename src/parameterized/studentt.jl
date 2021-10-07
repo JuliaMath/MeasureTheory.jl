@@ -30,9 +30,14 @@ StudentT(ν, μ, σ) = StudentT((ν=ν, μ=μ, σ=σ))
     sigma    => σ
 ]
 
-function logdensity(d::StudentT{(:ν,)}, x) 
+function logdensity(d::StudentT{(:ν,), Tuple{T}}, x::Number) where {T<:Number}
     ν = d.ν
     return  xlog1py((ν + 1) / (-2), x^2 / ν)
+end
+
+function logdensity(d::StudentT{(:ν,)}, x) 
+    ν = d.ν
+    return  (ν + 1) / (-2) * log1p(x^2 / ν)
 end
 
 function basemeasure(d::StudentT{(:ν,)})
