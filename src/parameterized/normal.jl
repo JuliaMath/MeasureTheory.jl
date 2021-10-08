@@ -27,6 +27,8 @@ export Normal, HalfNormal
 
 params(::Type{N}) where {N<:Normal} = ()
 
+MeasureBase.basekernel(::Type{N}) where {N<:Normal} = Returns(Lebesgue(ℝ))
+
 Normal(μ,σ) = Affine((;μ,σ), Normal())
 
 Normal(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Normal())

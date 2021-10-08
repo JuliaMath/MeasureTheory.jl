@@ -28,6 +28,7 @@ export CountingMeasure
 export TrivialMeasure
 export Likelihood
 export testvalue
+export basekernel
 
 using InfiniteArrays
 using ConcreteStructs
