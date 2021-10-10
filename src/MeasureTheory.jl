@@ -56,7 +56,7 @@ export AffineTransform
 
 if VERSION < v"1.7.0-beta1.0"
     @eval begin
-        struct Returns{T}
+        struct Returns{T} <: Function
             value::T
         end
 
