@@ -27,7 +27,7 @@ export Normal, HalfNormal
 
 params(::Type{N}) where {N<:Normal} = ()
 
-MeasureBase.basekernel(::Type{N}) where {N<:Normal} = Returns(Lebesgue(ℝ))
+MeasureBase.basekernel(::Type{N}) where {N<:Normal} = Returns((1/sqrt2π) * Lebesgue(ℝ))
 
 Normal(μ,σ) = Affine((;μ,σ), Normal())
 
