@@ -29,13 +29,15 @@ params(::Type{N}) where {N<:Normal} = ()
 
 MeasureBase.basekernel(::Type{N}) where {N<:Normal} = Returns((1/sqrt2π) * Lebesgue(ℝ))
 
-Normal(μ,σ) = Affine((;μ,σ), Normal())
+Normal(μ,σ) = affine((;μ,σ), Normal())
 
-Normal(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:μ,:ω)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:σ,)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:ω,)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:μ,)}) = Affine(nt, Normal())
+using MeasureBase: rowsize, colsize
+
+Normal(nt::NamedTuple{(:μ,:σ)}) = affine(nt, Normal() ^ colsize(nt.σ))
+Normal(nt::NamedTuple{(:μ,:ω)}) = affine(nt, Normal() ^ rowsize(nt.ω))
+Normal(nt::NamedTuple{(:σ,)}) = affine(nt, Normal() ^ colsize(nt.σ))
+Normal(nt::NamedTuple{(:ω,)}) = affine(nt, Normal() ^ rowsize(nt.ω))
+Normal(nt::NamedTuple{(:μ,)}) = affine(nt, Normal() ^ size(nt.μ))
 
 @affinepars Normal
 

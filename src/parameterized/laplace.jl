@@ -5,11 +5,11 @@ export Laplace
 
 @parameterized Laplace() ≪ (1/2) * Lebesgue(ℝ)
 
-Laplace(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Laplace())
-Laplace(nt::NamedTuple{(:μ,:ω)}) = Affine(nt, Laplace())
-Laplace(nt::NamedTuple{(:σ,)}) = Affine(nt, Laplace())
-Laplace(nt::NamedTuple{(:ω,)}) = Affine(nt, Laplace())
-Laplace(nt::NamedTuple{(:μ,)}) = Affine(nt, Laplace())
+Laplace(nt::NamedTuple{(:μ,:σ)}) = affine(nt, Laplace())
+Laplace(nt::NamedTuple{(:μ,:ω)}) = affine(nt, Laplace())
+Laplace(nt::NamedTuple{(:σ,)}) = affine(nt, Laplace())
+Laplace(nt::NamedTuple{(:ω,)}) = affine(nt, Laplace())
+Laplace(nt::NamedTuple{(:μ,)}) = affine(nt, Laplace())
 
 @affinepars Laplace
 

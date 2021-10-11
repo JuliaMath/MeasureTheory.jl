@@ -6,7 +6,7 @@ export Gumbel
 
 @kwstruct Gumbel()
 
-Gumbel(nt::NamedTuple{(:σ,)}) = Affine(nt, Gumbel())
+Gumbel(nt::NamedTuple{(:σ,)}) = affine(nt, Gumbel())
 
 @affinepars Gumbel
 

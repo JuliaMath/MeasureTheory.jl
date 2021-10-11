@@ -138,7 +138,7 @@ end
 
     # Fails because we need `asparams` for `::Affine`
     # @testset "Normal" begin
-    #     D = Affine{(:μ,:σ), Normal}
+    #     D = affine{(:μ,:σ), Normal}
     #     par = transform(asparams(D), randn(2))
     #     d = D(par)
     #     @test params(d) == par

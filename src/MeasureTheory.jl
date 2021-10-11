@@ -41,6 +41,7 @@ using SpecialFunctions
 using LogExpFunctions 
 
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
+import MeasureBase: affine
 
 using Reexport
 @reexport using MeasureBase
