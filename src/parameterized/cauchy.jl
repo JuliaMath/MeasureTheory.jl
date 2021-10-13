@@ -7,11 +7,11 @@ export Cauchy, HalfCauchy
 
 @kwstruct Cauchy()
 
-Cauchy(nt::NamedTuple{(:μ,:σ)}) = affine(nt, Cauchy())
-Cauchy(nt::NamedTuple{(:μ,:ω)}) = affine(nt, Cauchy())
-Cauchy(nt::NamedTuple{(:σ,)}) = affine(nt, Cauchy())
-Cauchy(nt::NamedTuple{(:ω,)}) = affine(nt, Cauchy())
-Cauchy(nt::NamedTuple{(:μ,)}) = affine(nt, Cauchy())
+Cauchy(nt::NamedTuple{(:μ,:σ)}) = affine(nt, Cauchy() ^ colsize(nt.σ))
+Cauchy(nt::NamedTuple{(:μ,:ω)}) = affine(nt, Cauchy() ^ rowsize(nt.ω))
+Cauchy(nt::NamedTuple{(:σ,)}) = affine(nt, Cauchy() ^ colsize(nt.σ))
+Cauchy(nt::NamedTuple{(:ω,)}) = affine(nt, Cauchy() ^ rowsize(nt.ω))
+Cauchy(nt::NamedTuple{(:μ,)}) = affine(nt, Cauchy() ^ size(nt.μ))
 
 @affinepars Cauchy
 

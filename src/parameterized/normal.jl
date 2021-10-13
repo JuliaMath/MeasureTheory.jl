@@ -29,7 +29,7 @@ params(::Type{N}) where {N<:Normal} = ()
 
 MeasureBase.basekernel(::Type{N}) where {N<:Normal} = Returns((1/sqrt2π) * Lebesgue(ℝ))
 
-Normal(μ,σ) = affine((;μ,σ), Normal())
+Normal(μ,σ) = affine((;μ,σ), Normal() ^ colsize(σ))
 
 using MeasureBase: rowsize, colsize
 

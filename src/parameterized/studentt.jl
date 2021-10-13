@@ -10,11 +10,11 @@ export StudentT, HalfStudentT
 @kwstruct StudentT(ν,σ)
 @kwstruct StudentT(ν,μ,σ)
 
-StudentT(nt::NamedTuple{(:ν,:μ,:σ)}) = affine(NamedTuple{(:μ,:σ)}(nt), StudentT(ν=nt.ν))
-StudentT(nt::NamedTuple{(:ν,:μ,:ω)}) = affine(NamedTuple{(:μ,:ω)}(nt), StudentT(ν=nt.ν))
-StudentT(nt::NamedTuple{(:ν,:σ,)}) = affine(NamedTuple{(:σ,)}(nt), StudentT(ν=nt.ν))
-StudentT(nt::NamedTuple{(:ν,:ω,)}) = affine(NamedTuple{(:ω,)}(nt), StudentT(ν=nt.ν))
-StudentT(nt::NamedTuple{(:ν,:μ,)}) = affine(NamedTuple{(:μ,)}(nt), StudentT(ν=nt.ν))
+StudentT(nt::NamedTuple{(:ν,:μ,:σ)}) = affine(NamedTuple{(:μ,:σ)}(nt), StudentT(ν=nt.ν) ^ colsize(nt.σ))
+StudentT(nt::NamedTuple{(:ν,:μ,:ω)}) = affine(NamedTuple{(:μ,:ω)}(nt), StudentT(ν=nt.ν) ^ rowsize(nt.ω))
+StudentT(nt::NamedTuple{(:ν,:σ,)}) = affine(NamedTuple{(:σ,)}(nt), StudentT(ν=nt.ν) ^ colsize(nt.σ))
+StudentT(nt::NamedTuple{(:ν,:ω,)}) = affine(NamedTuple{(:ω,)}(nt), StudentT(ν=nt.ν) ^ rowsize(nt.ω))
+StudentT(nt::NamedTuple{(:ν,:μ,)}) = affine(NamedTuple{(:μ,)}(nt), StudentT(ν=nt.ν) ^ size(nt.μ))
 
 @affinepars StudentT
 

@@ -451,3 +451,34 @@ end
     @test ℓ ≈ Dists.logpdf(Dists.MvNormal(R*R'),z)
     @test ℓ ≈ logpdf(MvNormal((σ= Q*R,)),Q*z)
 end
+
+@testset "Affine" begin
+    testmeasures = [
+        (Cauchy, (;))
+        (Normal, (;))
+        (StudentT, (ν=3,))
+    ]
+
+    using Test
+    function test_noerrors(d)
+        x = rand(d)
+        @test logpdf(d, x) isa Real
+        @test logdensity(d, x) isa Real
+    end
+
+    for (M, nt) in testmeasures
+        for p in [(μ=1,), (μ=1,σ=2), (μ=1,ω=2), (σ=2,), (ω=2,)]
+            d = M(merge(nt, p))
+            test_noerrors(d)
+        end
+        for n in 1:3
+            for k in 1:n
+                pars = [(μ=randn(n),), (μ=randn(n),σ=randn(n,k)), (μ=randn(n),ω=randn(k,n)), (σ=randn(n,k),), (ω=randn(k,n),)]
+                for p in pars
+                    d = M(merge(nt, p))
+                    test_noerrors(d)
+                end
+            end
+        end
+    end
+end
