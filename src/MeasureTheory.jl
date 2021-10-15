@@ -55,15 +55,7 @@ export as
 export Affine
 export AffineTransform
 
-if VERSION < v"1.7.0-beta1.0"
-    @eval begin
-        struct Returns{T} <: Function
-            value::T
-        end
-
-        (f::Returns)(x) = f.value
-    end
-end
+using MeasureBase: Returns
 
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
