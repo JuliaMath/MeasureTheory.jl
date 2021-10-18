@@ -8,15 +8,19 @@ export StudentT, HalfStudentT
 @kwstruct StudentT(ν)
 @kwstruct StudentT(ν,μ)
 @kwstruct StudentT(ν,σ)
+@kwstruct StudentT(ν,ω)
 @kwstruct StudentT(ν,μ,σ)
+@kwstruct StudentT(ν,μ,ω)
 
-StudentT(nt::NamedTuple{(:ν,:μ,:σ)}) = affine(NamedTuple{(:μ,:σ)}(nt), StudentT(ν=nt.ν) ^ colsize(nt.σ))
-StudentT(nt::NamedTuple{(:ν,:μ,:ω)}) = affine(NamedTuple{(:μ,:ω)}(nt), StudentT(ν=nt.ν) ^ rowsize(nt.ω))
-StudentT(nt::NamedTuple{(:ν,:σ,)}) = affine(NamedTuple{(:σ,)}(nt), StudentT(ν=nt.ν) ^ colsize(nt.σ))
-StudentT(nt::NamedTuple{(:ν,:ω,)}) = affine(NamedTuple{(:ω,)}(nt), StudentT(ν=nt.ν) ^ rowsize(nt.ω))
-StudentT(nt::NamedTuple{(:ν,:μ,)}) = affine(NamedTuple{(:μ,)}(nt), StudentT(ν=nt.ν) ^ size(nt.μ))
+for N in AFFINEPARS
+    @eval begin
+        proxy(d::StudentT{(:ν,$N...)}) = affine(NamedTupleTools.select(params(d), $N), StudentT((ν=d.ν,)))
+        logdensity(d::StudentT{(:ν, $N...)}, x) = logdensity(proxy(d), x)
+        basemeasure(d::StudentT{(:ν, $N...)}) = basemeasure(proxy(d))
+    end
+end
 
-@affinepars StudentT
+# @affinepars StudentT
 
 StudentT(ν, μ, σ) = StudentT((ν=ν, μ=μ, σ=σ))
 
@@ -53,6 +57,12 @@ TV.as(::StudentT) = asℝ
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 
 distproxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
+distproxy(d::StudentT{(:ν,:μ)}) = Dists.LocationScale(d.μ, 1.0, Dists.TDist(d.ν))
+distproxy(d::StudentT{(:ν,:σ)}) = Dists.LocationScale(0.0, d.σ, Dists.TDist(d.ν))
+distproxy(d::StudentT{(:ν,:ω)}) = Dists.LocationScale(0.0, inv(d.ω), Dists.TDist(d.ν))
+distproxy(d::StudentT{(:ν,:μ,:σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.TDist(d.ν))
+distproxy(d::StudentT{(:ν,:μ,:ω)}) = Dists.LocationScale(d.μ, inv(d.ω), Dists.TDist(d.ν))
+
 
 @half StudentT
 

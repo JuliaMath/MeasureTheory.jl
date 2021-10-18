@@ -23,26 +23,31 @@ export Normal, HalfNormal
 #
 #    Normal(μ, σ) = Normal((μ=μ, σ=σ))
 #
-@parameterized Normal() ≪ (1/sqrt2π) * Lebesgue(ℝ)
+@parameterized Normal() 
+
+basemeasure(::Normal{()}) = (1/sqrt2π) * Lebesgue(ℝ)
+
+@kwstruct Normal(μ)
+@kwstruct Normal(σ)
+@kwstruct Normal(μ,σ)
+@kwstruct Normal(ω)
+@kwstruct Normal(μ,ω)
 
 params(::Type{N}) where {N<:Normal} = ()
 
-MeasureBase.basekernel(::Type{N}) where {N<:Normal} = Returns((1/sqrt2π) * Lebesgue(ℝ))
-
-Normal(μ,σ) = affine((;μ,σ), Normal() ^ colsize(σ))
+Normal(μ,σ) = Normal((μ=μ, σ=σ))
 
 using MeasureBase: rowsize, colsize
 
-Normal(nt::NamedTuple{(:μ,:σ)}) = affine(nt, Normal() ^ colsize(nt.σ))
-Normal(nt::NamedTuple{(:μ,:ω)}) = affine(nt, Normal() ^ rowsize(nt.ω))
-Normal(nt::NamedTuple{(:σ,)}) = affine(nt, Normal() ^ colsize(nt.σ))
-Normal(nt::NamedTuple{(:ω,)}) = affine(nt, Normal() ^ rowsize(nt.ω))
-Normal(nt::NamedTuple{(:μ,)}) = affine(nt, Normal() ^ size(nt.μ))
+Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
-@affinepars Normal
-
-@kwstruct Normal(μ,Σ)
-@kwstruct Normal(μ,Σ⁻¹)
+for N in AFFINEPARS
+    @eval begin
+        proxy(d::Normal{$N}) = affine(params(d), Normal())
+        logdensity(d::Normal{$N}, x) = logdensity(proxy(d), x)
+        basemeasure(d::Normal{$N}) = basemeasure(proxy(d))
+    end
+end
 
 TV.as(::Normal) = asℝ
 
@@ -88,6 +93,12 @@ asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 #     2.805232894324563
 #
 distproxy(d::Normal{()}) = Dists.Normal()
+distproxy(d::Normal{(:μ,)}) = Dists.Normal(d.μ, 1.0)
+distproxy(d::Normal{(:σ,)}) = Dists.Normal(0.0, d.σ)
+distproxy(d::Normal{(:μ,:σ)}) = Dists.Normal(d.μ, d.σ)
+distproxy(d::Normal{(:ω,)}) = Dists.Normal(0.0, inv(d.ω))
+distproxy(d::Normal{(:μ,:ω)}) = Dists.Normal(d.μ, inv(d.ω))
+
 
 ###############################################################################
 # Some distributions have a "standard" version that takes no parameters

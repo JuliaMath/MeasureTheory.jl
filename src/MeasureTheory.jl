@@ -40,6 +40,8 @@ using StatsFuns
 using SpecialFunctions
 using LogExpFunctions 
 
+import NamedTupleTools
+
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
 import MeasureBase: affine
 
@@ -78,16 +80,26 @@ is understood to be `basemeasure(μ)`.
 """
 function logdensity end
 
+
+const AFFINEPARS = [
+    (:μ,:σ)
+    (:μ,:ω)
+    (:σ,)
+    (:ω,)
+    (:μ,)
+]
+
+
 include("const.jl")
 # include("traits.jl")
 include("parameterized.jl")
 # include("resettablerng.jl")
 
+include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
 include("combinators/chain.jl")
-include("combinators/affine.jl")
 
 include("distributions.jl")
 
