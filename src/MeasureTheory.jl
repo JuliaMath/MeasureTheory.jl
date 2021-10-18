@@ -28,6 +28,7 @@ export CountingMeasure
 export TrivialMeasure
 export Likelihood
 export testvalue
+export basekernel
 
 using InfiniteArrays
 using ConcreteStructs
@@ -39,7 +40,12 @@ using StatsFuns
 using SpecialFunctions
 using LogExpFunctions 
 
+import NamedTupleTools
+
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
+import MeasureBase: affine, supportdim
+
+import Base: rand
 
 using Reexport
 @reexport using MeasureBase
@@ -53,38 +59,22 @@ export as
 export Affine
 export AffineTransform
 
-if VERSION < v"1.7.0-beta1.0"
-    @eval begin
-        struct Returns{T}
-            value::T
-        end
-
-        (f::Returns)(x) = f.value
-    end
-end
+using MeasureBase: Returns
 
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
 # sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
 
-import Distributions: pdf, logpdf
 
+
+
+import Distributions: logpdf, pdf
 
 export pdf, logpdf
 
-function logpdf(d::AbstractMeasure, x)
-    _logpdf(d, x, logdensity(d,x))
-end
+Distributions.logpdf(d::AbstractMeasure, x) = MeasureBase.logpdf(d, x)
 
-function _logpdf(d::AbstractMeasure, x, acc::Real)
-    β = basemeasure(d)
-    d === β && return acc
-
-    _logpdf(β, x, acc + logdensity(β, x))
-end
-
-
-pdf(d::AbstractMeasure, x) = exp(logpdf(d, x))
+Distributions.pdf(d::AbstractMeasure, x) = exp(Dists.logpdf(d, x))
 
 """
     logdensity(μ::AbstractMeasure [, ν::AbstractMeasure], x::X)
@@ -95,16 +85,26 @@ is understood to be `basemeasure(μ)`.
 """
 function logdensity end
 
+
+const AFFINEPARS = [
+    (:μ,:σ)
+    (:μ,:ω)
+    (:σ,)
+    (:ω,)
+    (:μ,)
+]
+
+
 include("const.jl")
 # include("traits.jl")
 include("parameterized.jl")
 # include("resettablerng.jl")
 
+include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
 include("combinators/chain.jl")
-# include("combinators/basemeasure.jl")
 
 include("distributions.jl")
 
