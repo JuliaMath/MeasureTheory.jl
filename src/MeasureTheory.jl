@@ -53,7 +53,7 @@ using Reexport
 if VERSION < v"1.7.0-rc1"
     @eval begin
         function replace(t::Tuple, old_new::Pair...)
-            tuple(replace(collect(t), old_new)...)
+            tuple(replace(collect(t), old_new...)...)
         end
     end
 end
