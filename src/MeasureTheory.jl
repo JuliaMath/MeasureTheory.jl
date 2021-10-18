@@ -50,6 +50,14 @@ import Base: rand
 using Reexport
 @reexport using MeasureBase
 
+if VERSION < v"1.7.0-rc1"
+    @eval begin
+        function replace(t::Tuple, old_new::Pair...)
+            tuple(replace(collect(t), old_new)...)
+        end
+    end
+end
+
 using Tricks: static_hasmethod
 const ∞ = InfiniteArrays.∞
 
@@ -64,6 +72,9 @@ using MeasureBase: Returns
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
 # sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
+
+
+
 
 import Distributions: logpdf, pdf
 
