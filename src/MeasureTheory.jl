@@ -43,7 +43,9 @@ using LogExpFunctions
 import NamedTupleTools
 
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
-import MeasureBase: affine
+import MeasureBase: affine, supportdim
+
+import Base: rand
 
 using Reexport
 @reexport using MeasureBase

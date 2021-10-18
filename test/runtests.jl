@@ -345,6 +345,12 @@ end
 
     @testset "MvNormal" begin
         @test_broken repro(MvNormal, (:μ,))
+
+        σ = LowerTriangular(randn(3,3))
+        Σ = σ * σ'
+        d = MvNormal(σ=σ)
+        x = rand(d)
+        @test logpdf(d, x) ≈ logpdf(Dists.MvNormal(Σ), x)
     end
 
     @testset "NegativeBinomial" begin

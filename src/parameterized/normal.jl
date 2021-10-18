@@ -61,7 +61,6 @@ TV.as(::Normal) = asℝ
     std   => σ
     sigma => σ
     var   => σ²
-    cov   => Σ
 ]
 
 # It's often useful to be able to map into the parameter space for a given

@@ -3,27 +3,45 @@
 
 export MvNormal
 
-function MvNormal(nt::NamedTuple{(:μ,)})
-    dim = size(nt.μ)
-    affine(nt, Normal() ^ dim)
-end
+@parameterized MvNormal(μ,σ)
 
-function MvNormal(nt::NamedTuple{(:σ,)})
-    dim = colsize(nt.σ)
-    affine(nt, Normal() ^ dim)
-end
+# MvNormal(;kwargs...) = MvNormal(kwargs)
 
-function MvNormal(nt::NamedTuple{(:ω,)})
-    dim = rowsize(nt.ω)
-    affine(nt, Normal() ^ dim)
-end
+@kwstruct MvNormal(μ)
+@kwstruct MvNormal(σ)
+@kwstruct MvNormal(ω)
+@kwstruct MvNormal(μ,σ)
+@kwstruct MvNormal(μ,ω)
 
-function MvNormal(nt::NamedTuple{(:μ, :σ,)})
-    dim = colsize(nt.σ)
-    affine(nt, Normal() ^ dim)
-end
+supportdim(d::MvNormal) = supportdim(params(d))
 
-function MvNormal(nt::NamedTuple{(:μ, :ω,)})
-    dim = rowsize(nt.ω)
-    affine(nt, Normal() ^ dim)
-end
+proxy(d::MvNormal) = affine(params(d), Normal() ^ supportdim(d))
+logdensity(d::MvNormal, x) = logdensity(proxy(d), x)
+basemeasure(d::MvNormal) = basemeasure(proxy(d))
+
+rand(rng::AbstractRNG, ::Type{T}, d::MvNormal) where {T} = rand(rng, T, proxy(d))
+
+# function MvNormal(nt::NamedTuple{(:μ,)})
+#     dim = size(nt.μ)
+#     affine(nt, Normal() ^ dim)
+# end
+
+# function MvNormal(nt::NamedTuple{(:σ,)})
+#     dim = colsize(nt.σ)
+#     affine(nt, Normal() ^ dim)
+# end
+
+# function MvNormal(nt::NamedTuple{(:ω,)})
+#     dim = rowsize(nt.ω)
+#     affine(nt, Normal() ^ dim)
+# end
+
+# function MvNormal(nt::NamedTuple{(:μ, :σ,)})
+#     dim = colsize(nt.σ)
+#     affine(nt, Normal() ^ dim)
+# end
+
+# function MvNormal(nt::NamedTuple{(:μ, :ω,)})
+#     dim = rowsize(nt.ω)
+#     affine(nt, Normal() ^ dim)
+# end
