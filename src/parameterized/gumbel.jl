@@ -14,7 +14,7 @@ basemeasure(::Gumbel{()}) = Lebesgue(ℝ)
 
 # map affine names to those more common for Gumbel
 for N in [(:μ,), (:σ,), (:μ,:σ)]
-    G = replace(N, :σ => :β)
+    G = tuple(replace(collect(N), :σ => :β)...)
     @eval begin
         proxy(d::Gumbel{$G}) = affine(NamedTuple{$N}(values(params(d))), Gumbel())
         logdensity(d::Gumbel{$G}, x) = logdensity(proxy(d), x)
