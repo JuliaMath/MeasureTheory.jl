@@ -5,6 +5,8 @@
 [![Build Status](https://github.com/cscherrer/MeasureTheory.jl/workflows/CI/badge.svg)](https://github.com/cscherrer/MeasureTheory.jl/actions)
 [![Coverage](https://codecov.io/gh/cscherrer/MeasureTheory.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/cscherrer/MeasureTheory.jl)
 
+Check out our [JuliaCon submission](https://github.com/cscherrer/MeasureTheory.jl/blob/paper/paper/paper.pdf)
+
 `MeasureTheory.jl` is a package for building and reasoning about measures.
 
 # Why?
