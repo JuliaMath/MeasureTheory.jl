@@ -20,7 +20,7 @@ function logdensity(d::Dirichlet{(:α,)}, x)
     α = d.α
     s = 0.0
     for j in eachindex(x)
-        s += α[j] * log(x[j])
+        s += xlogy(α[j], x[j])
     end
     return s
 end

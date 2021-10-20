@@ -7,7 +7,6 @@ using DynamicIterators: trace, TimeLift
 using TransformVariables: transform, as𝕀, inverse
 
 using MeasureTheory
-using MeasureTheory: Const
 
 using Aqua
 Aqua.test_all(MeasureTheory; ambiguities=false, unbound_args=false)
@@ -95,6 +94,20 @@ end
         @test_broken logdensity(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
     end
 
+    @testset "Exponential" begin
+        r = rand(MersenneTwister(123), Exponential(2))
+        @test r ≈ rand(MersenneTwister(123), Exponential(β=2))
+        @test r ≈ rand(MersenneTwister(123), Exponential(λ=0.5))
+        @test r ≈ rand(MersenneTwister(123), Exponential(logβ=log(2)))
+        @test r ≈ rand(MersenneTwister(123), Exponential(logλ=log(0.5)))
+
+        ℓ = logdensity(Exponential(2), r)
+        @test ℓ ≈ logdensity(Exponential(β=2), r)
+        @test ℓ ≈ logdensity(Exponential(λ=0.5), r)
+        @test ℓ ≈ logdensity(Exponential(logβ=log(2)), r)
+        @test ℓ ≈ logdensity(Exponential(logλ=log(0.5)), r)
+    end
+
     @testset "NegativeBinomial" begin
         D = NegativeBinomial{(:r, :p)}
         par = transform(asparams(D), randn(2))
@@ -123,8 +136,9 @@ end
         @test sample1 == sample2
     end
 
+    # Fails because we need `asparams` for `::Affine`
     # @testset "Normal" begin
-    #     D = Affine{(:μ,:σ), Normal}
+    #     D = affine{(:μ,:σ), Normal}
     #     par = transform(asparams(D), randn(2))
     #     d = D(par)
     #     @test params(d) == par
@@ -227,6 +241,11 @@ end
 #     collect(Iterators.take(rand(Random.GLOBAL_RNG, chain), 10))
 # end
 
+@testset "rootmeasure/logpdf" begin
+    x = rand(Normal())
+    @test logdensity(Normal(), rootmeasure(Normal()), x) ≈ logpdf(Normal(), x)
+end
+
 @testset "Transforms" begin
     t = as𝕀
     @testset "Pushforward" begin
@@ -326,6 +345,12 @@ end
 
     @testset "MvNormal" begin
         @test_broken repro(MvNormal, (:μ,))
+
+        σ = LowerTriangular(randn(3,3))
+        Σ = σ * σ'
+        d = MvNormal(σ=σ)
+        x = rand(d)
+        @test logpdf(d, x) ≈ logpdf(Dists.MvNormal(Σ), x)
     end
 
     @testset "NegativeBinomial" begin
@@ -417,5 +442,54 @@ end
         h = HalfStudentT(2, 3)
         x = rand(h)
         @test density(h, Lebesgue(ℝ), x) ≈ 2 * density(d, Lebesgue(ℝ), x)
+    end
+end
+
+@testset "MvNormal" begin
+    Q,R = qr(randn(4,2))
+    D = Diagonal(sign.(diag(R)))
+    Q = Matrix(Q) * D
+    R = D * R
+
+    z = randn(2)
+    
+    ℓ = logpdf(MvNormal((σ= R,)),z)
+    @test ℓ ≈ Dists.logpdf(Dists.MvNormal(R*R'),z)
+    @test ℓ ≈ logpdf(MvNormal((σ= Q*R,)),Q*z)
+end
+
+@testset "Affine" begin
+    testmeasures = [
+        (Normal, NamedTuple())
+        (Cauchy, NamedTuple())
+        (Laplace, NamedTuple())
+        (StudentT, (ν=3,))
+    ]
+
+    using Test
+    function test_noerrors(d)
+        x = rand(d)
+        @test logpdf(d, x) isa Real
+        @test logdensity(d, x) isa Real
+    end
+
+    for (M, nt) in testmeasures
+        for p in [(μ=1,), (μ=1,σ=2), (μ=1,ω=2), (σ=2,), (ω=2,)]
+            d = M(merge(nt, p))
+            @info "Testing $d"
+            test_noerrors(d)
+        end
+        # for n in 1:3
+        #     @show n
+        #     for k in 1:n
+        #         @show k
+        #         pars = [(μ=randn(n),), (μ=randn(n),σ=randn(n,k)), (μ=randn(n),ω=randn(k,n)), (σ=randn(n,k),), (ω=randn(k,n),)]
+        #         for p in pars
+        #             @show p
+        #             d = M(merge(nt, p))
+        #             test_noerrors(d)
+        #         end
+        #     end
+        # end
     end
 end

@@ -23,22 +23,31 @@ export Normal, HalfNormal
 #
 #    Normal(μ, σ) = Normal((μ=μ, σ=σ))
 #
-@parameterized Normal() ≪ (1/sqrt2π) * Lebesgue(ℝ)
+@parameterized Normal() 
+
+basemeasure(::Normal{()}) = (1/sqrt2π) * Lebesgue(ℝ)
+
+@kwstruct Normal(μ)
+@kwstruct Normal(σ)
+@kwstruct Normal(μ,σ)
+@kwstruct Normal(ω)
+@kwstruct Normal(μ,ω)
 
 params(::Type{N}) where {N<:Normal} = ()
 
-Normal(μ,σ) = Affine((;μ,σ), Normal())
+Normal(μ,σ) = Normal((μ=μ, σ=σ))
 
-Normal(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:μ,:ω)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:σ,)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:ω,)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:μ,)}) = Affine(nt, Normal())
+using MeasureBase: rowsize, colsize
 
-@affinepars Normal
+Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
-@kwstruct Normal(μ,Σ)
-@kwstruct Normal(μ,Σ⁻¹)
+for N in AFFINEPARS
+    @eval begin
+        proxy(d::Normal{$N}) = affine(params(d), Normal())
+        logdensity(d::Normal{$N}, x) = logdensity(proxy(d), x)
+        basemeasure(d::Normal{$N}) = basemeasure(proxy(d))
+    end
+end
 
 TV.as(::Normal) = asℝ
 
@@ -52,7 +61,6 @@ TV.as(::Normal) = asℝ
     std   => σ
     sigma => σ
     var   => σ²
-    cov   => Σ
 ]
 
 # It's often useful to be able to map into the parameter space for a given
@@ -84,6 +92,12 @@ asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 #     2.805232894324563
 #
 distproxy(d::Normal{()}) = Dists.Normal()
+distproxy(d::Normal{(:μ,)}) = Dists.Normal(d.μ, 1.0)
+distproxy(d::Normal{(:σ,)}) = Dists.Normal(0.0, d.σ)
+distproxy(d::Normal{(:μ,:σ)}) = Dists.Normal(d.μ, d.σ)
+distproxy(d::Normal{(:ω,)}) = Dists.Normal(0.0, inv(d.ω))
+distproxy(d::Normal{(:μ,:ω)}) = Dists.Normal(d.μ, inv(d.ω))
+
 
 ###############################################################################
 # Some distributions have a "standard" version that takes no parameters

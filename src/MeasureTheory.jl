@@ -28,6 +28,7 @@ export CountingMeasure
 export TrivialMeasure
 export Likelihood
 export testvalue
+export basekernel
 
 using InfiniteArrays
 using ConcreteStructs
@@ -38,7 +39,13 @@ using Accessors
 using StatsFuns
 using SpecialFunctions
 
+import LogExpFunctions 
+import NamedTupleTools
+
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
+import MeasureBase: affine, supportdim
+
+import Base: rand
 
 using Reexport
 @reexport using MeasureBase
@@ -52,23 +59,19 @@ export as
 export Affine
 export AffineTransform
 
+using MeasureBase: Returns
+
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
 # sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
 
-import Distributions: pdf, logpdf
-
+import Distributions: logpdf, pdf
 
 export pdf, logpdf
 
-@inline function logpdf(d::AbstractMeasure, x)
-    β = basemeasure(d)
-    d === β && return zero(Float64)
+Distributions.logpdf(d::AbstractMeasure, x) = MeasureBase.logpdf(d, x)
 
-    logdensity(d,x) + logpdf(β,x)
-end
-
-pdf(d::AbstractMeasure, x) = exp(logpdf(d, x))
+Distributions.pdf(d::AbstractMeasure, x) = exp(Dists.logpdf(d, x))
 
 """
     logdensity(μ::AbstractMeasure [, ν::AbstractMeasure], x::X)
@@ -79,11 +82,28 @@ is understood to be `basemeasure(μ)`.
 """
 function logdensity end
 
+
+const AFFINEPARS = [
+    (:μ,:σ)
+    (:μ,:ω)
+    (:σ,)
+    (:ω,)
+    (:μ,)
+]
+
+xlogy(x::Number, y::Number) = LogExpFunctions.xlogy(x, y)
+xlogy(x, y) = x * log(y)
+
+xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
+xlog1py(x, y) = x * log1p(y)
+
+
 include("const.jl")
 # include("traits.jl")
 include("parameterized.jl")
 # include("resettablerng.jl")
 
+include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
