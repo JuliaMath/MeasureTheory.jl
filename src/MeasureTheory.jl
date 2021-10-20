@@ -38,8 +38,8 @@ using ConstructionBase
 using Accessors
 using StatsFuns
 using SpecialFunctions
-using LogExpFunctions 
 
+import LogExpFunctions 
 import NamedTupleTools
 
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
@@ -93,6 +93,12 @@ const AFFINEPARS = [
     (:ω,)
     (:μ,)
 ]
+
+xlogy(x::Number, y::Number) = LogExpFunctions.xlogy(x, y)
+xlogy(x, y) = x * log(y)
+
+xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
+xlog1py(x, y) = x * log1p(y)
 
 
 include("const.jl")
