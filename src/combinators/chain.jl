@@ -13,6 +13,8 @@ export Chain
     μ::M
 end
 
+quoteof(c::Chain) = :(Chain($(quoteof(c.κ)), $(quoteof(c.μ))))
+
 function basemeasure(mc::Chain)
     Chain(basemeasure ∘ mc.κ, basemeasure(mc.μ))
 end
