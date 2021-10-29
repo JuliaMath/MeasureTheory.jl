@@ -212,7 +212,7 @@ end
     
     d2 = For(r) do x Normal(μ=x) end  
 
-    @test_broken let r2 = rand(d2)
+    @test let r2 = rand(d2)
         logdensity(d2, take(r2, 100)) == logdensity(d2, take(r2, 100))
     end
 end

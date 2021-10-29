@@ -13,7 +13,9 @@ export Chain
     μ::M
 end
 
-quoteof(c::Chain) = :(Chain($(quoteof(c.κ)), $(quoteof(c.μ))))
+Pretty.quoteof(c::Chain) = :(Chain($(Pretty.quoteof(c.κ)), $(Pretty.quoteof(c.μ))))
+
+
 
 function basemeasure(mc::Chain)
     Chain(basemeasure ∘ mc.κ, basemeasure(mc.μ))
@@ -43,6 +45,7 @@ Base.iterate(E::Chain, value) = dyniterate(E, value)
 
 function DynamicIterators.dyniterate(r::Chain, (u,rng)::Sample)
     μ = r.κ(u) 
+    rng = deepcopy(rng)
     u = rand(rng, μ)
     return u, Sample(u, rng)
 end
@@ -54,6 +57,10 @@ Base.IteratorSize(::Type{Chain}) = IsInfinite()
     rng::ResettableRNG{R,S}
     iter::T
 end
+
+Base.show(io::IO, r::Realized) = Pretty.pprint(io, r)
+
+Pretty.quoteof(r::Realized) = :(Realized($(Pretty.quoteof(r.rng)), $(Pretty.quoteof(r.iter))))
 
 Base.IteratorEltype(mc::Realized) = Base.HasEltype()
 
@@ -120,9 +127,26 @@ end
     sampler :: S        
 end
 
+Pretty.quoteof(r::DynamicFor) = :(DynamicFor($(Pretty.quoteof(r.κ)), $(Pretty.quoteof(r.sampler))))
+
 function DynamicFor(κ::K,sampler::S) where {K,S}
     T = typeof(κ(first(sampler)))
     DynamicFor{T,K,S}(κ,sampler)
+end
+
+function Base.rand(rng::AbstractRNG, T::Type, df::DynamicFor)
+    rng = deepcopy(rng)
+    seed = rand(rng, UInt)
+    r = ResettableRNG(rng, seed)
+    return Realized(r, df)
+end
+
+function logdensity(df::DynamicFor, y)
+    ℓ = 0.0
+    for (xj, yj) in zip(df.sampler, y)
+        ℓ += logdensity(df.κ(xj), yj)
+    end
+    return ℓ
 end
 
 Base.eltype(::Type{D}) where {T,D<:DynamicFor{T}} = eltype(T)
@@ -148,7 +172,9 @@ For(f, r::Realized) = DynamicFor(f,r)
 
 function Base.rand(rng::AbstractRNG, dfor::DynamicFor)
     seed = rand(rng, UInt)
-    return Realized(seed, copy(rng), dfor)
+    rng = deepcopy(rng)
+    r = ResettableRNG(rng, seed)
+    return Realized(r, dfor)
 end
 
 function dyniterate(df::DynamicFor, st, args...)

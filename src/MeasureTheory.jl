@@ -45,6 +45,8 @@ import NamedTupleTools
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
 import MeasureBase: affine, supportdim
 
+import PrettyPrinting as Pretty
+
 import Base: rand
 
 using Reexport
