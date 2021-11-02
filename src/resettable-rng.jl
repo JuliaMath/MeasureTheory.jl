@@ -31,7 +31,7 @@ function Base.show(io::IO, r::ResettableRNG)
 end
 
 function reset!(r::ResettableRNG)
-    @info "Calling reset! on $r"
+    # @info "Calling reset! on $r"
     Random.seed!(r.rng, r.seed)
 end
 
@@ -85,7 +85,9 @@ for T in vcat(subtypes(Signed), subtypes(Unsigned), subtypes(AbstractFloat))
     end
 end
 
-function Base.iterate(r::ResettableRNG)
+Base.iterate(r::ResettableRNG) = iterate(r, nothing)
+
+function Base.iterate(r::ResettableRNG, ::Nothing)
     @info "Calling `iterate(::ResettableRNG)"
     r = copy(r)
     reset!(r)
@@ -93,6 +95,7 @@ function Base.iterate(r::ResettableRNG)
 end
 
 Base.iterate(r::ResettableRNG, _) = (rand(r), nothing)
+
 Base.IteratorSize(r::ResettableRNG) = Base.IsInfinite()
 
 function Random.Sampler(r::Type{R}, s::Random.Sampler, rep::Random.Repetition) where {R<:ResettableRNG}

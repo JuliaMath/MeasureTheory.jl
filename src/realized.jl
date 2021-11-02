@@ -23,7 +23,6 @@ end
     iter::T
 end
 
-
 Base.copy(r::Realized) = Realized(copy(r.rng), r.iter)
 
 reset!(rv::Realized) = reset!(rv.rng)
@@ -45,8 +44,10 @@ Base.size(r::Realized) = size(r.iter)
 Base.IteratorSize(::Type{Rz}) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSize(T)
 Base.IteratorSize(r::Rz) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSize(r.iter)
 
+Base.iterate(rv::Realized) = iterate(rv, nothing)
 
-function Base.iterate(rv::Realized{R,S,T}) where {R,S,T}
+
+function Base.iterate(rv::Realized{R,S,T}, ::Nothing) where {R,S,T}
     reset!(rv.rng)
     if static_hasmethod(evolve, Tuple{T})
         dyniterate(rv, nothing)
@@ -59,7 +60,6 @@ function Base.iterate(rv::Realized{R,S,T}) where {R,S,T}
     end
 end
 
-
 function Base.iterate(rv::Realized{R,S,T}, s) where {R,S,T}
     if static_hasmethod(evolve, Tuple{T})
         dyniterate(rv, s)
@@ -71,7 +71,6 @@ function Base.iterate(rv::Realized{R,S,T}, s) where {R,S,T}
         return (μ ↝ x), s
     end
 end
-
 
 function dyniterate(rv::Realized, ::Nothing)
     rv = copy(rv)

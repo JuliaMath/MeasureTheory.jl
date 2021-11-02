@@ -61,12 +61,12 @@ testbroken_measures = [
 
 @testset "testvalue" begin
     for μ in test_measures
-        @info "testing $μ"
+        # @info "testing $μ"
         @test test_measure(μ)
     end
 
     for μ in testbroken_measures
-        @info "testing $μ"
+        # @info "testing $μ"
         @test_broken test_measure(μ)
     end
     
@@ -385,7 +385,7 @@ end
         d = For((j^2 for j in 1:10)) do i Poisson(i) end
         x = Vector{Int16}(undef, 10)
         @test rand!(d,x) isa Vector
-        @test_broken rand(d) isa Base.Generator
+        @test rand(d) isa Base.Generator
     end
 
     @testset "Indexed by multiple Ints" begin
