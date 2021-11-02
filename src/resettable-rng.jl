@@ -36,32 +36,6 @@ function reset!(r::ResettableRNG)
 end
 
 
-# for f in [
-#     :(Base.rand)
-#     :(Base.randn)
-#     :(Random.rand!)
-#     :(Random.randcycle)
-#     :(Random.randcycle!)
-#     :(Random.randexp)
-#     :(Random.randexp!)
-#     :(Random.randn!)
-#     :(Random.randperm)
-#     :(Random.randperm!)
-#     :(Random.randstring)
-#     :(Random.randsubseq)
-#     :(Random.randsubseq!)
-#     :(Random.shuffle)
-#     :(Random.shuffle!)
-#     :(Random.seed!)
-# ]    
-#     @eval $f(r::ResettableRNG, args...) = $f(r.rng, args...)
-# end
-
-
-# Base.rand(r::ResettableRNG, d::AbstractMeasure) = rand(r.rng, d)
-# Base.rand(r::ResettableRNG, ::Type{T}, d::AbstractMeasure) where {T} = rand(r.rng, T, d)
-# Base.rand(r::ResettableRNG) = rand(r.rng, Float64)
-
 import Random
 using Random: randexp
 using InteractiveUtils: subtypes
