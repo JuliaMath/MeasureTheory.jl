@@ -26,7 +26,7 @@ end
 
 Base.copy(r::Realized) = Realized(copy(r.rng), r.iter)
 
-MeasureBase.reset!(rv::Realized) = reset!(rv.rng)
+reset!(rv::Realized) = reset!(rv.rng)
 
 Base.show(io::IO, r::Realized) = Pretty.pprint(io, r)
 
@@ -47,10 +47,13 @@ Base.IteratorSize(r::Rz) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSiz
 
 
 function Base.iterate(rv::Realized{R,S,T}) where {R,S,T}
+    reset!(rv.rng)
     if static_hasmethod(evolve, Tuple{T})
         dyniterate(rv, nothing)
     else
-        μ,s = iterate(rv.iter)
+        μs = iterate(rv.iter)
+        isnothing(μs) && return nothing
+        (μ,s) = μs
         x = rand(rv.rng, μ)
         return (μ ↝ x), s
     end
@@ -115,6 +118,11 @@ Base.show(io::IO, r::RealizedSamples) = Pretty.pprint(io, r)
 
 Pretty.quoteof(r::RealizedSamples) = :(RealizedSamples($(Pretty.quoteof(r.parent.rng)), $(Pretty.quoteof(r.parent.iter))))
 
+function Base.iterate(rm::RealizedSamples)
+    val, s = iterate(rm.parent)
+    (val.element, s)
+end
+
 function Base.iterate(rm::RealizedSamples, s=nothing)
     val, s = iterate(rm.parent, s)
     (val.element, s)
@@ -127,7 +135,7 @@ end
 
 Base.copy(r::RealizedSamples) = RealizedSamples(copy(r.parent))
 
-MeasureBase.reset!(rv::RealizedSamples) = RealizedSamples(reset!(rv.parent))
+reset!(rv::RealizedSamples) = RealizedSamples(reset!(rv.parent))
 
 Base.IteratorEltype(mc::RealizedSamples) = Base.HasEltype()
 
