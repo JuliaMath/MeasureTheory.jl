@@ -109,6 +109,9 @@ include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
+
+include("resettable-rng.jl")
+include("realized.jl")
 include("combinators/chain.jl")
 
 include("distributions.jl")
