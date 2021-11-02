@@ -6,14 +6,18 @@ struct ResettableRNG{R,S} <: Random.AbstractRNG
     rng::R
     seed::S
 
-    function ResettableRNG(rng::R, seed::S) where {R,S}
-        new{R,S}(copy(rng), seed)
+    function ResettableRNG(rng, seed::S) where {S}
+        rng = copy(rng)
+        R2 = typeof(rng) 
+        new{R2,S}(rng, seed)
     end
 
-    function ResettableRNG(rng::R) where {R}
+    function ResettableRNG(rng)
         seed = rand(rng, UInt)
         S = typeof(seed)
-        new{R,UInt}(copy(rng), seed)
+        rng = copy(rng)
+        R2 = typeof(rng) 
+        new{R2,UInt}(copy(rng), seed)
     end
 end
 
