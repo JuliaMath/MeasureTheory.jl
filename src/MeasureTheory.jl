@@ -13,7 +13,7 @@ import Base
 import Distributions
 const Dists = Distributions
 
-# export TV
+export TV
 export ≪
 export sampletype
 export For
@@ -38,12 +38,17 @@ using ConstructionBase
 using Accessors
 using StatsFuns
 using SpecialFunctions
-using LogExpFunctions 
 
+import LogExpFunctions 
 import NamedTupleTools
 
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
-import MeasureBase: affine, supportdim
+import MeasureBase: affine, supportdim, ≪
+using MeasureBase: constructor
+
+import PrettyPrinting
+
+const Pretty = PrettyPrinting
 
 import Base: rand
 
@@ -64,9 +69,6 @@ using MeasureBase: Returns
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
 # sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
-
-
-
 
 import Distributions: logpdf, pdf
 
@@ -94,6 +96,12 @@ const AFFINEPARS = [
     (:μ,)
 ]
 
+xlogy(x::Number, y::Number) = LogExpFunctions.xlogy(x, y)
+xlogy(x, y) = x * log(y)
+
+xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
+xlog1py(x, y) = x * log1p(y)
+
 
 include("const.jl")
 # include("traits.jl")
@@ -104,6 +112,9 @@ include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
+
+include("resettable-rng.jl")
+include("realized.jl")
 include("combinators/chain.jl")
 
 include("distributions.jl")

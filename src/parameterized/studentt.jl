@@ -44,8 +44,8 @@ function logdensity(d::StudentT{(:ν,)}, x)
     return  (ν + 1) / (-2) * log1p(x^2 / ν)
 end
 
-function basemeasure(d::StudentT{(:ν,)})
-    inbounds(x) = true
+@inline function basemeasure(d::StudentT{(:ν,)})
+    inbounds = Returns(true)
     constℓ = 0.0
     varℓ() = loggamma((d.ν+1)/2) - loggamma(d.ν/2) - log(π * d.ν) / 2
     base = Lebesgue(ℝ)

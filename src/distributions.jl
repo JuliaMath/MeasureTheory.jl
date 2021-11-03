@@ -33,6 +33,10 @@ function basemeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous})
     return Lebesgue(ℝ)
 end
 
+function basemeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Discrete})
+    return CountingMeasure(ℤ)
+end
+
 ∫(::typeof(identity), ::Dists.Distribution) = 1.0
 
 logdensity(μ::Dists.Distribution, x) = Dists.logpdf(μ,x)
