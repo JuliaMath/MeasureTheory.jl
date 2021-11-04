@@ -200,8 +200,7 @@ SuperpositionMeasure{Float64,2}((MeasureTheory.WeightedMeasure{Float64,Float64}(
 For an easy way to find expressions for the common log-densities, see [this gist](https://gist.github.com/cscherrer/47f0fc7597b4ffc11186d54cc4d8e577)
 
 ## Support
-
-[![Planting Space](https://planting.space/sponsor/PlantingSpace-sponsor-3.png)](https://planting.space)
+[<img src=https://user-images.githubusercontent.com/1184449/140397787-9b7e3eb7-49cd-4c63-8f3c-e5cdc41e393d.png width="49%">](https://informativeprior.com/) [<img src=https://planting.space/sponsor/PlantingSpace-sponsor-3.png width=49%>](https://planting.space)
 
 ## Stargazers over time
 
