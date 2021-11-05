@@ -23,7 +23,3 @@ pkg> add MeasureTheory
 To get an idea of the possibilities offered by this package, go to the [documentation](https://cscherrer.github.io/MeasureTheory.jl/stable).
 
 To know more about the underlying theory and its applications to probabilistic programming, check out our [JuliaCon 2021 submission](https://arxiv.org/abs/2110.00602).
-
-## Support
-
-[<img src=https://user-images.githubusercontent.com/1184449/140397787-9b7e3eb7-49cd-4c63-8f3c-e5cdc41e393d.png width="49%">](https://informativeprior.com/) [<img src=https://planting.space/sponsor/PlantingSpace-sponsor-3.png width=49%>](https://planting.space)
