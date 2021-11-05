@@ -8,11 +8,14 @@ DocMeta.setdocmeta!(MeasureTheory, :DocTestSetup, :(using MeasureTheory); recurs
 pages = [
     "Home" => "index.md",
     "Tutorials" => [
-        "Adding a New Measure" => "adding.md",
+        "Adding a new measure" => "adding.md",
         "Affine transformations" => "affine.md",
     ],
-    "MeasureBase API" => "api_measurebase.md",
-    "MeasureTheory API" => "api_measuretheory.md",
+    "API Reference" => [
+        "MeasureBase" => "api_measurebase.md",
+        "MeasureTheory" => "api_measuretheory.md",
+        "Index" => "api_index.md",
+    ],
 ]
 
 makedocs(;

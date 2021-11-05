@@ -2,42 +2,28 @@
 CurrentModule = MeasureTheory
 ```
 
-# MeasureTheory
+# Home
 
-## Introduction
+`MeasureTheory.jl` is a package for building and reasoning about measures.
 
-There are lots of packages for working with probability distributions. But very
-often, we need to work with "distributions" that really aren't. 
+## Why?
 
-For example, the [correspondence between regularization and Bayesian prior
-distributions](https://en.wikipedia.org/wiki/Bayesian_interpretation_of_kernel_regularization)
-leads naturally to the idea of extending probabilistic programming systems to
-cover both. But it's easy to come up with a loss function for which the integral
-of the
-corresponding "prior" is infinite! The result is not really a distirbution. It
-is, however, still a measure.
+A distribution (as provided by `Distributions.jl`) is also called a _probability measure_, and carries with it the constraint of adding (or integrating) to one. Statistical work usually requires this "at the end of the day", but enforcing it at each step of a computation can have considerable overhead. For instance, Bayesian modeling often requires working with unnormalized posterior densities or improper priors.
 
-Even restricted to Bayesian methods, users might sometimes want to use an
-[improper
-prior](https://en.wikipedia.org/wiki/Prior_probability#Improper_priors). By
-definition, these cannot be integrated over their domain. But an improper prior
-is still a measure.
+As a generalization of the concept of volume, measures also have applications outside of probability theory.
 
-In [Markov chain Monte Carlo
-(MCMC)](https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo), we often work
-with distributions for which we can only caluculate 
-the log-density up to an additive constant. Considering this instead as a
-measure can be helpful. Even better, consdering intermediate computations along
-the way as computations on measures saves us from computing normalization terms
-where the end result will discard this anyway.
+## Getting started
 
-To be clear, that's not to say that we always discard normalizations. Rather,
-they're considered as belonging to the measure itself, rather than being
-included in each sub-computation. If measures you work with happen to also be
-probability distributions, you'll always be able to recover those results.
+To install `MeasureTheory.jl`, open the Julia Pkg REPL (by typing `]` in the standard REPL) and run
 
-
-## Index
-
-```@index
+```julia
+pkg> add MeasureTheory
 ```
+
+To get an idea of the possibilities offered by this package, go to the [documentation](https://cscherrer.github.io/MeasureTheory.jl/stable).
+
+To know more about the underlying theory and its applications to probabilistic programming, check out our [JuliaCon 2021 submission](https://arxiv.org/abs/2110.00602).
+
+## Support
+
+[<img src=https://user-images.githubusercontent.com/1184449/140397787-9b7e3eb7-49cd-4c63-8f3c-e5cdc41e393d.png width="49%">](https://informativeprior.com/) [<img src=https://planting.space/sponsor/PlantingSpace-sponsor-3.png width=49%>](https://planting.space)
