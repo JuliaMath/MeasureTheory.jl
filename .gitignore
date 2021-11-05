@@ -2,7 +2,7 @@
 *.jl.cov
 *.jl.mem
 .DS_Store
-/Manifest.toml
+**/Manifest.toml
 /docs/build/
 /dev/
 /.history/
