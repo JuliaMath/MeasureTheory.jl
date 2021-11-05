@@ -1,5 +1,4 @@
 using Documenter
-using MeasureBase
 using MeasureTheory
 
 DocMeta.setdocmeta!(MeasureBase, :DocTestSetup, :(using MeasureBase); recursive=true)
