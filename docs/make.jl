@@ -1,15 +1,22 @@
-using MeasureTheory
 using Documenter
+using MeasureBase
+using MeasureTheory
 
+DocMeta.setdocmeta!(MeasureBase, :DocTestSetup, :(using MeasureBase); recursive=true)
+DocMeta.setdocmeta!(MeasureTheory, :DocTestSetup, :(using MeasureTheory); recursive=true)
 
 pages = [
-    "Introduction" => "intro.md"
-    "Home" => "index.md"
-    "Adding a New Measure" => "adding.md"
+    "Home" => "index.md",
+    "Tutorials" => [
+        "Adding a New Measure" => "adding.md",
+        "Affine transformations" => "affine.md",
+    ],
+    "MeasureBase API" => "api_measurebase.md",
+    "MeasureTheory API" => "api_measuretheory.md",
 ]
 
 makedocs(;
-    modules=[MeasureTheory],
+    modules=[MeasureBase, MeasureTheory],
     authors="Chad Scherrer <chad.scherrer@gmail.com> and contributors",
     repo="https://github.com/cscherrer/MeasureTheory.jl/blob/{commit}{path}#L{line}",
     sitename="MeasureTheory.jl",
