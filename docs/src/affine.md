@@ -10,7 +10,7 @@ f(z) = σ z + μ
 
 Starting with the above definition, we'll use ``z`` to represent an "un-transformed" variable, typically coming from a measure which has neither a location nor a scale parameter, for example `Normal()`.
 
-Affine transforms are often mistakenly referred to as "linear". For a function `f` to be linear requires 
+Affine transformations are often mistakenly referred to as "linear". In fact, an affine transformation is ["the composition of two functions: a translation and a linear map"](https://en.wikipedia.org/wiki/Affine_transformation#Representation). For a function `f` to be linear requires 
 ``f(ax + by) == a f(x) + b f(y)``
 for scalars ``a`` and ``b``. For an affine function
 ``f(z) = σ * z + μ``,
