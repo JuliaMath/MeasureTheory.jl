@@ -14,7 +14,7 @@ Affine transformations are often mistakenly referred to as "linear". In fact, an
 ``f(ax + by) == a f(x) + b f(y)``
 for scalars ``a`` and ``b``. For an affine function
 ``f(z) = σ * z + μ``, where the linear map is defined as ``σ`` and the translation defined as ``μ``,
-linearity holds only if ``μ = 0``.
+linearity holds only if the translation component ``μ`` is equal to zero.
 
 
 ## Cholesky-based parameterizations
