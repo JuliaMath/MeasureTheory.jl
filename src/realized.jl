@@ -117,11 +117,6 @@ Base.show(io::IO, r::RealizedSamples) = Pretty.pprint(io, r)
 
 Pretty.quoteof(r::RealizedSamples) = :(RealizedSamples($(Pretty.quoteof(r.parent.rng)), $(Pretty.quoteof(r.parent.iter))))
 
-function Base.iterate(rm::RealizedSamples)
-    val, s = iterate(rm.parent)
-    (val.element, s)
-end
-
 function Base.iterate(rm::RealizedSamples, s=nothing)
     val, s = iterate(rm.parent, s)
     (val.element, s)
