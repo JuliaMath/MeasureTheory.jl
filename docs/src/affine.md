@@ -25,9 +25,7 @@ In the literature, it's common for a multivariate normal distribution to be para
 
 While MeasureTheory.jl includes (or will include) a parameterization using `Σ`, we prefer to work in terms of its Cholesky decomposition ``σ``.
 
-The relationship between the computationally efficient "``σ``" and more familiar parameteriation `Σ` can be seen as follows:
-
-Let ``σ`` be a lower-triangular matrix satisfying
+To see the relationship between our ``σ`` parameterization and the likely more familiar  ``Σ`` parameterization,  let ``σ`` be a lower-triangular matrix satisfying
 
 ```math
 σ σᵗ = Σ
