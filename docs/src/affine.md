@@ -10,7 +10,11 @@ f(z) = σ z + μ
 
 Starting with the above definition, we'll use ``z`` to represent an "un-transformed" variable, typically coming from a measure which has neither a location nor a scale parameter, for example `Normal()`.
 
-It is a common misconception that affine transformations are "linear". Linearity requires ``f(ax + by) = a f(x) + b f(y)`` for scalars ``a`` and ``b``, which would only holds for the above affine transformation ``f`` if ``μ=0``.
+Affine transforms are often mistakenly referred to as "linear". For a function `f` to be linear requires 
+``f(ax + by) == a f(x) + b f(y)``
+for scalars ``a`` and ``b``. For an affine function
+``f(z) = σ * z + μ``,
+linearity holds only if ``μ = 0``.
 
 
 ## Cholesky-based parameterizations
