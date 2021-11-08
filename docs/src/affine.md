@@ -13,7 +13,7 @@ Starting with the above definition, we'll use ``z`` to represent an "un-transfor
 Affine transformations are often mistakenly referred to as "linear". In fact, an affine transformation is ["the composition of two functions: a translation and a linear map"](https://en.wikipedia.org/wiki/Affine_transformation#Representation). For a function `f` to be linear requires 
 ``f(ax + by) == a f(x) + b f(y)``
 for scalars ``a`` and ``b``. For an affine function
-``f(z) = σ * z + μ``,
+``f(z) = σ * z + μ``, where the linear map is defined as ``σ`` and the translation defined as ``μ``,
 linearity holds only if ``μ = 0``.
 
 
