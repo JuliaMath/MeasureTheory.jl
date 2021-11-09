@@ -21,7 +21,7 @@ linearity holds only if the translation component ``μ`` is equal to zero.
 
 If the "un-transformed" `z` is univariate, things are relatively simple. But it's important our approach handle the multivariate case as well.
 
-In the literature, it's common for a multivariate normal distribution to be parameterized by a mean `μ` and covariance matrix `Σ`. This is mathematically convenient, but leads an ``O(n^3)`` [Cholesky decomposition](https://en.wikipedia.org/wiki/Cholesky_decomposition), which becomes a significant bottleneck to compute as ``n`` gets large.
+In the literature, it's common for a multivariate normal distribution to be parameterized by a mean `μ` and covariance matrix `Σ`. This is mathematically convenient, but leads to an ``O(n^3)`` [Cholesky decomposition](https://en.wikipedia.org/wiki/Cholesky_decomposition), which becomes a significant bottleneck to compute as ``n`` gets large.
 
 While MeasureTheory.jl includes (or will include) a parameterization using `Σ`, we prefer to work in terms of its Cholesky decomposition ``σ``.
 
