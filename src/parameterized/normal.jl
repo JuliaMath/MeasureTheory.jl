@@ -25,7 +25,11 @@ export Normal, HalfNormal
 #
 @parameterized Normal() 
 
-basemeasure(::Normal{()}) = (1/sqrt2π) * Lebesgue(ℝ)
+basemeasure(::Normal{()}) = WeightedMeasure(-0.5*log2π, Lebesgue(ℝ))
+
+basemeasure_depth(::Type{Normal{()}}) = static(2)
+
+basemeasure_depth(::Type{<:Normal}) = static(3)
 
 @kwstruct Normal(μ)
 @kwstruct Normal(σ)
@@ -146,12 +150,12 @@ HalfNormal(σ) = HalfNormal(σ = σ)
 ###############################################################################
 @kwstruct Normal(μ,σ²)
 
-function logdensity(d::Normal{(:σ²)}, x)
+@inline function logdensity(d::Normal{(:σ²)}, x)
     σ² = d.σ²
     -0.5 * (log(σ²) + (x^2/σ²))
 end
 
-function logdensity(d::Normal{(:μ,:σ²)}, x)
+@inline function logdensity(d::Normal{(:μ,:σ²)}, x)
     μ = d.μ
     σ² = d.σ²
     -0.5 * (log(σ²) + ((x - μ)^2/σ²))
@@ -160,12 +164,12 @@ end
 ###############################################################################
 @kwstruct Normal(μ,τ)
 
-function logdensity(d::Normal{(:τ)}, x)
+@inline function logdensity(d::Normal{(:τ)}, x)
     τ = d.τ
     0.5 * (log(τ) - τ * x^2)
 end
 
-function logdensity(d::Normal{(:μ,:τ)}, x)
+@inline function logdensity(d::Normal{(:μ,:τ)}, x)
     μ = d.μ
     τ = d.τ
     0.5 * (log(τ) - τ * (x - μ)^2)
@@ -175,7 +179,7 @@ end
 ###############################################################################
 @kwstruct Normal(μ, logσ)
 
-function logdensity(d::Normal{(:μ,:logσ)}, x)
+@inline function logdensity(d::Normal{(:μ,:logσ)}, x)
     μ = d.μ
     logσ = d.logσ
     -logσ - 0.5(exp(-2logσ)*((x - μ)^2))

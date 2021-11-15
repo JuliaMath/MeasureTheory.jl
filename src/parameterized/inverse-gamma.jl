@@ -5,7 +5,7 @@ export InverseGamma
 
 @parameterized InverseGamma(shape) ≃ Lebesgue(ℝ₊)
 
-function logdensity(μ::InverseGamma{(:shape,)}, x) 
+@inline function logdensity(μ::InverseGamma{(:shape,)}, x) 
     α = μ.shape
     xinv = 1/x
 

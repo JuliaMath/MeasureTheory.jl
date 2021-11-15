@@ -8,7 +8,7 @@ export Exponential
 
 @kwstruct Exponential()
 
-function logdensity(d::Exponential{()} , x)
+@inline function logdensity(d::Exponential{()} , x)
     return -x
 end
 
@@ -26,7 +26,7 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Exponential{(:β,)})
     randexp(rng, T) * d.β
 end
 
-function logdensity(d::Exponential{(:β,)}, x)
+@inline function logdensity(d::Exponential{(:β,)}, x)
     z = x / d.β
     return logdensity(Exponential(), z) - log(d.β)
 end
@@ -45,7 +45,7 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Exponential{(:logβ,)})
     randexp(rng, T) * exp(d.logβ)
 end
 
-function logdensity(d::Exponential{(:logβ,)}, x)
+@inline function logdensity(d::Exponential{(:logβ,)}, x)
     z = x * exp(-d.logβ)
     return logdensity(Exponential(), z) - d.logβ
 end
@@ -66,7 +66,7 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Exponential{(:λ,)})
     randexp(rng, T) / d.λ
 end
 
-function logdensity(d::Exponential{(:λ,)}, x)
+@inline function logdensity(d::Exponential{(:λ,)}, x)
     z = x * d.λ
     return logdensity(Exponential(), z) + log(d.λ)
 end
@@ -85,7 +85,7 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Exponential{(:logλ,)})
     randexp(rng, T) * exp(-d.logλ)
 end
 
-function logdensity(d::Exponential{(:logλ,)}, x)
+@inline function logdensity(d::Exponential{(:logλ,)}, x)
     z = x * exp(d.logλ)
     return logdensity(Exponential(), z) + d.logλ
 end

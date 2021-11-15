@@ -58,6 +58,8 @@ using Reexport
 using Tricks: static_hasmethod
 const ∞ = InfiniteArrays.∞
 
+using Static
+
 export ∞
 
 export as
@@ -65,6 +67,8 @@ export Affine
 export AffineTransform
 
 using MeasureBase: Returns
+import MeasureBase: proxy
+import MeasureBase: basemeasure_depth
 
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
@@ -87,14 +91,7 @@ is understood to be `basemeasure(μ)`.
 """
 function logdensity end
 
-
-const AFFINEPARS = [
-    (:μ,:σ)
-    (:μ,:ω)
-    (:σ,)
-    (:ω,)
-    (:μ,)
-]
+using MeasureBase: AFFINEPARS
 
 xlogy(x::Number, y::Number) = LogExpFunctions.xlogy(x, y)
 xlogy(x, y) = x * log(y)

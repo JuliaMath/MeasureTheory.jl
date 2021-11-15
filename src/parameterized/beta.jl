@@ -15,7 +15,7 @@ export Beta
 
 TV.as(::Beta) = as𝕀
 
-function logdensity(d::Beta{(:α, :β), Tuple{A,B}}, x::X) where {A,B,X}
+@inline function logdensity(d::Beta{(:α, :β), Tuple{A,B}}, x::X) where {A,B,X}
     if static_hasmethod(xlogy, Tuple{A,X}) && static_hasmethod(xlog1py, Tuple{B,X})
         return xlogy(d.α - 1, x) + xlog1py(d.β - 1, -x) 
     else
@@ -23,7 +23,7 @@ function logdensity(d::Beta{(:α, :β), Tuple{A,B}}, x::X) where {A,B,X}
     end
 end
 
-function basemeasure(d::Beta{(:α,:β)})
+@inline function basemeasure(d::Beta{(:α,:β)})
     inbounds(x) = 0 < x < 1
     constℓ = 0.0
     varℓ() = - logbeta(d.α, d.β)

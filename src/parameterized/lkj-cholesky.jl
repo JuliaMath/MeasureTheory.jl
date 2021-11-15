@@ -51,7 +51,7 @@ using LinearAlgebra
 
 logdensity(d::LKJCholesky, C::Cholesky) = logdensity(d, C.UL)
 
-function logdensity(d::LKJCholesky{(:k, :η,)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal})
+@inline function logdensity(d::LKJCholesky{(:k, :η,)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal})
     η = d.η
     # z = diag(L)
     # sum(log.(z) .* ((k:-1:1) .+ 2*(η-1)))
@@ -65,7 +65,7 @@ function logdensity(d::LKJCholesky{(:k, :η,)}, L::Union{LinearAlgebra.AbstractT
     return s
 end
 
-function logdensity(d::LKJCholesky{(:k, :logη)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal})
+@inline function logdensity(d::LKJCholesky{(:k, :logη)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal})
     c = d.k + 2 * expm1(d.logη)
     n = size(L,1)
     s = sum(1:n) do i
@@ -77,14 +77,14 @@ end
 
 TV.as(d::LKJCholesky) = CorrCholesky(d.k)
 
-function basemeasure(μ::LKJCholesky{(:k,:η)})
+@inline function basemeasure(μ::LKJCholesky{(:k,:η)})
     t = as(μ)
     ℓ(par) = Dists.lkj_logc0(par.k, par.η)
     base = Pushforward(t, Lebesgue(ℝ)^dimension(t), false)
     ParamWeightedMeasure(ℓ, (k= μ.k, η= μ.η), base)
 end
 
-function basemeasure(μ::LKJCholesky{(:k,:logη)})
+@inline function basemeasure(μ::LKJCholesky{(:k,:logη)})
     t = as(μ)
     η = exp(μ.logη)
     ℓ(par) = Dists.lkj_logc0(par.k, exp(par.logη))

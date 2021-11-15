@@ -24,7 +24,7 @@ end
 
 # @affinepars Cauchy
 
-function logdensity(d::Cauchy{()} , x) 
+@inline function logdensity(d::Cauchy{()} , x) 
     return -log1p(x^2)
 end
 

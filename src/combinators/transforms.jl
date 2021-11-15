@@ -21,7 +21,7 @@ end
 
 Pullback(f,ν) = Pullback(f, ν, true)
 
-function logdensity(pb::Pullback{F}, x) where {F <: CallableTransform}
+@inline function logdensity(pb::Pullback{F}, x) where {F <: CallableTransform}
     f = pb.f
     ν = pb.ν
     if pb.logjac
@@ -33,7 +33,7 @@ function logdensity(pb::Pullback{F}, x) where {F <: CallableTransform}
     end
 end
 
-function logdensity(pf::Pushforward{F}, y) where {F <: CallableTransform}
+@inline function logdensity(pf::Pushforward{F}, y) where {F <: CallableTransform}
     f = pf.f
     μ = pf.μ
     x = inverse(f.t)(y)

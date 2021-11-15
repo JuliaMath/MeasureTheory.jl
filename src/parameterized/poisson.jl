@@ -8,12 +8,12 @@ using SpecialFunctions: logfactorial
 
 Base.eltype(::Type{P}) where {P<:Poisson} = Int
 
-function logdensity(d::Poisson{(:λ,)}, y)
+@inline function logdensity(d::Poisson{(:λ,)}, y)
     λ = d.λ
     return y * log(λ) - λ - logfactorial(y)
 end
 
-function logdensity(d::Poisson{(:logλ,)}, y)
+@inline function logdensity(d::Poisson{(:logλ,)}, y)
     return y * d.logλ - exp(d.logλ) - logfactorial(y)
 end
 

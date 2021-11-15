@@ -5,7 +5,7 @@ import Base
 
 @parameterized Bernoulli(p) ≃ CountingMeasure(ℤ[0:1])
 
-function logdensity(d::Bernoulli{(:p,)}, y)
+@inline function logdensity(d::Bernoulli{(:p,)}, y)
     p = d.p
     return y * log(p) + (1 - y) * log(1 - p)
 end
@@ -15,7 +15,7 @@ function density(d::Bernoulli{(:p,)}, y)
     return 2*p*y - p - y + 1
 end
 
-function logdensity(d::Bernoulli{(:logitp,)}, y)
+@inline function logdensity(d::Bernoulli{(:logitp,)}, y)
     x = d.logitp
     return y * x - log1pexp(x)
 end

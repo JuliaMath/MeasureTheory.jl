@@ -13,13 +13,13 @@ struct DistributionMeasure{F, S, X} <: AbstractMeasure
     dist :: Dists.Distribution{F, S}
 end
 
-function basemeasure(μ::DistributionMeasure{F,S,X}) where {F, S <: Dists.Continuous, X}
+@inline function basemeasure(μ::DistributionMeasure{F,S,X}) where {F, S <: Dists.Continuous, X}
     return Lebesgue(X)
 end
 
 export logdensity
 
-function logdensity(μ::DistributionMeasure{F,S,X}, x::X) where {F, S, X}
+@inline function logdensity(μ::DistributionMeasure{F,S,X}, x::X) where {F, S, X}
     return Dists.logpdf(μ.dist, x)
 end
 
@@ -29,11 +29,11 @@ end
 
 basemeasure(d::Dists.AbstractMvNormal) = Lebesgue(ℝ)^size(d)
 
-function basemeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous})
+@inline function basemeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Continuous})
     return Lebesgue(ℝ)
 end
 
-function basemeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Discrete})
+@inline function basemeasure(μ::Dists.Distribution{Dists.Univariate,Dists.Discrete})
     return CountingMeasure(ℤ)
 end
 

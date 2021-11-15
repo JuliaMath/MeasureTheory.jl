@@ -18,7 +18,7 @@ Pretty.quoteof(c::Chain) = :(Chain($(Pretty.quoteof(c.κ)), $(Pretty.quoteof(c.�
 
 Base.length(::Chain) = ∞
 
-function basemeasure(mc::Chain)
+@inline function basemeasure(mc::Chain)
     Chain(basemeasure ∘ mc.κ, basemeasure(mc.μ))
 end
 
@@ -26,7 +26,7 @@ Base.IteratorEltype(mc::Chain) = Base.HasEltype()
 
 Base.eltype(::Type{C}) where {K,M,C<:Chain{K,M}} = eltype(M)
 
-function logdensity(mc::Chain, x)
+@inline function logdensity(mc::Chain, x)
     μ = mc.μ
     ℓ = 0.0
     for xj in x
@@ -81,7 +81,7 @@ function Base.rand(rng::AbstractRNG, T::Type, df::DynamicFor)
     return RealizedSamples(r, df)
 end
 
-function logdensity(df::DynamicFor, y)
+@inline function logdensity(df::DynamicFor, y)
     ℓ = 0.0
     for (xj, yj) in zip(df.iter, y)
         ℓ += logdensity(df.κ(xj), yj)
