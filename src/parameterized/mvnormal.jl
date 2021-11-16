@@ -19,6 +19,10 @@ proxy(d::MvNormal) = affine(params(d), Normal() ^ supportdim(d))
 logdensity(d::MvNormal, x) = logdensity(proxy(d), x)
 basemeasure(d::MvNormal) = basemeasure(proxy(d))
 
+basemeasure_depth(::MvNormal) = static(4)
+basemeasure_depth(::Type{<:MvNormal}) = static(4)
+
+
 rand(rng::AbstractRNG, ::Type{T}, d::MvNormal) where {T} = rand(rng, T, proxy(d))
 
 # function MvNormal(nt::NamedTuple{(:μ,)})

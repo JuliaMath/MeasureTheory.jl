@@ -27,6 +27,7 @@ export Normal, HalfNormal
 
 basemeasure(::Normal{()}) = WeightedMeasure(-0.5*log2π, Lebesgue(ℝ))
 
+basemeasure_depth(::N) where {N<:Normal}= basemeasure_depth(N)
 basemeasure_depth(::Type{Normal{()}}) = static(2)
 
 basemeasure_depth(::Type{<:Normal}) = static(3)
@@ -45,11 +46,12 @@ using MeasureBase: rowsize, colsize
 
 Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
+logdensity(d::Normal, x) = logdensity(proxy(logdensity, d), x)
+basemeasure(d::Normal) = basemeasure(proxy(basemeasure, d))
+
 for N in AFFINEPARS
     @eval begin
         proxy(d::Normal{$N}) = affine(params(d), Normal())
-        logdensity(d::Normal{$N}, x) = logdensity(proxy(d), x)
-        basemeasure(d::Normal{$N}) = basemeasure(proxy(d))
     end
 end
 
@@ -96,11 +98,6 @@ asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
 #     2.805232894324563
 #
 distproxy(d::Normal{()}) = Dists.Normal()
-distproxy(d::Normal{(:μ,)}) = Dists.Normal(d.μ, 1.0)
-distproxy(d::Normal{(:σ,)}) = Dists.Normal(0.0, d.σ)
-distproxy(d::Normal{(:μ,:σ)}) = Dists.Normal(d.μ, d.σ)
-distproxy(d::Normal{(:ω,)}) = Dists.Normal(0.0, inv(d.ω))
-distproxy(d::Normal{(:μ,:ω)}) = Dists.Normal(d.μ, inv(d.ω))
 
 
 ###############################################################################

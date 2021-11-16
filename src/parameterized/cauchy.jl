@@ -12,15 +12,12 @@ export Cauchy, HalfCauchy
 @kwstruct Cauchy(ω)
 @kwstruct Cauchy(μ,ω)
 
+proxy(d::Cauchy) = affine(params(d), Cauchy())
+logdensity(d::Cauchy, x) = logdensity(proxy(d), x)
+basemeasure(d::Cauchy) = basemeasure(proxy(d))
 
-
-for N in AFFINEPARS
-    @eval begin
-        proxy(d::Cauchy{$N}) = affine(params(d), Cauchy())
-        logdensity(d::Cauchy{$N}, x) = logdensity(proxy(d), x)
-        basemeasure(d::Cauchy{$N}) = basemeasure(proxy(d))
-    end
-end
+basemeasure_depth(::Cauchy) = static(2)
+basemeasure_depth(::Type{C}) where {C<:Cauchy} = static(2)
 
 # @affinepars Cauchy
 

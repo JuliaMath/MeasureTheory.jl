@@ -93,6 +93,9 @@ function logdensity end
 
 using MeasureBase: AFFINEPARS
 
+xlogx(x::Number) = LogExpFunctions.xlogx(x)
+xlogx(x, y) = x * log(x)
+
 xlogy(x::Number, y::Number) = LogExpFunctions.xlogy(x, y)
 xlogy(x, y) = x * log(y)
 
