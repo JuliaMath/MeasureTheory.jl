@@ -11,7 +11,7 @@ TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
     t = as(μ)
     d = dimension(t)
     logw = loggamma(sum(α)) - sum(loggamma, α)
-    return WeightedMeasure( logw, Pushforward(t, Lebesgue(ℝ)^d, false))
+    return WeightedMeasure(logw, Pushforward(t, Lebesgue(ℝ)^d, false))
 end
 
 @kwstruct Dirichlet(α)
@@ -33,5 +33,5 @@ distproxy(d::Dirichlet{(:α,)}) = Dists.Dirichlet(d.α)
 
 function testvalue(d::Dirichlet{(:α,)})
     n = length(d.α)
-    Fill(1/n, n)
+    Fill(1 / n, n)
 end

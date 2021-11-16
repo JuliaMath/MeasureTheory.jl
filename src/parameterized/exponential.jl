@@ -5,17 +5,15 @@ export Exponential
 
 @parameterized Exponential(β) ≃ Lebesgue(ℝ₊)
 
-
 @kwstruct Exponential()
 
-@inline function logdensity(d::Exponential{()} , x)
+@inline function logdensity(d::Exponential{()}, x)
     return -x
 end
 
-Base.rand(rng::AbstractRNG, T::Type, μ::Exponential{()}) = randexp(rng,T)
+Base.rand(rng::AbstractRNG, T::Type, μ::Exponential{()}) = randexp(rng, T)
 
 TV.as(::Exponential) = asℝ₊
-
 
 ##########################
 # Scale β
@@ -38,7 +36,6 @@ asparams(::Type{<:Exponential}, ::Val{:β}) = asℝ₊
 ##########################
 # Log-Scale logβ
 
-
 @kwstruct Exponential(logβ)
 
 function Base.rand(rng::AbstractRNG, T::Type, d::Exponential{(:logβ,)})
@@ -54,9 +51,6 @@ distproxy(d::Exponential{(:logβ,)}) = Dists.Exponential(exp(d.logβ))
 
 asparams(::Type{<:Exponential}, ::Val{:logβ}) = asℝ
 
-
-
-
 ##########################
 # Rate λ
 
@@ -71,13 +65,12 @@ end
     return logdensity(Exponential(), z) + log(d.λ)
 end
 
-distproxy(d::Exponential{(:λ,)}) = Dists.Exponential(1/d.λ)
+distproxy(d::Exponential{(:λ,)}) = Dists.Exponential(1 / d.λ)
 
 asparams(::Type{<:Exponential}, ::Val{:λ}) = asℝ₊
 
 ##########################
 # Log-Rate logλ
-
 
 @kwstruct Exponential(logλ)
 

@@ -7,7 +7,6 @@
 export LKJCholesky
 using PositiveFactorizations
 
-
 const CorrCholeskyUpper = TV.CorrCholeskyFactor
 
 @doc """
@@ -32,11 +31,10 @@ Adapted from
 https://github.com/tpapp/AltDistributions.jl
 """ LKJCholesky
 
-@parameterized LKJCholesky(k,η)
+@parameterized LKJCholesky(k, η)
 
-
-@kwstruct LKJCholesky(k,η)
-@kwstruct LKJCholesky(k,logη)
+@kwstruct LKJCholesky(k, η)
+@kwstruct LKJCholesky(k, logη)
 
 LKJCholesky(k::Integer) = LKJCholesky(k, 1.0)
 
@@ -46,50 +44,54 @@ asparams(::Type{<:LKJCholesky}, ::Val{:logη}) = asℝ
 # Modified from
 # https://github.com/tpapp/AltDistributions.jl
 
-
 using LinearAlgebra
 
 logdensity(d::LKJCholesky, C::Cholesky) = logdensity(d, C.UL)
 
-@inline function logdensity(d::LKJCholesky{(:k, :η,)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal})
+@inline function logdensity(
+    d::LKJCholesky{(:k, :η)},
+    L::Union{LinearAlgebra.AbstractTriangular,Diagonal},
+)
     η = d.η
     # z = diag(L)
     # sum(log.(z) .* ((k:-1:1) .+ 2*(η-1)))
 
     # Note: https://github.com/cscherrer/MeasureTheory.jl/issues/100#issuecomment-852428192
     c = d.k + 2(η - 1)
-    n = size(L,1)
-    s = sum(1:n) do i 
-        (c - i) * @inbounds log(L[i,i]) 
-    end
-    return s
-end
-
-@inline function logdensity(d::LKJCholesky{(:k, :logη)}, L::Union{LinearAlgebra.AbstractTriangular, Diagonal})
-    c = d.k + 2 * expm1(d.logη)
-    n = size(L,1)
+    n = size(L, 1)
     s = sum(1:n) do i
-        (c - i) * @inbounds log(L[i,i])
+        (c - i) * @inbounds log(L[i, i])
     end
     return s
 end
 
+@inline function logdensity(
+    d::LKJCholesky{(:k, :logη)},
+    L::Union{LinearAlgebra.AbstractTriangular,Diagonal},
+)
+    c = d.k + 2 * expm1(d.logη)
+    n = size(L, 1)
+    s = sum(1:n) do i
+        (c - i) * @inbounds log(L[i, i])
+    end
+    return s
+end
 
 TV.as(d::LKJCholesky) = CorrCholesky(d.k)
 
-@inline function basemeasure(μ::LKJCholesky{(:k,:η)})
+@inline function basemeasure(μ::LKJCholesky{(:k, :η)})
     t = as(μ)
     ℓ(par) = Dists.lkj_logc0(par.k, par.η)
     base = Pushforward(t, Lebesgue(ℝ)^dimension(t), false)
-    ParamWeightedMeasure(ℓ, (k= μ.k, η= μ.η), base)
+    ParamWeightedMeasure(ℓ, (k = μ.k, η = μ.η), base)
 end
 
-@inline function basemeasure(μ::LKJCholesky{(:k,:logη)})
+@inline function basemeasure(μ::LKJCholesky{(:k, :logη)})
     t = as(μ)
     η = exp(μ.logη)
     ℓ(par) = Dists.lkj_logc0(par.k, exp(par.logη))
     base = Pushforward(t, Lebesgue(ℝ)^dimension(t), false)
-    ParamWeightedMeasure(ℓ, (k= μ.k, logη= logη), base)
+    ParamWeightedMeasure(ℓ, (k = μ.k, logη = logη), base)
 end
 
 # Note (from @sethaxen): this can be done without the cholesky decomposition, by randomly
@@ -98,7 +100,7 @@ end
 # implements* this. But that can be for a future PR. 
 #
 # * https://github.com/stan-dev/math/blob/develop/stan/math/prim/prob/lkj_corr_cholesky_rng.hpp
-function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{(:k, :η,)})
+function Base.rand(rng::AbstractRNG, ::Type, d::LKJCholesky{(:k, :η)})
     return cholesky(Positive, rand(rng, Dists.LKJ(d.k, d.η)))
 end;
 

@@ -6,7 +6,6 @@ export Uniform
 @parameterized Uniform()
 @kwstruct Uniform()
 
-
 ###############################################################################
 # Standard Uniform
 

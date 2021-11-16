@@ -9,7 +9,7 @@ PROXIES = Dict(
         :std
         :entropy
         :cdf
-        ],
+    ],
     # :MonteCarloMeasurements => [
     #     :Particles
     # ]
@@ -25,8 +25,8 @@ for m in keys(PROXIES)
     end
 end
 
-
-Base.rand(rng::AbstractRNG, ::Type{T}, d::ParameterizedMeasure) where {T} = rand(rng, T, proxy(rand, d))
+Base.rand(rng::AbstractRNG, ::Type{T}, d::ParameterizedMeasure) where {T} =
+    rand(rng, T, proxy(rand, d))
 
 # MonteCarloMeasurements.Particles(N::Int, d::AbstractMeasure) = MonteCarloMeasurements.Particles(N, distproxy(d))
 

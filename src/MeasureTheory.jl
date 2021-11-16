@@ -39,7 +39,7 @@ using Accessors
 using StatsFuns
 using SpecialFunctions
 
-import LogExpFunctions 
+import LogExpFunctions
 import NamedTupleTools
 
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
@@ -101,7 +101,6 @@ xlogy(x, y) = x * log(y)
 
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log1p(y)
-
 
 include("const.jl")
 # include("traits.jl")

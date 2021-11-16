@@ -2,13 +2,11 @@
 
 export Multinomial
 
-
 @parameterized Multinomial(n, p)
 
-basemeasure(d::Multinomial{(:n, :p)}) = CountingMeasure(ℤ) ^ length(d.p)
+basemeasure(d::Multinomial{(:n, :p)}) = CountingMeasure(ℤ)^length(d.p)
 
-
-@kwstruct Multinomial(n,p)
+@kwstruct Multinomial(n, p)
 
 @inline function logdensity(d::Multinomial{(:n, :p)}, x)
     p = d.p
@@ -19,10 +17,10 @@ basemeasure(d::Multinomial{(:n, :p)}) = CountingMeasure(ℤ) ^ length(d.p)
     return s
 end
 
-Base.rand(rng::AbstractRNG, T::Type, μ::Multinomial) = rand(rng, Dists.Multinomial(μ.n, μ.p))
+Base.rand(rng::AbstractRNG, T::Type, μ::Multinomial) =
+    rand(rng, Dists.Multinomial(μ.n, μ.p))
 
-distproxy(d::Multinomial{(:p,)}) = Dists.Multinomial(d.n,d.p)
-
+distproxy(d::Multinomial{(:p,)}) = Dists.Multinomial(d.n, d.p)
 
 # Based on
 # https://github.com/JuliaMath/Combinatorics.jl/blob/c2114a71ccfc93052efb9a9379e62b81b9388ef8/src/factorials.jl#L99
@@ -37,10 +35,10 @@ function logmultinomial(k)
     result
 end
 
-function testvalue(d::Multinomial{(:n,:p)})
+function testvalue(d::Multinomial{(:n, :p)})
     n = d.n
     l = length(d.p)
-    q,r = divrem(n, l)
+    q, r = divrem(n, l)
     x = fill(q, l)
     x[1] += r
     return x

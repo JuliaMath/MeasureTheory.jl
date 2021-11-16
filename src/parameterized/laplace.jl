@@ -3,7 +3,7 @@
 
 export Laplace
 
-@parameterized Laplace() ≪ (1/2) * Lebesgue(ℝ)
+@parameterized Laplace() ≪ (1 / 2) * Lebesgue(ℝ)
 
 for N in AFFINEPARS
     @eval begin
@@ -15,13 +15,13 @@ end
 
 # @affinepars Laplace
 
-
-@inline function logdensity(d::Laplace{()} , x)
+@inline function logdensity(d::Laplace{()}, x)
     return -abs(x)
 end
 
-Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace{()}) where {T} = rand(rng, Dists.Laplace())
+Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace{()}) where {T} =
+    rand(rng, Dists.Laplace())
 
-≪(::Laplace, ::Lebesgue{X}) where X <: Real = true
+≪(::Laplace, ::Lebesgue{X}) where {X<:Real} = true
 
 TV.as(::Laplace) = asℝ
