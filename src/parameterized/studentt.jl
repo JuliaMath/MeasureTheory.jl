@@ -68,4 +68,4 @@ distproxy(d::StudentT{(:ν, :μ, :ω)}) = Dists.LocationScale(d.μ, inv(d.ω), D
 
 HalfStudentT(ν, σ) = HalfStudentT((ν = ν, σ = σ))
 
-asparams(::Type{<:StudentT}, ::Val{:ν}) = asℝ₊
+asparams(::Type{<:StudentT}, ::StaticSymbol{:ν}) = asℝ₊

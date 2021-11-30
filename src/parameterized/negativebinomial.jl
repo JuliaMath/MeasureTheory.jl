@@ -73,8 +73,8 @@ end
 
 ###############################################################################
 
-asparams(::Type{<:NegativeBinomial}, ::Val{:p}) = as𝕀
-asparams(::Type{<:NegativeBinomial}, ::Val{:logitp}) = asℝ
-asparams(::Type{<:NegativeBinomial}, ::Val{:r}) = asℝ₊
-asparams(::Type{<:NegativeBinomial}, ::Val{:λ}) = asℝ₊
-asparams(::Type{<:NegativeBinomial}, ::Val{:logλ}) = asℝ
+asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:p}) = as𝕀
+asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:logitp}) = asℝ
+asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:r}) = asℝ₊
+asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:λ}) = asℝ₊
+asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:logλ}) = asℝ

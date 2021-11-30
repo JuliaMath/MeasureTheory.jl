@@ -83,9 +83,9 @@ TV.as(::Normal) = asℝ
 #
 # And of course, you can apply `Normal` to any one of the above.
 #
-asparams(::Type{<:Normal}, ::Val{:σ²}) = asℝ₊
-asparams(::Type{<:Normal}, ::Val{:τ}) = asℝ₊
-asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
+asparams(::Type{<:Normal}, ::StaticSymbol{:σ²}) = asℝ₊
+asparams(::Type{<:Normal}, ::StaticSymbol{:τ}) = asℝ₊
+asparams(::Type{<:Normal}, ::StaticSymbol{:logτ}) = asℝ
 
 # Rather than try to reimplement everything in Distributions, measures can have
 # a `distproxy` method. This just delegates some methods to the corresponding

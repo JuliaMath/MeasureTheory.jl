@@ -31,7 +31,7 @@ end
 
 distproxy(d::Exponential{(:β,)}) = Dists.Exponential(d.β)
 
-asparams(::Type{<:Exponential}, ::Val{:β}) = asℝ₊
+asparams(::Type{<:Exponential}, ::StaticSymbol{:β}) = asℝ₊
 
 ##########################
 # Log-Scale logβ
@@ -49,7 +49,7 @@ end
 
 distproxy(d::Exponential{(:logβ,)}) = Dists.Exponential(exp(d.logβ))
 
-asparams(::Type{<:Exponential}, ::Val{:logβ}) = asℝ
+asparams(::Type{<:Exponential}, ::StaticSymbol{:logβ}) = asℝ
 
 ##########################
 # Rate λ
@@ -67,7 +67,7 @@ end
 
 distproxy(d::Exponential{(:λ,)}) = Dists.Exponential(1 / d.λ)
 
-asparams(::Type{<:Exponential}, ::Val{:λ}) = asℝ₊
+asparams(::Type{<:Exponential}, ::StaticSymbol{:λ}) = asℝ₊
 
 ##########################
 # Log-Rate logλ
@@ -85,4 +85,4 @@ end
 
 distproxy(d::Exponential{(:logλ,)}) = Dists.Exponential(exp(-d.logλ))
 
-asparams(::Type{<:Exponential}, ::Val{:logλ}) = asℝ
+asparams(::Type{<:Exponential}, ::StaticSymbol{:logλ}) = asℝ

@@ -38,8 +38,8 @@ https://github.com/tpapp/AltDistributions.jl
 
 LKJCholesky(k::Integer) = LKJCholesky(k, 1.0)
 
-asparams(::Type{<:LKJCholesky}, ::Val{:η}) = asℝ₊
-asparams(::Type{<:LKJCholesky}, ::Val{:logη}) = asℝ
+asparams(::Type{<:LKJCholesky}, ::StaticSymbol{:η}) = asℝ₊
+asparams(::Type{<:LKJCholesky}, ::StaticSymbol{:logη}) = asℝ
 
 # Modified from
 # https://github.com/tpapp/AltDistributions.jl

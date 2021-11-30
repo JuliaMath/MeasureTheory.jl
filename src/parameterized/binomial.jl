@@ -55,6 +55,6 @@ distproxy(d::Binomial{(:n, :p)}) = Dists.Binomial(d.n, d.p)
 distproxy(d::Binomial{(:n, :logitp)}) = Dists.Binomial(d.n, logistic(d.logitp))
 distproxy(d::Binomial{(:n, :probitp)}) = Dists.Binomial(d.n, Φ(d.probitp))
 
-asparams(::Type{<:Binomial}, ::Val{:p}) = as𝕀
-asparams(::Type{<:Binomial}, ::Val{:logitp}) = asℝ
-asparams(::Type{<:Binomial}, ::Val{:probitp}) = asℝ
+asparams(::Type{<:Binomial}, ::StaticSymbol{:p}) = as𝕀
+asparams(::Type{<:Binomial}, ::StaticSymbol{:logitp}) = asℝ
+asparams(::Type{<:Binomial}, ::StaticSymbol{:probitp}) = asℝ

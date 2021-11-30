@@ -33,8 +33,8 @@ Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logitp,)}) =
     rand(rng, T) < logistic(d.logitp)
 
 
-asparams(::Type{<:Bernoulli}, ::Val{:p}) = as𝕀
-asparams(::Type{<:Bernoulli}, ::Val{:logitp}) = asℝ
+asparams(::Type{<:Bernoulli}, ::StaticSymbol{:p}) = as𝕀
+asparams(::Type{<:Bernoulli}, ::StaticSymbol{:logitp}) = asℝ
 
 distproxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
 distproxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))

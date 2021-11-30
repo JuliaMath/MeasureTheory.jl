@@ -17,8 +17,8 @@ end
     return y * d.logλ - exp(d.logλ) - logfactorial(y)
 end
 
-asparams(::Type{<:Poisson}, ::Val{:λ}) = asℝ₊
-asparams(::Type{<:Poisson}, ::Val{:logλ}) = asℝ
+asparams(::Type{<:Poisson}, ::StaticSymbol{:λ}) = asℝ₊
+asparams(::Type{<:Poisson}, ::StaticSymbol{:logλ}) = asℝ
 
 gentype(::Poisson) = Int
 

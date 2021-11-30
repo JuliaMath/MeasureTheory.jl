@@ -287,14 +287,14 @@ supportdim(nt::NamedTuple{(:ω,)}) = rowsize(nt.ω)
 supportdim(nt::NamedTuple{(:μ,)}) = size(nt.μ)
 
 
-asparams(::Affine, ::Val{:μ}) = asℝ
-asparams(::Affine, ::Val{:σ}) = asℝ₊
-asparams(::Type{A}, ::Val{:μ}) where {A<:Affine} = asℝ
-asparams(::Type{A}, ::Val{:σ}) where {A<:Affine} = asℝ₊
+asparams(::Affine, ::StaticSymbol{:μ}) = asℝ
+asparams(::Affine, ::StaticSymbol{:σ}) = asℝ₊
+asparams(::Type{A}, ::StaticSymbol{:μ}) where {A<:Affine} = asℝ
+asparams(::Type{A}, ::StaticSymbol{:σ}) where {A<:Affine} = asℝ₊
 
-asparams(::Affine{N,M,T}, ::Val{:μ}) where {N,M,T<:AbstractArray} =
+asparams(::Affine{N,M,T}, ::StaticSymbol{:μ}) where {N,M,T<:AbstractArray} =
     as(Array, asℝ, size(d.μ))
-asparams(::Affine{N,M,T}, ::Val{:σ}) where {N,M,T<:AbstractArray} =
+asparams(::Affine{N,M,T}, ::StaticSymbol{:σ}) where {N,M,T<:AbstractArray} =
     as(Array, asℝ, size(d.σ))
 
 function Base.rand(rng::Random.AbstractRNG, ::Type{T}, d::Affine) where {T}

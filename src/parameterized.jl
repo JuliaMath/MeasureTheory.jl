@@ -10,13 +10,13 @@ subset of the parameters.
 
 --------
 
-    asparams(::Type{<:ParameterizedMeasure}, ::Val{::Symbol})
+    asparams(::Type{<:ParameterizedMeasure}, ::StaticSymbol)
 
 Return a transformation for a particular parameter of a given parameterized
 measure. For example,
 
 ```
-julia> asparams(Normal, Val(:σ))
+julia> asparams(Normal, static(:σ))
 asℝ₊
 ```
 
