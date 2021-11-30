@@ -6,11 +6,10 @@ export Uniform
 @parameterized Uniform()
 @kwstruct Uniform()
 
-
 ###############################################################################
 # Standard Uniform
 
-function basemeasure(::Uniform{()})
+@inline function basemeasure(::Uniform{()})
     inbounds(x) = 0 < x < 1
     constℓ = 0.0
     varℓ() = 0.0

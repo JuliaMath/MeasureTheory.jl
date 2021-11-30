@@ -6,21 +6,23 @@ export Dirichlet
 
 TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
 
-function basemeasure(μ::Dirichlet{(:α,)})
+@inline function basemeasure(μ::Dirichlet{(:α,)})
+    α = μ.α
     t = as(μ)
     d = dimension(t)
-    return Pushforward(t, Lebesgue(ℝ)^d, false)
+    logw = loggamma(sum(α)) - sum(loggamma, α)
+    return WeightedMeasure(logw, Pushforward(t, Lebesgue(ℝ)^d, false))
 end
 
 @kwstruct Dirichlet(α)
 
 Dirichlet(k::Integer, α) = Dirichlet(Fill(α, k))
 
-function logdensity(d::Dirichlet{(:α,)}, x)
+@inline function logdensity(d::Dirichlet{(:α,)}, x)
     α = d.α
     s = 0.0
     for j in eachindex(x)
-        s += xlogy(α[j], x[j])
+        s += xlogy(α[j] - 1, x[j])
     end
     return s
 end
@@ -31,5 +33,5 @@ distproxy(d::Dirichlet{(:α,)}) = Dists.Dirichlet(d.α)
 
 function testvalue(d::Dirichlet{(:α,)})
     n = length(d.α)
-    Fill(1/n, n)
+    Fill(1 / n, n)
 end

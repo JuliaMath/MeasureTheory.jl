@@ -50,7 +50,7 @@ asparams(μ, s::Symbol) = asparams(μ, Val(s))
 
 asparams(M::Type{A}) where {A<:AbstractMeasure} = asparams(M, NamedTuple())
 
-function asparams(::Type{M}, constraints::NamedTuple{N}) where {N, M<: ParameterizedMeasure} 
+function asparams(::Type{M}, constraints::NamedTuple{N}) where {N,M<:ParameterizedMeasure}
     # @show M
     thekeys = paramnames(M, constraints)
     t1 = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
@@ -69,8 +69,7 @@ end
 #     ...
 # end
 
-
-asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(constructor(μ), nt)
+asparams(μ::ParameterizedMeasure, nt::NamedTuple = NamedTuple()) =
+    asparams(constructor(μ), nt)
 
 TV.as(::Half) = asℝ₊
-

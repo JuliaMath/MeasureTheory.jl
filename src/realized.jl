@@ -8,8 +8,9 @@ end
 
 export ↝
 
-↝(m,x) = SamplesTo(m,x)
-Pretty.tile(s::SamplesTo) = Pretty.pair_layout(Pretty.tile(s.measure), Pretty.tile(s.element), sep=" ↝ ")
+↝(m, x) = SamplesTo(m, x)
+Pretty.tile(s::SamplesTo) =
+    Pretty.pair_layout(Pretty.tile(s.measure), Pretty.tile(s.element), sep = " ↝ ")
 
 function Base.show(io::IO, s::SamplesTo)
     io = IOContext(io, :compact => true)
@@ -29,7 +30,8 @@ reset!(rv::Realized) = reset!(rv.rng)
 
 Base.show(io::IO, r::Realized) = Pretty.pprint(io, r)
 
-Pretty.quoteof(r::Realized) = :(Realized($(Pretty.quoteof(r.rng)), $(Pretty.quoteof(r.iter))))
+Pretty.quoteof(r::Realized) =
+    :(Realized($(Pretty.quoteof(r.rng)), $(Pretty.quoteof(r.iter))))
 
 Base.IteratorEltype(mc::Realized) = Base.HasEltype()
 
@@ -41,11 +43,10 @@ Base.length(r::Realized) = length(r.iter)
 
 Base.size(r::Realized) = size(r.iter)
 
-Base.IteratorSize(::Type{Rz}) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSize(T)
-Base.IteratorSize(r::Rz) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSize(r.iter)
+Base.IteratorSize(::Type{Rz}) where {R,S,T,Rz<:Realized{R,S,T}} = Base.IteratorSize(T)
+Base.IteratorSize(r::Rz) where {R,S,T,Rz<:Realized{R,S,T}} = Base.IteratorSize(r.iter)
 
 Base.iterate(rv::Realized) = iterate(rv, nothing)
-
 
 function Base.iterate(rv::Realized{R,S,T}, ::Nothing) where {R,S,T}
     reset!(rv.rng)
@@ -54,7 +55,7 @@ function Base.iterate(rv::Realized{R,S,T}, ::Nothing) where {R,S,T}
     else
         μs = iterate(rv.iter)
         isnothing(μs) && return nothing
-        (μ,s) = μs
+        (μ, s) = μs
         x = rand(rv.rng, μ)
         return (μ ↝ x), s
     end
@@ -66,7 +67,7 @@ function Base.iterate(rv::Realized{R,S,T}, s) where {R,S,T}
     else
         μs = iterate(rv.iter, s)
         isnothing(μs) && return nothing
-        (μ,s) = μs
+        (μ, s) = μs
         x = rand(rv.rng, μ)
         return (μ ↝ x), s
     end
@@ -93,9 +94,10 @@ end
 
 Base.show(io::IO, r::RealizedMeasures) = Pretty.pprint(io, r)
 
-Pretty.quoteof(r::RealizedMeasures) = :(RealizedMeasures($(Pretty.quoteof(r.rng)), $(Pretty.quoteof(r.iter))))
+Pretty.quoteof(r::RealizedMeasures) =
+    :(RealizedMeasures($(Pretty.quoteof(r.rng)), $(Pretty.quoteof(r.iter))))
 
-function Base.iterate(rm::RealizedMeasures, s=nothing)
+function Base.iterate(rm::RealizedMeasures, s = nothing)
     val, s = iterate(rm, s)
     (val.measure, s)
 end
@@ -115,14 +117,10 @@ RealizedSamples(rng::AbstractRNG, iter) = RealizedSamples(Realized(rng, iter))
 
 Base.show(io::IO, r::RealizedSamples) = Pretty.pprint(io, r)
 
-Pretty.quoteof(r::RealizedSamples) = :(RealizedSamples($(Pretty.quoteof(r.parent.rng)), $(Pretty.quoteof(r.parent.iter))))
+Pretty.quoteof(r::RealizedSamples) =
+    :(RealizedSamples($(Pretty.quoteof(r.parent.rng)), $(Pretty.quoteof(r.parent.iter))))
 
-function Base.iterate(rm::RealizedSamples)
-    val, s = iterate(rm.parent)
-    (val.element, s)
-end
-
-function Base.iterate(rm::RealizedSamples, s=nothing)
+function Base.iterate(rm::RealizedSamples, s = nothing)
     val, s = iterate(rm.parent, s)
     (val.element, s)
 end
@@ -147,4 +145,3 @@ Base.length(r::RealizedSamples) = length(r.parent)
 # Base.size(r::RealizedSamples) = ...
 
 Base.IteratorSize(r::RealizedSamples) = Base.IteratorSize(r.parent)
-

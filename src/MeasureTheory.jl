@@ -39,14 +39,16 @@ using Accessors
 using StatsFuns
 using SpecialFunctions
 
-import LogExpFunctions 
+import LogExpFunctions
 import NamedTupleTools
 
 import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
 import MeasureBase: affine, supportdim, ≪
 using MeasureBase: constructor
 
-import PrettyPrinting as Pretty
+import PrettyPrinting
+
+const Pretty = PrettyPrinting
 
 import Base: rand
 
@@ -56,6 +58,8 @@ using Reexport
 using Tricks: static_hasmethod
 const ∞ = InfiniteArrays.∞
 
+using Static
+
 export ∞
 
 export as
@@ -63,6 +67,8 @@ export Affine
 export AffineTransform
 
 using MeasureBase: Returns
+import MeasureBase: proxy
+import MeasureBase: basemeasure_depth
 
 sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
@@ -85,21 +91,16 @@ is understood to be `basemeasure(μ)`.
 """
 function logdensity end
 
+using MeasureBase: AFFINEPARS
 
-const AFFINEPARS = [
-    (:μ,:σ)
-    (:μ,:ω)
-    (:σ,)
-    (:ω,)
-    (:μ,)
-]
+xlogx(x::Number) = LogExpFunctions.xlogx(x)
+xlogx(x, y) = x * log(x)
 
 xlogy(x::Number, y::Number) = LogExpFunctions.xlogy(x, y)
 xlogy(x, y) = x * log(y)
 
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log1p(y)
-
 
 include("const.jl")
 # include("traits.jl")

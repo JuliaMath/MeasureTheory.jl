@@ -9,7 +9,6 @@ TV.as(c::Returns) = AsConst(c.value)
 
 TV.dimension(t::AsConst) = 0
 
-
 function TV.transform_with(flag::TV.NoLogJac, t::AsConst, x, index)
     return (t.value, TV.NoLogJac(), index)
 end

@@ -10,7 +10,7 @@
 using MeasureTheory
 
 export Ordered
-struct Ordered{T <: TV.AbstractTransform} <: TV.VectorTransform
+struct Ordered{T<:TV.AbstractTransform} <: TV.VectorTransform
     transformation::T
     dim::Int
 end
@@ -34,9 +34,8 @@ function TV.transform_with(flag::TV.LogJacFlag, t::Ordered, x, index::T) where {
     transformation, len = (t.transformation, t.dim)
     @assert dimension(transformation) == 1
     y = similar(x, len)
-        
-    (lo,hi) = bounds(transformation)
 
+    (lo, hi) = bounds(transformation)
 
     x = mappedarray(xj -> xj + OrderedΔx, x)
 
@@ -44,7 +43,7 @@ function TV.transform_with(flag::TV.LogJacFlag, t::Ordered, x, index::T) where {
     index += 1
 
     @inbounds for i in 2:len
-        (y[i], Δℓ, _) =  TV.transform_with(flag, as(Real, y[i-1], hi), x, index)
+        (y[i], Δℓ, _) = TV.transform_with(flag, as(Real, y[i-1], hi), x, index)
         ℓ = addlogjac(ℓ, Δℓ)
         index += 1
     end
@@ -57,7 +56,7 @@ TV.inverse_eltype(t::Ordered, y::AbstractVector) = TV.extended_eltype(y)
 Ordered(n::Int) = Ordered(asℝ, n)
 
 function TV.inverse_at!(x::AbstractVector, index, t::Ordered, y::AbstractVector)
-    (lo,hi) = bounds(t.transformation)
+    (lo, hi) = bounds(t.transformation)
 
     @inbounds x[index] = inverse(as(Real, lo, hi), y[1]) - OrderedΔx
     index += 1
@@ -75,12 +74,12 @@ struct Sorted{M} <: AbstractMeasure
     n::Int
 end
 
-logdensity(s::Sorted, x) = logdensity(s.μ ^ s.n, x)
+logdensity(s::Sorted, x) = logdensity(s.μ^s.n, x)
 
 TV.as(s::Sorted) = Ordered(as(s.μ), s.n)
 
 function Random.rand!(rng::AbstractRNG, d::Sorted, x::AbstractArray)
-    rand!(rng, d.μ ^ d.n, x)
+    rand!(rng, d.μ^d.n, x)
     sort!(x)
     return x
 end
@@ -93,8 +92,6 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Sorted)
 end
 
 # logdensity(d, rand(d))
-
-
 
 # TV.transform_with(TV.LogJac(), Ordered(asℝ, 4), zeros(4), 1)
 # TV.transform_with(TV.LogJac(), Ordered(asℝ, 4), randn(4), 1)

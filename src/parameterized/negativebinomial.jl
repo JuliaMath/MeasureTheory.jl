@@ -3,45 +3,47 @@
 export NegativeBinomial
 import Base
 
-@parameterized NegativeBinomial(r,p) ≪ CountingMeasure(ℤ[0:∞])
-
-
+@parameterized NegativeBinomial(r, p) ≪ CountingMeasure(ℤ[0:∞])
 
 (d::NegativeBinomial ≪ ::CountingMeasure{IntegerRange{a,b}}) where {a,b} = a ≤ 0 && b ≥ d.n
 
 (::CountingMeasure{IntegerRange{a,b}} ≪ ::NegativeBinomial) where {a,b} = a ≥ 0 && b ≤ d.n
 
-###############################################################################
-@kwstruct NegativeBinomial(r, p)
-    
-function logdensity(d::NegativeBinomial{(:r, :p)}, y)
-    (r, p) = (d.r, d.p)
-    return -log(y + r) - logbeta(r, y+1) + xlogy(y, p) + xlog1py(r, -p)
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::NegativeBinomial) where {T}
+    rand(rng, proxy(d))
 end
 
-distproxy(d::NegativeBinomial{(:r, :p)}) = Dists.NegativeBinomial(d.r, d.p)
+###############################################################################
+@kwstruct NegativeBinomial(r, p)
+
+@inline function logdensity(d::NegativeBinomial{(:r, :p)}, y)
+    (r, p) = (d.r, d.p)
+    return -log(y + r) - logbeta(r, y + 1) + xlogy(y, p) + xlog1py(r, -p)
+end
+
+proxy(d::NegativeBinomial{(:r, :p)}) = Dists.NegativeBinomial(d.r, d.p)
 
 ###############################################################################
 @kwstruct NegativeBinomial(r, logitp)
 
-function logdensity(d::NegativeBinomial{(:r, :logitp)}, y)
+@inline function logdensity(d::NegativeBinomial{(:r, :logitp)}, y)
     (r, logitp) = (d.r, d.logitp)
-    return -log(y + r) - logbeta(r, y+1) - y * log1pexp(-logitp) - r * log1pexp(logitp)
+    return -log(y + r) - logbeta(r, y + 1) - y * log1pexp(-logitp) - r * log1pexp(logitp)
 end
 
-distproxy(d::NegativeBinomial{(:n,:logitp)}) = Dists.NegativeBinomial(d.n, logistic(d.logitp))
+proxy(d::NegativeBinomial{(:n, :logitp)}) = Dists.NegativeBinomial(d.n, logistic(d.logitp))
 
 ###############################################################################
 @kwstruct NegativeBinomial(r, λ)
 # mean λ, as in Poisson
 # Converges to Poisson as r→∞
 
-function logdensity(d::NegativeBinomial{(:r, :λ)}, y)
+@inline function logdensity(d::NegativeBinomial{(:r, :λ)}, y)
     (r, λ) = (d.r, d.λ)
-    return -log(y + r) - logbeta(r, y+1) + xlogy(y, λ) + xlogx(r) - xlogy(y + r, r + λ)
+    return -log(y + r) - logbeta(r, y + 1) + xlogy(y, λ) + xlogx(r) - xlogy(y + r, r + λ)
 end
 
-function distproxy(d::NegativeBinomial{(:r,:λ)})
+function proxy(d::NegativeBinomial{(:r, :λ)})
     p = d.λ / (d.r + d.λ)
     return Dists.NegativeBinomial(d.r, p)
 end
@@ -57,18 +59,17 @@ end
 ###############################################################################
 @kwstruct NegativeBinomial(r, logλ)
 
-function logdensity(d::NegativeBinomial{(:r, :logλ)}, y)
+@inline function logdensity(d::NegativeBinomial{(:r, :logλ)}, y)
     (r, logλ) = (d.r, d.logλ)
     λ = exp(logλ)
-    return -log(y + r) - logbeta(r, y+1) + y * logλ + xlogx(r) - xlogy(y + r, r + λ)
+    return -log(y + r) - logbeta(r, y + 1) + y * logλ + xlogx(r) - xlogy(y + r, r + λ)
 end
 
-function distproxy(d::NegativeBinomial{(:r,:logλ)})
+function proxy(d::NegativeBinomial{(:r, :logλ)})
     λ = exp(d.logλ)
     p = λ / (d.r + λ)
     return Dists.NegativeBinomial(d.r, p)
 end
-
 
 ###############################################################################
 

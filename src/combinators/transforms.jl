@@ -1,7 +1,6 @@
 using TransformVariables
 using TransformVariables: AbstractTransform, CallableTransform, CallableInverse
 
-
 export Pushforward
 export Pullback
 
@@ -11,7 +10,7 @@ struct Pushforward{F,M} <: AbstractMeasure
     logjac::Bool
 end
 
-Pushforward(f,μ) = Pushforward(f, μ, true)
+Pushforward(f, μ) = Pushforward(f, μ, true)
 
 struct Pullback{F,M} <: AbstractMeasure
     f::F
@@ -19,9 +18,9 @@ struct Pullback{F,M} <: AbstractMeasure
     logjac::Bool
 end
 
-Pullback(f,ν) = Pullback(f, ν, true)
+Pullback(f, ν) = Pullback(f, ν, true)
 
-function logdensity(pb::Pullback{F}, x) where {F <: CallableTransform}
+@inline function logdensity(pb::Pullback{F}, x) where {F<:CallableTransform}
     f = pb.f
     ν = pb.ν
     if pb.logjac
@@ -33,7 +32,7 @@ function logdensity(pb::Pullback{F}, x) where {F <: CallableTransform}
     end
 end
 
-function logdensity(pf::Pushforward{F}, y) where {F <: CallableTransform}
+@inline function logdensity(pf::Pushforward{F}, y) where {F<:CallableTransform}
     f = pf.f
     μ = pf.μ
     x = inverse(f.t)(y)
@@ -45,12 +44,15 @@ function logdensity(pf::Pushforward{F}, y) where {F <: CallableTransform}
     end
 end
 
-Pullback(f::AbstractTransform, ν, logjac::Bool=true) = Pullback(transform(f), ν, logjac)
-Pushforward(f::AbstractTransform, ν, logjac::Bool=true) = Pushforward(transform(f), ν, logjac)
+Pullback(f::AbstractTransform, ν, logjac::Bool = true) = Pullback(transform(f), ν, logjac)
+Pushforward(f::AbstractTransform, ν, logjac::Bool = true) =
+    Pushforward(transform(f), ν, logjac)
 
-Pullback(f::CallableInverse, ν, logjac::Bool=true) = Pushforward(transform(f.t), ν, logjac)
+Pullback(f::CallableInverse, ν, logjac::Bool = true) =
+    Pushforward(transform(f.t), ν, logjac)
 
-Pushforward(f::CallableInverse, ν, logjac::Bool=true) = Pullback(transform(f.t), ν, logjac)
+Pushforward(f::CallableInverse, ν, logjac::Bool = true) =
+    Pullback(transform(f.t), ν, logjac)
 
 Base.rand(rng::AbstractRNG, T::Type, ν::Pushforward) = ν.f(rand(rng, T, ν.μ))
 
@@ -75,10 +77,13 @@ TV.as(d::Affine) = _as_affine(_firstval(d))
 
 _firstval(d::Affine) = first(values(getfield(getfield(d, :f), :par)))
 _as_affine(x::Real) = asℝ
-_as_affine(x::AbstractArray) = as(Vector, size(x,1))
+_as_affine(x::AbstractArray) = as(Vector, size(x, 1))
 
-basemeasure(::Pushforward{TV.CallableTransform{T}, Lebesgue{ℝ}}) where {T <: TV.ScalarTransform} = Lebesgue(ℝ)
-basemeasure(::Pullback{TV.CallableTransform{T}, Lebesgue{ℝ}}) where {T <: TV.ScalarTransform} = Lebesgue(ℝ)
+basemeasure(
+    ::Pushforward{TV.CallableTransform{T},Lebesgue{ℝ}},
+) where {T<:TV.ScalarTransform} = Lebesgue(ℝ)
+basemeasure(::Pullback{TV.CallableTransform{T},Lebesgue{ℝ}}) where {T<:TV.ScalarTransform} =
+    Lebesgue(ℝ)
 # t = as𝕀
 # μ = Normal()
 # ν = Pushforward(t, μ)

@@ -2,7 +2,6 @@
 
 export CorrCholesky
 
-
 """
     CorrCholesky(n)
 Cholesky factor of a correlation matrix of size `n`.
