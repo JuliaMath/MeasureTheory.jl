@@ -5,6 +5,8 @@ import Base
 
 @parameterized Bernoulli(p)
 
+basemeasure(::Bernoulli) = Counting(Bool)
+
 @inline function logdensity_def(d::Bernoulli{(:p,)}, y)
     p = d.p
     return y * log(p) + (1 - y) * log(1 - p)

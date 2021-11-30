@@ -4,9 +4,10 @@ export Poisson
 import Base
 using SpecialFunctions: logfactorial
 
-@parameterized Poisson(λ) ≪ CountingMeasure(ℤ[0:∞])
+@parameterized Poisson(λ) 
 
-Base.eltype(::Type{P}) where {P<:Poisson} = Int
+basemeasure(::Poisson) = Counting(BoundedInts(static(0),static(Inf)))
+
 
 @inline function logdensity_def(d::Poisson{(:λ,)}, y)
     λ = d.λ

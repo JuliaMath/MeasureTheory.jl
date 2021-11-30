@@ -3,11 +3,9 @@
 export NegativeBinomial
 import Base
 
-@parameterized NegativeBinomial(r, p) ≪ CountingMeasure(ℤ[0:∞])
+@parameterized NegativeBinomial(r, p)
 
-(d::NegativeBinomial ≪ ::CountingMeasure{IntegerRange{a,b}}) where {a,b} = a ≤ 0 && b ≥ d.n
-
-(::CountingMeasure{IntegerRange{a,b}} ≪ ::NegativeBinomial) where {a,b} = a ≥ 0 && b ≤ d.n
+basemeasure(::NegativeBinomial) = Counting(BoundedInts(static(0), static(Inf)))
 
 function Base.rand(rng::AbstractRNG, ::Type{T}, d::NegativeBinomial) where {T}
     rand(rng, proxy(d))
