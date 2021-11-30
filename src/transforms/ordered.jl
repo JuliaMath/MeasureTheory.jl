@@ -74,7 +74,7 @@ struct Sorted{M} <: AbstractMeasure
     n::Int
 end
 
-logdensity(s::Sorted, x) = logdensity(s.μ^s.n, x)
+logdensity_def(s::Sorted, x) = logdensity(s.μ^s.n, x)
 
 TV.as(s::Sorted) = Ordered(as(s.μ), s.n)
 
@@ -85,7 +85,7 @@ function Random.rand!(rng::AbstractRNG, d::Sorted, x::AbstractArray)
 end
 
 function Base.rand(rng::AbstractRNG, T::Type, d::Sorted)
-    # TODO: Use `sampletype` for this
+    # TODO: Use `gentype` for this
     elT = typeof(rand(rng, T, d.μ))
     x = Vector{elT}(undef, d.n)
     rand!(rng, d, x)

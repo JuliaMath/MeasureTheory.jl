@@ -15,7 +15,7 @@ const Dists = Distributions
 
 export TV
 export ≪
-export sampletype
+export gentype
 export For
 
 export AbstractMeasure
@@ -42,9 +42,12 @@ using SpecialFunctions
 import LogExpFunctions
 import NamedTupleTools
 
-import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
-import MeasureBase: affine, supportdim, ≪
+import MeasureBase: testvalue, logdensity_def, density_def, basemeasure, kernel, params, ∫
+import MeasureBase: ≪
 using MeasureBase: constructor
+using MeasureBase: MapsTo, ↦
+using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
+
 
 import PrettyPrinting
 
@@ -56,11 +59,8 @@ using Reexport
 @reexport using MeasureBase
 
 using Tricks: static_hasmethod
-const ∞ = InfiniteArrays.∞
 
 using Static
-
-export ∞
 
 export as
 export Affine
@@ -69,10 +69,14 @@ export AffineTransform
 using MeasureBase: Returns
 import MeasureBase: proxy
 import MeasureBase: basemeasure_depth
+import DensityInterface: logdensityof
+import DensityInterface: densityof
+import DensityInterface: DensityKind
+using DensityInterface
 
-sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
+gentype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
-# sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
+# gentype(μ::AbstractMeasure) = gentype(basemeasure(μ))
 
 import Distributions: logpdf, pdf
 
@@ -82,17 +86,6 @@ Distributions.logpdf(d::AbstractMeasure, x) = MeasureBase.logpdf(d, x)
 
 Distributions.pdf(d::AbstractMeasure, x) = exp(Dists.logpdf(d, x))
 
-"""
-    logdensity(μ::AbstractMeasure [, ν::AbstractMeasure], x::X)
-
-Compute the logdensity of the measure μ at the point x. This is the standard way
-to define `logdensity` for a new measure. the base measure is implicit here, and
-is understood to be `basemeasure(μ)`.
-"""
-function logdensity end
-
-using MeasureBase: AFFINEPARS
-
 xlogx(x::Number) = LogExpFunctions.xlogx(x)
 xlogx(x, y) = x * log(x)
 
@@ -100,13 +93,14 @@ xlogy(x::Number, y::Number) = LogExpFunctions.xlogy(x, y)
 xlogy(x, y) = x * log(y)
 
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
-xlog1py(x, y) = x * log1p(y)
+xlog1py(x, y) = x * log(1 + y)
 
 include("const.jl")
 # include("traits.jl")
 include("parameterized.jl")
 # include("resettablerng.jl")
 
+include("macros.jl")
 include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")

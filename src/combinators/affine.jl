@@ -296,3 +296,9 @@ asparams(::Affine{N,M,T}, ::Val{:μ}) where {N,M,T<:AbstractArray} =
     as(Array, asℝ, size(d.μ))
 asparams(::Affine{N,M,T}, ::Val{:σ}) where {N,M,T<:AbstractArray} =
     as(Array, asℝ, size(d.σ))
+
+function Base.rand(rng::Random.AbstractRNG, ::Type{T}, d::Affine) where {T}
+    z = rand(rng, T, parent(d))
+    f = getfield(d, :f)
+    return f(z)
+end

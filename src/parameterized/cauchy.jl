@@ -3,7 +3,7 @@
 
 export Cauchy, HalfCauchy
 
-@parameterized Cauchy(μ, σ) ≃ (1 / π) * Lebesgue(ℝ)
+@parameterized Cauchy(μ, σ)
 
 @kwstruct Cauchy()
 @kwstruct Cauchy(μ)
@@ -13,15 +13,17 @@ export Cauchy, HalfCauchy
 @kwstruct Cauchy(μ, ω)
 
 proxy(d::Cauchy) = affine(params(d), Cauchy())
-logdensity(d::Cauchy, x) = logdensity(proxy(d), x)
-basemeasure(d::Cauchy) = basemeasure(proxy(d))
+
+logdensity_def(d::Cauchy, x) = logdensity(proxy(d), x)
+
+basemeasure(d::Cauchy) = (1 / π) * Lebesgue(ℝ)
 
 basemeasure_depth(::Cauchy) = static(2)
 basemeasure_depth(::Type{C}) where {C<:Cauchy} = static(2)
 
 # @affinepars Cauchy
 
-@inline function logdensity(d::Cauchy{()}, x)
+@inline function logdensity_def(d::Cauchy{()}, x)
     return -log1p(x^2)
 end
 

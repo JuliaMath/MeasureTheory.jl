@@ -18,7 +18,7 @@ end
 
 Dirichlet(k::Integer, α) = Dirichlet(Fill(α, k))
 
-@inline function logdensity(d::Dirichlet{(:α,)}, x)
+@inline function logdensity_def(d::Dirichlet{(:α,)}, x)
     α = d.α
     s = 0.0
     for j in eachindex(x)

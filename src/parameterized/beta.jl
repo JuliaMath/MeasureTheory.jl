@@ -15,7 +15,7 @@ export Beta
 
 TV.as(::Beta) = as𝕀
 
-@inline function logdensity(d::Beta{(:α, :β),Tuple{A,B}}, x::X) where {A,B,X}
+@inline function logdensity_def(d::Beta{(:α, :β),Tuple{A,B}}, x::X) where {A,B,X}
     return xlogy(d.α - 1, x) + xlog1py(d.β - 1, -x)
 end
 

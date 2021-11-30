@@ -19,7 +19,7 @@ end
 
 distproxy(::Uniform{()}) = Dists.Uniform()
 
-logdensity(d::Uniform{()}, x) = 0.0
+logdensity_def(d::Uniform{()}, x) = 0.0
 
 TV.as(::Uniform{()}) = as𝕀
 

@@ -16,7 +16,7 @@ export MvNormal
 supportdim(d::MvNormal) = supportdim(params(d))
 
 proxy(d::MvNormal) = affine(params(d), Normal()^supportdim(d))
-logdensity(d::MvNormal, x) = logdensity(proxy(d), x)
+logdensity_def(d::MvNormal, x) = logdensity(proxy(d), x)
 basemeasure(d::MvNormal) = basemeasure(proxy(d))
 
 basemeasure_depth(::MvNormal) = static(4)

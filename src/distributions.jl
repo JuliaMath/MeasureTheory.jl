@@ -18,7 +18,7 @@ end
 
 export logdensity
 
-@inline function logdensity(μ::DistributionMeasure{F,S,X}, x::X) where {F,S,X}
+@inline function logdensity_def(μ::DistributionMeasure{F,S,X}, x::X) where {F,S,X}
     return Dists.logpdf(μ.dist, x)
 end
 
@@ -38,7 +38,7 @@ end
 
 ∫(::typeof(identity), ::Dists.Distribution) = 1.0
 
-logdensity(μ::Dists.Distribution, x) = Dists.logpdf(μ, x)
+logdensity_def(μ::Dists.Distribution, x) = Dists.logpdf(μ, x)
 
 density(μ::Dists.Distribution, x) = Dists.pdf(μ, x)
 

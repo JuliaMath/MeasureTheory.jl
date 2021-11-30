@@ -15,7 +15,7 @@ end
 
 # @affinepars Laplace
 
-@inline function logdensity(d::Laplace{()}, x)
+@inline function logdensity_def(d::Laplace{()}, x)
     return -abs(x)
 end
 

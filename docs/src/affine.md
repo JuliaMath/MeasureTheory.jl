@@ -62,7 +62,7 @@ z = σ⁻¹ (x - μ)
 so the log-density is
 
 ```julia
-logdensity(d::Normal{(:μ,:σ)}, x) = logdensity(d.σ \ (x - d.μ)) - logdet(d.σ)
+logdensity_def(d::Normal{(:μ,:σ)}, x) = logdensity(d.σ \ (x - d.μ)) - logdet(d.σ)
 ```
 
 Here the `- logdet(σ)` is the "log absolute Jacobian", required to account for the stretching of the space.
@@ -74,7 +74,7 @@ In addition to the covariance ``Σ``, it's also common to parameterize a multiva
 This parameterization enables more efficient calculation of the log-density using only multiplication and addition,
 
 ```julia
-logdensity(d::Normal{(:μ,:ω)}, x) = logdensity(d.ω * (x - d.μ)) + logdet(d.ω)
+logdensity_def(d::Normal{(:μ,:ω)}, x) = logdensity(d.ω * (x - d.μ)) + logdet(d.ω)
 ```
 
 ## `AffineTransform`

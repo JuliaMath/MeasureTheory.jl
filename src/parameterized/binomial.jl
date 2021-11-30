@@ -16,7 +16,7 @@ probit(p) = sqrt2 * erfinv(2p - 1)
 ###############################################################################
 @kwstruct Binomial(n, p)
 
-@inline function logdensity(d::Binomial{(:n, :p)}, y)
+@inline function logdensity_def(d::Binomial{(:n, :p)}, y)
     (n, p) = (d.n, d.p)
     return -log1p(n) - logbeta(n - y + 1, y + 1) + xlogy(y, p) + xlog1py(n - y, -p)
 end
@@ -28,7 +28,7 @@ end
 ###############################################################################
 @kwstruct Binomial(n, logitp)
 
-@inline function logdensity(d::Binomial{(:n, :logitp)}, y)
+@inline function logdensity_def(d::Binomial{(:n, :logitp)}, y)
     n = d.n
     x = d.logitp
     return -log1p(n) - logbeta(n - y + 1, y + 1) + y * x - n * log1pexp(x)
@@ -41,7 +41,7 @@ end
 ###############################################################################
 @kwstruct Binomial(n, probitp)
 
-@inline function logdensity(d::Binomial{(:n, :probitp)}, y)
+@inline function logdensity_def(d::Binomial{(:n, :probitp)}, y)
     n = d.n
     z = d.probitp
     return -log1p(n) - logbeta(n - y + 1, y + 1) + xlogy(y, Φ(z)) + xlogy(n - y, Φ(-z))

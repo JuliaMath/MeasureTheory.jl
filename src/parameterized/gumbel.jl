@@ -22,7 +22,7 @@ for N in [(:μ,), (:σ,), (:μ, :σ)]
     end
 end
 
-@inline function logdensity(d::Gumbel{()}, x)
+@inline function logdensity_def(d::Gumbel{()}, x)
     return -exp(-x) - x
 end
 

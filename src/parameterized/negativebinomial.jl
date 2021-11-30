@@ -16,7 +16,7 @@ end
 ###############################################################################
 @kwstruct NegativeBinomial(r, p)
 
-@inline function logdensity(d::NegativeBinomial{(:r, :p)}, y)
+@inline function logdensity_def(d::NegativeBinomial{(:r, :p)}, y)
     (r, p) = (d.r, d.p)
     return -log(y + r) - logbeta(r, y + 1) + xlogy(y, p) + xlog1py(r, -p)
 end
@@ -26,7 +26,7 @@ proxy(d::NegativeBinomial{(:r, :p)}) = Dists.NegativeBinomial(d.r, d.p)
 ###############################################################################
 @kwstruct NegativeBinomial(r, logitp)
 
-@inline function logdensity(d::NegativeBinomial{(:r, :logitp)}, y)
+@inline function logdensity_def(d::NegativeBinomial{(:r, :logitp)}, y)
     (r, logitp) = (d.r, d.logitp)
     return -log(y + r) - logbeta(r, y + 1) - y * log1pexp(-logitp) - r * log1pexp(logitp)
 end
@@ -38,7 +38,7 @@ proxy(d::NegativeBinomial{(:n, :logitp)}) = Dists.NegativeBinomial(d.n, logistic
 # mean λ, as in Poisson
 # Converges to Poisson as r→∞
 
-@inline function logdensity(d::NegativeBinomial{(:r, :λ)}, y)
+@inline function logdensity_def(d::NegativeBinomial{(:r, :λ)}, y)
     (r, λ) = (d.r, d.λ)
     return -log(y + r) - logbeta(r, y + 1) + xlogy(y, λ) + xlogx(r) - xlogy(y + r, r + λ)
 end
@@ -59,7 +59,7 @@ end
 ###############################################################################
 @kwstruct NegativeBinomial(r, logλ)
 
-@inline function logdensity(d::NegativeBinomial{(:r, :logλ)}, y)
+@inline function logdensity_def(d::NegativeBinomial{(:r, :logλ)}, y)
     (r, logλ) = (d.r, d.logλ)
     λ = exp(logλ)
     return -log(y + r) - logbeta(r, y + 1) + y * logλ + xlogx(r) - xlogy(y + r, r + λ)

@@ -5,8 +5,6 @@ using Base.Iterators: SizeUnknown, IsInfinite
 
 import MeasureBase: For
 
-
-
 export Chain
 
 @concrete terse struct Chain{K,M} <: AbstractMeasure
@@ -26,7 +24,7 @@ Base.IteratorEltype(mc::Chain) = Base.HasEltype()
 
 Base.eltype(::Type{C}) where {K,M,C<:Chain{K,M}} = eltype(M)
 
-@inline function logdensity(mc::Chain, x)
+@inline function logdensity_def(mc::Chain, x)
     μ = mc.μ
     ℓ = 0.0
     for xj in x
@@ -81,7 +79,7 @@ function Base.rand(rng::AbstractRNG, T::Type, df::DynamicFor)
     return RealizedSamples(r, df)
 end
 
-@inline function logdensity(df::DynamicFor, y)
+@inline function logdensity_def(df::DynamicFor, y)
     ℓ = 0.0
     for (xj, yj) in zip(df.iter, y)
         ℓ += logdensity(df.κ(xj), yj)

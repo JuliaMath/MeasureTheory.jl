@@ -8,7 +8,7 @@ basemeasure(d::Multinomial{(:n, :p)}) = CountingMeasure(ℤ)^length(d.p)
 
 @kwstruct Multinomial(n, p)
 
-@inline function logdensity(d::Multinomial{(:n, :p)}, x)
+@inline function logdensity_def(d::Multinomial{(:n, :p)}, x)
     p = d.p
     s = 0.0
     for j in eachindex(x)

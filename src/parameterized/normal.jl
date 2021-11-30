@@ -42,11 +42,9 @@ params(::Type{N}) where {N<:Normal} = ()
 
 Normal(μ, σ) = Normal((μ = μ, σ = σ))
 
-using MeasureBase: rowsize, colsize
-
 Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
-logdensity(d::Normal, x) = logdensity(proxy(logdensity, d), x)
+logdensity_def(d::Normal, x) = logdensity(proxy(logdensity, d), x)
 basemeasure(d::Normal) = basemeasure(proxy(basemeasure, d))
 
 for N in AFFINEPARS
@@ -104,7 +102,7 @@ distproxy(d::Normal{()}) = Dists.Normal()
 
 # Instead of setting default values, the `@kwstruct` call above makes a
 # parameter-free instance available. The log-density for this is very efficient.
-logdensity(d::Normal{()}, x) = -x^2 / 2
+logdensity_def(d::Normal{()}, x) = -x^2 / 2
 
 Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 
@@ -143,12 +141,12 @@ HalfNormal(σ) = HalfNormal(σ = σ)
 ###############################################################################
 @kwstruct Normal(μ, σ²)
 
-@inline function logdensity(d::Normal{(:σ²)}, x)
+@inline function logdensity_def(d::Normal{(:σ²)}, x)
     σ² = d.σ²
     -0.5 * (log(σ²) + (x^2 / σ²))
 end
 
-@inline function logdensity(d::Normal{(:μ, :σ²)}, x)
+@inline function logdensity_def(d::Normal{(:μ, :σ²)}, x)
     μ = d.μ
     σ² = d.σ²
     -0.5 * (log(σ²) + ((x - μ)^2 / σ²))
@@ -157,12 +155,12 @@ end
 ###############################################################################
 @kwstruct Normal(μ, τ)
 
-@inline function logdensity(d::Normal{(:τ)}, x)
+@inline function logdensity_def(d::Normal{(:τ)}, x)
     τ = d.τ
     0.5 * (log(τ) - τ * x^2)
 end
 
-@inline function logdensity(d::Normal{(:μ, :τ)}, x)
+@inline function logdensity_def(d::Normal{(:μ, :τ)}, x)
     μ = d.μ
     τ = d.τ
     0.5 * (log(τ) - τ * (x - μ)^2)
@@ -171,7 +169,7 @@ end
 ###############################################################################
 @kwstruct Normal(μ, logσ)
 
-@inline function logdensity(d::Normal{(:μ, :logσ)}, x)
+@inline function logdensity_def(d::Normal{(:μ, :logσ)}, x)
     μ = d.μ
     logσ = d.logσ
     -logσ - 0.5(exp(-2logσ) * ((x - μ)^2))
