@@ -82,10 +82,6 @@ import Distributions: logpdf, pdf
 
 export pdf, logpdf
 
-Distributions.logpdf(d::AbstractMeasure, x) = MeasureBase.logpdf(d, x)
-
-Distributions.pdf(d::AbstractMeasure, x) = exp(Dists.logpdf(d, x))
-
 xlogx(x::Number) = LogExpFunctions.xlogx(x)
 xlogx(x, y) = x * log(x)
 
@@ -111,6 +107,7 @@ include("realized.jl")
 include("combinators/chain.jl")
 
 include("distributions.jl")
+include("smart-constructors.jl")
 
 include("parameterized/normal.jl")
 include("parameterized/studentt.jl")

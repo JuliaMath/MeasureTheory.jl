@@ -142,8 +142,8 @@ function _half(__module__, ex)
             halfdist = esc(Symbol(:Half, dist))
             dist = esc(dist)
             quote
-                $halfdist(args...) = half($dist(args...))
-                $halfdist(; kwargs...) = half($dist(; kwargs...))
+                $halfdist(args...) = Half($dist(args...))
+                $halfdist(; kwargs...) = Half($dist(; kwargs...))
             end
         end
     end
