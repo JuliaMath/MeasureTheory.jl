@@ -102,7 +102,10 @@ end
 
 function Base.iterate(d::DynamicFor, s)
     (x, s) = iterate(d.iter, s)
+    (d.κ(x), s)
 end
+
+Base.length(d::DynamicFor) = length(d.iter)
 
 For(f, r::Realized) = DynamicFor(f, copy(r))
 
