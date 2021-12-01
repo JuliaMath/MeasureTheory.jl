@@ -16,8 +16,6 @@ end
     return Lebesgue(X)
 end
 
-export logdensity
-
 @inline function logdensity_def(μ::DistributionMeasure{F,S,X}, x::X) where {F,S,X}
     return Dists.logpdf(μ.dist, x)
 end
