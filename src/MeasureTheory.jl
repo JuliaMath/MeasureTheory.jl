@@ -5,8 +5,10 @@ using Random
 using MeasureBase
 using MLStyle
 using NestedTuples
-using TransformVariables
+import TransformVariables
 const TV = TransformVariables
+
+using TransformVariables: as, asℝ₊, as𝕀, asℝ
 
 import Base
 import Distributions
@@ -40,12 +42,12 @@ using SpecialFunctions
 import LogExpFunctions
 import NamedTupleTools
 
-import MeasureBase: testvalue, logdensity_def, density_def, basemeasure, kernel, params, ∫
+import MeasureBase: testvalue, logdensity_def, density_def, basemeasure, kernel, params, paramnames, ∫
 import MeasureBase: ≪
 using MeasureBase: constructor
 using MeasureBase: MapsTo, ↦
 using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
-
+using MeasureBase: weightedmeasure, restrict
 
 import PrettyPrinting
 

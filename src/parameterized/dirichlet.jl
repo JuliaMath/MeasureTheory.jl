@@ -2,6 +2,8 @@
 
 export Dirichlet
 
+using FillArrays
+
 @parameterized Dirichlet(α)
 
 TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))

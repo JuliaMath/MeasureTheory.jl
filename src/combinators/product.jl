@@ -6,13 +6,13 @@ end
 ###############################################################################
 # I <: Base.Generator
 
-function TV.as(d::ProductMeasure{F,S,I}) where {F,S,I<:Base.Generator}
+function TV.as(d::ProductMeasure{K,I}) where {K,I<:Base.Generator}
     d1 = marginals(d).f(first(marginals(d).iter))
     as(Array, as(d1), size(marginals(d))...)
 end
 
 function TV.as(d::ProductMeasure{Returns{T},F,A}) where {T,F,A<:AbstractArray}
-    as(Array, as(d.f.f.value), size(d.pars))
+    as(Array, as(d.f.f.value), size(d.xs))
 end
 
 function Base.rand(
@@ -28,7 +28,7 @@ function Base.rand(
 
     sz = size(mar)
     x = Array{elT,length(sz)}(undef, sz)
-    for (j, parj) in enumerate(d.pars)
+    for (j, parj) in enumerate(d.xs)
         x[j] = rand(rng, d.f(parj))
     end
     x
@@ -48,6 +48,6 @@ function Accessors.set(
     ::typeof(params),
     p,
 ) where {F,S,A<:AbstractArray}
-    par = typeof(d.pars[1])(p)
-    ProductMeasure(d.f, Fill(par, size(d.pars)))
+    par = typeof(d.xs[1])(p)
+    ProductMeasure(d.f, Fill(par, size(d.xs)))
 end

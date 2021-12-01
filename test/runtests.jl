@@ -264,8 +264,6 @@ end
     end
 end
 
-using TransformVariables
-
 @testset "Likelihood" begin
     dps = [
         (Normal()                             ,    2.0  )

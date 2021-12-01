@@ -32,7 +32,7 @@ const OrderedΔx = -8.0
 # See https://mc-stan.org/docs/2_27/reference-manual/ordered-vector.html
 function TV.transform_with(flag::TV.LogJacFlag, t::Ordered, x, index::T) where {T}
     transformation, len = (t.transformation, t.dim)
-    @assert dimension(transformation) == 1
+    @assert TV.dimension(transformation) == 1
     y = similar(x, len)
 
     (lo, hi) = bounds(transformation)
@@ -58,11 +58,11 @@ Ordered(n::Int) = Ordered(asℝ, n)
 function TV.inverse_at!(x::AbstractVector, index, t::Ordered, y::AbstractVector)
     (lo, hi) = bounds(t.transformation)
 
-    @inbounds x[index] = inverse(as(Real, lo, hi), y[1]) - OrderedΔx
+    @inbounds x[index] = TV.inverse(as(Real, lo, hi), y[1]) - OrderedΔx
     index += 1
 
     @inbounds for i in 2:length(y)
-        x[index] = inverse(as(Real, y[i-1], hi), y[i]) - OrderedΔx
+        x[index] = TV.inverse(as(Real, y[i-1], hi), y[i]) - OrderedΔx
         index += 1
     end
     return index

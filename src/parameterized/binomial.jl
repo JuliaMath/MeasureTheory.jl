@@ -20,7 +20,7 @@ basemeasure(d::Binomial) =  Counting(BoundedInts(static(0), d.n))
     return -log1p(n) - logbeta(n - y + 1, y + 1) + xlogy(y, p) + xlog1py(n - y, -p)
 end
 
-function Base.rand(rng::AbstractRNG, T::Type, d::Binomial{(:n, :p)})
+function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :p)})
     rand(rng, Dists.Binomial(d.n, d.p))
 end
 

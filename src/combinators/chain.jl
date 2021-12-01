@@ -124,7 +124,7 @@ function dyniterate(df::DynamicFor, state)
     ϕ = dyniterate(df.iter, state)
     ϕ === nothing && return nothing
     u, state = ϕ
-    df.f(u), state
+    df.κ(u), state
 end
 
 function Base.collect(r::Realized)

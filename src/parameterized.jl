@@ -1,5 +1,3 @@
-using TransformVariables
-
 export asparams
 
 """
@@ -45,15 +43,15 @@ TransformVariables.TransformTuple{NamedTuple{(:μ, :σ), Tuple{TransformVariable
 """
 function asparams end
 
-asparams(μ::ParameterizedMeasure, v::Val) = asparams(constructor(μ), v)
-asparams(μ, s::Symbol) = asparams(μ, Val(s))
+asparams(μ::ParameterizedMeasure, v::StaticSymbol) = asparams(constructor(μ), v)
+asparams(μ, s::Symbol) = asparams(μ, static(s))
 
 asparams(M::Type{A}) where {A<:AbstractMeasure} = asparams(M, NamedTuple())
 
 function asparams(::Type{M}, constraints::NamedTuple{N}) where {N,M<:ParameterizedMeasure}
     # @show M
     thekeys = paramnames(M, constraints)
-    t1 = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
+    t1 = NamedTuple{thekeys}(asparams(M, StaticSymbol(k)) for k in thekeys)
     t2 = NamedTuple{N}(map(asConst, values(constraints)))
     C = constructorof(M)
     # @show C
