@@ -88,7 +88,8 @@ end
 
 @inline function basemeasure(μ::LKJCholesky{(:k, :logη)})
     t = as(μ)
-    η = exp(μ.logη)
+    logη = μ.logη
+    η = exp(logη)
     ℓ(par) = Dists.lkj_logc0(par.k, exp(par.logη))
     base = Pushforward(t, Lebesgue(ℝ)^TV.dimension(t), false)
     ParamWeightedMeasure(ℓ, (k = μ.k, logη = logη), base)

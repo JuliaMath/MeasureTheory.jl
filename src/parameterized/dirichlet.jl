@@ -11,7 +11,7 @@ TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
 @inline function basemeasure(μ::Dirichlet{(:α,)})
     α = μ.α
     t = as(μ)
-    d = dimension(t)
+    d = TV.dimension(t)
     logw = loggamma(sum(α)) - sum(loggamma, α)
     return WeightedMeasure(logw, Pushforward(t, Lebesgue(ℝ)^d, false))
 end
