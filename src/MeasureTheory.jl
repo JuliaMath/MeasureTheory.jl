@@ -3,7 +3,6 @@ module MeasureTheory
 using Random
 
 using MeasureBase
-using ConcreteStructs
 using MLStyle
 using NestedTuples
 using TransformVariables
@@ -30,8 +29,7 @@ export Likelihood
 export testvalue
 export basekernel
 
-using InfiniteArrays
-using ConcreteStructs
+using Infinities
 using DynamicIterators
 using KeywordCalls
 using ConstructionBase

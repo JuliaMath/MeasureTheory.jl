@@ -8,7 +8,7 @@ export Laplace
 for N in AFFINEPARS
     @eval begin
         proxy(d::Laplace{$N}) = affine(params(d), Laplace())
-        logdensity(d::Laplace{$N}, x) = logdensity(proxy(d), x)
+        logdensity_def(d::Laplace{$N}, x) = logdensity_def(proxy(d), x)
         basemeasure(d::Laplace{$N}) = basemeasure(proxy(d))
     end
 end

@@ -1,4 +1,3 @@
-using ConcreteStructs
 using DynamicIterators
 import DynamicIterators: dub, dyniterate, evolve
 using Base.Iterators: SizeUnknown, IsInfinite
@@ -7,7 +6,7 @@ import MeasureBase: For
 
 export Chain
 
-@concrete terse struct Chain{K,M} <: AbstractMeasure
+struct Chain{K,M} <: AbstractMeasure
     κ::K
     μ::M
 end
@@ -28,7 +27,7 @@ Base.eltype(::Type{C}) where {K,M,C<:Chain{K,M}} = eltype(M)
     μ = mc.μ
     ℓ = 0.0
     for xj in x
-        ℓ += logdensity(μ, xj)
+        ℓ += logdensity_def(μ, xj)
         μ = mc.κ(xj)
     end
     return ℓ
@@ -61,7 +60,7 @@ end
 
 # A `DynamicFor` is produced when `For` is called on a `DynamicIterator`.
 
-@concrete terse struct DynamicFor{T,K,S} <: AbstractMeasure
+struct DynamicFor{T,K,S} <: AbstractMeasure
     κ::K
     iter::S
 end
@@ -82,7 +81,7 @@ end
 @inline function logdensity_def(df::DynamicFor, y)
     ℓ = 0.0
     for (xj, yj) in zip(df.iter, y)
-        ℓ += logdensity(df.κ(xj), yj)
+        ℓ += logdensity_def(df.κ(xj), yj)
     end
     return ℓ
 end

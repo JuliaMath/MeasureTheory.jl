@@ -16,7 +16,7 @@ for N in AFFINEPARS
     @eval begin
         proxy(d::StudentT{(:ν, $N...)}) =
             affine(NamedTupleTools.select(params(d), $N), StudentT((ν = d.ν,)))
-        logdensity(d::StudentT{(:ν, $N...)}, x) = logdensity(proxy(d), x)
+        logdensity_def(d::StudentT{(:ν, $N...)}, x) = logdensity_def(proxy(d), x)
         basemeasure(d::StudentT{(:ν, $N...)}) = basemeasure(proxy(d))
     end
 end

@@ -25,10 +25,10 @@ Pullback(f, ν) = Pullback(f, ν, true)
     ν = pb.ν
     if pb.logjac
         y, logJ = transform_and_logjac(f.t, x)
-        return logdensity(ν, y) + logJ
+        return logdensity_def(ν, y) + logJ
     else
         y = f(x)
-        return logdensity(ν, y)
+        return logdensity_def(ν, y)
     end
 end
 
@@ -38,9 +38,9 @@ end
     x = inverse(f.t)(y)
     if pf.logjac
         _, logJ = transform_and_logjac(f.t, x)
-        return logdensity(μ, x) - logJ
+        return logdensity_def(μ, x) - logJ
     else
-        return logdensity(μ, x)
+        return logdensity_def(μ, x)
     end
 end
 
@@ -88,5 +88,5 @@ basemeasure(::Pullback{TV.CallableTransform{T},Lebesgue{ℝ}}) where {T<:TV.Scal
 # μ = Normal()
 # ν = Pushforward(t, μ)
 # x = rand(μ)
-# julia> logdensity(μ, x) ≈ logdensity(Pushforward(inverse(t), ν), x)
+# julia> logdensity_def(μ, x) ≈ logdensity_def(Pushforward(inverse(t), ν), x)
 # true

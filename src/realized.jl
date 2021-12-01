@@ -19,7 +19,7 @@ end
 
 ###############################################################################
 
-@concrete struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
+struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
     rng::ResettableRNG{R,S}
     iter::T
 end

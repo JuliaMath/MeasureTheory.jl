@@ -14,7 +14,7 @@ export Cauchy, HalfCauchy
 
 proxy(d::Cauchy) = affine(params(d), Cauchy())
 
-logdensity_def(d::Cauchy, x) = logdensity(proxy(d), x)
+logdensity_def(d::Cauchy, x) = logdensity_def(proxy(d), x)
 
 basemeasure(d::Cauchy) = (1 / π) * Lebesgue(ℝ)
 

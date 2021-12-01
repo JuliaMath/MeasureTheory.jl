@@ -26,7 +26,7 @@ end
 
 @inline function logdensity_def(d::Exponential{(:β,)}, x)
     z = x / d.β
-    return logdensity(Exponential(), z) - log(d.β)
+    return logdensity_def(Exponential(), z) - log(d.β)
 end
 
 distproxy(d::Exponential{(:β,)}) = Dists.Exponential(d.β)
@@ -44,7 +44,7 @@ end
 
 @inline function logdensity_def(d::Exponential{(:logβ,)}, x)
     z = x * exp(-d.logβ)
-    return logdensity(Exponential(), z) - d.logβ
+    return logdensity_def(Exponential(), z) - d.logβ
 end
 
 distproxy(d::Exponential{(:logβ,)}) = Dists.Exponential(exp(d.logβ))
@@ -62,7 +62,7 @@ end
 
 @inline function logdensity_def(d::Exponential{(:λ,)}, x)
     z = x * d.λ
-    return logdensity(Exponential(), z) + log(d.λ)
+    return logdensity_def(Exponential(), z) + log(d.λ)
 end
 
 distproxy(d::Exponential{(:λ,)}) = Dists.Exponential(1 / d.λ)
@@ -80,7 +80,7 @@ end
 
 @inline function logdensity_def(d::Exponential{(:logλ,)}, x)
     z = x * exp(d.logλ)
-    return logdensity(Exponential(), z) + d.logλ
+    return logdensity_def(Exponential(), z) + d.logλ
 end
 
 distproxy(d::Exponential{(:logλ,)}) = Dists.Exponential(exp(-d.logλ))

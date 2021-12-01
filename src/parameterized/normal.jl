@@ -44,7 +44,7 @@ Normal(μ, σ) = Normal((μ = μ, σ = σ))
 
 Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
-logdensity_def(d::Normal, x) = logdensity(proxy(logdensity, d), x)
+logdensity_def(d::Normal, x) = logdensity_def(proxy(logdensity, d), x)
 basemeasure(d::Normal) = basemeasure(proxy(basemeasure, d))
 
 for N in AFFINEPARS

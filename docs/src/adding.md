@@ -33,7 +33,7 @@ The `≪` (typed as `\ll <TAB>`) can be read "is dominated by". This just means 
 
 ### Defining a Log Density
 
-Most computations involve log-densities rather than densities themselves, so these are our first priority. `density(d,x)` will default to `exp(logdensity(d,x))`, but you can add a separate method if it's more efficient.
+Most computations involve log-densities rather than densities themselves, so these are our first priority. `density(d,x)` will default to `exp(logdensity_def(d,x))`, but you can add a separate method if it's more efficient.
 
 The definition is simple:
 ```julia

@@ -46,7 +46,7 @@ asparams(::Type{<:LKJCholesky}, ::StaticSymbol{:logη}) = asℝ
 
 using LinearAlgebra
 
-logdensity_def(d::LKJCholesky, C::Cholesky) = logdensity(d, C.UL)
+logdensity_def(d::LKJCholesky, C::Cholesky) = logdensity_def(d, C.UL)
 
 @inline function logdensity_def(
     d::LKJCholesky{(:k, :η)},

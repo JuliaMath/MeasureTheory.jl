@@ -74,7 +74,7 @@ struct Sorted{M} <: AbstractMeasure
     n::Int
 end
 
-logdensity_def(s::Sorted, x) = logdensity(s.μ^s.n, x)
+logdensity_def(s::Sorted, x) = logdensity_def(s.μ^s.n, x)
 
 TV.as(s::Sorted) = Ordered(as(s.μ), s.n)
 
@@ -91,10 +91,10 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Sorted)
     rand!(rng, d, x)
 end
 
-# logdensity(d, rand(d))
+# logdensity_def(d, rand(d))
 
 # TV.transform_with(TV.LogJac(), Ordered(asℝ, 4), zeros(4), 1)
 # TV.transform_with(TV.LogJac(), Ordered(asℝ, 4), randn(4), 1)
 
 # d = Pushforward(Ordered(10), Normal()^10, false)
-# logdensity(Lebesgue(ℝ)^10, rand(d))
+# logdensity_def(Lebesgue(ℝ)^10, rand(d))

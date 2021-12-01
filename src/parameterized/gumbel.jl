@@ -17,7 +17,7 @@ for N in [(:μ,), (:σ,), (:μ, :σ)]
     G = tuple(replace(collect(N), :σ => :β)...)
     @eval begin
         proxy(d::Gumbel{$G}) = affine(NamedTuple{$N}(values(params(d))), Gumbel())
-        logdensity(d::Gumbel{$G}, x) = logdensity(proxy(d), x)
+        logdensity_def(d::Gumbel{$G}, x) = logdensity_def(proxy(d), x)
         basemeasure(d::Gumbel{$G}) = basemeasure(proxy(d))
     end
 end
