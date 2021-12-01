@@ -43,7 +43,8 @@ end
     end
 end
 
-Pullback(f::AbstractTransform, ν, logjac::Bool = true) = Pullback(TV.transform(f), ν, logjac)
+Pullback(f::AbstractTransform, ν, logjac::Bool = true) =
+    Pullback(TV.transform(f), ν, logjac)
 Pushforward(f::AbstractTransform, ν, logjac::Bool = true) =
     Pushforward(TV.transform(f), ν, logjac)
 

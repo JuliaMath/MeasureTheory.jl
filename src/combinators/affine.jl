@@ -286,7 +286,6 @@ supportdim(nt::NamedTuple{(:σ,)}) = colsize(nt.σ)
 supportdim(nt::NamedTuple{(:ω,)}) = rowsize(nt.ω)
 supportdim(nt::NamedTuple{(:μ,)}) = size(nt.μ)
 
-
 asparams(::Affine, ::StaticSymbol{:μ}) = asℝ
 asparams(::Affine, ::StaticSymbol{:σ}) = asℝ₊
 asparams(::Type{A}, ::StaticSymbol{:μ}) where {A<:Affine} = asℝ

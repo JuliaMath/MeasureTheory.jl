@@ -34,7 +34,6 @@ Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:p,)}) = rand(rng, T) < d.p
 Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logitp,)}) =
     rand(rng, T) < logistic(d.logitp)
 
-
 asparams(::Type{<:Bernoulli}, ::StaticSymbol{:p}) = as𝕀
 asparams(::Type{<:Bernoulli}, ::StaticSymbol{:logitp}) = asℝ
 

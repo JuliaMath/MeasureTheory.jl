@@ -7,10 +7,9 @@ using SpecialFunctions
 probit(p) = sqrt2 * erfinv(2p - 1)
 Φ(z) = (1 + erf(invsqrt2 * z)) / 2
 
-@parameterized Binomial(n, p) 
+@parameterized Binomial(n, p)
 
-basemeasure(d::Binomial) =  Counting(BoundedInts(static(0), d.n))
-
+basemeasure(d::Binomial) = Counting(BoundedInts(static(0), d.n))
 
 ###############################################################################
 @kwstruct Binomial(n, p)
