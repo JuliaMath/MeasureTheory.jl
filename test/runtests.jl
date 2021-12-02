@@ -244,7 +244,7 @@ end
 
 @testset "rootmeasure/logpdf" begin
     x = rand(Normal())
-    @test logdensity_def(Normal(), rootmeasure(Normal()), x) ≈ logpdf(Normal(), x)
+    @test logdensity_def(Normal(), rootmeasure(Normal()), x) ≈ logdensityof(Normal(), x)
 end
 
 @testset "Transforms" begin
@@ -277,7 +277,7 @@ end
 
     for (d,p) in dps
         for ℓ in ℓs
-            @test logdensity_def(d ⊙ ℓ, p) == logdensity_def(d, p) + logdensity_def(ℓ, p)
+            @test logdensity_def(d ⊙ ℓ, p) ≈ logdensity_def(d, p) + logdensity_def(ℓ, p)
         end
     end
 end
@@ -349,7 +349,7 @@ end
         Σ = σ * σ'
         d = MvNormal(σ=σ)
         x = rand(d)
-        @test logpdf(d, x) ≈ logpdf(Dists.MvNormal(Σ), x)
+        @test logdensityof(d, x) ≈ logdensityof(Dists.MvNormal(Σ), x)
     end
 
     @testset "NegativeBinomial" begin

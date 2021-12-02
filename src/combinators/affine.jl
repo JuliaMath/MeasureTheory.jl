@@ -119,9 +119,26 @@ logjac(f::AffineTransform{(:μ,)}) = 0.0
 
 ###############################################################################
 
+
+struct OrthoLebesgue{N,T} <: AbstractMeasure
+    par::NamedTuple{N,T}
+
+    OrthoLebesgue(nt::NamedTuple{N,T}) where {N,T} = new{N,T}(nt)
+end
+
+basemeasure(d::OrthoLebesgue) = d
+
+basemeasure_depth(::Type{O}) where {O<:OrthoLebesgue} = static(0)
+
+logdensity_def(::OrthoLebesgue, x) = static(0)
+
 struct Affine{N,M,T} <: AbstractMeasure
     f::AffineTransform{N,T}
     parent::M
+end
+
+function Pretty.tile(d::Affine)
+    Pretty.list_layout(Pretty.tile.([params(d.f), d.parent]); prefix=:Affine)
 end
 
 function testvalue(d::Affine)
@@ -251,6 +268,11 @@ basemeasure(d::Affine) = affine(getfield(d, :f), basemeasure(d.parent))
 # example it wouldn't make sense to apply a log-Jacobian to a point measure
 basemeasure(d::Affine{N,L}) where {N,L<:Lebesgue} = weightedmeasure(-logjac(d), d.parent)
 
+
+function basemeasure(d::Affine{N,P}) where {N,L<:Union{Lebesgue, <:LebesgueMeasure},P<:PowerMeasure{L}} 
+    weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
+end
+
 @inline function basemeasure(
     d::Affine{N,M},
 ) where {N,L<:Lebesgue,M<:ProductMeasure{Returns{L}}}
@@ -291,10 +313,13 @@ asparams(::Affine, ::StaticSymbol{:σ}) = asℝ₊
 asparams(::Type{A}, ::StaticSymbol{:μ}) where {A<:Affine} = asℝ
 asparams(::Type{A}, ::StaticSymbol{:σ}) where {A<:Affine} = asℝ₊
 
-asparams(::Affine{N,M,T}, ::StaticSymbol{:μ}) where {N,M,T<:AbstractArray} =
+function asparams(d::Affine{N,M,T}, ::StaticSymbol{:μ}) where {N,M,T<:AbstractArray}
     as(Array, asℝ, size(d.μ))
-asparams(::Affine{N,M,T}, ::StaticSymbol{:σ}) where {N,M,T<:AbstractArray} =
+end
+
+function asparams(d::Affine{N,M,T}, ::StaticSymbol{:σ}) where {N,M,T<:AbstractArray}
     as(Array, asℝ, size(d.σ))
+end
 
 function Base.rand(rng::Random.AbstractRNG, ::Type{T}, d::Affine) where {T}
     z = rand(rng, T, parent(d))

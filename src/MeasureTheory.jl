@@ -71,6 +71,8 @@ export AffineTransform
 using MeasureBase: Returns
 import MeasureBase: proxy
 import MeasureBase: basemeasure_depth
+using MeasureBase: LebesgueMeasure
+
 import DensityInterface: logdensityof
 import DensityInterface: densityof
 import DensityInterface: DensityKind

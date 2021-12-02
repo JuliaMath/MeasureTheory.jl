@@ -32,7 +32,7 @@ end
     return -log1p(n) - logbeta(n - y + 1, y + 1) + y * x - n * log1pexp(x)
 end
 
-function Base.rand(rng::AbstractRNG, d::Binomial{(:n, :logitp)})
+function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :logitp)})
     rand(rng, Dists.Binomial(d.n, logistic(d.logitp)))
 end
 
@@ -45,7 +45,7 @@ end
     return -log1p(n) - logbeta(n - y + 1, y + 1) + xlogy(y, Φ(z)) + xlogy(n - y, Φ(-z))
 end
 
-function Base.rand(rng::AbstractRNG, d::Binomial{(:n, :probitp)})
+function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :probitp)})
     rand(rng, Dists.Binomial(d.n, Φ(d.probitp)))
 end
 

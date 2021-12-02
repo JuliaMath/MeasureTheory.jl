@@ -11,6 +11,13 @@ end
 
 Pushforward(f, μ) = Pushforward(f, μ, true)
 
+function Pretty.tile(pf::Pushforward{<:TV.CallableTransform})
+    Pretty.list_layout(Pretty.tile.([pf.f.t, pf.μ, pf.logjac]); prefix=:Pushforward)
+end
+
+function Pretty.tile(pf::Pushforward)
+    Pretty.list_layout(Pretty.tile.([pf.f, pf.μ, pf.logjac]); prefix=:Pushforward)
+end
 struct Pullback{F,M} <: AbstractMeasure
     f::F
     ν::M
@@ -18,6 +25,14 @@ struct Pullback{F,M} <: AbstractMeasure
 end
 
 Pullback(f, ν) = Pullback(f, ν, true)
+
+function Pretty.tile(pf::Pullback{<:TV.CallableTransform})
+    Pretty.list_layout(Pretty.tile.([pf.f.t, pf.μ, pf.logjac]); prefix=:Pullback)
+end
+
+function Pretty.tile(pf::Pullback)
+    Pretty.list_layout(Pretty.tile.([pf.f, pf.μ, pf.logjac]); prefix=:Pullback)
+end
 
 @inline function logdensity_def(pb::Pullback{F}, x) where {F<:CallableTransform}
     f = pb.f

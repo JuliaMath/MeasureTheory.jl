@@ -50,6 +50,7 @@ basemeasure(d::Normal) = basemeasure(proxy(basemeasure, d))
 for N in AFFINEPARS
     @eval begin
         proxy(d::Normal{$N}) = affine(params(d), Normal())
+        rand(rng::AbstractRNG, ::Type{T}, d::Normal{$N}) where {T} = rand(rng, T, affine(params(d), Normal()))
     end
 end
 
