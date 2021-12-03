@@ -7,8 +7,6 @@
 # as(::Type{OrderedVector}, transformation::TV.AbstractTransform, dim::Int) =
 #     Ordered(transformation, dim)
 
-using MeasureTheory
-
 export Ordered
 struct Ordered{T<:TV.AbstractTransform} <: TV.VectorTransform
     transformation::T

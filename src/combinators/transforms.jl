@@ -27,11 +27,11 @@ end
 Pullback(f, ν) = Pullback(f, ν, true)
 
 function Pretty.tile(pf::Pullback{<:TV.CallableTransform})
-    Pretty.list_layout(Pretty.tile.([pf.f.t, pf.μ, pf.logjac]); prefix=:Pullback)
+    Pretty.list_layout(Pretty.tile.([pf.f.t, pf.ν, pf.logjac]); prefix=:Pullback)
 end
 
 function Pretty.tile(pf::Pullback)
-    Pretty.list_layout(Pretty.tile.([pf.f, pf.μ, pf.logjac]); prefix=:Pullback)
+    Pretty.list_layout(Pretty.tile.([pf.f, pf.ν, pf.logjac]); prefix=:Pullback)
 end
 
 @inline function logdensity_def(pb::Pullback{F}, x) where {F<:CallableTransform}

@@ -43,10 +43,9 @@ import LogExpFunctions
 import NamedTupleTools
 
 import MeasureBase:
-    testvalue, logdensity_def, density_def, basemeasure, kernel, params, paramnames, ∫
+    testvalue, logdensity_def, density_def, basemeasure, kernel, params, paramnames, ∫, 𝒹, ∫exp
 import MeasureBase: ≪
 using MeasureBase: constructor
-using MeasureBase: MapsTo, ↦
 using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractKernel

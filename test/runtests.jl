@@ -244,7 +244,7 @@ end
 
 @testset "rootmeasure/logpdf" begin
     x = rand(Normal())
-    @test logdensity_def(Normal(), rootmeasure(Normal()), x) ≈ logdensityof(Normal(), x)
+    @test logdensityof(Normal(), rootmeasure(Normal()), x) ≈ logdensityof(Normal(), x)
 end
 
 @testset "Transforms" begin
@@ -405,19 +405,19 @@ end
 @testset "Density measures and Radon-Nikodym" begin
     x = randn()
     let d = ∫(𝒹(Cauchy(), Normal()), Normal())
-        @test logdensity_def(d, Cauchy(), x) ≈ 0 atol=1e-12
+        @test logdensityof(d, Cauchy(), x) ≈ 0 atol=1e-12
     end
 
     let f = 𝒹(∫(x -> x^2, Normal()), Normal())
-        @test f(x) ≈ x^2
+        @test densityof(f, x) ≈ x^2
     end
 
-    let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
-        @test logdensity_def(d, Cauchy(), x) ≈ 0 atol=1e-12
-    end
+    # let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
+    #     @test logdensity_def(d, Cauchy(), x) ≈ 0 atol=1e-12
+    # end
 
-    let f = log𝒹(∫exp(x -> x^2, Normal()), Normal())
-        @test f(x) ≈ x^2
+    let f = 𝒹(∫exp(x -> x^2, Normal()), Normal())
+        @test logdensityof(f, x) ≈ x^2
     end
 end
 
@@ -426,21 +426,21 @@ end
         d = Normal(σ=3)
         h = HalfNormal(3)
         x = rand(h)
-        @test density(h, Lebesgue(ℝ), x) ≈ 2 * density(d, Lebesgue(ℝ), x)
+        @test densityof(h, Lebesgue(ℝ), x) ≈ 2 * densityof(d, Lebesgue(ℝ), x)
     end
 
     @testset "HalfCauchy" begin
         d = Cauchy(σ=3)
         h = HalfCauchy(3)
         x = rand(h)
-        @test density(h, Lebesgue(ℝ), x) ≈ 2 * density(d, Lebesgue(ℝ), x)
+        @test densityof(h, Lebesgue(ℝ), x) ≈ 2 * densityof(d, Lebesgue(ℝ), x)
     end
 
     @testset "HalfStudentT" begin
         d = StudentT(ν=2, σ=3)
         h = HalfStudentT(2, 3)
         x = rand(h)
-        @test density(h, Lebesgue(ℝ), x) ≈ 2 * density(d, Lebesgue(ℝ), x)
+        @test densityof(h, Lebesgue(ℝ), x) ≈ 2 * densityof(d, Lebesgue(ℝ), x)
     end
 end
 
