@@ -528,7 +528,7 @@ end
     for f in [f1, f2, f3, f4, f5]
         par = getfield(f, :par)
         @test Affine(par)(unif) == Affine(f, unif)
-        @test density_def(Affine(f, Affine(inv(f), unif)), 0.5) == 1
+        @test densityof(Affine(f, Affine(inv(f), unif)), 0.5) == 1
     end
 
     d = ∫exp(x -> -x^2, Lebesgue(ℝ))
