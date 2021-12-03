@@ -44,7 +44,7 @@ import NamedTupleTools
 
 import MeasureBase:
     testvalue, logdensity_def, density_def, basemeasure, kernel, params, paramnames, ∫, 𝒹, ∫exp
-import MeasureBase: ≪
+import MeasureBase: ≪, basemeasure_type
 using MeasureBase: constructor
 using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict

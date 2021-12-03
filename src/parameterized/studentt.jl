@@ -12,16 +12,23 @@ export StudentT, HalfStudentT
 @kwstruct StudentT(ν, μ, σ)
 @kwstruct StudentT(ν, μ, ω)
 
+
 for N in AFFINEPARS
     @eval begin
         proxy(d::StudentT{(:ν, $N...)}) =
             affine(NamedTupleTools.select(params(d), $N), StudentT((ν = d.ν,)))
-        logdensity_def(d::StudentT{(:ν, $N...)}, x) = logdensity_def(proxy(d), x)
-        basemeasure(d::StudentT{(:ν, $N...)}) = basemeasure(proxy(d))
     end
 end
 
+logdensity_def(d::StudentT, x) = logdensity_def(proxy(d), x)
+basemeasure(d::StudentT) = basemeasure(proxy(d))
+Base.rand(rng::AbstractRNG, ::Type{T}, μ::StudentT) where {T} = rand(rng, T, proxy(μ))
+
 # @affinepars StudentT
+
+function basemeasure_type(::Type{StudentT{(:ν,), T}}) where {T}
+    FactoredBase{Returns{Bool}, Float64, MeasureTheory.var"#varℓ#10"{StudentT{(:ν,), T}}, Lebesgue{MeasureBase.RealNumbers}}
+end
 
 StudentT(ν, μ, σ) = StudentT((ν = ν, μ = μ, σ = σ))
 

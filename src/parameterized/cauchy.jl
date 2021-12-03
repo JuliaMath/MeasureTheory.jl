@@ -33,6 +33,12 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng, T)
 
+for N in AFFINEPARS
+    @eval begin
+        rand(rng::AbstractRNG, ::Type{T}, d::Cauchy{$N}) where {T} = rand(rng, T, affine(params(d), Cauchy()))
+    end
+end
+
 ≪(::Cauchy, ::Lebesgue{X}) where {X<:Real} = true
 
 TV.as(::Cauchy) = asℝ

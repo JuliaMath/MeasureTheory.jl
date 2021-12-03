@@ -188,6 +188,7 @@ end
     ]
 
     for d in FORDISTS
+        @info "testing $d"
         @test logdensity_def(d, rand(d)) isa Float64
     end
 end
@@ -452,9 +453,9 @@ end
 
     z = randn(2)
     
-    ℓ = logpdf(MvNormal((σ= R,)),z)
-    @test ℓ ≈ Dists.logpdf(Dists.MvNormal(R*R'),z)
-    @test ℓ ≈ logpdf(MvNormal((σ= Q*R,)),Q*z)
+    ℓ = logdensityof(MvNormal((σ= R,)),z)
+    @test ℓ ≈ logdensityof(Dists.MvNormal(R*R'),z)
+    @test ℓ ≈ logdensityof(MvNormal((σ= Q*R,)),Q*z)
 end
 
 @testset "Affine" begin
@@ -468,7 +469,7 @@ end
     using Test
     function test_noerrors(d)
         x = rand(d)
-        @test logpdf(d, x) isa Real
+        @test logdensityof(d, x) isa Real
         @test logdensity_def(d, x) isa Real
     end
 

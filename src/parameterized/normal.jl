@@ -25,10 +25,22 @@ export Normal, HalfNormal
 #
 @parameterized Normal()
 
-basemeasure(::Normal{()}) = WeightedMeasure(-0.5 * log2π, Lebesgue(ℝ))
+for N in AFFINEPARS
+    @eval begin
+        proxy(d::Normal{$N}) = affine(params(d), Normal())
+    end
+end
+
+
+basemeasure(d::Normal) = basemeasure(proxy(d))
+logdensity_def(d::Normal, x) = logdensity_def(proxy(d), x)
+
+basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), Lebesgue(ℝ))
+basemeasure_type(::Type{<:Normal{()}}) = WeightedMeasure{Static.StaticFloat64{-0.5 * log2π}, Lebesgue{MeasureBase.RealNumbers}}
+
 
 basemeasure_depth(::N) where {N<:Normal} = basemeasure_depth(N)
-basemeasure_depth(::Type{Normal{()}}) = static(2)
+basemeasure_depth(::Type{<:Normal{()}}) = static(2)
 
 basemeasure_depth(::Type{<:Normal}) = static(3)
 
@@ -43,16 +55,6 @@ params(::Type{N}) where {N<:Normal} = ()
 Normal(μ, σ) = Normal((μ = μ, σ = σ))
 
 Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
-
-logdensity_def(d::Normal, x) = logdensity_def(proxy(logdensity_def, d), x)
-basemeasure(d::Normal) = basemeasure(proxy(basemeasure, d))
-
-for N in AFFINEPARS
-    @eval begin
-        proxy(d::Normal{$N}) = affine(params(d), Normal())
-        rand(rng::AbstractRNG, ::Type{T}, d::Normal{$N}) where {T} = rand(rng, T, affine(params(d), Normal()))
-    end
-end
 
 TV.as(::Normal) = asℝ
 
@@ -105,7 +107,8 @@ distproxy(d::Normal{()}) = Dists.Normal()
 # parameter-free instance available. The log-density for this is very efficient.
 logdensity_def(d::Normal{()}, x) = -x^2 / 2
 
-Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
+Base.rand(rng::Random.AbstractRNG, ::Type{T}, ::Normal{()}) where {T} = randn(rng, T)
+Base.rand(rng::Random.AbstractRNG, ::Type{T}, μ::Normal) where {T} = rand(rng, T, proxy(μ))
 
 ###############################################################################
 # `μ` and `σ` parameterizations are so common, we have a macro to make them easy

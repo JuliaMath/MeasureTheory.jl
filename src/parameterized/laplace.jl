@@ -3,24 +3,35 @@
 
 export Laplace
 
-@parameterized Laplace() ≪ (1 / 2) * Lebesgue(ℝ)
+@parameterized Laplace() 
 
 for N in AFFINEPARS
     @eval begin
         proxy(d::Laplace{$N}) = affine(params(d), Laplace())
-        logdensity_def(d::Laplace{$N}, x) = logdensity_def(proxy(d), x)
-        basemeasure(d::Laplace{$N}) = basemeasure(proxy(d))
     end
 end
-
-# @affinepars Laplace
 
 @inline function logdensity_def(d::Laplace{()}, x)
     return -abs(x)
 end
 
+logdensity_def(d::Laplace, x) = logdensity_def(proxy(d), x)
+
+
+basemeasure(::Laplace{()}) = (1 / 2) * Lebesgue(ℝ)
+basemeasure(d::Laplace) = basemeasure(proxy(d))
+
+function basemeasure_type(::Type{<:Laplace{()}}) 
+    WeightedMeasure{Float64, Lebesgue{MeasureBase.RealNumbers}}
+end
+
+
+# @affinepars Laplace
+
+
 Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace{()}) where {T} =
     rand(rng, Dists.Laplace())
+Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace) where {T} = Base.rand(rng, T, proxy(μ))
 
 ≪(::Laplace, ::Lebesgue{X}) where {X<:Real} = true
 

@@ -263,6 +263,7 @@ basemeasure(d::Affine) = affine(getfield(d, :f), rootmeasure(d.parent))
 # We can't do this until we know we're working with Lebesgue measure, since for
 # example it wouldn't make sense to apply a log-Jacobian to a point measure
 basemeasure(d::Affine{N,L}) where {N,L<:Lebesgue} = weightedmeasure(-logjac(d), d.parent)
+basemeasure(d::Affine{N,L}) where {N,L<:LebesgueMeasure} = weightedmeasure(-logjac(d), d.parent)
 
 
 function basemeasure(d::Affine{N,P}) where {N,L<:Union{Lebesgue, <:LebesgueMeasure},P<:PowerMeasure{L}} 
