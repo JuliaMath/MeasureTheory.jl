@@ -6,7 +6,7 @@ end
 ###############################################################################
 # I <: Base.Generator
 
-function TV.as(d::ProductMeasure{I}) where {I<:Base.Generator}
+function TV.as(d::ProductMeasure{<:Base.Generator})
     d1 = marginals(d).f(first(marginals(d).iter))
     as(Array, as(d1), size(marginals(d))...)
 end
@@ -19,7 +19,7 @@ function Base.rand(rng::AbstractRNG, ::Type{T},  d::ProductMeasure{A}) where {T,
     mar = marginals(d)
 
     # Distributions doens't (yet) have the three-argument form
-    elT = typeof(rand(rng, first(mar)))
+    elT = typeof(rand(rng, T, first(mar)))
 
     sz = size(mar)
     x = Array{elT,length(sz)}(undef, sz)
