@@ -9,8 +9,10 @@ end
 export ↝
 
 ↝(m, x) = SamplesTo(m, x)
-Pretty.tile(s::SamplesTo) =
+
+function Pretty.tile(s::SamplesTo)
     Pretty.pair_layout(Pretty.tile(s.measure), Pretty.tile(s.element), sep = " ↝ ")
+end
 
 function Base.show(io::IO, s::SamplesTo)
     io = IOContext(io, :compact => true)

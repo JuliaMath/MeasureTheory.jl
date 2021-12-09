@@ -21,6 +21,8 @@ params(f::AffineTransform) = getfield(f, :par)
 
 Base.propertynames(d::AffineTransform{N}) where {N} = N
 
+# TODO: Use InverseFunctions
+# TODO: Use ChangesOfVariables
 @inline Base.inv(f::AffineTransform{(:μ, :σ)}) =
     AffineTransform((μ = -(f.σ \ f.μ), ω = f.σ))
 @inline Base.inv(f::AffineTransform{(:μ, :ω)}) = AffineTransform((μ = -f.ω * f.μ, σ = f.ω))
@@ -203,41 +205,6 @@ end
     z = d.ω * (x - d.μ)
     logdensityof(d.parent, z)
 end
-
-# @inline function logdensity_tuple(d::Affine{(:σ,)}, x)
-#     z = d.σ \ x
-#     # @show z
-#     # println()
-#     (logdensity_def(d.parent, z), basemeasure(d), z ↦ x)
-# end
-
-# @inline function logdensity_tuple(d::Affine{(:ω,)}, x)
-#     z = d.ω * x
-#     (logdensity_def(d.parent, z), basemeasure(d), z ↦ x)
-# end
-
-# @inline function logdensity_tuple(d::Affine{(:μ,)}, x)
-#     z = x - d.μ
-#     (logdensity_def(d.parent, z), basemeasure(d), z ↦ x)
-# end
-
-# @inline function logdensity_tuple(d::Affine{(:μ, :σ)}, x)
-#     z = d.σ \ (x - d.μ)
-#     (logdensity_def(d.parent, z), basemeasure(d), z ↦ x)
-# end
-
-# @inline function logdensity_tuple(d::Affine{(:μ, :ω)}, x)
-#     z = d.ω * (x - d.μ)
-#     (logdensity_def(d.parent, z), basemeasure(d), z ↦ x)
-# end
-
-# for p in AFFINEPARS
-#     @eval begin
-#         @inline function logdensity_tuple(d::Affine{$p}, (z, x)::MapsTo)
-#             (logdensity_def(d.parent, z), basemeasure(d), z ↦ x)
-#         end
-#     end
-# end
 
 # # # logdensity_def(d::Affine{(:μ,:ω)}, x) = logdensity_def(d.parent, d.σ \ (x - d.μ))
 # # @inline function logdensity_def(d::Affine{(:μ,:σ), P, Tuple{V,M}}, x) where {P, V<:AbstractVector, M<:AbstractMatrix}

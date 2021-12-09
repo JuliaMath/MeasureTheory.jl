@@ -19,7 +19,7 @@ basemeasure(d::Binomial) = Counting(BoundedInts(static(0), d.n))
     return -log1p(n) - logbeta(n - y + 1, y + 1) + xlogy(y, p) + xlog1py(n - y, -p)
 end
 
-function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :p)})
+function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :p), Tuple{I, A}}) where {I<:Integer, A}
     rand(rng, Dists.Binomial(d.n, d.p))
 end
 
@@ -32,7 +32,7 @@ end
     return -log1p(n) - logbeta(n - y + 1, y + 1) + y * x - n * log1pexp(x)
 end
 
-function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :logitp)})
+function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :logitp), Tuple{I, A}}) where {I<:Integer, A}
     rand(rng, Dists.Binomial(d.n, logistic(d.logitp)))
 end
 
@@ -45,13 +45,13 @@ end
     return -log1p(n) - logbeta(n - y + 1, y + 1) + xlogy(y, Φ(z)) + xlogy(n - y, Φ(-z))
 end
 
-function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :probitp)})
+function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :probitp), Tuple{I, A}}) where {I<:Integer, A}
     rand(rng, Dists.Binomial(d.n, Φ(d.probitp)))
 end
 
-distproxy(d::Binomial{(:n, :p)}) = Dists.Binomial(d.n, d.p)
-distproxy(d::Binomial{(:n, :logitp)}) = Dists.Binomial(d.n, logistic(d.logitp))
-distproxy(d::Binomial{(:n, :probitp)}) = Dists.Binomial(d.n, Φ(d.probitp))
+distproxy(d::Binomial{(:n, :p), Tuple{I, A}}) where {I<:Integer, A} = Dists.Binomial(d.n, d.p)
+distproxy(d::Binomial{(:n, :logitp), Tuple{I, A}}) where {I<:Integer, A} = Dists.Binomial(d.n, logistic(d.logitp))
+distproxy(d::Binomial{(:n, :probitp), Tuple{I, A}}) where {I<:Integer, A} = Dists.Binomial(d.n, Φ(d.probitp))
 
 asparams(::Type{<:Binomial}, ::StaticSymbol{:p}) = as𝕀
 asparams(::Type{<:Binomial}, ::StaticSymbol{:logitp}) = asℝ

@@ -173,8 +173,8 @@ end
     end
 end
 
-@testset "Kernel" begin
-    κ = MeasureTheory.kernel(MeasureTheory.Dirac, identity)
+@testset "Kleisli" begin
+    κ = kleisli(Dirac)
     @test rand(κ(1.1)) == 1.1
 end
 
@@ -194,8 +194,8 @@ end
 end
 
 import MeasureTheory.:⋅
-function ⋅(μ::Normal, kernel) 
-    m = kernel(μ)
+function ⋅(μ::Normal, kleisli) 
+    m = kleisli(μ)
     Normal(μ = m.μ.μ, σ = sqrt(m.μ.σ^2 + m.σ^2))
 end
 struct AffineMap{S,T}
@@ -229,11 +229,11 @@ end
 #     Q = 0.2
 
 #     μ = Normal(μ=ξ0, σ=sqrt(P0))
-#     kernel = MeasureTheory.kernel(Normal; μ=AffineMap(Φ, β), σ=MeasureTheory.AsConst(Q))
+#     kleisli = MeasureTheory.kleisli(Normal; μ=AffineMap(Φ, β), σ=MeasureTheory.AsConst(Q))
     
-#     @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
+#     @test (μ ⋅ kleisli).μ == Normal(μ = 0.9, σ = 0.824621).μ
     
-#     chain = Chain(kernel, μ)
+#     chain = Chain(kleisli, μ)
     
 
 #     dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing) 
@@ -273,7 +273,7 @@ end
 
     ℓs = [
         Likelihood(Normal{(:μ,)},              3.0)
-        Likelihood(kernel(Normal, x -> (μ=x, σ=2.0)), 3.0)
+        # Likelihood(kleisli(Normal, x -> (μ=x, σ=2.0)), 3.0)
     ]
 
     for (d,p) in dps
