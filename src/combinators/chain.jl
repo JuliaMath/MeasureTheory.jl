@@ -116,9 +116,9 @@ function dyniterate(df::DynamicFor, st, args...)
     return (df.κ(val), state)
 end
 
-For(f, it::DynamicIterator) = DynamicFor(kernel(f), it)
+For(f, it::DynamicIterator) = DynamicFor(f, it)
 
-For(f, it::DynamicFor) = DynamicFor(kernel(f), it)
+For(f, it::DynamicFor) = DynamicFor(f, it)
 
 For(f::AbstractKernel, it::DynamicIterator) = DynamicFor(f, it)
 

@@ -173,11 +173,6 @@ end
     end
 end
 
-@testset "Kernel" begin
-    κ = MeasureTheory.kernel(MeasureTheory.Dirac, identity)
-    @test rand(κ(1.1)) == 1.1
-end
-
 @testset "For" begin
     FORDISTS = [
         For(1:10) do j Normal(μ=j) end
