@@ -28,21 +28,24 @@ export Normal, HalfNormal
 for N in AFFINEPARS
     @eval begin
         proxy(d::Normal{$N}) = affine(params(d), Normal())
+        @useproxy Normal{$N}
     end
 end
 
 
-basemeasure(d::Normal) = basemeasure(proxy(d))
-logdensity_def(d::Normal, x) = logdensity_def(proxy(d), x)
 
-basemeasure(::Normal{()}) = WeightedMeasure(-0.5 * log2π, Lebesgue(ℝ))
-basemeasure_type(::Type{<:Normal{()}}) = WeightedMeasure{Static.StaticFloat64{-0.5 * log2π}, Lebesgue{MeasureBase.RealNumbers}}
+@inline logdensity_def(d::Normal{()}, x) = -x^2 / 2
+@inline basemeasure(::Normal{()}) = WeightedMeasure(-0.5 * log2π, Lebesgue(ℝ))
 
 
-basemeasure_depth(::N) where {N<:Normal} = basemeasure_depth(N)
-basemeasure_depth(::Type{<:Normal{()}}) = static(2)
 
-basemeasure_depth(::Type{<:Normal}) = static(3)
+
+@inline tbasemeasure_depth(::Type{<:Normal{()}}) = static(3)
+
+
+
+tbasemeasure_type(::Type{<:Normal{()}}) = WeightedMeasure{Static.StaticFloat64{-0.5 * log2π}, Lebesgue{MeasureBase.RealNumbers}}
+
 
 @kwstruct Normal(μ)
 @kwstruct Normal(σ)
@@ -105,7 +108,7 @@ distproxy(d::Normal{()}) = Dists.Normal()
 
 # Instead of setting default values, the `@kwstruct` call above makes a
 # parameter-free instance available. The log-density for this is very efficient.
-logdensity_def(d::Normal{()}, x) = -x^2 / 2
+
 
 Base.rand(rng::Random.AbstractRNG, ::Type{T}, ::Normal{()}) where {T} = randn(rng, T)
 Base.rand(rng::Random.AbstractRNG, ::Type{T}, μ::Normal) where {T} = rand(rng, T, proxy(μ))

@@ -45,6 +45,7 @@ import NamedTupleTools
 import MeasureBase:
     testvalue, logdensity_def, density_def, basemeasure, kleisli, params, paramnames, ∫, 𝒹, ∫exp
 import MeasureBase: ≪, basemeasure_type
+import MeasureBase: tbasemeasure_depth, tbasemeasure_type
 using MeasureBase: constructor
 using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
@@ -68,7 +69,7 @@ export Affine
 export AffineTransform
 
 using MeasureBase: Returns
-import MeasureBase: proxy
+import MeasureBase: proxy, @useproxy
 import MeasureBase: basemeasure_depth
 using MeasureBase: LebesgueMeasure
 
