@@ -35,7 +35,7 @@ end
 basemeasure(d::Normal) = basemeasure(proxy(d))
 logdensity_def(d::Normal, x) = logdensity_def(proxy(d), x)
 
-basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), Lebesgue(ℝ))
+basemeasure(::Normal{()}) = WeightedMeasure(-0.5 * log2π, Lebesgue(ℝ))
 basemeasure_type(::Type{<:Normal{()}}) = WeightedMeasure{Static.StaticFloat64{-0.5 * log2π}, Lebesgue{MeasureBase.RealNumbers}}
 
 
