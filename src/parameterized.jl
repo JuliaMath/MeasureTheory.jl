@@ -43,7 +43,10 @@ TransformVariables.TransformTuple{NamedTuple{(:μ, :σ), Tuple{TransformVariable
 """
 function asparams end
 
-asparams(μ::M, v::StaticSymbol) where {M<:ParameterizedMeasure}= asparams(constructorof(M), v)
+function asparams(μ::M, v::StaticSymbol) where {M<:ParameterizedMeasure}
+    asparams(constructorof(M), v)
+end
+
 asparams(μ, s::Symbol) = asparams(μ, static(s))
 
 asparams(M::Type{A}) where {A<:AbstractMeasure} = asparams(M, NamedTuple())
@@ -67,7 +70,8 @@ end
 #     ...
 # end
 
-asparams(μ::M, nt::NamedTuple = NamedTuple()) where {M<:ParameterizedMeasure}=
+function asparams(μ::M, nt::NamedTuple = NamedTuple()) where {M<:ParameterizedMeasure}
     asparams(constructorof(M), nt)
+end
 
 TV.as(::Half) = asℝ₊
