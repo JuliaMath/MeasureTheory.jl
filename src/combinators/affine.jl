@@ -122,12 +122,11 @@ logjac(f::AffineTransform{(:μ,)}) = 0.0
 ###############################################################################
 
 
-struct OrthoLebesgue{N,T} <: AbstractMeasure
+struct OrthoLebesgue{N,T} <: PrimitiveMeasure
     par::NamedTuple{N,T}
 
     OrthoLebesgue(nt::NamedTuple{N,T}) where {N,T} = new{N,T}(nt)
 end
-
 
 
 basemeasure(d::OrthoLebesgue) = d
@@ -243,13 +242,6 @@ function basemeasure(d::Affine{N,P}) where {N,L<:Union{Lebesgue, <:LebesgueMeasu
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
 end
 
-@inline function basemeasure(
-    d::Affine{N,M},
-) where {N,L<:Lebesgue,M<:ProductMeasure{Returns{L}}}
-    weightedmeasure(-logjac(d), d.parent)
-end
-
-basemeasure_type(::Type{Affine{N,M,T}}) where {N,M,T} = M
 
 logjac(d::Affine) = logjac(getfield(d, :f))
 

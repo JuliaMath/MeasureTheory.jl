@@ -8,6 +8,7 @@ using TransformVariables: transform, as𝕀, inverse
 using FillArrays
 
 using MeasureTheory
+using MeasureBase.Interface
 
 using Aqua
 Aqua.test_all(MeasureTheory; ambiguities=false, unbound_args=false)
@@ -64,6 +65,7 @@ testbroken_measures = [
     for μ in test_measures
         @info "testing $μ"
         @test test_measure(μ)
+        test_interface(μ)
     end
 
     for μ in testbroken_measures

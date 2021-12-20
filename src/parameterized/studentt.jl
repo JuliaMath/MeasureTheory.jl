@@ -26,7 +26,7 @@ Base.rand(rng::AbstractRNG, ::Type{T}, μ::StudentT) where {T} = rand(rng, T, pr
 
 # @affinepars StudentT
 
-function basemeasure_type(::Type{StudentT{(:ν,), T}}) where {T}
+function tbasemeasure_type(::Type{StudentT{(:ν,), T}}) where {T}
     FactoredBase{Returns{Bool}, Float64, MeasureTheory.var"#varℓ#10"{StudentT{(:ν,), T}}, Lebesgue{MeasureBase.RealNumbers}}
 end
 

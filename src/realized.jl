@@ -11,7 +11,7 @@ export ↝
 ↝(m, x) = SamplesTo(m, x)
 
 function Pretty.tile(s::SamplesTo)
-    Pretty.pair_layout(Pretty.tile(s.measure), Pretty.tile(s.element), sep = " ↝ ")
+    Pretty.pair_layout(Pretty.tile(s.measure), Pretty.tile(s.element); sep = " ↝ ")
 end
 
 function Base.show(io::IO, s::SamplesTo)

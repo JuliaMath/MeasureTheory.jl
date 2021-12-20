@@ -27,7 +27,7 @@ end
 
 function Base.show(io::IO, r::ResettableRNG)
     io = IOContext(io, :compact => true)
-    print(io, "ResettableRNG(::", constructor(r.rng), ", ", r.seed, ")")
+    print(io, "ResettableRNG(::", constructorof(typeof(r.rng)), ", ", r.seed, ")")
 end
 
 function reset!(r::ResettableRNG)
