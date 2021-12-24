@@ -48,7 +48,7 @@ test_measures = [
     Poisson(3.1)
     StudentT(ν=2.1)    
     Uniform()
-    Normal() ⊙ Cauchy()
+    Counting(Float64)
     Dirac(0.0) + Normal()
 ]
 
@@ -56,7 +56,6 @@ testbroken_measures = [
     Pushforward(as𝕀, Normal())
     # InverseGamma(2) # Not defined yet
     # MvNormal(I(3)) # Entirely broken for now
-    Counting(Float64)
     Likelihood
     TrivialMeasure()
 ]

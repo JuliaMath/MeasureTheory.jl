@@ -4,7 +4,11 @@ export Multinomial
 
 @parameterized Multinomial(n, p)
 
-basemeasure(d::Multinomial{(:n, :p)}) = CountingMeasure(ℤ)^length(d.p)
+basemeasure(d::Multinomial{(:n, :p)}) = Counting(ℤ)^length(d.p)
+
+function tbasemeasure_type(::Type{Multinomial{(:n, :p), Tuple{T, F}}}) where {T,F}
+    PowerMeasure{Counting{MeasureBase.IntegerNumbers}, Tuple{Base.OneTo{T}}}
+end
 
 @kwstruct Multinomial(n, p)
 
@@ -12,7 +16,7 @@ basemeasure(d::Multinomial{(:n, :p)}) = CountingMeasure(ℤ)^length(d.p)
     p = d.p
     s = 0.0
     for j in eachindex(x)
-        s += x[j] * log(p[j])
+        s += xlogy(x[j], p[j])
     end
     return s
 end

@@ -3,13 +3,13 @@ using TransformVariables: AbstractTransform, CallableTransform, CallableInverse
 export Pushforward
 export Pullback
 
-struct Pushforward{F,M} <: AbstractMeasure
+struct Pushforward{F,M,L} <: AbstractMeasure
     f::F
     μ::M
-    logjac::Bool
+    logjac::L
 end
 
-Pushforward(f, μ) = Pushforward(f, μ, true)
+Pushforward(f, μ) = Pushforward(f, μ, True())
 
 function Pretty.tile(pf::Pushforward{<:TV.CallableTransform})
     Pretty.list_layout(Pretty.tile.([pf.f.t, pf.μ, pf.logjac]); prefix=:Pushforward)
@@ -18,13 +18,13 @@ end
 function Pretty.tile(pf::Pushforward)
     Pretty.list_layout(Pretty.tile.([pf.f, pf.μ, pf.logjac]); prefix=:Pushforward)
 end
-struct Pullback{F,M} <: AbstractMeasure
+struct Pullback{F,M,L} <: AbstractMeasure
     f::F
     ν::M
-    logjac::Bool
+    logjac::L
 end
 
-Pullback(f, ν) = Pullback(f, ν, true)
+Pullback(f, ν) = Pullback(f, ν, True())
 
 function Pretty.tile(pf::Pullback{<:TV.CallableTransform})
     Pretty.list_layout(Pretty.tile.([pf.f.t, pf.ν, pf.logjac]); prefix=:Pullback)
@@ -34,40 +34,42 @@ function Pretty.tile(pf::Pullback)
     Pretty.list_layout(Pretty.tile.([pf.f, pf.ν, pf.logjac]); prefix=:Pullback)
 end
 
-@inline function logdensity_def(pb::Pullback{F}, x) where {F<:CallableTransform}
+@inline function logdensity_def(pb::Pullback{F,M,True}, x) where {F<:CallableTransform,M}
     f = pb.f
     ν = pb.ν
-    if pb.logjac
-        y, logJ = TV.transform_and_logjac(f.t, x)
-        return logdensity_def(ν, y) + logJ
-    else
-        y = f(x)
-        return logdensity_def(ν, y)
-    end
+    y, logJ = TV.transform_and_logjac(f.t, x)
+    return logdensity_def(ν, y) + logJ
 end
 
-@inline function logdensity_def(pf::Pushforward{F}, y) where {F<:CallableTransform}
+@inline function logdensity_def(pb::Pullback{F,M,False}, x) where {F<:CallableTransform,M}
+    f = pb.f
+    ν = pb.ν
+    y = f(x)
+    return logdensity_def(ν, y)
+end
+
+@inline function logdensity_def(pf::Pushforward{F,M,True}, y) where {F<:CallableTransform,M}
     f = pf.f
     μ = pf.μ
     x = TV.inverse(f.t)(y)
-    if pf.logjac
-        _, logJ = TV.transform_and_logjac(f.t, x)
-        return logdensity_def(μ, x) - logJ
-    else
-        return logdensity_def(μ, x)
-    end
+    _, logJ = TV.transform_and_logjac(f.t, x)
+    return logdensity_def(μ, x) - logJ
 end
 
-Pullback(f::AbstractTransform, ν, logjac::Bool = true) =
-    Pullback(TV.transform(f), ν, logjac)
-Pushforward(f::AbstractTransform, ν, logjac::Bool = true) =
-    Pushforward(TV.transform(f), ν, logjac)
+@inline function logdensity_def(pf::Pushforward{F,M,False}, y) where {F<:CallableTransform,M}
+    f = pf.f
+    μ = pf.μ
+    x = TV.inverse(f.t)(y)
+    return logdensity_def(μ, x)
+end
 
-Pullback(f::CallableInverse, ν, logjac::Bool = true) =
-    Pushforward(TV.transform(f.t), ν, logjac)
+Pullback(f::AbstractTransform, ν, logjac = True()) = Pullback(TV.transform(f), ν, logjac)
 
-Pushforward(f::CallableInverse, ν, logjac::Bool = true) =
-    Pullback(TV.transform(f.t), ν, logjac)
+Pushforward(f::AbstractTransform, ν, logjac = True()) = Pushforward(TV.transform(f), ν, logjac)
+
+Pullback(f::CallableInverse, ν, logjac = True()) = Pushforward(TV.transform(f.t), ν, logjac)
+
+Pushforward(f::CallableInverse, ν, logjac = True()) = Pullback(TV.transform(f.t), ν, logjac)
 
 Base.rand(rng::AbstractRNG, T::Type, ν::Pushforward) = ν.f(rand(rng, T, ν.μ))
 
@@ -77,9 +79,19 @@ testvalue(ν::Pushforward) = TV.transform(ν.f, testvalue(ν.μ))
 
 testvalue(μ::Pullback) = TV.transform(TV.inverse(μ.f), testvalue(μ.ν))
 
-basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν), false)
+basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν), False())
 
-basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ), false)
+basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ), False())
+
+function tbasemeasure_type(::Type{Pushforward{F,M,L}}) where {F,M,L}
+    B = tbasemeasure_type(M)
+    return Pushforward{F,B,False}
+end
+
+function tbasemeasure_type(::Type{Pullback{F,M,L}}) where {F,M,L}
+    B = tbasemeasure_type(M)
+    return Pullback{F,B,False}
+end
 
 TV.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
 

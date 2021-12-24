@@ -29,11 +29,11 @@ for N in AFFINEPARS
     @eval begin
         proxy(d::Normal{$N}) = affine(params(d), Normal())
         @useproxy Normal{$N}
-
-        function tbasemeasure_type(::Type{Normal{$N,T}}) where {T} 
-            Affine{$N, MeasureBase.LebesgueMeasure, T}
-        end
     end
+end
+
+function tbasemeasure_type(::Type{Normal{N,T}}) where {N,T} 
+    Affine{N, MeasureBase.LebesgueMeasure, T}
 end
 
 @inline logdensity_def(d::Normal{()}, x) = -x^2 / 2

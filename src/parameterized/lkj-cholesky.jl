@@ -79,19 +79,25 @@ end
 
 TV.as(d::LKJCholesky) = CorrCholesky(d.k)
 
+splat_lkj_logc0(x) = Dists.lkj_logc0(x...)
+
 @inline function basemeasure(μ::LKJCholesky{(:k, :η)})
     t = as(μ)
-    ℓ(par) = Dists.lkj_logc0(par.k, par.η)
-    base = Pushforward(t, Lebesgue(ℝ)^TV.dimension(t), false)
+    ℓ = splat_lkj_logc0 ∘ values
+    base = Pushforward(t, Lebesgue(ℝ)^TV.dimension(t), False())
     ParamWeightedMeasure(ℓ, (k = μ.k, η = μ.η), base)
+end
+
+function tbasemeasure_type(::Type{LKJCholesky{N, T}}) where {N,T}
+    ParamWeightedMeasure{ComposedFunction{ComposedFunction{typeof(MeasureTheory.splat_lkj_logc0), typeof(values)}, typeof(params)}, N, T, Pushforward{TransformVariables.CallableTransform{CorrCholesky}, PowerMeasure{Lebesgue{MeasureBase.RealNumbers}, Tuple{Base.OneTo{Int64}}}, Bool}}
 end
 
 @inline function basemeasure(μ::LKJCholesky{(:k, :logη)})
     t = as(μ)
     logη = μ.logη
     η = exp(logη)
-    ℓ(par) = Dists.lkj_logc0(par.k, exp(par.logη))
-    base = Pushforward(t, Lebesgue(ℝ)^TV.dimension(t), false)
+    ℓ = splat_lkj_logc0 ∘ values ∘ params
+    base = Pushforward(t, Lebesgue(ℝ)^TV.dimension(t), False())
     ParamWeightedMeasure(ℓ, (k = μ.k, logη = logη), base)
 end
 
