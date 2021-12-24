@@ -49,6 +49,7 @@ import MeasureBase: tbasemeasure_depth, tbasemeasure_type
 using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractKleisli
+using MeasureBase: trootmeasure_type
 
 import PrettyPrinting
 

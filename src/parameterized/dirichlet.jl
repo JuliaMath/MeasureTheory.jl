@@ -16,6 +16,11 @@ TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
     return WeightedMeasure(logw, Pushforward(t, Lebesgue(ℝ)^d, false))
 end
 
+function tbasemeasure_type(::Type{Dirichlet{(:α,), Tuple{V}}}) where {V<:AbstractVector}
+    R = float(eltype(V))
+    WeightedMeasure{R, Pushforward{TransformVariables.CallableTransform{TransformVariables.UnitSimplex}, PowerMeasure{Lebesgue{MeasureBase.RealNumbers}, Tuple{Base.OneTo{Int64}}}}}
+end
+
 @kwstruct Dirichlet(α)
 
 Dirichlet(k::Integer, α) = Dirichlet(Fill(α, k))

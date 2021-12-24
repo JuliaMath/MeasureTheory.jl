@@ -7,6 +7,10 @@ export Exponential
 
 @kwstruct Exponential()
 
+function tbasemeasure_type(::Type{Exponential{(), Tuple{}}}) 
+    Lebesgue{MeasureBase.BoundedReals{Static.StaticFloat64{0.0}, Static.StaticFloat64{Inf}}}
+end
+
 @inline function logdensity_def(d::Exponential{()}, x)
     return -x
 end

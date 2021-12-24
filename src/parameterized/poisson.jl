@@ -8,6 +8,10 @@ using SpecialFunctions: logfactorial
 
 basemeasure(::Poisson) = Counting(BoundedInts(static(0), static(Inf)))
 
+function tbasemeasure_type(::Type{Poisson{(:λ,), T}}) where {T}
+    Counting{MeasureBase.BoundedInts{Static.StaticInt{0}, Static.StaticFloat64{Inf}}}
+end
+
 @inline function logdensity_def(d::Poisson{(:λ,)}, y)
     λ = d.λ
     return y * log(λ) - λ - logfactorial(y)

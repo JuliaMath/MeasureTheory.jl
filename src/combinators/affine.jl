@@ -150,7 +150,16 @@ function testvalue(d::Affine)
     return f(z)
 end
 
-function tbasemeasure_type(::Type{Affine{N,M,T}}) where {N,M,T}
+function tbasemeasure_type(::Type{Affine{N, M, T}}) where {N,M,T}
+    R = trootmeasure_type(M)
+    Affine{N, R, T}
+end
+
+function tbasemeasure_type(::Type{Affine{N,LebesgueMeasure,T}}) where {N,T} 
+    WeightedMeasure{float(eltype(T)), LebesgueMeasure}
+end
+
+function tbasemeasure_type(::Type{Affine{N,P,T}}) where {T,N,L<:Union{Lebesgue, <:LebesgueMeasure},P<:PowerMeasure{L}} 
     OrthoLebesgue{N,T}
 end
 
@@ -229,7 +238,7 @@ end
 # #     lmul!(d.ω, z)
 # #     logdensity_def(d.parent, z)
 # # end
-
+ 
 basemeasure(d::Affine) = affine(getfield(d, :f), rootmeasure(d.parent))
 
 # We can't do this until we know we're working with Lebesgue measure, since for

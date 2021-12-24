@@ -56,3 +56,7 @@ distproxy(d::Binomial{(:n, :probitp), Tuple{I, A}}) where {I<:Integer, A} = Dist
 asparams(::Type{<:Binomial}, ::StaticSymbol{:p}) = as𝕀
 asparams(::Type{<:Binomial}, ::StaticSymbol{:logitp}) = asℝ
 asparams(::Type{<:Binomial}, ::StaticSymbol{:probitp}) = asℝ
+
+function tbasemeasure_type(::Type{<:Binomial{(:n, :p), Tuple{N, P}}}) where {N,P}
+    Counting{MeasureBase.BoundedInts{Static.StaticInt{0}, N}}
+end
