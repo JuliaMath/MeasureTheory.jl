@@ -246,7 +246,7 @@ end
 
 @testset "rootmeasure/logpdf" begin
     x = rand(Normal())
-    @test logdensityof(Normal(), rootmeasure(Normal()), x) ≈ logdensityof(Normal(), x)
+    @test logdensityof(𝒹(Normal(), rootmeasure(Normal())), x) ≈ logdensityof(Normal(), x)
 end
 
 @testset "Transforms" begin
