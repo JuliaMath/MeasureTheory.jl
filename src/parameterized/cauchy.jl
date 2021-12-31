@@ -17,10 +17,6 @@ logdensity_def(d::Cauchy, x) = logdensity_def(proxy(d), x)
 
 basemeasure(d::Cauchy) = WeightedMeasure(static(-logπ), Lebesgue(ℝ))
 
-function tbasemeasure_type(::Type{Cauchy{(), Tuple{}}}) 
-    WeightedMeasure{StaticFloat64{-logπ}, Lebesgue{MeasureBase.RealNumbers}}
-end
-
 # @affinepars Cauchy
 
 @inline function logdensity_def(d::Cauchy{()}, x)

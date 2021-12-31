@@ -6,10 +6,6 @@ export Multinomial
 
 basemeasure(d::Multinomial{(:n, :p)}) = Counting(ℤ)^length(d.p)
 
-function tbasemeasure_type(::Type{Multinomial{(:n, :p), Tuple{T, F}}}) where {T,F}
-    PowerMeasure{Counting{MeasureBase.IntegerNumbers}, Tuple{Base.OneTo{T}}}
-end
-
 @kwstruct Multinomial(n, p)
 
 @inline function logdensity_def(d::Multinomial{(:n, :p)}, x)

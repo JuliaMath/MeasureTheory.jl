@@ -45,11 +45,9 @@ import NamedTupleTools
 import MeasureBase:
     testvalue, logdensity_def, density_def, basemeasure, kleisli, params, paramnames, ∫, 𝒹, ∫exp
 import MeasureBase: ≪, basemeasure_type
-import MeasureBase: tbasemeasure_depth, tbasemeasure_type
 using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractKleisli
-using MeasureBase: trootmeasure_type
 
 import PrettyPrinting
 

@@ -19,11 +19,6 @@ TV.as(::Beta) = as𝕀
     return xlogy(d.α - 1, x) + xlog1py(d.β - 1, -x)
 end
 
-function tbasemeasure_type(::Type{Beta{(:α, :β), T}}) where {T}
-    R = float(eltype(T))
-    FactoredBase{Base.Fix2{typeof(in), MeasureBase.BoundedReals{Static.StaticFloat64{0.0}, Static.StaticFloat64{1.0}}}, R, Returns{R}, Lebesgue{MeasureBase.RealNumbers}}
-end
-
 @inline function basemeasure(d::Beta{(:α, :β)})
     inbounds = in(𝕀)
     constℓ = 0.0

@@ -17,10 +17,6 @@ TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
     return WeightedMeasure(logw, Lebesgue(Simplex()))
 end
 
-function tbasemeasure_type(::Type{Dirichlet{(:α,), Tuple{Vector{T}}}}) where {T}
-    WeightedMeasure{T, Lebesgue{MeasureBase.Simplex}}
-end
-
 @kwstruct Dirichlet(α)
 
 Dirichlet(k::Integer, α) = Dirichlet(Fill(α, k))

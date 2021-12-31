@@ -131,8 +131,6 @@ end
 
 basemeasure(d::OrthoLebesgue) = d
 
-tbasemeasure_depth(::Type{O}) where {O<:OrthoLebesgue} = static(0)
-
 logdensity_def(::OrthoLebesgue, x) = static(0)
 
 struct Affine{N,M,T} <: AbstractMeasure
@@ -148,19 +146,6 @@ function testvalue(d::Affine)
     f = getfield(d, :f)
     z = testvalue(parent(d))
     return f(z)
-end
-
-function tbasemeasure_type(::Type{Affine{N, M, T}}) where {N,M,T}
-    R = trootmeasure_type(M)
-    Affine{N, R, T}
-end
-
-function tbasemeasure_type(::Type{Affine{N,LebesgueMeasure,T}}) where {N,T} 
-    WeightedMeasure{float(eltype(T)), LebesgueMeasure}
-end
-
-function tbasemeasure_type(::Type{Affine{N,P,T}}) where {T,N,L<:Union{Lebesgue, <:LebesgueMeasure},P<:PowerMeasure{L}} 
-    OrthoLebesgue{N,T}
 end
 
 Affine(nt::NamedTuple, μ::AbstractMeasure) = affine(nt, μ)

@@ -12,10 +12,6 @@ basemeasure(::Gumbel{()}) = Lebesgue(ℝ)
 
 @kwstruct Gumbel(μ, β)
 
-function tbasemeasure_type(::Type{Gumbel{(), Tuple{}}}) 
-    Lebesgue{MeasureBase.RealNumbers}
-end
-
 # map affine names to those more common for Gumbel
 for N in [(:μ,), (:σ,), (:μ, :σ)]
     G = tuple(replace(collect(N), :σ => :β)...)

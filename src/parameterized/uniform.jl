@@ -18,11 +18,6 @@ export Uniform
     FactoredBase(inbounds, constℓ, varℓ, base)
 end
 
-
-function tbasemeasure_type(::Type{Uniform{(), Tuple{}}}) 
-    FactoredBase{typeof(in(𝕀)), Static.StaticFloat64{0.0}, Returns{Static.StaticFloat64{0.0}}, Lebesgue{MeasureBase.RealNumbers}}
-end
-
 distproxy(::Uniform{()}) = Dists.Uniform()
 
 logdensity_def(d::Uniform{()}, x) = 0.0

@@ -5,10 +5,6 @@ import Base
 
 @parameterized Bernoulli(p)
 
-function tbasemeasure_type(::Type{Bernoulli{(:p,), T}}) where {T}
-    Counting{Type{Bool}}
-end
-
 basemeasure(::Bernoulli) = Counting(Bool)
 
 @inline function logdensity_def(d::Bernoulli{(:p,)}, y)
