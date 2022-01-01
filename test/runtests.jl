@@ -4,7 +4,7 @@ using Base.Iterators: take
 using Random
 using LinearAlgebra
 using DynamicIterators: trace, TimeLift
-using TransformVariables: transform, as𝕀, inverse
+using TransformVariables: transform, as𝕀
 using FillArrays
 
 using MeasureTheory
@@ -255,14 +255,14 @@ end
         μ = Normal()
         ν = Pushforward(t, μ)
         x = rand(μ)
-        @test logdensity_def(μ, x) ≈ logdensity_def(Pushforward(inverse(t), ν), x)
+        @test logdensity_def(μ, x) ≈ logdensity_def(Pushforward(TV.inverse(t), ν), x)
     end
 
     @testset "Pullback" begin
         ν = Uniform()
         μ = Pullback(t,ν)
         y = rand(ν)
-        @test logdensity_def(ν, y) ≈ logdensity_def(Pullback(inverse(t), μ), y)
+        @test logdensity_def(ν, y) ≈ logdensity_def(Pullback(TV.inverse(t), μ), y)
     end
 end
 
@@ -498,24 +498,24 @@ end
 
 @testset "AffineTransform" begin
     f = AffineTransform((μ = 3, σ = 2))
-    @test f(inv(f)(1)) == 1
-    @test inv(f)(f(1)) == 1
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
 
     f = AffineTransform((μ = 3, ω = 2))
-    @test f(inv(f)(1)) == 1
-    @test inv(f)(f(1)) == 1
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
 
     f = AffineTransform((σ = 2,))
-    @test f(inv(f)(1)) == 1
-    @test inv(f)(f(1)) == 1
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
 
     f = AffineTransform((ω = 2,))
-    @test f(inv(f)(1)) == 1
-    @test inv(f)(f(1)) == 1
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
 
     f = AffineTransform((μ = 3,))
-    @test f(inv(f)(1)) == 1
-    @test inv(f)(f(1)) == 1
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
 end
 
 @testset "Affine" begin
@@ -529,7 +529,7 @@ end
     for f in [f1, f2, f3, f4, f5]
         par = getfield(f, :par)
         @test Affine(par)(unif) == Affine(f, unif)
-        @test densityof(Affine(f, Affine(inv(f), unif)), 0.5) == 1
+        @test densityof(Affine(f, Affine(inverse(f), unif)), 0.5) == 1
     end
 
     d = ∫exp(x -> -x^2, Lebesgue(ℝ))
@@ -549,10 +549,10 @@ end
     a = Affine((σ = [1 0]',), d^1)
     x = randn(2)
     y = randn(1)
-    @test logdensityof(a, x) ≈ logdensityof(d, inv(a.f)(x)[1])
+    @test logdensityof(a, x) ≈ logdensityof(d, inverse(a.f)(x)[1])
     @test logdensityof(a, a.f(y)) ≈ logdensityof(d^1, y)
 
     b = Affine((ω = [1 0]'',), d^1)
-    @test logdensityof(b, x) ≈ logdensityof(d, inv(b.f)(x)[1])
+    @test logdensityof(b, x) ≈ logdensityof(d, inverse(b.f)(x)[1])
     @test logdensityof(b, b.f(y)) ≈ logdensityof(d^1, y)
 end
