@@ -36,9 +36,7 @@ for N in AFFINEPARS
     end
 end
 
-
-
-@inline logdensity_def(d::Normal{()}, x) = -x^2 / 2
+@inline logdensity_def(d::Normal{()}, x) = -x^2 / static(2.0)
 @inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), Lebesgue(ℝ))
 
 function tbasemeasure_type(::Type{Normal{(), Tuple{}}}) 

@@ -188,27 +188,27 @@ Base.size(d::Affine{(:ω,)}) = (size(d.ω, 2),)
 
 @inline function logdensity_def(d::Affine{(:σ,)}, x)
     z = d.σ \ x
-    logdensityof(d.parent, z)
+    MeasureBase._logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:ω,)}, x)
     z = d.ω * x
-    logdensityof(d.parent, z)
+    MeasureBase._logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:μ,)}, x)
     z = x - d.μ
-    logdensityof(d.parent, z)
+    MeasureBase._logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:μ, :σ)}, x)
     z = d.σ \ (x - d.μ)
-    logdensityof(d.parent, z)
+    MeasureBase._logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:μ, :ω)}, x)
     z = d.ω * (x - d.μ)
-    logdensityof(d.parent, z)
+    MeasureBase._logdensityof(d.parent, z)
 end
 
 # # # logdensity_def(d::Affine{(:μ,:ω)}, x) = logdensity_def(d.parent, d.σ \ (x - d.μ))
@@ -229,6 +229,8 @@ end
 # #     lmul!(d.ω, z)
 # #     logdensity_def(d.parent, z)
 # # end
+ 
+@inline basemeasure(d::Affine{N,M,Tuple{Vararg{T,K}}}) where {K,N,M,T<:AbstractArray} = affine(getfield(d, :f), rootmeasure(d.parent))
 
 basemeasure(d::Affine) = affine(getfield(d, :f), rootmeasure(d.parent))
 
@@ -238,10 +240,9 @@ basemeasure(d::Affine{N,L}) where {N,L<:Lebesgue} = weightedmeasure(-logjac(d), 
 basemeasure(d::Affine{N,L}) where {N,L<:LebesgueMeasure} = weightedmeasure(-logjac(d), d.parent)
 
 
-function basemeasure(d::Affine{N,P}) where {N,L<:Union{Lebesgue, <:LebesgueMeasure},P<:PowerMeasure{L}} 
+@inline function basemeasure(d::Affine{N,P, Tuple{Vararg{T, K}}}) where {K,N,L<:Union{<:Lebesgue, <:LebesgueMeasure},P<:PowerMeasure{L}, T<:AbstractArray} 
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
 end
-
 
 logjac(d::Affine) = logjac(getfield(d, :f))
 
