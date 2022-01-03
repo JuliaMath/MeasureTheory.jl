@@ -1,5 +1,6 @@
 export Affine, AffineTransform
 using LinearAlgebra
+using MeasureBase: solve!
 
 const AFFINEPARS = [
     (:μ, :σ)
@@ -181,7 +182,8 @@ Base.size(d::Affine{(:σ,)}) = (size(d.σ, 1),)
 Base.size(d::Affine{(:ω,)}) = (size(d.ω, 2),)
 
 @inline function logdensity_def(d::Affine{(:σ,)}, x)
-    z = d.σ \ x
+    z = Vector{eltype(d.σ)}(undef, size(d.σ, 2))
+    solve!(z, d.σ, x)
     MeasureBase._logdensityof(d.parent, z)
 end
 
