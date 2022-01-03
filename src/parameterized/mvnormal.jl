@@ -15,12 +15,9 @@ export MvNormal
 
 supportdim(d::MvNormal) = supportdim(params(d))
 
-proxy(d::MvNormal) = affine(params(d), Normal()^supportdim(d))
-logdensity_def(d::MvNormal, x) = logdensity_def(proxy(d), x)
-basemeasure(d::MvNormal) = basemeasure(proxy(d))
+@useproxy MvNormal
 
-basemeasure_depth(::MvNormal) = static(4)
-basemeasure_depth(::Type{<:MvNormal}) = static(4)
+proxy(d::MvNormal) = affine(params(d), Normal()^supportdim(d))
 
 rand(rng::AbstractRNG, ::Type{T}, d::MvNormal) where {T} = rand(rng, T, proxy(d))
 

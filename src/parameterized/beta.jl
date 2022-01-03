@@ -20,15 +20,12 @@ TV.as(::Beta) = as𝕀
 end
 
 @inline function basemeasure(d::Beta{(:α, :β)})
-    inbounds(x) = 0 < x < 1
+    inbounds = in(𝕀)
     constℓ = 0.0
-    varℓ() = -logbeta(d.α, d.β)
+    varℓ = Returns(-logbeta(d.α, d.β))
     base = Lebesgue(ℝ)
     FactoredBase(inbounds, constℓ, varℓ, base)
 end
-
-basemeasure_depth(::Beta) = static(2)
-basemeasure_depth(::Type{T}) where {T<:Beta} = static(2)
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Beta(μ.α, μ.β))
 

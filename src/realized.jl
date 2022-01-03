@@ -122,19 +122,22 @@ Base.show(io::IO, r::RealizedSamples) = Pretty.pprint(io, r)
 Pretty.quoteof(r::RealizedSamples) =
     :(RealizedSamples($(Pretty.quoteof(r.parent.rng)), $(Pretty.quoteof(r.parent.iter))))
 
-function Base.iterate(rm::RealizedSamples)
-    val, s = iterate(rm.parent)
+function iter_helper(x)
+    isnothing(x) && return x
+    val, s = x
     (val.element, s)
+end
+
+function Base.iterate(rm::RealizedSamples)
+    iter_helper(iterate(rm.parent))
 end
 
 function Base.iterate(rm::RealizedSamples, ::Nothing)
-    val, s = iterate(rm.parent)
-    (val.element, s)
+    iter_helper(iterate(rm.parent))
 end
 
 function Base.iterate(rm::RealizedSamples, s)
-    val, s = iterate(rm.parent, s)
-    (val.element, s)
+    iter_helper(iterate(rm.parent, s))
 end
 
 function dyniterate(rm::RealizedSamples, s)
@@ -159,5 +162,9 @@ Base.length(r::RealizedSamples) = length(r.parent)
 Base.IteratorSize(r::RealizedSamples) = Base.IteratorSize(r.parent)
 
 function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure{G}) where {T, G<:Base.Generator}
+    RealizedSamples(ResettableRNG(rng), marginals(d))
+end
+
+function Base.rand(rng::AbstractRNG, ::Type, d::For{T,F,I}) where {N,T,F,I<:NTuple{N,<:Base.Generator}}
     RealizedSamples(ResettableRNG(rng), marginals(d))
 end

@@ -94,7 +94,7 @@ In the univariate case this is relatively simple to invert. But if `σ` is a mat
 With multiple parameterizations of a given family of measures, we can work around these issues. The inverse transform of a ``(μ,σ)`` transform will be in terms of ``(μ,ω)``, and vice-versa. So
 
 ```julia
-julia> f⁻¹ = inv(f)
+julia> f⁻¹ = inverse(f)
 AffineTransform{(:μ, :ω), Tuple{Float64, Float64}}((μ = -1.5, ω = 2.0))
 
 julia> f(f⁻¹(4))

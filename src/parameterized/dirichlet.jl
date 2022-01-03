@@ -1,4 +1,5 @@
 # Dirichlet distribution
+using MeasureBase: Simplex
 
 export Dirichlet
 
@@ -13,7 +14,7 @@ TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
     t = as(μ)
     d = TV.dimension(t)
     logw = loggamma(sum(α)) - sum(loggamma, α)
-    return WeightedMeasure(logw, Pushforward(t, Lebesgue(ℝ)^d, false))
+    return WeightedMeasure(logw, Lebesgue(Simplex()))
 end
 
 @kwstruct Dirichlet(α)

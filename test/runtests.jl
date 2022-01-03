@@ -4,7 +4,7 @@ using Base.Iterators: take
 using Random
 using LinearAlgebra
 using DynamicIterators: trace, TimeLift
-using TransformVariables: transform, as𝕀, inverse
+using TransformVariables: transform, as𝕀
 using FillArrays
 
 using MeasureTheory
@@ -48,7 +48,7 @@ test_measures = [
     Poisson(3.1)
     StudentT(ν=2.1)    
     Uniform()
-    Normal() ⊙ Cauchy()
+    Counting(Float64)
     Dirac(0.0) + Normal()
 ]
 
@@ -56,7 +56,6 @@ testbroken_measures = [
     Pushforward(as𝕀, Normal())
     # InverseGamma(2) # Not defined yet
     # MvNormal(I(3)) # Entirely broken for now
-    Counting(Float64)
     Likelihood
     TrivialMeasure()
 ]
@@ -247,7 +246,7 @@ end
 
 @testset "rootmeasure/logpdf" begin
     x = rand(Normal())
-    @test logdensityof(Normal(), rootmeasure(Normal()), x) ≈ logdensityof(Normal(), x)
+    @test logdensityof(𝒹(Normal(), rootmeasure(Normal())), x) ≈ logdensityof(Normal(), x)
 end
 
 @testset "Transforms" begin
@@ -256,14 +255,14 @@ end
         μ = Normal()
         ν = Pushforward(t, μ)
         x = rand(μ)
-        @test logdensity_def(μ, x) ≈ logdensity_def(Pushforward(inverse(t), ν), x)
+        @test logdensity_def(μ, x) ≈ logdensity_def(Pushforward(TV.inverse(t), ν), x)
     end
 
     @testset "Pullback" begin
         ν = Uniform()
         μ = Pullback(t,ν)
         y = rand(ν)
-        @test logdensity_def(ν, y) ≈ logdensity_def(Pullback(inverse(t), μ), y)
+        @test logdensity_def(ν, y) ≈ logdensity_def(Pullback(TV.inverse(t), μ), y)
     end
 end
 
@@ -408,7 +407,7 @@ end
 @testset "Density measures and Radon-Nikodym" begin
     x = randn()
     let d = ∫(𝒹(Cauchy(), Normal()), Normal())
-        @test logdensityof(d, Cauchy(), x) ≈ 0 atol=1e-12
+        @test logdensityof(𝒹(d, Cauchy()), x) ≈ 0 atol=1e-12
     end
 
     let f = 𝒹(∫(x -> x^2, Normal()), Normal())
@@ -429,21 +428,21 @@ end
         d = Normal(σ=3)
         h = HalfNormal(3)
         x = rand(h)
-        @test densityof(h, Lebesgue(ℝ), x) ≈ 2 * densityof(d, Lebesgue(ℝ), x)
+        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
     end
 
     @testset "HalfCauchy" begin
         d = Cauchy(σ=3)
         h = HalfCauchy(3)
         x = rand(h)
-        @test densityof(h, Lebesgue(ℝ), x) ≈ 2 * densityof(d, Lebesgue(ℝ), x)
+        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
     end
 
     @testset "HalfStudentT" begin
         d = StudentT(ν=2, σ=3)
         h = HalfStudentT(2, 3)
         x = rand(h)
-        @test densityof(h, Lebesgue(ℝ), x) ≈ 2 * densityof(d, Lebesgue(ℝ), x)
+        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
     end
 end
 
@@ -499,24 +498,24 @@ end
 
 @testset "AffineTransform" begin
     f = AffineTransform((μ = 3, σ = 2))
-    @test f(inv(f)(1)) == 1
-    @test inv(f)(f(1)) == 1
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
 
     f = AffineTransform((μ = 3, ω = 2))
-    @test f(inv(f)(1)) == 1
-    @test inv(f)(f(1)) == 1
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
 
     f = AffineTransform((σ = 2,))
-    @test f(inv(f)(1)) == 1
-    @test inv(f)(f(1)) == 1
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
 
     f = AffineTransform((ω = 2,))
-    @test f(inv(f)(1)) == 1
-    @test inv(f)(f(1)) == 1
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
 
     f = AffineTransform((μ = 3,))
-    @test f(inv(f)(1)) == 1
-    @test inv(f)(f(1)) == 1
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
 end
 
 @testset "Affine" begin
@@ -530,7 +529,7 @@ end
     for f in [f1, f2, f3, f4, f5]
         par = getfield(f, :par)
         @test Affine(par)(unif) == Affine(f, unif)
-        @test densityof(Affine(f, Affine(inv(f), unif)), 0.5) == 1
+        @test densityof(Affine(f, Affine(inverse(f), unif)), 0.5) == 1
     end
 
     d = ∫exp(x -> -x^2, Lebesgue(ℝ))
@@ -552,10 +551,10 @@ end
     a = Affine((σ = [1 0]',), d^1)
     x = randn(2)
     y = randn(1)
-    @test logdensityof(a, x) ≈ logdensityof(d, inv(a.f)(x)[1])
+    @test logdensityof(a, x) ≈ logdensityof(d, inverse(a.f)(x)[1])
     @test logdensityof(a, a.f(y)) ≈ logdensityof(d^1, y)
 
     b = Affine((ω = [1 0]'',), d^1)
-    @test logdensityof(b, x) ≈ logdensityof(d, inv(b.f)(x)[1])
+    @test logdensityof(b, x) ≈ logdensityof(d, inverse(b.f)(x)[1])
     @test logdensityof(b, b.f(y)) ≈ logdensityof(d^1, y)
 end

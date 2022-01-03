@@ -22,14 +22,14 @@ params(f::AffineTransform) = getfield(f, :par)
 
 Base.propertynames(d::AffineTransform{N}) where {N} = N
 
-# TODO: Use InverseFunctions
-# TODO: Use ChangesOfVariables
-@inline Base.inv(f::AffineTransform{(:μ, :σ)}) =
+import InverseFunctions: inverse
+
+@inline inverse(f::AffineTransform{(:μ, :σ)}) =
     AffineTransform((μ = -(f.σ \ f.μ), ω = f.σ))
-@inline Base.inv(f::AffineTransform{(:μ, :ω)}) = AffineTransform((μ = -f.ω * f.μ, σ = f.ω))
-@inline Base.inv(f::AffineTransform{(:σ,)}) = AffineTransform((ω = f.σ,))
-@inline Base.inv(f::AffineTransform{(:ω,)}) = AffineTransform((σ = f.ω,))
-@inline Base.inv(f::AffineTransform{(:μ,)}) = AffineTransform((μ = -f.μ,))
+@inline inverse(f::AffineTransform{(:μ, :ω)}) = AffineTransform((μ = -f.ω * f.μ, σ = f.ω))
+@inline inverse(f::AffineTransform{(:σ,)}) = AffineTransform((ω = f.σ,))
+@inline inverse(f::AffineTransform{(:ω,)}) = AffineTransform((σ = f.ω,))
+@inline inverse(f::AffineTransform{(:μ,)}) = AffineTransform((μ = -f.μ,))
 
 # `size(f) == (m,n)` means `f : ℝⁿ → ℝᵐ`  
 Base.size(f::AffineTransform{(:μ, :σ)}) = size(f.σ)
@@ -181,30 +181,35 @@ Base.size(d::Affine) = size(d.μ)
 Base.size(d::Affine{(:σ,)}) = (size(d.σ, 1),)
 Base.size(d::Affine{(:ω,)}) = (size(d.ω, 2),)
 
-@inline function logdensity_def(d::Affine{(:σ,)}, x)
+@inline function logdensity_def(d::Affine{(:σ,)}, x::AbstractArray)
     z = Vector{eltype(d.σ)}(undef, size(d.σ, 2))
     solve!(z, d.σ, x)
     MeasureBase._logdensityof(d.parent, z)
 end
 
-@inline function logdensity_def(d::Affine{(:ω,)}, x)
+@inline function logdensity_def(d::Affine{(:ω,)}, x::AbstractArray)
     z = d.ω * x
     MeasureBase._logdensityof(d.parent, z)
 end
 
-@inline function logdensity_def(d::Affine{(:μ,)}, x)
+@inline function logdensity_def(d::Affine{(:μ,)}, x::AbstractArray)
     z = x - d.μ
     MeasureBase._logdensityof(d.parent, z)
 end
 
-@inline function logdensity_def(d::Affine{(:μ, :σ)}, x)
+@inline function logdensity_def(d::Affine{(:μ, :σ)}, x::AbstractArray)
     z = d.σ \ (x - d.μ)
     MeasureBase._logdensityof(d.parent, z)
 end
 
-@inline function logdensity_def(d::Affine{(:μ, :ω)}, x)
+@inline function logdensity_def(d::Affine{(:μ, :ω)}, x::AbstractArray)
     z = d.ω * (x - d.μ)
     MeasureBase._logdensityof(d.parent, z)
+end
+
+@inline function logdensity_def(d::Affine, x)
+    z = inverse(d.f)(x)
+    logdensity_def(d.parent, z)
 end
 
 # # # logdensity_def(d::Affine{(:μ,:ω)}, x) = logdensity_def(d.parent, d.σ \ (x - d.μ))
@@ -228,12 +233,12 @@ end
  
 @inline basemeasure(d::Affine{N,M,Tuple{Vararg{T,K}}}) where {K,N,M,T<:AbstractArray} = affine(getfield(d, :f), rootmeasure(d.parent))
 
-basemeasure(d::Affine) = affine(getfield(d, :f), rootmeasure(d.parent))
+@inline basemeasure(d::Affine) = affine(getfield(d, :f), basemeasure(d.parent))
 
 # We can't do this until we know we're working with Lebesgue measure, since for
 # example it wouldn't make sense to apply a log-Jacobian to a point measure
-basemeasure(d::Affine{N,L}) where {N,L<:Lebesgue} = weightedmeasure(-logjac(d), d.parent)
-basemeasure(d::Affine{N,L}) where {N,L<:LebesgueMeasure} = weightedmeasure(-logjac(d), d.parent)
+@inline basemeasure(d::Affine{N,L}) where {N,L<:Lebesgue} = weightedmeasure(-logjac(d), d.parent)
+@inline basemeasure(d::Affine{N,L}) where {N,L<:LebesgueMeasure} = weightedmeasure(-logjac(d), d.parent)
 
 
 @inline function basemeasure(d::Affine{N,P, Tuple{Vararg{T, K}}}) where {K,N,L<:Union{<:Lebesgue, <:LebesgueMeasure},P<:PowerMeasure{L}, T<:AbstractArray} 
