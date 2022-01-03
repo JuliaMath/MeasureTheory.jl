@@ -21,11 +21,6 @@ logdensity_def(d::Laplace, x) = logdensity_def(proxy(d), x)
 basemeasure(::Laplace{()}) = WeightedMeasure(static(-logtwo), Lebesgue(ℝ))
 basemeasure(d::Laplace) = basemeasure(proxy(d))
 
-function tbasemeasure_type(::Type{<:Laplace{()}}) 
-    WeightedMeasure{Float64, Lebesgue{MeasureBase.RealNumbers}}
-end
-
-
 # @affinepars Laplace
 
 
