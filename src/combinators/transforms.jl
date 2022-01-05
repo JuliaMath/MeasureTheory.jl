@@ -83,16 +83,6 @@ basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν), False())
 
 basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ), False())
 
-function tbasemeasure_type(::Type{Pushforward{F,M,L}}) where {F,M,L}
-    B = tbasemeasure_type(M)
-    return Pushforward{F,B,False}
-end
-
-function tbasemeasure_type(::Type{Pullback{F,M,L}}) where {F,M,L}
-    B = tbasemeasure_type(M)
-    return Pullback{F,B,False}
-end
-
 TV.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
 
 TV.as(μ::Pullback) = TV.inverse(μ.f) ∘ μ.ν

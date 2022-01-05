@@ -14,10 +14,6 @@ end
 ###############################################################################
 @kwstruct NegativeBinomial(r, p)
 
-function tbasemeasure_type(::Type{N}) where {N<:NegativeBinomial}
-    Counting{MeasureBase.BoundedInts{Static.StaticInt{0}, Static.StaticFloat64{Inf}}}
-end
-
 @inline function logdensity_def(d::NegativeBinomial{(:r, :p)}, y)
     (r, p) = (d.r, d.p)
     return -log(y + r) - logbeta(r, y + 1) + xlogy(y, p) + xlog1py(r, -p)

@@ -32,16 +32,9 @@ for N in AFFINEPARS
     end
 end
 
-function tbasemeasure_type(::Type{Normal{N,T}}) where {N,T} 
-    Affine{N, MeasureBase.LebesgueMeasure, T}
-end
 
 @inline logdensity_def(d::Normal{()}, x) = -x^2 / 2
 @inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), Lebesgue(ℝ))
-
-function tbasemeasure_type(::Type{Normal{(), Tuple{}}}) 
-    WeightedMeasure{StaticFloat64{-0.5 * log2π}, Lebesgue{MeasureBase.RealNumbers}}
-end
 
 @kwstruct Normal(μ)
 @kwstruct Normal(σ)
