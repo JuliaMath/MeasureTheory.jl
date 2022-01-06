@@ -95,6 +95,7 @@ xlogy(x, y) = x * log(y)
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
 
+include("utils.jl")
 include("const.jl")
 # include("traits.jl")
 include("parameterized.jl")
