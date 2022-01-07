@@ -105,6 +105,7 @@ include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
+include("combinators/exponential-families.jl")
 
 include("resettable-rng.jl")
 include("realized.jl")
@@ -112,6 +113,7 @@ include("combinators/chain.jl")
 
 include("distributions.jl")
 include("smart-constructors.jl")
+
 
 include("parameterized/normal.jl")
 include("parameterized/studentt.jl")
