@@ -8,11 +8,29 @@ struct ExponentialFamily{B,Θ,H,T,A} <: AbstractKleisli
     a::A
 end
 
+struct ExpFamMeasure{B,Θ,H,T,A,P} <: AbstractMeasure
+    base::B
+    θ::Θ
+    η::H
+    t::T
+    a::A
+    par :: P
+end
 
-function MeasureBase.powermeasure(fam::ExponentialFamily, dims::NTuple{N,I}) where {N,I}
-    @inline t(x) = sum(fam.t, x)
-    a = AffineTransform((σ=prod(dims),)) ∘ fam.a
-    ExponentialFamily(fam.base ^ dims, fam.θ, fam.η, t, a)
+
+@inline function (fam::ExponentialFamily)(par)
+    base = fam.base
+    θ = fam.θ(par)
+    η = fam.η(θ)
+    t = fam.t
+    a = fam.a(θ)
+    ExpFamMeasure(base, θ, η, t, a, par)
+end
+
+basemeasure(d::ExpFamMeasure) = d.base
+
+function logdensity_def(d::ExpFamMeasure, x)
+    mydot(d.η, d.t(x)) - d.a
 end
 
 function (fam::ExponentialFamily)(par)
@@ -21,6 +39,13 @@ function (fam::ExponentialFamily)(par)
     a = fam.a(θ)
     @inline ℓ(x) = mydot(η, fam.t(x)) - a
     ∫exp(ℓ, fam.base)
+end
+
+
+function MeasureBase.powermeasure(fam::ExponentialFamily, dims::NTuple{N,I}) where {N,I}
+    @inline t(x) = sum(fam.t, x)
+    a = AffineTransform((σ=prod(dims),)) ∘ fam.a
+    ExponentialFamily(fam.base ^ dims, fam.θ, fam.η, t, a)
 end
 
 struct ExpFamLikelihood{C,Θ,H,T,A} <: AbstractLikelihood
