@@ -51,6 +51,8 @@ using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, In
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractKleisli
 
+using StaticArrays
+
 import PrettyPrinting
 
 const Pretty = PrettyPrinting
