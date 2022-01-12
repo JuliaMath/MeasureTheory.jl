@@ -33,14 +33,6 @@ function logdensity_def(d::ExpFamMeasure, x)
     mydot(d.η, d.t(x)) - d.a
 end
 
-function (fam::ExponentialFamily)(par)
-    θ = fam.θ(par)
-    η = fam.η(θ)
-    a = fam.a(θ)
-    @inline ℓ(x) = mydot(η, fam.t(x)) - a
-    ∫exp(ℓ, fam.base)
-end
-
 
 function MeasureBase.powermeasure(fam::ExponentialFamily, dims::NTuple{N,I}) where {N,I}
     @inline t(x) = sum(fam.t, x)
@@ -68,3 +60,5 @@ end
     θ = ℓ.θ(par)
     mydot(ℓ.η(θ), ℓ.t) - ℓ.a(θ) + ℓ.c 
 end
+
+basemeasure(fam::ExponentialFamily) = fam.base
