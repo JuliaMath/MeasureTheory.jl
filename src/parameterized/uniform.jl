@@ -64,6 +64,6 @@ end
 
 distproxy(d::Uniform{(:shift, :scale)}) = Dists.Uniform(d.shift, d.shift + d.scale)
 
-TV.as(d::Uniform{(:shift, :scale), T}) where T = TV.ScaledShiftedLogistic(Real, d.scale, d.shift)
+TV.as(d::Uniform{(:shift, :scale)}) = TV.ScaledShiftedLogistic(d.scale, d.shift)
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Uniform{(:shift, :scale)}) = rand(rng, T)*μ.scale + μ.shift
