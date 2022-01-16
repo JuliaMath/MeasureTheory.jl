@@ -27,19 +27,18 @@ TV.as(::Uniform{()}) = as𝕀
 Base.rand(rng::AbstractRNG, T::Type, μ::Uniform{()}) = rand(rng, T)
 
 ###############################################################################
-# Uniform
+# Uniform over an interval
 #
-# The parameterization was chosen to enforce the constraint that the parameters
-# define an interval. Since `asparams` operates on parameters independently,
-# we parameterize with the left point of the interval (lower bound) and the width
-# of the interval, which is parameterized as positive real number (`asℝ₊`).
+# We use an affine parameterization (shift, scale) versus a more traditional (lower, upper)
+# because of how `asparams` works. Since `asparams` works on a per-parameter basis,
+# we can enforce the `lower < upper` constraint by making `scale` be non-negative
 
-@kwstruct Uniform(left, width)
+@kwstruct Uniform(shift, scale)
 
-function basemeasure(d::Uniform{(:left, :width)})
-    # Lebesgue measure on (left, width+left)
-    lb = d.left
-    ub = d.left + d.width
+function basemeasure(d::Uniform{(:shift, :scale)})
+    # Lebesgue measure on (shift, scale+shift)
+    lb = d.shift
+    ub = d.shift + d.scale
     inbounds(x) = lb < x < ub
     constℓ = 0.0
     varℓ() = 0.0
@@ -47,21 +46,24 @@ function basemeasure(d::Uniform{(:left, :width)})
     FactoredBase(inbounds, constℓ, varℓ, base)
 end
 
-asparams(::Type{<:Uniform{(:left, :width)}}, ::Val{:left}) = asℝ
-asparams(::Type{<:Uniform{(:left, :width)}}, ::Val{:width}) = asℝ₊
+asparams(::Type{<:Uniform}, ::Val{:shift}) = asℝ
+asparams(::Type{<:Uniform}, ::Val{:scale}) = asℝ₊
 
 """
 The uniform probability measure on the interval (a, b).
 """
 function Uniform(a, b)
     @assert(a < b)
-    Uniform(left=a, width=b-a)
+    Uniform(shift=a, scale=b-a)
 end
 
-logdensity(d::Uniform{(:left, :width)}, x) = -log(d.width)
+logdensity(d::Uniform{(:shift, :scale)}, x) = begin
+    @assert (d.scale > 0.0)
+    ℓ = -log(d.scale)
+end
 
-distproxy(d::Uniform{(:left, :width)}) = Dists.Uniform(d.left, d.left + d.width)
+distproxy(d::Uniform{(:shift, :scale)}) = Dists.Uniform(d.shift, d.shift + d.scale)
 
-TV.as(d::Uniform{(:left, :width), T}) where T = TV.as(Real, d.left, d.left + d.width)
+TV.as(d::Uniform{(:shift, :scale), T}) where T = TV.ScaledShiftedLogistic(Real, d.scale, d.shift)
 
-Base.rand(rng::AbstractRNG, T::Type, μ::Uniform{(:left, :width)}) = rand(rng, T)*μ.width + μ.left
+Base.rand(rng::AbstractRNG, T::Type, μ::Uniform{(:shift, :scale)}) = rand(rng, T)*μ.scale + μ.shift
