@@ -46,6 +46,7 @@ test_measures = [
     Poisson(3.1)
     StudentT(ν=2.1)    
     Uniform()
+    Uniform(-1.0, 1.0)
     Normal() ⊙ Cauchy()
     Dirac(0.0) + Normal()
 ]
