@@ -101,7 +101,7 @@ end
     return x
 end
 
-function logjac(x::AbstractMatrix)
+@inline function logjac(x::AbstractMatrix)
     (m, n) = size(x)
     m == n && return first(logabsdet(x))
 
