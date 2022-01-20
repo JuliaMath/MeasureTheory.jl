@@ -38,6 +38,7 @@ using ConstructionBase
 using Accessors
 using StatsFuns
 using SpecialFunctions
+using ConcreteStructs
 
 import LogExpFunctions
 import NamedTupleTools
