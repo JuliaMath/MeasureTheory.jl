@@ -6,12 +6,16 @@ using SpecialFunctions: logfactorial
 
 @parameterized Poisson(λ)
 
+@kwstruct Poisson(λ)
+
 basemeasure(::Poisson) = Counting(BoundedInts(static(0), static(Inf)))
 
 @inline function logdensity_def(d::Poisson{(:λ,)}, y)
     λ = d.λ
     return y * log(λ) - λ - logfactorial(y)
 end
+
+@kwstruct Poisson(logλ)
 
 @inline function logdensity_def(d::Poisson{(:logλ,)}, y)
     return y * d.logλ - exp(d.logλ) - logfactorial(y)
