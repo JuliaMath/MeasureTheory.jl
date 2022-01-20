@@ -51,6 +51,8 @@ function _parameterized(__module__, expr)
         q = quote
             struct $μ{N,T} <: MeasureBase.ParameterizedMeasure{N}
                 par::NamedTuple{N,T}
+
+                $μ{N,T}(nt::NamedTuple{N,T}) where {N,T<:Tuple} = new{N,T}(nt)
             end
 
             const $μbase = $base
@@ -72,6 +74,8 @@ function _parameterized(__module__, expr)
         q = quote
             struct $μ{N,T} <: MeasureBase.ParameterizedMeasure{N}
                 par::NamedTuple{N,T}
+
+                $μ{N,T}(nt::NamedTuple{N,T}) where {N,T<:Tuple} = new{N,T}(nt)
             end
         end
 
@@ -91,6 +95,8 @@ function _parameterized(__module__, expr)
             struct $μ{N,T} <: MeasureBase.ParameterizedMeasure{N}
                 par::NamedTuple{N,T}
             end
+
+            $μ{N,T}(nt::NamedTuple{N,T}) where {N,T<:Tuple} = new{N,T}(nt)
         end
 
         if !isempty(p)
