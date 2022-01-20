@@ -5,6 +5,8 @@ import Base
 
 @parameterized Bernoulli(p)
 
+@kwstruct Bernoulli(p)
+
 basemeasure(::Bernoulli) = Counting(Bool)
 
 @inline function logdensity_def(d::Bernoulli{(:p,)}, y)
