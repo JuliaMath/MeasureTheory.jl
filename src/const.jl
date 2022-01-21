@@ -5,7 +5,7 @@ end
 
 asConst(x) = AsConst(x)
 
-TV.as(c::Returns) = AsConst(c.value)
+xform(c::Returns) = AsConst(c.value)
 
 TV.dimension(t::AsConst) = 0
 

@@ -7,11 +7,11 @@ using FillArrays
 
 @parameterized Dirichlet(α)
 
-TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
+xform(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
 
 @inline function basemeasure(μ::Dirichlet{(:α,)})
     α = μ.α
-    t = as(μ)
+    t = xform(μ)
     d = TV.dimension(t)
     logw = loggamma(sum(α)) - sum(loggamma, α)
     return WeightedMeasure(logw, Lebesgue(Simplex()))

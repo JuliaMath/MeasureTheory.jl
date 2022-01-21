@@ -40,7 +40,7 @@ end
 
 ≪(::Cauchy, ::Lebesgue{X}) where {X<:Real} = true
 
-TV.as(::Cauchy) = asℝ
+xform(::Cauchy) = asℝ
 
 @half Cauchy
 

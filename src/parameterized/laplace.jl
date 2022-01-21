@@ -39,4 +39,4 @@ Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace) where {T} = Base.rand(rng, T
 
 ≪(::Laplace, ::Lebesgue{X}) where {X<:Real} = true
 
-TV.as(::Laplace) = asℝ
+xform(::Laplace) = asℝ

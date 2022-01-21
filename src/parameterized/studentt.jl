@@ -56,7 +56,7 @@ end
     FactoredBase(inbounds, constℓ, varℓ, base)
 end
 
-TV.as(::StudentT) = asℝ
+xform(::StudentT) = asℝ
 
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 

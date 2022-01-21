@@ -77,19 +77,19 @@ end
     return s
 end
 
-TV.as(d::LKJCholesky) = CorrCholesky(d.k)
+xform(d::LKJCholesky) = CorrCholesky(d.k)
 
 splat_lkj_logc0(x) = Dists.lkj_logc0(x...)
 
 @inline function basemeasure(μ::LKJCholesky{(:k, :η)})
-    t = as(μ)
+    t = xform(μ)
     ℓ = splat_lkj_logc0 ∘ values
     base = Pushforward(t, Lebesgue(ℝ)^TV.dimension(t), False())
     ParamWeightedMeasure(ℓ, (k = μ.k, η = μ.η), base)
 end
 
 @inline function basemeasure(μ::LKJCholesky{(:k, :logη)})
-    t = as(μ)
+    t = xform(μ)
     logη = μ.logη
     η = exp(logη)
     ℓ = splat_lkj_logc0 ∘ values ∘ params
