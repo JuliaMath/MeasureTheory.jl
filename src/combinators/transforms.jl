@@ -9,6 +9,8 @@ struct Pushforward{F,M,L} <: AbstractMeasure
     logjac::L
 end
 
+insupport(d::Pushforward, x) = insupport(d.μ, inverse(d.f)(x))
+
 Pushforward(f, μ) = Pushforward(f, μ, True())
 
 function Pretty.tile(pf::Pushforward{<:TV.CallableTransform})
@@ -25,6 +27,8 @@ struct Pullback{F,M,L} <: AbstractMeasure
 end
 
 Pullback(f, ν) = Pullback(f, ν, True())
+
+insupport(d::Pullback, x) = insupport(d.μ, d.f(x))
 
 function Pretty.tile(pf::Pullback{<:TV.CallableTransform})
     Pretty.list_layout(Pretty.tile.([pf.f.t, pf.ν, pf.logjac]); prefix=:Pullback)

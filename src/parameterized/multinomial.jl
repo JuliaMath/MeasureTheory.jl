@@ -4,7 +4,14 @@ export Multinomial
 
 @parameterized Multinomial(n, p)
 
-basemeasure(d::Multinomial{(:n, :p)}) = Counting(ℤ)^length(d.p)
+basemeasure(d::Multinomial) = CountingMeasure()
+
+@inline function insupport(d::Multinomial{(:n, :p)}, x)
+    length(x) == length(d.p) || return false
+    all(isinteger, x) || return false
+    sum(x) == d.n || return false
+    return true
+end
 
 @kwstruct Multinomial(n, p)
 

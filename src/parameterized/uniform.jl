@@ -10,12 +10,14 @@ export Uniform
 # Standard Uniform
 
 
+insupport(::Uniform{()}) = in𝕀
+insupport(::Uniform{()}, x) = in𝕀(x)
+
 @inline function basemeasure(::Uniform{()})
-    inbounds = in(𝕀)
     constℓ = static(0.0)
     varℓ = Returns(static(0.0))
     base = Lebesgue(ℝ)
-    FactoredBase(inbounds, constℓ, varℓ, base)
+    FactoredBase(constℓ, varℓ, base)
 end
 
 distproxy(::Uniform{()}) = Dists.Uniform()

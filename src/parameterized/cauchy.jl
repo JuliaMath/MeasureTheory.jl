@@ -47,3 +47,5 @@ xform(::Cauchy) = asℝ
 HalfCauchy(σ) = HalfCauchy(σ = σ)
 
 distproxy(d::Cauchy{()}) = Dists.Cauchy()
+
+insupport(::Cauchy, x) = true

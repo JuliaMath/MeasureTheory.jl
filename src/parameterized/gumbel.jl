@@ -38,3 +38,5 @@ xform(::Gumbel) = asℝ
 ≪(::Gumbel, ::Lebesgue{X}) where {X<:Real} = true
 
 distproxy(::Gumbel{()}) = Dists.Gumbel()
+
+insupport(::Gumbel, x) = true

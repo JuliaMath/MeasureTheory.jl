@@ -41,3 +41,6 @@ end
         return result
     end
 end
+
+in𝕀(x) = static(0.0) ≤ x ≤ static(1.0)
+inℝ₊(x) = static(0.0) ≤ x

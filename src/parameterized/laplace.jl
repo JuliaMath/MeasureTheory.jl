@@ -19,7 +19,7 @@ for N in AFFINEPARS
     end
 end
 
-
+insupport(::Laplace, x) = true
 
 @inline function logdensity_def(d::Laplace{()}, x)
     return -abs(x)

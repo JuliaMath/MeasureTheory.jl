@@ -5,7 +5,11 @@ import Base
 
 @parameterized NegativeBinomial(r, p)
 
-basemeasure(::NegativeBinomial) = Counting(BoundedInts(static(0), static(Inf)))
+insupport(::NegativeBinomial, x) = isinteger(x) && x ≥ 0
+
+basemeasure(::NegativeBinomial) = CountingMeasure()
+
+testvalue(::NegativeBinomial) = 0
 
 function Base.rand(rng::AbstractRNG, ::Type{T}, d::NegativeBinomial) where {T}
     rand(rng, proxy(d))

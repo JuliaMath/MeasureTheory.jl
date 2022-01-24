@@ -79,23 +79,22 @@ end
 
 xform(d::LKJCholesky) = CorrCholesky(d.k)
 
-splat_lkj_logc0(x) = Dists.lkj_logc0(x...)
 
-@inline function basemeasure(μ::LKJCholesky{(:k, :η)})
-    t = xform(μ)
-    ℓ = splat_lkj_logc0 ∘ values
+@inline function basemeasure(d::LKJCholesky{(:k, :η)})
+    t = xform(d)
     base = Pushforward(t, Lebesgue(ℝ)^TV.dimension(t), False())
-    ParamWeightedMeasure(ℓ, (k = μ.k, η = μ.η), base)
+    WeightedMeasure(Dists.lkj_logc0(d.k, d.η), base)
 end
 
-@inline function basemeasure(μ::LKJCholesky{(:k, :logη)})
-    t = xform(μ)
-    logη = μ.logη
-    η = exp(logη)
-    ℓ = splat_lkj_logc0 ∘ values ∘ params
+@inline function basemeasure(d::LKJCholesky{(:k, :logη)})
+    t = xform(d)
+    η = exp(d.logη)
     base = Pushforward(t, Lebesgue(ℝ)^TV.dimension(t), False())
-    ParamWeightedMeasure(ℓ, (k = μ.k, logη = logη), base)
+    WeightedMeasure(Dists.lkj_logc0(d.k, η), base)
 end
+
+# TODO: Fix this
+insupport(::LKJCholesky, x) = true
 
 # Note (from @sethaxen): this can be done without the cholesky decomposition, by randomly
 # sampling the canonical partial correlations, as in the LKJ paper, and then

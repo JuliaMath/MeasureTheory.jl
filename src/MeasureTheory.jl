@@ -45,6 +45,7 @@ import NamedTupleTools
 import InverseFunctions: inverse
 export inverse
 
+import MeasureBase: insupport
 import MeasureBase:
     testvalue, logdensity_def, density_def, basemeasure, kleisli, params, paramnames, ∫, 𝒹, ∫exp
 import MeasureBase: ≪

@@ -29,3 +29,7 @@ gentype(::Poisson) = Int
 Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:λ,)}) = rand(rng, Dists.Poisson(d.λ))
 Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:logλ,)}) =
     rand(rng, Dists.Poisson(exp(d.logλ)))
+
+@inline function insupport(::Poisson, x) 
+    isinteger(x) && x ≥ 0
+end

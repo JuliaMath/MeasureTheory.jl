@@ -288,3 +288,7 @@ function Base.rand(rng::Random.AbstractRNG, ::Type{T}, d::Affine) where {T}
     f = getfield(d, :f)
     return f(z)
 end
+
+@inline function insupport(d::Affine, x)
+    insupport(d.parent, inverse(d.f)(x))
+end

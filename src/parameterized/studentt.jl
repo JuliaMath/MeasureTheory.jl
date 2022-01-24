@@ -49,11 +49,10 @@ end
 end
 
 @inline function basemeasure(d::StudentT{(:ν,)})
-    inbounds = Returns(true)
     constℓ = 0.0
     varℓ() = loggamma((d.ν + 1) / 2) - loggamma(d.ν / 2) - log(π * d.ν) / 2
     base = Lebesgue(ℝ)
-    FactoredBase(inbounds, constℓ, varℓ, base)
+    FactoredBase(constℓ, varℓ, base)
 end
 
 xform(::StudentT) = asℝ
@@ -72,3 +71,5 @@ distproxy(d::StudentT{(:ν, :μ, :ω)}) = Dists.LocationScale(d.μ, inv(d.ω), D
 HalfStudentT(ν, σ) = HalfStudentT((ν = ν, σ = σ))
 
 asparams(::Type{<:StudentT}, ::StaticSymbol{:ν}) = asℝ₊
+
+insupport(::StudentT, x) = static(true)
