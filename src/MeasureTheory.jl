@@ -110,6 +110,7 @@ include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
 include("combinators/exponential-families.jl")
+include("combinators/conditional.jl")
 
 include("resettable-rng.jl")
 include("realized.jl")
