@@ -19,7 +19,7 @@ end
 #     as(Array, as(d.f.f.value), size(d.xs))
 # end
 
-function Base.rand(rng::AbstractRNG, ::Type{T},  d::ProductMeasure{A}) where {T,A<:AbstractArray}
+@inline function Base.rand(rng::AbstractRNG, ::Type{T},  d::ProductMeasure{A}) where {T,A<:AbstractArray}
     mar = marginals(d)
 
     # Distributions doens't (yet) have the three-argument form
