@@ -17,3 +17,13 @@ function affine(f::AffineTransform, parent::FactoredBase)
     base = affine(f, parent.base)
     FactoredBase(constℓ, varℓ, base)
 end
+
+using MeasureBase: RealNumbers
+
+function affine(f::AffineTransform{(:μ, :σ)}, parent::Lebesgue{RealNumbers})
+    affine(AffineTransform((σ=f.σ,)), parent)
+end
+
+function affine(f::AffineTransform{(:μ, :ω)}, parent::Lebesgue{RealNumbers})
+    affine(AffineTransform((ω = f.ω,)), parent)
+end
