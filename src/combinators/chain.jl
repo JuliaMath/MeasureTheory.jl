@@ -2,7 +2,6 @@ using DynamicIterators
 import DynamicIterators: dub, dyniterate, evolve
 using Base.Iterators: SizeUnknown, IsInfinite
 
-import MeasureBase: For
 
 export Chain
 

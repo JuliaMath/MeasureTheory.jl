@@ -182,27 +182,27 @@ Base.size(d::Affine{(:ω,)}) = (size(d.ω, 2),)
 
 @inline function logdensity_def(d::Affine{(:σ,)}, x::AbstractArray)
     z = solve(d.σ, x)
-    MeasureBase._logdensityof(d.parent, z)
+    MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:ω,)}, x::AbstractArray)
     z = d.ω * x
-    MeasureBase._logdensityof(d.parent, z)
+    MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:μ,)}, x::AbstractArray)
     z = mappedarray(-, x, d.μ)
-    MeasureBase._logdensityof(d.parent, z)
+    MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:μ, :σ)}, x::AbstractArray)
     z = d.σ \ mappedarray(-, x, d.μ)
-    MeasureBase._logdensityof(d.parent, z)
+    MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:μ, :ω)}, x::AbstractArray)
     z = d.ω * mappedarray(-, x, d.μ)
-    MeasureBase._logdensityof(d.parent, z)
+    MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine, x)

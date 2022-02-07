@@ -1,6 +1,7 @@
 module MeasureTheory
 
 using Random
+using FLoops
 
 using MeasureBase
 using MLStyle
@@ -45,7 +46,7 @@ import NamedTupleTools
 import InverseFunctions: inverse
 export inverse
 
-import MeasureBase: insupport
+import MeasureBase: insupport, instance_type, instance, marginals
 import MeasureBase:
     testvalue, logdensity_def, density_def, basemeasure, kleisli, params, paramnames, ∫, 𝒹, ∫exp
 import MeasureBase: ≪
@@ -71,6 +72,7 @@ using Static
 export as
 export Affine
 export AffineTransform
+export insupport
 
 using MeasureBase: Returns
 import MeasureBase: proxy, @useproxy
@@ -101,6 +103,7 @@ xlog1py(x, y) = x * log(1 + y)
 
 include("utils.jl")
 include("const.jl")
+include("combinators/for.jl")
 # include("traits.jl")
 include("parameterized.jl")
 
