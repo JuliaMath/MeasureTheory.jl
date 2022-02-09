@@ -73,6 +73,7 @@ export as
 export Affine
 export AffineTransform
 export insupport
+export For
 
 using MeasureBase: Returns
 import MeasureBase: proxy, @useproxy

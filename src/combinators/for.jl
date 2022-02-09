@@ -257,11 +257,11 @@ julia> For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end |> marginals |> colle
 
 """
 @inline For{T}(f, inds...) where {T} = For{T}(f, inds)
-@inline For{T}(f, n::Integer) where {T} = For{T}(f, Base.OneTo(n))
+@inline For{T}(f, n::Integer) where {T} = For{T}(f, static(1):n)
 @inline For{T}(f, inds::Integer...) where {T} = For{T}(i -> f(Tuple(i)...), Base.CartesianIndices(inds))
 
 @inline For(f, inds...) = For(f, inds)
-@inline For(f, n::Integer) = For(f, Base.OneTo(n))
+@inline For(f, n::Integer) = For(f, static(1):n)
 @inline For(f, inds::Integer...) = For(i -> f(Tuple(i)...), Base.CartesianIndices(inds))
 # For(f, inds::Base.Generator) = productmeasure(mymap(f, inds))
 
