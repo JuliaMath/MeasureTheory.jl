@@ -9,9 +9,10 @@ import Base
 
 basemeasure(::Bernoulli) = Counting(Bool)
 
-@inline function logdensity_def(d::Bernoulli{(:p,)}, y::Bool)
+@inline function logdensity_def(d::Bernoulli{(:p,)}, y)
     p = d.p
-    return ifelse(y, log(p), log(1 - p))
+    f = ifelse(y, () -> log(p), () -> log(1 - p))
+    return f()
 end
 
 function density(d::Bernoulli{(:p,)}, y)
