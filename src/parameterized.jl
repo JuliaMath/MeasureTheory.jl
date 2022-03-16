@@ -1,5 +1,3 @@
-using TransformVariables
-
 export asparams
 
 """
@@ -10,13 +8,13 @@ subset of the parameters.
 
 --------
 
-    asparams(::Type{<:ParameterizedMeasure}, ::Val{::Symbol})
+    asparams(::Type{<:ParameterizedMeasure}, ::StaticSymbol)
 
 Return a transformation for a particular parameter of a given parameterized
 measure. For example,
 
 ```
-julia> asparams(Normal, Val(:σ))
+julia> asparams(Normal, static(:σ))
 asℝ₊
 ```
 
@@ -45,15 +43,18 @@ TransformVariables.TransformTuple{NamedTuple{(:μ, :σ), Tuple{TransformVariable
 """
 function asparams end
 
-asparams(μ::ParameterizedMeasure, v::Val) = asparams(constructor(μ), v)
-asparams(μ, s::Symbol) = asparams(μ, Val(s))
+function asparams(μ::M, v::StaticSymbol) where {M<:ParameterizedMeasure}
+    asparams(constructorof(M), v)
+end
+
+asparams(μ, s::Symbol) = asparams(μ, static(s))
 
 asparams(M::Type{A}) where {A<:AbstractMeasure} = asparams(M, NamedTuple())
 
-function asparams(::Type{M}, constraints::NamedTuple{N}) where {N, M<: ParameterizedMeasure} 
+function asparams(::Type{M}, constraints::NamedTuple{N}) where {N,M<:ParameterizedMeasure}
     # @show M
     thekeys = paramnames(M, constraints)
-    t1 = NamedTuple{thekeys}(asparams(M, Val(k)) for k in thekeys)
+    t1 = NamedTuple{thekeys}(asparams(M, StaticSymbol(k)) for k in thekeys)
     t2 = NamedTuple{N}(map(asConst, values(constraints)))
     C = constructorof(M)
     # @show C
@@ -61,7 +62,7 @@ function asparams(::Type{M}, constraints::NamedTuple{N}) where {N, M<: Parameter
     # @show transforms
     # Make sure we end up with a consistent ordering
     ordered_transforms = params(C(merge(t1, t2)))
-    return TV.as(ordered_transforms)
+    return as(ordered_transforms)
 end
 
 # TODO: Make this work for Affine measures
@@ -69,8 +70,8 @@ end
 #     ...
 # end
 
+function asparams(μ::M, nt::NamedTuple = NamedTuple()) where {M<:ParameterizedMeasure}
+    asparams(constructorof(M), nt)
+end
 
-asparams(μ::ParameterizedMeasure, nt::NamedTuple=NamedTuple()) = asparams(constructor(μ), nt)
-
-TV.as(::Half) = asℝ₊
-
+xform(::Half) = asℝ₊

@@ -33,11 +33,11 @@ The `≪` (typed as `\ll <TAB>`) can be read "is dominated by". This just means 
 
 ### Defining a Log Density
 
-Most computations involve log-densities rather than densities themselves, so these are our first priority. `density(d,x)` will default to `exp(logdensity(d,x))`, but you can add a separate method if it's more efficient.
+Most computations involve log-densities rather than densities themselves, so these are our first priority. `density(d,x)` will default to `exp(logdensity_def(d,x))`, but you can add a separate method if it's more efficient.
 
 The definition is simple:
 ```julia
-logdensity(d::Normal{()} , x) = - x^2 / 2 
+logdensity_def(d::Normal{()} , x) = - x^2 / 2 
 ```
 
 There are a few things here worth noting.
@@ -53,7 +53,7 @@ Also, there's nothing here about `μ` and `σ`. These _location-scale parameters
 Let's look at another example, the Beta distribution. Here the base measure is `Lebesgue(𝕀)` (support is the unit interval). The log-density is
 
 ```julia
-function logdensity(d::Beta{(:α, :β)}, x)
+@inline function logdensity_def(d::Beta{(:α, :β)}, x)
     return (d.α - 1) * log(x) + (d.β - 1) * log(1 - x) - logbeta(d.α, d.β)
 end
 ```
@@ -114,15 +114,15 @@ basemeasure(μ::Lebesgue) = μ
 
 isprimitive(::Lebesgue) = true
 
-sampletype(::Lebesgue{ℝ}) = Float64
-sampletype(::Lebesgue{ℝ₊}) = Float64
-sampletype(::Lebesgue{𝕀}) = Float64
+gentype(::Lebesgue{ℝ}) = Float64
+gentype(::Lebesgue{ℝ₊}) = Float64
+gentype(::Lebesgue{𝕀}) = Float64
 
-logdensity(::Lebesgue, x) = zero(float(x))
+logdensity_def(::Lebesgue, x) = zero(float(x))
 ```
 
-We haven't yet talked about `sampletype`. When you call `rand` without specifying a type, there needs to be a default. That default is the `sampletype`. This only needs to be defined for primitive measures, because others will fall back on 
+We haven't yet talked about `gentype`. When you call `rand` without specifying a type, there needs to be a default. That default is the `gentype`. This only needs to be defined for primitive measures, because others will fall back on 
 
 ```julia
-sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
+gentype(μ::AbstractMeasure) = gentype(basemeasure(μ))
 ```

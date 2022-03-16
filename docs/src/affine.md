@@ -62,7 +62,7 @@ z = σ⁻¹ (x - μ)
 so the log-density is
 
 ```julia
-logdensity(d::Normal{(:μ,:σ)}, x) = logdensity(d.σ \ (x - d.μ)) - logdet(d.σ)
+logdensity_def(d::Normal{(:μ,:σ)}, x) = logdensity_def(d.σ \ (x - d.μ)) - logdet(d.σ)
 ```
 
 Here the `- logdet(σ)` is the "log absolute Jacobian", required to account for the stretching of the space.
@@ -74,7 +74,7 @@ In addition to the covariance ``Σ``, it's also common to parameterize a multiva
 This parameterization enables more efficient calculation of the log-density using only multiplication and addition,
 
 ```julia
-logdensity(d::Normal{(:μ,:ω)}, x) = logdensity(d.ω * (x - d.μ)) + logdet(d.ω)
+logdensity_def(d::Normal{(:μ,:ω)}, x) = logdensity_def(d.ω * (x - d.μ)) + logdet(d.ω)
 ```
 
 ## `AffineTransform`
@@ -94,7 +94,7 @@ In the univariate case this is relatively simple to invert. But if `σ` is a mat
 With multiple parameterizations of a given family of measures, we can work around these issues. The inverse transform of a ``(μ,σ)`` transform will be in terms of ``(μ,ω)``, and vice-versa. So
 
 ```julia
-julia> f⁻¹ = inv(f)
+julia> f⁻¹ = inverse(f)
 AffineTransform{(:μ, :ω), Tuple{Float64, Float64}}((μ = -1.5, ω = 2.0))
 
 julia> f(f⁻¹(4))

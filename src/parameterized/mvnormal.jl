@@ -3,23 +3,25 @@
 
 export MvNormal
 
-@parameterized MvNormal(μ,σ)
+@parameterized MvNormal(μ, σ)
 
 # MvNormal(;kwargs...) = MvNormal(kwargs)
 
 @kwstruct MvNormal(μ)
 @kwstruct MvNormal(σ)
 @kwstruct MvNormal(ω)
-@kwstruct MvNormal(μ,σ)
-@kwstruct MvNormal(μ,ω)
+@kwstruct MvNormal(μ, σ)
+@kwstruct MvNormal(μ, ω)
 
 supportdim(d::MvNormal) = supportdim(params(d))
 
-proxy(d::MvNormal) = affine(params(d), Normal() ^ supportdim(d))
-logdensity(d::MvNormal, x) = logdensity(proxy(d), x)
-basemeasure(d::MvNormal) = basemeasure(proxy(d))
+@useproxy MvNormal
+
+proxy(d::MvNormal) = affine(params(d), Normal()^supportdim(d))
 
 rand(rng::AbstractRNG, ::Type{T}, d::MvNormal) where {T} = rand(rng, T, proxy(d))
+
+insupport(::MvNormal, x) = true
 
 # function MvNormal(nt::NamedTuple{(:μ,)})
 #     dim = size(nt.μ)

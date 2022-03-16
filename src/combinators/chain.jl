@@ -1,15 +1,11 @@
-using ConcreteStructs
 using DynamicIterators
 import DynamicIterators: dub, dyniterate, evolve
 using Base.Iterators: SizeUnknown, IsInfinite
 
-import MeasureBase: For
-
-
 
 export Chain
 
-@concrete terse struct Chain{K,M} <: AbstractMeasure
+struct Chain{K,M} <: AbstractMeasure
     κ::K
     μ::M
 end
@@ -18,7 +14,7 @@ Pretty.quoteof(c::Chain) = :(Chain($(Pretty.quoteof(c.κ)), $(Pretty.quoteof(c.�
 
 Base.length(::Chain) = ∞
 
-function basemeasure(mc::Chain)
+@inline function basemeasure(mc::Chain)
     Chain(basemeasure ∘ mc.κ, basemeasure(mc.μ))
 end
 
@@ -26,33 +22,32 @@ Base.IteratorEltype(mc::Chain) = Base.HasEltype()
 
 Base.eltype(::Type{C}) where {K,M,C<:Chain{K,M}} = eltype(M)
 
-function logdensity(mc::Chain, x)
+@inline function logdensity_def(mc::Chain, x)
     μ = mc.μ
     ℓ = 0.0
     for xj in x
-        ℓ += logdensity(μ, xj)
+        ℓ += logdensity_def(μ, xj)
         μ = mc.κ(xj)
     end
     return ℓ
 end
 
-DynamicIterators.evolve(mc::Chain, μ) =  μ ⋅ mc.κ
-DynamicIterators.evolve(mc::Chain) =  mc.μ
+DynamicIterators.evolve(mc::Chain, μ) = μ ⋅ mc.κ
+DynamicIterators.evolve(mc::Chain) = mc.μ
 
 dyniterate(E::Chain, value) = dub(evolve(E, value))
 dyniterate(E::Chain, ::Nothing) = dub(evolve(E))
 Base.iterate(E::Chain) = dyniterate(E, nothing)
 Base.iterate(E::Chain, value) = dyniterate(E, value)
 
-function DynamicIterators.dyniterate(r::Chain, (x,rng)::Sample)
-    μ = r.κ(x) 
+function DynamicIterators.dyniterate(r::Chain, (x, rng)::Sample)
+    μ = r.κ(x)
     y = rand(rng, μ)
     return (μ ↝ y), Sample(y, rng)
 end
 
 Base.IteratorSize(::Chain) = IsInfinite()
 Base.IteratorSize(::Type{Chain}) = IsInfinite()
-
 
 function Base.rand(rng::AbstractRNG, T::Type, chain::Chain)
     r = ResettableRNG(rng)
@@ -64,16 +59,17 @@ end
 
 # A `DynamicFor` is produced when `For` is called on a `DynamicIterator`.
 
-@concrete terse struct DynamicFor{T,K,S} <: AbstractMeasure
-    κ ::K
-    iter :: S        
+struct DynamicFor{T,K,S} <: AbstractMeasure
+    κ::K
+    iter::S
 end
 
-Pretty.quoteof(r::DynamicFor) = :(DynamicFor($(Pretty.quoteof(r.κ)), $(Pretty.quoteof(r.iter))))
+Pretty.quoteof(r::DynamicFor) =
+    :(DynamicFor($(Pretty.quoteof(r.κ)), $(Pretty.quoteof(r.iter))))
 
-function DynamicFor(κ::K,iter::S) where {K,S}
+function DynamicFor(κ::K, iter::S) where {K,S}
     T = typeof(κ(first(iter)))
-    DynamicFor{T,K,S}(κ,iter)
+    DynamicFor{T,K,S}(κ, iter)
 end
 
 function Base.rand(rng::AbstractRNG, T::Type, df::DynamicFor)
@@ -81,10 +77,11 @@ function Base.rand(rng::AbstractRNG, T::Type, df::DynamicFor)
     return RealizedSamples(r, df)
 end
 
-function logdensity(df::DynamicFor, y)
+@inline function logdensity_def(df::DynamicFor{M}, y::T) where {M,T}
+    # ℓ = zero(float(Core.Compiler.return_type(logdensity_def, Tuple{M,T})))
     ℓ = 0.0
     for (xj, yj) in zip(df.iter, y)
-        ℓ += logdensity(df.κ(xj), yj)
+        ℓ += logdensity_def(df.κ(xj), yj)
     end
     return ℓ
 end
@@ -96,17 +93,16 @@ Base.IteratorEltype(d::DynamicFor) = Base.HasEltype()
 Base.IteratorSize(d::DynamicFor) = Base.IteratorSize(d.iter)
 
 function Base.iterate(d::DynamicFor)
-    (x,s) = iterate(d.iter)
+    (x, s) = iterate(d.iter)
     (d.κ(x), s)
 end
 
 function Base.iterate(d::DynamicFor, s)
-    (x,s) = iterate(d.iter, s)
+    (x, s) = iterate(d.iter, s)
     (d.κ(x), s)
 end
 
 Base.length(d::DynamicFor) = length(d.iter)
-
 
 For(f, r::Realized) = DynamicFor(f, copy(r))
 
@@ -125,16 +121,16 @@ For(f, it::DynamicIterator) = DynamicFor(f, it)
 For(f, it::DynamicFor) = DynamicFor(f, it)
 
 function dyniterate(df::DynamicFor, state)
-      ϕ = dyniterate(df.iter, state)
-      ϕ === nothing && return nothing
-      u, state = ϕ
-      df.f(u), state
+    ϕ = dyniterate(df.iter, state)
+    ϕ === nothing && return nothing
+    u, state = ϕ
+    df.κ(u), state
 end
 
 function Base.collect(r::Realized)
     next = iterate(r)
     isnothing(next) && return []
-    (x,s) = next
+    (x, s) = next
     a = similar(r.iter, typeof(x))
 
     i = 1
@@ -146,7 +142,7 @@ function Base.collect(r::Realized)
         next = iterate(r, s)
     end
     return a
-end 
+end
 
 function testvalue(mc::Chain)
     μ = mc.μ

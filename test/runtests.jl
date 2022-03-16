@@ -4,9 +4,11 @@ using Base.Iterators: take
 using Random
 using LinearAlgebra
 using DynamicIterators: trace, TimeLift
-using TransformVariables: transform, as𝕀, inverse
+using TransformVariables: transform, as𝕀
+using FillArrays
 
 using MeasureTheory
+using MeasureBase.Interface
 
 using Aqua
 Aqua.test_all(MeasureTheory; ambiguities=false, unbound_args=false)
@@ -21,7 +23,7 @@ function draw2(μ)
 end
 
 function test_measure(μ)
-    logdensity(μ, testvalue(μ)) isa AbstractFloat
+    logdensity_def(μ, testvalue(μ)) isa AbstractFloat
 end
 
 test_measures = [
@@ -46,7 +48,7 @@ test_measures = [
     Poisson(3.1)
     StudentT(ν=2.1)    
     Uniform()
-    Normal() ⊙ Cauchy()
+    Counting(Float64)
     Dirac(0.0) + Normal()
 ]
 
@@ -54,26 +56,26 @@ testbroken_measures = [
     Pushforward(as𝕀, Normal())
     # InverseGamma(2) # Not defined yet
     # MvNormal(I(3)) # Entirely broken for now
-    CountingMeasure(Float64)
     Likelihood
     TrivialMeasure()
 ]
 
 @testset "testvalue" begin
     for μ in test_measures
-        # @info "testing $μ"
+        @info "testing $μ"
         @test test_measure(μ)
+        test_interface(μ)
     end
 
     for μ in testbroken_measures
-        # @info "testing $μ"
+        @info "testing $μ"
         @test_broken test_measure(μ)
     end
     
     @testset "testvalue(::Chain)" begin
         mc =  Chain(x -> Normal(μ=x), Normal(μ=0.0))
         r = testvalue(mc)
-        @test logdensity(mc, Iterators.take(r, 10)) isa AbstractFloat
+        @test logdensity_def(mc, Iterators.take(r, 10)) isa AbstractFloat
     end
 end
 
@@ -87,11 +89,11 @@ end
         probitp = norminvcdf(p)
         y = rand(d)
 
-        ℓ = logdensity(Binomial(;n, p), y)
-        @test ℓ ≈ logdensity(Binomial(;n, logitp), y)
-        @test ℓ ≈ logdensity(Binomial(;n, probitp), y)
+        ℓ = logdensity_def(Binomial(;n, p), y)
+        @test ℓ ≈ logdensity_def(Binomial(;n, logitp), y)
+        @test ℓ ≈ logdensity_def(Binomial(;n, probitp), y)
 
-        @test_broken logdensity(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
+        @test_broken logdensity_def(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
     end
 
     @testset "Exponential" begin
@@ -101,11 +103,11 @@ end
         @test r ≈ rand(MersenneTwister(123), Exponential(logβ=log(2)))
         @test r ≈ rand(MersenneTwister(123), Exponential(logλ=log(0.5)))
 
-        ℓ = logdensity(Exponential(2), r)
-        @test ℓ ≈ logdensity(Exponential(β=2), r)
-        @test ℓ ≈ logdensity(Exponential(λ=0.5), r)
-        @test ℓ ≈ logdensity(Exponential(logβ=log(2)), r)
-        @test ℓ ≈ logdensity(Exponential(logλ=log(0.5)), r)
+        ℓ = logdensity_def(Exponential(2), r)
+        @test ℓ ≈ logdensity_def(Exponential(β=2), r)
+        @test ℓ ≈ logdensity_def(Exponential(λ=0.5), r)
+        @test ℓ ≈ logdensity_def(Exponential(logβ=log(2)), r)
+        @test ℓ ≈ logdensity_def(Exponential(logλ=log(0.5)), r)
     end
 
     @testset "NegativeBinomial" begin
@@ -118,16 +120,16 @@ end
         logλ = log(λ)
         y = rand(d)
 
-        ℓ = logdensity(NegativeBinomial(;r, p), y)
-        @test ℓ ≈ logdensity(NegativeBinomial(;r, logitp), y)
-        @test ℓ ≈ logdensity(NegativeBinomial(;r, λ), y)
-        @test ℓ ≈ logdensity(NegativeBinomial(;r, logλ), y)
+        ℓ = logdensity_def(NegativeBinomial(;r, p), y)
+        @test ℓ ≈ logdensity_def(NegativeBinomial(;r, logitp), y)
+        @test ℓ ≈ logdensity_def(NegativeBinomial(;r, λ), y)
+        @test ℓ ≈ logdensity_def(NegativeBinomial(;r, logλ), y)
 
         sample1 = rand(MersenneTwister(123), NegativeBinomial(;r, λ))
         sample2 = rand(MersenneTwister(123), NegativeBinomial(;r, logλ))
         @test sample1 == sample2
 
-        @test_broken logdensity(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
+        @test_broken logdensity_def(Binomial(n,p), CountingMeasure(ℤ[0:n]), x) ≈ binomlogpdf(n,p,x)
     end
 
     @testset "Poisson" begin
@@ -150,10 +152,10 @@ end
     #     logσ = log(σ)
     #     y = rand(d)
 
-    #     ℓ = logdensity(Normal(;μ,σ), y)
-    #     @test ℓ ≈ logdensity(Normal(;μ,σ²), y)
-    #     @test ℓ ≈ logdensity(Normal(;μ,τ), y)
-    #     @test ℓ ≈ logdensity(Normal(;μ,logσ), y)
+    #     ℓ = logdensity_def(Normal(;μ,σ), y)
+    #     @test ℓ ≈ logdensity_def(Normal(;μ,σ²), y)
+    #     @test ℓ ≈ logdensity_def(Normal(;μ,τ), y)
+    #     @test ℓ ≈ logdensity_def(Normal(;μ,logσ), y)
     # end
 
     @testset "LKJCholesky" begin
@@ -167,13 +169,13 @@ end
 
         y = rand(d)
         η = par.η
-        ℓ = logdensity(LKJCholesky(4,η), y)
-        @test ℓ ≈ logdensity(LKJCholesky(k=4,logη=logη), y)
+        ℓ = logdensity_def(LKJCholesky(4,η), y)
+        @test ℓ ≈ logdensity_def(LKJCholesky(k=4,logη=logη), y)
     end
 end
 
-@testset "Kernel" begin
-    κ = MeasureTheory.kernel(MeasureTheory.Dirac, identity)
+@testset "Kleisli" begin
+    κ = kleisli(Dirac)
     @test rand(κ(1.1)) == 1.1
 end
 
@@ -187,13 +189,14 @@ end
     ]
 
     for d in FORDISTS
-        @test logdensity(d, rand(d)) isa Float64
+        @info "testing $d"
+        @test logdensity_def(d, rand(d)) isa Float64
     end
 end
 
 import MeasureTheory.:⋅
-function ⋅(μ::Normal, kernel) 
-    m = kernel(μ)
+function ⋅(μ::Normal, kleisli) 
+    m = kleisli(μ)
     Normal(μ = m.μ.μ, σ = sqrt(m.μ.σ^2 + m.σ^2))
 end
 struct AffineMap{S,T}
@@ -208,12 +211,12 @@ end
     r = rand(mc)
    
     # Check that `r` is now deterministic
-    @test logdensity(mc, take(r, 100)) == logdensity(mc, take(r, 100))
+    @test logdensity_def(mc, take(r, 100)) == logdensity_def(mc, take(r, 100))
     
     d2 = For(r) do x Normal(μ=x) end  
 
     @test let r2 = rand(d2)
-        logdensity(d2, take(r2, 100)) == logdensity(d2, take(r2, 100))
+        logdensity_def(d2, take(r2, 100)) == logdensity_def(d2, take(r2, 100))
     end
 end
 
@@ -227,11 +230,11 @@ end
 #     Q = 0.2
 
 #     μ = Normal(μ=ξ0, σ=sqrt(P0))
-#     kernel = MeasureTheory.kernel(Normal; μ=AffineMap(Φ, β), σ=MeasureTheory.AsConst(Q))
+#     kleisli = MeasureTheory.kleisli(Normal; μ=AffineMap(Φ, β), σ=MeasureTheory.AsConst(Q))
     
-#     @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
+#     @test (μ ⋅ kleisli).μ == Normal(μ = 0.9, σ = 0.824621).μ
     
-#     chain = Chain(kernel, μ)
+#     chain = Chain(kleisli, μ)
     
 
 #     dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing) 
@@ -243,7 +246,7 @@ end
 
 @testset "rootmeasure/logpdf" begin
     x = rand(Normal())
-    @test logdensity(Normal(), rootmeasure(Normal()), x) ≈ logpdf(Normal(), x)
+    @test logdensityof(𝒹(Normal(), rootmeasure(Normal())), x) ≈ logdensityof(Normal(), x)
 end
 
 @testset "Transforms" begin
@@ -252,18 +255,16 @@ end
         μ = Normal()
         ν = Pushforward(t, μ)
         x = rand(μ)
-        @test logdensity(μ, x) ≈ logdensity(Pushforward(inverse(t), ν), x)
+        @test logdensity_def(μ, x) ≈ logdensity_def(Pushforward(TV.inverse(t), ν), x)
     end
 
     @testset "Pullback" begin
         ν = Uniform()
         μ = Pullback(t,ν)
         y = rand(ν)
-        @test logdensity(ν, y) ≈ logdensity(Pullback(inverse(t), μ), y)
+        @test logdensity_def(ν, y) ≈ logdensity_def(Pullback(TV.inverse(t), μ), y)
     end
 end
-
-using TransformVariables
 
 @testset "Likelihood" begin
     dps = [
@@ -273,12 +274,12 @@ using TransformVariables
 
     ℓs = [
         Likelihood(Normal{(:μ,)},              3.0)
-        Likelihood(kernel(Normal, x -> (μ=x, σ=2.0)), 3.0)
+        # Likelihood(kleisli(Normal, x -> (μ=x, σ=2.0)), 3.0)
     ]
 
     for (d,p) in dps
         for ℓ in ℓs
-            @test logdensity(d ⊙ ℓ, p) == logdensity(d, p) + logdensity(ℓ, p)
+            @test logdensity_def(d ⊙ ℓ, p) ≈ logdensity_def(d, p) + logdensity_def(ℓ, p)
         end
     end
 end
@@ -297,7 +298,7 @@ end
         t = asparams(D{args}, nt)
         d = D(transform(t, randn(t.dimension)))
         r(d) = rand(Random.MersenneTwister(1), d)
-        logdensity(d, r(d)) == logdensity(d, r(d))
+        logdensity_def(d, r(d)) == logdensity_def(d, r(d))
     end
 
     @testset "Bernoulli" begin
@@ -350,7 +351,7 @@ end
         Σ = σ * σ'
         d = MvNormal(σ=σ)
         x = rand(d)
-        @test logpdf(d, x) ≈ logpdf(Dists.MvNormal(Σ), x)
+        @test logdensityof(d, x) ≈ logdensityof(Dists.MvNormal(Σ), x)
     end
 
     @testset "NegativeBinomial" begin
@@ -385,7 +386,7 @@ end
         d = For((j^2 for j in 1:10)) do i Poisson(i) end
         x = Vector{Int16}(undef, 10)
         @test rand!(d,x) isa Vector
-        @test rand(d) isa Base.Generator
+        @test rand(d) isa MeasureTheory.RealizedSamples
     end
 
     @testset "Indexed by multiple Ints" begin
@@ -406,19 +407,19 @@ end
 @testset "Density measures and Radon-Nikodym" begin
     x = randn()
     let d = ∫(𝒹(Cauchy(), Normal()), Normal())
-        @test logdensity(d, Cauchy(), x) ≈ 0 atol=1e-12
+        @test logdensityof(𝒹(d, Cauchy()), x) ≈ 0 atol=1e-12
     end
 
     let f = 𝒹(∫(x -> x^2, Normal()), Normal())
-        @test f(x) ≈ x^2
+        @test densityof(f, x) ≈ x^2
     end
 
-    let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
-        @test logdensity(d, Cauchy(), x) ≈ 0 atol=1e-12
-    end
+    # let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
+    #     @test logdensity_def(d, Cauchy(), x) ≈ 0 atol=1e-12
+    # end
 
-    let f = log𝒹(∫exp(x -> x^2, Normal()), Normal())
-        @test f(x) ≈ x^2
+    let f = 𝒹(∫exp(x -> x^2, Normal()), Normal())
+        @test logdensityof(f, x) ≈ x^2
     end
 end
 
@@ -427,21 +428,21 @@ end
         d = Normal(σ=3)
         h = HalfNormal(3)
         x = rand(h)
-        @test density(h, Lebesgue(ℝ), x) ≈ 2 * density(d, Lebesgue(ℝ), x)
+        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
     end
 
     @testset "HalfCauchy" begin
         d = Cauchy(σ=3)
         h = HalfCauchy(3)
         x = rand(h)
-        @test density(h, Lebesgue(ℝ), x) ≈ 2 * density(d, Lebesgue(ℝ), x)
+        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
     end
 
     @testset "HalfStudentT" begin
         d = StudentT(ν=2, σ=3)
         h = HalfStudentT(2, 3)
         x = rand(h)
-        @test density(h, Lebesgue(ℝ), x) ≈ 2 * density(d, Lebesgue(ℝ), x)
+        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
     end
 end
 
@@ -453,9 +454,9 @@ end
 
     z = randn(2)
     
-    ℓ = logpdf(MvNormal((σ= R,)),z)
-    @test ℓ ≈ Dists.logpdf(Dists.MvNormal(R*R'),z)
-    @test ℓ ≈ logpdf(MvNormal((σ= Q*R,)),Q*z)
+    ℓ = logdensityof(MvNormal((σ= R,)),z)
+    @test ℓ ≈ logdensityof(Dists.MvNormal(R*R'),z)
+    @test ℓ ≈ logdensityof(MvNormal((σ= Q*R,)),Q*z)
 end
 
 @testset "Affine" begin
@@ -469,8 +470,8 @@ end
     using Test
     function test_noerrors(d)
         x = rand(d)
-        @test logpdf(d, x) isa Real
-        @test logdensity(d, x) isa Real
+        @test logdensityof(d, x) isa Real
+        @test logdensity_def(d, x) isa Real
     end
 
     for (M, nt) in testmeasures
@@ -492,4 +493,68 @@ end
         #     end
         # end
     end
+end
+
+
+@testset "AffineTransform" begin
+    f = AffineTransform((μ = 3, σ = 2))
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
+
+    f = AffineTransform((μ = 3, ω = 2))
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
+
+    f = AffineTransform((σ = 2,))
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
+
+    f = AffineTransform((ω = 2,))
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
+
+    f = AffineTransform((μ = 3,))
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
+end
+
+@testset "Affine" begin
+    unif = ∫(x -> 0 < x < 1, Lebesgue(ℝ))
+    f1 = AffineTransform((μ = 3.0, σ = 2.0))
+    f2 = AffineTransform((μ = 3.0, ω = 2.0))
+    f3 = AffineTransform((μ = 3.0,))
+    f4 = AffineTransform((σ = 2.0,))
+    f5 = AffineTransform((ω = 2.0,))
+
+    for f in [f1, f2, f3, f4, f5]
+        par = getfield(f, :par)
+        @test Affine(par)(unif) == Affine(f, unif)
+        @test densityof(Affine(f, Affine(inverse(f), unif)), 0.5) == 1
+    end
+
+    d = ∫exp(x -> -x^2, Lebesgue(ℝ))
+
+    μ = randn(3)
+    σ = let x = randn(10,3)
+            cholesky(x' * x).L
+    end
+    ω = inv(σ)
+
+    x = randn(3)
+
+    @test logdensity_def(Affine((μ = μ, σ = σ), d^3), x) ≈
+          logdensity_def(Affine((μ = μ, ω = ω), d^3), x)
+    @test logdensity_def(Affine((σ = σ,), d^3), x) ≈ logdensity_def(Affine((ω = ω,), d^3), x)
+    @test logdensity_def(Affine((μ = μ,), d^3), x) ≈ logdensity_def(d^3, x - μ)
+
+    d = ∫exp(x -> -x^2, Lebesgue(ℝ))
+    a = Affine((σ = [1 0]',), d^1)
+    x = randn(2)
+    y = randn(1)
+    @test logdensityof(a, x) ≈ logdensityof(d, inverse(a.f)(x)[1])
+    @test logdensityof(a, a.f(y)) ≈ logdensityof(d^1, y)
+
+    b = Affine((ω = [1 0]'',), d^1)
+    @test logdensityof(b, x) ≈ logdensityof(d, inverse(b.f)(x)[1])
+    @test logdensityof(b, b.f(y)) ≈ logdensityof(d^1, y)
 end

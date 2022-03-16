@@ -8,7 +8,7 @@ struct ResettableRNG{R,S} <: Random.AbstractRNG
 
     function ResettableRNG(rng, seed::S) where {S}
         rng = copy(rng)
-        R2 = typeof(rng) 
+        R2 = typeof(rng)
         new{R2,S}(rng, seed)
     end
 
@@ -16,7 +16,7 @@ struct ResettableRNG{R,S} <: Random.AbstractRNG
         seed = rand(rng, UInt)
         S = typeof(seed)
         rng = copy(rng)
-        R2 = typeof(rng) 
+        R2 = typeof(rng)
         new{R2,UInt}(copy(rng), seed)
     end
 end
@@ -27,14 +27,13 @@ end
 
 function Base.show(io::IO, r::ResettableRNG)
     io = IOContext(io, :compact => true)
-    print(io, "ResettableRNG(::", constructor(r.rng), ", ", r.seed, ")")
+    print(io, "ResettableRNG(::", constructorof(typeof(r.rng)), ", ", r.seed, ")")
 end
 
 function reset!(r::ResettableRNG)
     # @info "Calling reset! on $r"
     Random.seed!(r.rng, r.seed)
 end
-
 
 import Random
 using Random: randexp
@@ -44,12 +43,11 @@ for T in vcat(subtypes(Signed), subtypes(Unsigned), subtypes(AbstractFloat))
     isbitstype(T) || continue
 
     @eval begin
-        
-        function Base.rand(r::ResettableRNG, ::Type{$T}) 
+        function Base.rand(r::ResettableRNG, ::Type{$T})
             rand(r.rng, $T)
         end
 
-        function Base.randn(r::ResettableRNG, ::Type{$T}) 
+        function Base.randn(r::ResettableRNG, ::Type{$T})
             randn(r.rng, $T)
         end
 
@@ -72,7 +70,11 @@ Base.iterate(r::ResettableRNG, _) = (rand(r), nothing)
 
 Base.IteratorSize(r::ResettableRNG) = Base.IsInfinite()
 
-function Random.Sampler(r::Type{R}, s::Random.Sampler, rep::Random.Repetition) where {R<:ResettableRNG}
+function Random.Sampler(
+    r::Type{R},
+    s::Random.Sampler,
+    rep::Random.Repetition,
+) where {R<:ResettableRNG}
     return Random.Sampler(r.rng, s, r)
 end
 

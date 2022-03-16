@@ -1,13 +1,15 @@
 module MeasureTheory
 
 using Random
+using FLoops
 
 using MeasureBase
-using ConcreteStructs
 using MLStyle
 using NestedTuples
-using TransformVariables
+import TransformVariables
 const TV = TransformVariables
+
+using TransformVariables: as, asℝ₊, as𝕀, asℝ
 
 import Base
 import Distributions
@@ -15,7 +17,7 @@ const Dists = Distributions
 
 export TV
 export ≪
-export sampletype
+export gentype
 export For
 
 export AbstractMeasure
@@ -28,23 +30,31 @@ export CountingMeasure
 export TrivialMeasure
 export Likelihood
 export testvalue
-export basekernel
+export basekleisli
 
-using InfiniteArrays
-using ConcreteStructs
+using Infinities
 using DynamicIterators
 using KeywordCalls
 using ConstructionBase
 using Accessors
 using StatsFuns
 using SpecialFunctions
+using ConcreteStructs
 
-import LogExpFunctions 
+import LogExpFunctions
 import NamedTupleTools
+import InverseFunctions: inverse
+export inverse
 
-import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
-import MeasureBase: affine, supportdim, ≪
-using MeasureBase: constructor
+import MeasureBase: insupport, instance_type, instance, marginals
+import MeasureBase:
+    testvalue, logdensity_def, density_def, basemeasure, kleisli, params, paramnames, ∫, 𝒹, ∫exp
+import MeasureBase: ≪
+using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
+using MeasureBase: weightedmeasure, restrict
+using MeasureBase: AbstractKleisli
+
+using StaticArrays
 
 import PrettyPrinting
 
@@ -56,68 +66,63 @@ using Reexport
 @reexport using MeasureBase
 
 using Tricks: static_hasmethod
-const ∞ = InfiniteArrays.∞
 
-export ∞
+using Static
 
 export as
 export Affine
 export AffineTransform
+export insupport
+export For
 
 using MeasureBase: Returns
+import MeasureBase: proxy, @useproxy
+import MeasureBase: basemeasure_depth
+using MeasureBase: LebesgueMeasure
 
-sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
+import DensityInterface: logdensityof
+import DensityInterface: densityof
+import DensityInterface: DensityKind
+using DensityInterface
 
-# sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
+gentype(μ::AbstractMeasure) = typeof(testvalue(μ))
+
+# gentype(μ::AbstractMeasure) = gentype(basemeasure(μ))
 
 import Distributions: logpdf, pdf
 
 export pdf, logpdf
 
-Distributions.logpdf(d::AbstractMeasure, x) = MeasureBase.logpdf(d, x)
-
-Distributions.pdf(d::AbstractMeasure, x) = exp(Dists.logpdf(d, x))
-
-"""
-    logdensity(μ::AbstractMeasure [, ν::AbstractMeasure], x::X)
-
-Compute the logdensity of the measure μ at the point x. This is the standard way
-to define `logdensity` for a new measure. the base measure is implicit here, and
-is understood to be `basemeasure(μ)`.
-"""
-function logdensity end
-
-
-const AFFINEPARS = [
-    (:μ,:σ)
-    (:μ,:ω)
-    (:σ,)
-    (:ω,)
-    (:μ,)
-]
+xlogx(x::Number) = LogExpFunctions.xlogx(x)
+xlogx(x, y) = x * log(x)
 
 xlogy(x::Number, y::Number) = LogExpFunctions.xlogy(x, y)
 xlogy(x, y) = x * log(y)
 
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
-xlog1py(x, y) = x * log1p(y)
+xlog1py(x, y) = x * log(1 + y)
 
-
+include("utils.jl")
 include("const.jl")
+include("combinators/for.jl")
 # include("traits.jl")
 include("parameterized.jl")
-# include("resettablerng.jl")
 
+include("macros.jl")
 include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
+include("combinators/exponential-families.jl")
+include("combinators/conditional.jl")
 
 include("resettable-rng.jl")
 include("realized.jl")
 include("combinators/chain.jl")
 
 include("distributions.jl")
+include("smart-constructors.jl")
+
 
 include("parameterized/normal.jl")
 include("parameterized/studentt.jl")

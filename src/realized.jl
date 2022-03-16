@@ -8,8 +8,11 @@ end
 
 export ↝
 
-↝(m,x) = SamplesTo(m,x)
-Pretty.tile(s::SamplesTo) = Pretty.pair_layout(Pretty.tile(s.measure), Pretty.tile(s.element), sep=" ↝ ")
+↝(m, x) = SamplesTo(m, x)
+
+function Pretty.tile(s::SamplesTo)
+    Pretty.pair_layout(Pretty.tile(s.measure), Pretty.tile(s.element); sep = " ↝ ")
+end
 
 function Base.show(io::IO, s::SamplesTo)
     io = IOContext(io, :compact => true)
@@ -18,7 +21,7 @@ end
 
 ###############################################################################
 
-@concrete struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
+struct Realized{R,S,T} <: DynamicIterators.DynamicIterator
     rng::ResettableRNG{R,S}
     iter::T
 end
@@ -29,7 +32,8 @@ reset!(rv::Realized) = reset!(rv.rng)
 
 Base.show(io::IO, r::Realized) = Pretty.pprint(io, r)
 
-Pretty.quoteof(r::Realized) = :(Realized($(Pretty.quoteof(r.rng)), $(Pretty.quoteof(r.iter))))
+Pretty.quoteof(r::Realized) =
+    :(Realized($(Pretty.quoteof(r.rng)), $(Pretty.quoteof(r.iter))))
 
 Base.IteratorEltype(mc::Realized) = Base.HasEltype()
 
@@ -41,11 +45,10 @@ Base.length(r::Realized) = length(r.iter)
 
 Base.size(r::Realized) = size(r.iter)
 
-Base.IteratorSize(::Type{Rz}) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSize(T)
-Base.IteratorSize(r::Rz) where {R,S,T, Rz <: Realized{R,S,T}} = Base.IteratorSize(r.iter)
+Base.IteratorSize(::Type{Rz}) where {R,S,T,Rz<:Realized{R,S,T}} = Base.IteratorSize(T)
+Base.IteratorSize(r::Rz) where {R,S,T,Rz<:Realized{R,S,T}} = Base.IteratorSize(r.iter)
 
 Base.iterate(rv::Realized) = iterate(rv, nothing)
-
 
 function Base.iterate(rv::Realized{R,S,T}, ::Nothing) where {R,S,T}
     reset!(rv.rng)
@@ -54,7 +57,7 @@ function Base.iterate(rv::Realized{R,S,T}, ::Nothing) where {R,S,T}
     else
         μs = iterate(rv.iter)
         isnothing(μs) && return nothing
-        (μ,s) = μs
+        (μ, s) = μs
         x = rand(rv.rng, μ)
         return (μ ↝ x), s
     end
@@ -66,7 +69,7 @@ function Base.iterate(rv::Realized{R,S,T}, s) where {R,S,T}
     else
         μs = iterate(rv.iter, s)
         isnothing(μs) && return nothing
-        (μ,s) = μs
+        (μ, s) = μs
         x = rand(rv.rng, μ)
         return (μ ↝ x), s
     end
@@ -93,9 +96,10 @@ end
 
 Base.show(io::IO, r::RealizedMeasures) = Pretty.pprint(io, r)
 
-Pretty.quoteof(r::RealizedMeasures) = :(RealizedMeasures($(Pretty.quoteof(r.rng)), $(Pretty.quoteof(r.iter))))
+Pretty.quoteof(r::RealizedMeasures) =
+    :(RealizedMeasures($(Pretty.quoteof(r.rng)), $(Pretty.quoteof(r.iter))))
 
-function Base.iterate(rm::RealizedMeasures, s=nothing)
+function Base.iterate(rm::RealizedMeasures, s = nothing)
     val, s = iterate(rm, s)
     (val.measure, s)
 end
@@ -115,11 +119,25 @@ RealizedSamples(rng::AbstractRNG, iter) = RealizedSamples(Realized(rng, iter))
 
 Base.show(io::IO, r::RealizedSamples) = Pretty.pprint(io, r)
 
-Pretty.quoteof(r::RealizedSamples) = :(RealizedSamples($(Pretty.quoteof(r.parent.rng)), $(Pretty.quoteof(r.parent.iter))))
+Pretty.quoteof(r::RealizedSamples) =
+    :(RealizedSamples($(Pretty.quoteof(r.parent.rng)), $(Pretty.quoteof(r.parent.iter))))
 
-function Base.iterate(rm::RealizedSamples, s=nothing)
-    val, s = iterate(rm.parent, s)
+function iter_helper(x)
+    isnothing(x) && return x
+    val, s = x
     (val.element, s)
+end
+
+function Base.iterate(rm::RealizedSamples)
+    iter_helper(iterate(rm.parent))
+end
+
+function Base.iterate(rm::RealizedSamples, ::Nothing)
+    iter_helper(iterate(rm.parent))
+end
+
+function Base.iterate(rm::RealizedSamples, s)
+    iter_helper(iterate(rm.parent, s))
 end
 
 function dyniterate(rm::RealizedSamples, s)
@@ -143,3 +161,10 @@ Base.length(r::RealizedSamples) = length(r.parent)
 
 Base.IteratorSize(r::RealizedSamples) = Base.IteratorSize(r.parent)
 
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::ProductMeasure{G}) where {T, G<:Base.Generator}
+    RealizedSamples(ResettableRNG(rng), marginals(d))
+end
+
+function Base.rand(rng::AbstractRNG, ::Type, d::For{T,F,I}) where {N,T,F,I<:NTuple{N,<:Base.Generator}}
+    RealizedSamples(ResettableRNG(rng), marginals(d))
+end

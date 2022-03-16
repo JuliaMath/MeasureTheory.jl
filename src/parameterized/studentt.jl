@@ -6,23 +6,27 @@ export StudentT, HalfStudentT
 @parameterized StudentT(ν)
 
 @kwstruct StudentT(ν)
-@kwstruct StudentT(ν,μ)
-@kwstruct StudentT(ν,σ)
-@kwstruct StudentT(ν,ω)
-@kwstruct StudentT(ν,μ,σ)
-@kwstruct StudentT(ν,μ,ω)
+@kwstruct StudentT(ν, μ)
+@kwstruct StudentT(ν, σ)
+@kwstruct StudentT(ν, ω)
+@kwstruct StudentT(ν, μ, σ)
+@kwstruct StudentT(ν, μ, ω)
+
 
 for N in AFFINEPARS
     @eval begin
-        proxy(d::StudentT{(:ν,$N...)}) = affine(NamedTupleTools.select(params(d), $N), StudentT((ν=d.ν,)))
-        logdensity(d::StudentT{(:ν, $N...)}, x) = logdensity(proxy(d), x)
-        basemeasure(d::StudentT{(:ν, $N...)}) = basemeasure(proxy(d))
+        proxy(d::StudentT{(:ν, $N...)}) =
+            affine(NamedTuple{$N}(params(d)), StudentT((ν = d.ν,)))
     end
 end
 
+logdensity_def(d::StudentT, x) = logdensity_def(proxy(d), x)
+basemeasure(d::StudentT) = basemeasure(proxy(d))
+Base.rand(rng::AbstractRNG, ::Type{T}, μ::StudentT) where {T} = rand(rng, T, proxy(μ))
+
 # @affinepars StudentT
 
-StudentT(ν, μ, σ) = StudentT((ν=ν, μ=μ, σ=σ))
+StudentT(ν, μ, σ) = StudentT((ν = ν, μ = μ, σ = σ))
 
 @kwalias StudentT [
     df       => ν
@@ -34,38 +38,38 @@ StudentT(ν, μ, σ) = StudentT((ν=ν, μ=μ, σ=σ))
     sigma    => σ
 ]
 
-function logdensity(d::StudentT{(:ν,), Tuple{T}}, x::Number) where {T<:Number}
+@inline function logdensity_def(d::StudentT{(:ν,),Tuple{T}}, x::Number) where {T<:Number}
     ν = d.ν
-    return  xlog1py((ν + 1) / (-2), x^2 / ν)
+    return xlog1py((ν + 1) / (-2), x^2 / ν)
 end
 
-function logdensity(d::StudentT{(:ν,)}, x) 
+@inline function logdensity_def(d::StudentT{(:ν,)}, x)
     ν = d.ν
-    return  (ν + 1) / (-2) * log1p(x^2 / ν)
+    return (ν + 1) / (-2) * log1p(x^2 / ν)
 end
 
 @inline function basemeasure(d::StudentT{(:ν,)})
-    inbounds = Returns(true)
     constℓ = 0.0
-    varℓ() = loggamma((d.ν+1)/2) - loggamma(d.ν/2) - log(π * d.ν) / 2
+    varℓ() = loggamma((d.ν + 1) / 2) - loggamma(d.ν / 2) - log(π * d.ν) / 2
     base = Lebesgue(ℝ)
-    FactoredBase(inbounds, constℓ, varℓ, base)
+    FactoredBase(constℓ, varℓ, base)
 end
 
-TV.as(::StudentT) = asℝ
+xform(::StudentT) = asℝ
 
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 
 distproxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
-distproxy(d::StudentT{(:ν,:μ)}) = Dists.LocationScale(d.μ, 1.0, Dists.TDist(d.ν))
-distproxy(d::StudentT{(:ν,:σ)}) = Dists.LocationScale(0.0, d.σ, Dists.TDist(d.ν))
-distproxy(d::StudentT{(:ν,:ω)}) = Dists.LocationScale(0.0, inv(d.ω), Dists.TDist(d.ν))
-distproxy(d::StudentT{(:ν,:μ,:σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.TDist(d.ν))
-distproxy(d::StudentT{(:ν,:μ,:ω)}) = Dists.LocationScale(d.μ, inv(d.ω), Dists.TDist(d.ν))
-
+distproxy(d::StudentT{(:ν, :μ)}) = Dists.LocationScale(d.μ, 1.0, Dists.TDist(d.ν))
+distproxy(d::StudentT{(:ν, :σ)}) = Dists.LocationScale(0.0, d.σ, Dists.TDist(d.ν))
+distproxy(d::StudentT{(:ν, :ω)}) = Dists.LocationScale(0.0, inv(d.ω), Dists.TDist(d.ν))
+distproxy(d::StudentT{(:ν, :μ, :σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.TDist(d.ν))
+distproxy(d::StudentT{(:ν, :μ, :ω)}) = Dists.LocationScale(d.μ, inv(d.ω), Dists.TDist(d.ν))
 
 @half StudentT
 
-HalfStudentT(ν, σ) = HalfStudentT((ν=ν, σ=σ))
+HalfStudentT(ν, σ) = HalfStudentT((ν = ν, σ = σ))
 
-asparams(::Type{<:StudentT}, ::Val{:ν}) = asℝ₊
+asparams(::Type{<:StudentT}, ::StaticSymbol{:ν}) = asℝ₊
+
+insupport(::StudentT, x) = static(true)

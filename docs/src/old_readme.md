@@ -153,21 +153,21 @@ A density doesn't exist by itself, but is defined relative to some _base measure
 ```julia
 @implement Density{Normal{X,P},X} where {X, P <: NamedTuple{(:μ, :σ)}} begin
     basemeasure(d) = Lebesgue(X)
-    logdensity(d, x) = - (log(2) + log(π)) / 2 - log(d.par.σ)  - (x - d.par.μ)^2 / (2 * d.par.σ^2)
+    logdensity_def(d, x) = - (log(2) + log(π)) / 2 - log(d.par.σ)  - (x - d.par.μ)^2 / (2 * d.par.σ^2)
 end
 ```
 
 Now we can compute the log-density:
 
 ```julia
-julia> logdensity(Normal(0.0, 0.5), 1.0)
+julia> logdensity_def(Normal(0.0, 0.5), 1.0)
 -2.2257913526447273
 ```
 
 And just to check that our default is working,
 
 ```julia
-julia> logdensity(Normal(μ=0.0, σ=0.5), 1.0)
+julia> logdensity_def(Normal(μ=0.0, σ=0.5), 1.0)
 -2.2257913526447273
 ```
 
@@ -178,14 +178,14 @@ eltype(::Type{Normal}, ::Type{NamedTuple{(:μ, :τ), Tuple{A, B}}}) where {A,B} 
 
 @implement Density{Normal{X,P},X} where {X, P <: NamedTuple{(:μ, :τ)}} begin
     basemeasure(d) = Lebesgue(X)
-    logdensity(d, x) = - (log(2) + log(π) - log(d.par.τ)  + d.par.τ * (x - d.par.μ)^2) / 2
+    logdensity_def(d, x) = - (log(2) + log(π) - log(d.par.τ)  + d.par.τ * (x - d.par.μ)^2) / 2
 end
 ```
 
 And another check:
 
 ```julia
-julia> logdensity(Normal(μ=0.0, τ=4.0), 1.0)
+julia> logdensity_def(Normal(μ=0.0, τ=4.0), 1.0)
 -2.2257913526447273
 ```
 
