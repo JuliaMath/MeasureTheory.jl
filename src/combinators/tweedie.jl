@@ -97,7 +97,7 @@ end
 
 @inline function logdensity_def(ℓ::TweedieLikelihood, par)
     θ = ℓ.θ(par)
-    mydot(θ, ℓ.) - ℓ.a(θ) + ℓ.c 
+    mydot(θ, ℓ.t) - ℓ.a(θ) + ℓ.c 
 end
 
 basemeasure(fam::Tweedie) = fam.base
