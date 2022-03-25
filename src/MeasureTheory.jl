@@ -122,10 +122,6 @@ include("combinators/chain.jl")
 
 include("distributions.jl")
 include("smart-constructors.jl")
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
 
 include("parameterized/normal.jl")
 include("parameterized/studentt.jl")
