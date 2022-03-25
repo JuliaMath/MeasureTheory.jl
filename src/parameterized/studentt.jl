@@ -51,7 +51,7 @@ end
 @inline function basemeasure(d::StudentT{(:ν,)})
     constℓ = 0.0
     varℓ() = loggamma((d.ν + 1) / 2) - loggamma(d.ν / 2) - log(π * d.ν) / 2
-TV.asase = Lebesgue(ℝ)
+    base = Lebesgue(ℝ)
     FactoredBase(constℓ, varℓ, base)
 end
 
