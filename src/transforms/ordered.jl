@@ -70,7 +70,7 @@ export Sorted
 struct Sorted{M} <: AbstractMeasure
     μ::M
     n::Int
-TV.asTV.as
+end
 
 logdensity_def(s::Sorted, x) = logdensity_def(s.μ^s.n, x)
 
