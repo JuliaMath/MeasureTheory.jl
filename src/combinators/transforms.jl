@@ -87,14 +87,14 @@ basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν), False())
 
 basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ), False())
 
-xform(ν::Pushforward) = ν.f ∘ as(ν.μ)
+TV.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
 
 TV.as(μ::Pullback) = TV.inverse(μ.f) ∘ μ.ν
 
-xform(::Lebesgue) = asℝ
+TV.as(::Lebesgue) = asℝ
 
 # TODO: Make this work for affine embeddings
-xform(d::Affine) = _as_affine(_firstval(d))
+TV.as(d::Affine) = _as_affine(_firstval(d))
 
 _firstval(d::Affine) = first(values(getfield(getfield(d, :f), :par)))
 _as_affine(x::Real) = asℝ

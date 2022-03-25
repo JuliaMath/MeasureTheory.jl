@@ -4,7 +4,7 @@ end
 
 function TV.as(d::ProductMeasure{A}) where {A<:AbstractArray}
     d1 = marginals(d).f(first(marginals(d).data))
-    as(Array, xform(d1), size(marginals(d))...)
+    as(Array, TV.as(d1), size(marginals(d))...)
 end
 
 ###############################################################################
