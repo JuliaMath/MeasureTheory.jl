@@ -5,11 +5,21 @@ export Laplace
 
 @parameterized Laplace() 
 
+@kwstruct Laplace()
+@kwstruct Laplace(μ)
+@kwstruct Laplace(σ)
+@kwstruct Laplace(μ, σ)
+@kwstruct Laplace(ω)
+@kwstruct Laplace(μ, ω)
+
 for N in AFFINEPARS
     @eval begin
         proxy(d::Laplace{$N}) = affine(params(d), Laplace())
+        @useproxy Laplace{$N}
     end
 end
+
+insupport(::Laplace, x) = true
 
 @inline function logdensity_def(d::Laplace{()}, x)
     return -abs(x)
@@ -19,7 +29,6 @@ logdensity_def(d::Laplace, x) = logdensity_def(proxy(d), x)
 
 
 basemeasure(::Laplace{()}) = WeightedMeasure(static(-logtwo), Lebesgue(ℝ))
-basemeasure(d::Laplace) = basemeasure(proxy(d))
 
 # @affinepars Laplace
 

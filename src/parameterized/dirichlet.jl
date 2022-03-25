@@ -7,7 +7,7 @@ using FillArrays
 
 @parameterized Dirichlet(α)
 
-TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
+xform(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
 
 @inline function basemeasure(μ::Dirichlet{(:α,)})
     α = μ.α
@@ -37,4 +37,8 @@ distproxy(d::Dirichlet{(:α,)}) = Dists.Dirichlet(d.α)
 function testvalue(d::Dirichlet{(:α,)})
     n = length(d.α)
     Fill(1 / n, n)
+end
+
+@inline function insupport(d::Dirichlet{(:α,)}, x) 
+    length(x) == length(d.α) && sum(x) ≈ 1.0 
 end

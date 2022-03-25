@@ -40,10 +40,12 @@ end
 
 ≪(::Cauchy, ::Lebesgue{X}) where {X<:Real} = true
 
-TV.as(::Cauchy) = asℝ
+xform(::Cauchy) = asℝ
 
 @half Cauchy
 
 HalfCauchy(σ) = HalfCauchy(σ = σ)
 
 distproxy(d::Cauchy{()}) = Dists.Cauchy()
+
+insupport(::Cauchy, x) = true

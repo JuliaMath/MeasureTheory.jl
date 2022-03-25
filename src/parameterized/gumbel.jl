@@ -33,8 +33,10 @@ function Base.rand(rng::AbstractRNG, d::Gumbel{()})
     -log(-log(u))
 end
 
-TV.as(::Gumbel) = asℝ
+xform(::Gumbel) = asℝ
 
 ≪(::Gumbel, ::Lebesgue{X}) where {X<:Real} = true
 
 distproxy(::Gumbel{()}) = Dists.Gumbel()
+
+insupport(::Gumbel, x) = true

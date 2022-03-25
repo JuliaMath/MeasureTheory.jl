@@ -62,7 +62,7 @@ function asparams(::Type{M}, constraints::NamedTuple{N}) where {N,M<:Parameteriz
     # @show transforms
     # Make sure we end up with a consistent ordering
     ordered_transforms = params(C(merge(t1, t2)))
-    return TV.as(ordered_transforms)
+    return as(ordered_transforms)
 end
 
 # TODO: Make this work for Affine measures

@@ -101,7 +101,7 @@ end
     return x
 end
 
-function logjac(x::AbstractMatrix)
+@inline function logjac(x::AbstractMatrix)
     (m, n) = size(x)
     m == n && return first(logabsdet(x))
 
@@ -181,28 +181,28 @@ Base.size(d::Affine{(:σ,)}) = (size(d.σ, 1),)
 Base.size(d::Affine{(:ω,)}) = (size(d.ω, 2),)
 
 @inline function logdensity_def(d::Affine{(:σ,)}, x::AbstractArray)
-    z = d.σ \ x
-    logdensityof(d.parent, z)
+    z = solve(d.σ, x)
+    MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:ω,)}, x::AbstractArray)
     z = d.ω * x
-    logdensityof(d.parent, z)
+    MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:μ,)}, x::AbstractArray)
-    z = x - d.μ
-    logdensityof(d.parent, z)
+    z = mappedarray(-, x, d.μ)
+    MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:μ, :σ)}, x::AbstractArray)
-    z = d.σ \ (x - d.μ)
-    logdensityof(d.parent, z)
+    z = d.σ \ mappedarray(-, x, d.μ)
+    MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine{(:μ, :ω)}, x::AbstractArray)
-    z = d.ω * (x - d.μ)
-    logdensityof(d.parent, z)
+    z = d.ω * mappedarray(-, x, d.μ)
+    MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
 @inline function logdensity_def(d::Affine, x)
@@ -229,7 +229,7 @@ end
 # #     logdensity_def(d.parent, z)
 # # end
  
-@inline basemeasure(d::Affine{N,M,Tuple{Vararg{T}}}) where {N,M,T<:AbstractArray} = affine(getfield(d, :f), rootmeasure(d.parent))
+@inline basemeasure(d::Affine{N,M,Tuple{Vararg{T,K}}}) where {K,N,M,T<:AbstractArray} = affine(getfield(d, :f), rootmeasure(d.parent))
 
 @inline basemeasure(d::Affine) = affine(getfield(d, :f), basemeasure(d.parent))
 
@@ -239,10 +239,9 @@ end
 @inline basemeasure(d::Affine{N,L}) where {N,L<:LebesgueMeasure} = weightedmeasure(-logjac(d), d.parent)
 
 
-@inline function basemeasure(d::Affine{N,P}) where {N,L<:Union{Lebesgue, <:LebesgueMeasure},P<:PowerMeasure{L}} 
+@inline function basemeasure(d::Affine{N,P, Tuple{Vararg{T, K}}}) where {K,N,L<:Union{<:Lebesgue, <:LebesgueMeasure},P<:PowerMeasure{L}, T<:AbstractArray} 
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
 end
-
 
 logjac(d::Affine) = logjac(getfield(d, :f))
 
@@ -288,4 +287,8 @@ function Base.rand(rng::Random.AbstractRNG, ::Type{T}, d::Affine) where {T}
     z = rand(rng, T, parent(d))
     f = getfield(d, :f)
     return f(z)
+end
+
+@inline function insupport(d::Affine, x)
+    insupport(d.parent, inverse(d.f)(x))
 end

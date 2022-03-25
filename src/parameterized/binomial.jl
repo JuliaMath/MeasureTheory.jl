@@ -14,6 +14,10 @@ basemeasure(d::Binomial) = Counting(BoundedInts(static(0), d.n))
 ###############################################################################
 @kwstruct Binomial(n, p)
 
+@inline function insupport(d::Binomial, x)
+    isinteger(x) && 0 ≤ x ≤ d.n
+end
+
 @inline function logdensity_def(d::Binomial{(:n, :p)}, y)
     (n, p) = (d.n, d.p)
     return -log1p(n) - logbeta(n - y + 1, y + 1) + xlogy(y, p) + xlog1py(n - y, -p)

@@ -86,3 +86,5 @@ end
 distproxy(d::Exponential{(:logλ,)}) = Dists.Exponential(exp(-d.logλ))
 
 asparams(::Type{<:Exponential}, ::StaticSymbol{:logλ}) = asℝ
+
+insupport(::Exponential, x) = x ≥ 0

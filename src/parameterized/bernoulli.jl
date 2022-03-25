@@ -5,11 +5,14 @@ import Base
 
 @parameterized Bernoulli(p)
 
+@kwstruct Bernoulli(p)
+
 basemeasure(::Bernoulli) = Counting(Bool)
 
 @inline function logdensity_def(d::Bernoulli{(:p,)}, y)
     p = d.p
-    return y * log(p) + (1 - y) * log(1 - p)
+    f = ifelse(y, () -> log(p), () -> log(1 - p))
+    return f()
 end
 
 function density(d::Bernoulli{(:p,)}, y)
@@ -39,3 +42,5 @@ asparams(::Type{<:Bernoulli}, ::StaticSymbol{:logitp}) = asℝ
 
 distproxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
 distproxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))
+
+insupport(::Bernoulli, x) = x ∈ (true, false)

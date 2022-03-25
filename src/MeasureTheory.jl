@@ -1,6 +1,7 @@
 module MeasureTheory
 
 using Random
+using FLoops
 
 using MeasureBase
 using MLStyle
@@ -38,18 +39,22 @@ using ConstructionBase
 using Accessors
 using StatsFuns
 using SpecialFunctions
+using ConcreteStructs
 
 import LogExpFunctions
 import NamedTupleTools
 import InverseFunctions: inverse
 export inverse
 
+import MeasureBase: insupport, instance_type, instance, marginals
 import MeasureBase:
     testvalue, logdensity_def, density_def, basemeasure, kleisli, params, paramnames, ∫, 𝒹, ∫exp
 import MeasureBase: ≪
 using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractKleisli
+
+using StaticArrays
 
 import PrettyPrinting
 
@@ -67,6 +72,8 @@ using Static
 export as
 export Affine
 export AffineTransform
+export insupport
+export For
 
 using MeasureBase: Returns
 import MeasureBase: proxy, @useproxy
@@ -95,7 +102,9 @@ xlogy(x, y) = x * log(y)
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
 
+include("utils.jl")
 include("const.jl")
+include("combinators/for.jl")
 # include("traits.jl")
 include("parameterized.jl")
 
@@ -104,6 +113,8 @@ include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
+include("combinators/exponential-families.jl")
+include("combinators/conditional.jl")
 
 include("resettable-rng.jl")
 include("realized.jl")
@@ -111,6 +122,10 @@ include("combinators/chain.jl")
 
 include("distributions.jl")
 include("smart-constructors.jl")
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 
 include("parameterized/normal.jl")
 include("parameterized/studentt.jl")

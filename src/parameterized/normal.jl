@@ -32,6 +32,9 @@ for N in AFFINEPARS
     end
 end
 
+insupport(d::Normal, x) = static(true)
+
+insupport(d::Normal) = Returns(static(true))
 
 @inline logdensity_def(d::Normal{()}, x) = -x^2 / 2
 @inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), Lebesgue(ℝ))
@@ -45,7 +48,7 @@ end
 params(::Type{N}) where {N<:Normal} = ()
 
 Normal(μ, σ) = Normal((μ = μ, σ = σ))
-
+TV.as
 Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
 TV.as(::Normal) = asℝ

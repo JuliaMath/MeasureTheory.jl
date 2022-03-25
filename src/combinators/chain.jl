@@ -2,7 +2,6 @@ using DynamicIterators
 import DynamicIterators: dub, dyniterate, evolve
 using Base.Iterators: SizeUnknown, IsInfinite
 
-import MeasureBase: For
 
 export Chain
 
@@ -78,7 +77,8 @@ function Base.rand(rng::AbstractRNG, T::Type, df::DynamicFor)
     return RealizedSamples(r, df)
 end
 
-@inline function logdensity_def(df::DynamicFor, y)
+@inline function logdensity_def(df::DynamicFor{M}, y::T) where {M,T}
+    # ℓ = zero(float(Core.Compiler.return_type(logdensity_def, Tuple{M,T})))
     ℓ = 0.0
     for (xj, yj) in zip(df.iter, y)
         ℓ += logdensity_def(df.κ(xj), yj)

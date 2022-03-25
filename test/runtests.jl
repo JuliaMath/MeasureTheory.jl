@@ -535,7 +535,10 @@ end
     d = ∫exp(x -> -x^2, Lebesgue(ℝ))
 
     μ = randn(3)
-    σ = LowerTriangular(randn(3, 3))
+    # σ = LowerTriangular(randn(3, 3))
+    σ = let x = randn(10,3)
+            cholesky(x' * x).L
+    end
     ω = inv(σ)
 
     x = randn(3)

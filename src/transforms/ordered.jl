@@ -37,7 +37,7 @@ function TV.transform_with(flag::TV.LogJacFlag, t::Ordered, x, index::T) where {
 
     x = mappedarray(xj -> xj + OrderedΔx, x)
 
-    @inbounds (y[1], ℓ, _) = TV.transform_with(flag, as(Real, lo, hi), x, index)
+    @inbounds (y[1], ℓ, _) = TV.transform_with(flag, TV.as(Real, lo, hi), x, index)
     index += 1
 
     @inbounds for i in 2:len
@@ -70,11 +70,11 @@ export Sorted
 struct Sorted{M} <: AbstractMeasure
     μ::M
     n::Int
-end
+TV.asTV.as
 
 logdensity_def(s::Sorted, x) = logdensity_def(s.μ^s.n, x)
 
-TV.as(s::Sorted) = Ordered(as(s.μ), s.n)
+xform(s::Sorted) = Ordered(xform(s.μ), s.n)
 
 function Random.rand!(rng::AbstractRNG, d::Sorted, x::AbstractArray)
     rand!(rng, d.μ^d.n, x)

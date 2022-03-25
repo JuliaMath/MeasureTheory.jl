@@ -10,19 +10,21 @@ export Uniform
 # Standard Uniform
 
 
+insupport(::Uniform{()}) = in𝕀
+insupport(::Uniform{()}, x) = in𝕀(x)
+
 @inline function basemeasure(::Uniform{()})
-    inbounds = in(𝕀)
     constℓ = static(0.0)
     varℓ = Returns(static(0.0))
     base = Lebesgue(ℝ)
-    FactoredBase(inbounds, constℓ, varℓ, base)
+    FactoredBase(constℓ, varℓ, base)
 end
-
+TV.as
 distproxy(::Uniform{()}) = Dists.Uniform()
 
 logdensity_def(d::Uniform{()}, x) = 0.0
 
-TV.as(::Uniform{()}) = as𝕀
+xform(::Uniform{()}) = as𝕀
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Uniform{()}) = rand(rng, T)
 

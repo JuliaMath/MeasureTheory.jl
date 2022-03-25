@@ -16,7 +16,7 @@ export StudentT, HalfStudentT
 for N in AFFINEPARS
     @eval begin
         proxy(d::StudentT{(:ν, $N...)}) =
-            affine(NamedTupleTools.select(params(d), $N), StudentT((ν = d.ν,)))
+            affine(NamedTuple{$N}(params(d)), StudentT((ν = d.ν,)))
     end
 end
 
@@ -49,14 +49,13 @@ end
 end
 
 @inline function basemeasure(d::StudentT{(:ν,)})
-    inbounds = Returns(true)
     constℓ = 0.0
     varℓ() = loggamma((d.ν + 1) / 2) - loggamma(d.ν / 2) - log(π * d.ν) / 2
-    base = Lebesgue(ℝ)
-    FactoredBase(inbounds, constℓ, varℓ, base)
+TV.asase = Lebesgue(ℝ)
+    FactoredBase(constℓ, varℓ, base)
 end
 
-TV.as(::StudentT) = asℝ
+xform(::StudentT) = asℝ
 
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 
@@ -72,3 +71,5 @@ distproxy(d::StudentT{(:ν, :μ, :ω)}) = Dists.LocationScale(d.μ, inv(d.ω), D
 HalfStudentT(ν, σ) = HalfStudentT((ν = ν, σ = σ))
 
 asparams(::Type{<:StudentT}, ::StaticSymbol{:ν}) = asℝ₊
+
+insupport(::StudentT, x) = static(true)
