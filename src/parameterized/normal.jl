@@ -32,9 +32,9 @@ for N in AFFINEPARS
     end
 end
 
-insupport(d::Normal, x) = static(true)
+insupport(d::Normal, x) = true
 
-insupport(d::Normal) = Returns(static(true))
+insupport(d::Normal) = Returns(true)
 
 @inline logdensity_def(d::Normal{()}, x) = -x^2 / 2
 @inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), Lebesgue(ℝ))

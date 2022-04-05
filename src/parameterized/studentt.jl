@@ -72,4 +72,5 @@ HalfStudentT(ν, σ) = HalfStudentT((ν = ν, σ = σ))
 
 asparams(::Type{<:StudentT}, ::StaticSymbol{:ν}) = asℝ₊
 
-insupport(::StudentT, x) = static(true)
+insupport(::StudentT, x) = true
+insupport(::StudentT) = Returns(true)
