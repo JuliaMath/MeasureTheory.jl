@@ -37,6 +37,6 @@ TV.as(::Gumbel) = asℝ
 
 ≪(::Gumbel, ::Lebesgue{X}) where {X<:Real} = true
 
-distproxy(::Gumbel{()}) = Dists.Gumbel()
+proxy(::Gumbel{()}) = Dists.Gumbel()
 
 insupport(::Gumbel, x) = true

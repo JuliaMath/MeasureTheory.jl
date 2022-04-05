@@ -11,6 +11,8 @@ const TV = TransformVariables
 
 using TransformVariables: as, asℝ₊, as𝕀, asℝ
 
+
+
 import Base
 import Distributions
 const Dists = Distributions
@@ -64,6 +66,8 @@ import Base: rand
 
 using Reexport
 @reexport using MeasureBase
+import IfElse: ifelse
+@reexport using IfElse
 
 using Tricks: static_hasmethod
 
@@ -114,7 +118,7 @@ include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
 include("combinators/exponential-families.jl")
-include("combinators/conditional.jl")
+
 
 include("resettable-rng.jl")
 include("realized.jl")
@@ -140,6 +144,9 @@ include("parameterized/binomial.jl")
 include("parameterized/multinomial.jl")
 include("parameterized/lkj-cholesky.jl")
 include("parameterized/negativebinomial.jl")
+
+include("combinators/ifelse.jl")
+
 
 include("transforms/corrcholesky.jl")
 include("transforms/ordered.jl")

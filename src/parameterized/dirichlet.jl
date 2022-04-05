@@ -32,7 +32,7 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Dirichlet) = rand(rng, Dists.Dirichlet(μ.α))
 
-distproxy(d::Dirichlet{(:α,)}) = Dists.Dirichlet(d.α)
+proxy(d::Dirichlet{(:α,)}) = Dists.Dirichlet(d.α)
 
 function testvalue(d::Dirichlet{(:α,)})
     n = length(d.α)

@@ -48,7 +48,7 @@ insupport(d::Normal) = Returns(true)
 params(::Type{N}) where {N<:Normal} = ()
 
 Normal(μ, σ) = Normal((μ = μ, σ = σ))
-TV.as
+
 Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
 TV.as(::Normal) = asℝ
@@ -86,13 +86,13 @@ asparams(::Type{<:Normal}, ::StaticSymbol{:τ}) = asℝ₊
 asparams(::Type{<:Normal}, ::StaticSymbol{:logτ}) = asℝ
 
 # Rather than try to reimplement everything in Distributions, measures can have
-# a `distproxy` method. This just delegates some methods to the corresponding
+# a `proxy` method. This just delegates some methods to the corresponding
 # Distributions.jl methods. For example,
 #
 #     julia> entropy(Normal(2,4))
 #     2.805232894324563
 #
-distproxy(d::Normal{()}) = Dists.Normal()
+proxy(d::Normal{()}) = Dists.Normal()
 
 ###############################################################################
 # Some distributions have a "standard" version that takes no parameters
