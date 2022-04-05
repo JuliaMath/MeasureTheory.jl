@@ -28,7 +28,7 @@ end
 
 Pullback(f, ν) = Pullback(f, ν, True())
 
-insupport(d::Pullback, x) = insupport(d.μ, d.f(x))
+insupport(d::Pullback, x) = insupport(d.ν, d.f(x))
 
 function Pretty.tile(pf::Pullback{<:TV.CallableTransform})
     Pretty.list_layout(Pretty.tile.([pf.f.t, pf.ν, pf.logjac]); prefix=:Pullback)
