@@ -267,7 +267,7 @@ julia> For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end |> marginals |> colle
 
 function Random.rand!(rng::AbstractRNG, d::For{T,F,I}, x) where {T,F,I} 
     mar = marginals(d)
-    @inbounds for (dⱼ, j) in zip(mar, eachindex(x))
+    @inbounds for (j, dⱼ) in enumerate(mar)
         x[j] = rand(rng,dⱼ)
     end
     return x
