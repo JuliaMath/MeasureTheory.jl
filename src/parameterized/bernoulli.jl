@@ -7,7 +7,9 @@ import Base
 
 @kwstruct Bernoulli(p)
 
-basemeasure(::Bernoulli) = Counting(Bool)
+basemeasure(::Bernoulli) = CountingMeasure()
+
+insupport(::Bernoulli, x) = x == true || x == false
 
 @inline function logdensity_def(d::Bernoulli{(:p,)}, y)
     p = d.p
@@ -42,5 +44,3 @@ asparams(::Type{<:Bernoulli}, ::StaticSymbol{:logitp}) = asℝ
 
 proxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
 proxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))
-
-insupport(::Bernoulli, x) = x ∈ (true, false)

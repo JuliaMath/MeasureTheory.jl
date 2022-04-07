@@ -9,7 +9,7 @@ probit(p) = sqrt2 * erfinv(2p - 1)
 
 @parameterized Binomial(n, p)
 
-basemeasure(d::Binomial) = Counting(BoundedInts(static(0), d.n))
+basemeasure(d::Binomial) = CountingMeasure()
 
 ###############################################################################
 @kwstruct Binomial(n, p)
