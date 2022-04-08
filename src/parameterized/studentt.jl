@@ -60,11 +60,6 @@ xform(::StudentT) = asℝ
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 
 proxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
-proxy(d::StudentT{(:ν, :μ)}) = affine((μ=d.μ,), StudentT(d.ν))
-proxy(d::StudentT{(:ν, :σ)}) = affine((σ=d.σ,), StudentT(d.ν))
-proxy(d::StudentT{(:ν, :ω)}) = affine((ω=d.ω,), StudentT(d.ν))
-proxy(d::StudentT{(:ν, :μ, :σ)}) = affine((μ= d.μ, σ = d.σ), StudentT(d.ν))
-proxy(d::StudentT{(:ν, :μ, :ω)}) = affine((μ= d.μ, ω = d.ω), StudentT(d.ν))
 
 @half StudentT
 
