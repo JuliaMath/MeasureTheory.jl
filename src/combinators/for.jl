@@ -8,7 +8,7 @@ struct For{T, F, I} <: AbstractProductMeasure
     inds::I
 
     @inline function For{T}(f::F, inds::I) where {T,F,I<:Tuple}
-        new{T,instance_type(f),I}(f, inds)
+        new{T,Core.Typeof(f),I}(f, inds)
     end
 
     @inline For{T,F,I}(f::F, inds::I) where {T,F,I} = new{T,F,I}(f,inds)
