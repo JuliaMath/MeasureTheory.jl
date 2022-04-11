@@ -15,10 +15,12 @@ struct For{T, F, I} <: AbstractProductMeasure
 
     function For{Union{},F,I}(f::F, inds::I) where {F,I}
         println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        @warn "Empty `For` construction. This should not be happening"
+        @show f(first(zip(inds...))...)
         println.(stacktrace())
         println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        @show f(first(zip(inds...))...)
-        @error "Empty `For` construction"
+        # @error "Empty `For` construction"
+        return ProductMeasure(mappedarray(i -> f(Tuple(i)...), CartesianIndices(inds...))) 
     end
 end
 
