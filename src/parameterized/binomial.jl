@@ -11,6 +11,8 @@ probit(p) = sqrt2 * erfinv(2p - 1)
 
 basemeasure(d::Binomial) = CountingMeasure()
 
+testvalue(::Binomial) = 0
+
 ###############################################################################
 @kwstruct Binomial(n, p)
 

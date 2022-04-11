@@ -9,6 +9,8 @@ import Base
 
 basemeasure(::Bernoulli) = CountingMeasure()
 
+testvalue(::Bernoulli) = true
+
 insupport(::Bernoulli, x) = x == true || x == false
 
 @inline function logdensity_def(d::Bernoulli{(:p,)}, y)
