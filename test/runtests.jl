@@ -559,3 +559,10 @@ end
     @test logdensityof(b, x) ≈ logdensityof(d, inverse(b.f)(x)[1])
     @test logdensityof(b, b.f(y)) ≈ logdensityof(d^1, y)
 end
+
+@testset "IfElseMeasure" begin
+    p = rand()
+    x = randn()
+    @test logdensityof(ifelse(Bernoulli(p), Normal(), Normal()), x) == logdensityof(Normal(), x)
+    @test logdensityof(ifelse(Bernoulli(p), Normal(2,3), Normal()), x) == logdensityof(p*Normal(2,3) + (1-p) * Normal(), x)
+end 
