@@ -11,8 +11,6 @@ const TV = TransformVariables
 
 using TransformVariables: as, asℝ₊, as𝕀, asℝ
 
-
-
 import Base
 import Distributions
 const Dists = Distributions
@@ -118,7 +116,6 @@ include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
 include("combinators/exponential-families.jl")
-
 
 include("resettable-rng.jl")
 include("realized.jl")
