@@ -15,12 +15,8 @@ basemeasure(d::IfElseMeasure) = d.t + d.f
 
 @inline function Base.rand(rng::AbstractRNG, ::Type{T}, m::IfElseMeasure) where {T}
     c = rand(rng, T, m.b)
-    if c
-        return rand(rng, T, m.t)
-    else
-        return rand(rng, T, m.f)
-    end
+    result = ifelse(c, m.t, m.f)
+    rand(rng, T, result)
 end
-
 
 IfElse.ifelse(b::Bernoulli, t, f) = IfElseMeasure(b, t, f)
