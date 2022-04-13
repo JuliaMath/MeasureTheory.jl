@@ -563,6 +563,6 @@ end
 @testset "IfElseMeasure" begin
     p = rand()
     x = randn()
-    @test logdensityof(ifelse(Bernoulli(p), Normal(), Normal()), x) == logdensityof(Normal(), x)
-    @test logdensityof(ifelse(Bernoulli(p), Normal(2,3), Normal()), x) == logdensityof(p*Normal(2,3) + (1-p) * Normal(), x)
+    @test logdensityof(MeasureTheory.ifelse(Bernoulli(p), Normal(), Normal()), x) == logdensityof(Normal(), x)
+    @test logdensityof(MeasureTheory.ifelse(Bernoulli(p), Normal(2,3), Normal()), x) == logdensityof(p*Normal(2,3) + (1-p) * Normal(), x)
 end

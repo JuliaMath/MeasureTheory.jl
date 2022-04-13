@@ -45,6 +45,7 @@ import LogExpFunctions
 import NamedTupleTools
 import InverseFunctions: inverse
 export inverse
+export ifelse
 
 import MeasureBase: insupport, instance, marginals
 import MeasureBase:
