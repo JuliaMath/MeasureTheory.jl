@@ -26,7 +26,7 @@ function test_measure(μ)
     logdensity_def(μ, testvalue(μ)) isa AbstractFloat
 end
 
-test_measures = [
+test_measures = Any[
     # Chain(x -> Normal(μ=x), Normal(μ=0.0))
     For(3) do j Normal(σ=j) end
     For(2,3) do i,j Normal(i,j) end
