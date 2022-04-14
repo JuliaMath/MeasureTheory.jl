@@ -56,7 +56,6 @@ testbroken_measures = Any[
     Pushforward(as𝕀, Normal())
     # InverseGamma(2) # Not defined yet
     # MvNormal(I(3)) # Entirely broken for now
-    Likelihood
     TrivialMeasure()
 ]
 
