@@ -52,7 +52,7 @@ test_measures = Any[
     Dirac(0.0) + Normal()
 ]
 
-testbroken_measures = [
+testbroken_measures = Any[
     Pushforward(as𝕀, Normal())
     # InverseGamma(2) # Not defined yet
     # MvNormal(I(3)) # Entirely broken for now
