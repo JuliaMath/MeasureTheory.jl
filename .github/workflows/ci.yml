@@ -23,8 +23,6 @@ jobs:
       matrix:
         version:
           - '1.6'
-          - '1.7'
-          - '1'
         os:
           - ubuntu-latest
           - macOS-latest
