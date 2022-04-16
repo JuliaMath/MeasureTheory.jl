@@ -32,9 +32,9 @@ for N in AFFINEPARS
     end
 end
 
-insupport(d::Normal, x) = static(true)
+insupport(d::Normal, x) = true
 
-insupport(d::Normal) = Returns(static(true))
+insupport(d::Normal) = Returns(true)
 
 @inline logdensity_def(d::Normal{()}, x) = -x^2 / 2
 @inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), Lebesgue(ℝ))
@@ -51,7 +51,7 @@ Normal(μ, σ) = Normal((μ = μ, σ = σ))
 
 Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
-xform(::Normal) = asℝ
+TV.as(::Normal) = asℝ
 
 # `@kwalias` defines some alias names, giving users flexibility in the names
 # they use. For example, σ² is standard notation for the variance parameter, but
@@ -86,13 +86,13 @@ asparams(::Type{<:Normal}, ::StaticSymbol{:τ}) = asℝ₊
 asparams(::Type{<:Normal}, ::StaticSymbol{:logτ}) = asℝ
 
 # Rather than try to reimplement everything in Distributions, measures can have
-# a `distproxy` method. This just delegates some methods to the corresponding
+# a `proxy` method. This just delegates some methods to the corresponding
 # Distributions.jl methods. For example,
 #
 #     julia> entropy(Normal(2,4))
 #     2.805232894324563
 #
-distproxy(d::Normal{()}) = Dists.Normal()
+proxy(d::Normal{()}) = Dists.Normal()
 
 ###############################################################################
 # Some distributions have a "standard" version that takes no parameters

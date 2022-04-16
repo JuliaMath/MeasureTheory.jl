@@ -8,17 +8,19 @@ struct For{T, F, I} <: AbstractProductMeasure
     inds::I
 
     @inline function For{T}(f::F, inds::I) where {T,F,I<:Tuple}
-        new{T,instance_type(f),I}(f, inds)
+        new{T,Core.Typeof(f),I}(f, inds)
     end
 
     @inline For{T,F,I}(f::F, inds::I) where {T,F,I} = new{T,F,I}(f,inds)
 
     function For{Union{},F,I}(f::F, inds::I) where {F,I}
         println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        @warn "Empty `For` construction. This should not be happening"
+        @show f(first(zip(inds...))...)
         println.(stacktrace())
         println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        @show f(first(zip(inds...))...)
-        @error "Empty `For` construction"
+        # @error "Empty `For` construction"
+        return ProductMeasure(mappedarray(i -> f(Tuple(i)...), CartesianIndices(inds...))) 
     end
 end
 
@@ -267,7 +269,7 @@ julia> For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end |> marginals |> colle
 
 function Random.rand!(rng::AbstractRNG, d::For{T,F,I}, x) where {T,F,I} 
     mar = marginals(d)
-    @inbounds for (dⱼ, j) in zip(mar, eachindex(x))
+    @inbounds for (j, dⱼ) in enumerate(mar)
         x[j] = rand(rng,dⱼ)
     end
     return x

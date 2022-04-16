@@ -3,7 +3,10 @@
 
 export Exponential
 
-@parameterized Exponential(β) ≃ Lebesgue(ℝ₊)
+@parameterized Exponential(β) 
+
+insupport(::Exponential, x) = x ≥ 0
+basemeasure(::Exponential) = Lebesgue()
 
 @kwstruct Exponential()
 
@@ -13,7 +16,7 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Exponential{()}) = randexp(rng, T)
 
-xform(::Exponential) = asℝ₊
+TV.as(::Exponential) = asℝ₊
 
 ##########################
 # Scale β
@@ -29,7 +32,7 @@ end
     return logdensity_def(Exponential(), z) - log(d.β)
 end
 
-distproxy(d::Exponential{(:β,)}) = Dists.Exponential(d.β)
+proxy(d::Exponential{(:β,)}) = Dists.Exponential(d.β)
 
 asparams(::Type{<:Exponential}, ::StaticSymbol{:β}) = asℝ₊
 
@@ -47,7 +50,7 @@ end
     return logdensity_def(Exponential(), z) - d.logβ
 end
 
-distproxy(d::Exponential{(:logβ,)}) = Dists.Exponential(exp(d.logβ))
+proxy(d::Exponential{(:logβ,)}) = Dists.Exponential(exp(d.logβ))
 
 asparams(::Type{<:Exponential}, ::StaticSymbol{:logβ}) = asℝ
 
@@ -65,7 +68,7 @@ end
     return logdensity_def(Exponential(), z) + log(d.λ)
 end
 
-distproxy(d::Exponential{(:λ,)}) = Dists.Exponential(1 / d.λ)
+proxy(d::Exponential{(:λ,)}) = Dists.Exponential(1 / d.λ)
 
 asparams(::Type{<:Exponential}, ::StaticSymbol{:λ}) = asℝ₊
 
@@ -83,8 +86,6 @@ end
     return logdensity_def(Exponential(), z) + d.logλ
 end
 
-distproxy(d::Exponential{(:logλ,)}) = Dists.Exponential(exp(-d.logλ))
+proxy(d::Exponential{(:logλ,)}) = Dists.Exponential(exp(-d.logλ))
 
 asparams(::Type{<:Exponential}, ::StaticSymbol{:logλ}) = asℝ
-
-insupport(::Exponential, x) = x ≥ 0

@@ -7,11 +7,11 @@ using FillArrays
 
 @parameterized Dirichlet(α)
 
-xform(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
+TV.as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
 
 @inline function basemeasure(μ::Dirichlet{(:α,)})
     α = μ.α
-    t = xform(μ)
+    t = as(μ)
     d = TV.dimension(t)
     logw = loggamma(sum(α)) - sum(loggamma, α)
     return WeightedMeasure(logw, Lebesgue(Simplex()))
@@ -32,7 +32,7 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Dirichlet) = rand(rng, Dists.Dirichlet(μ.α))
 
-distproxy(d::Dirichlet{(:α,)}) = Dists.Dirichlet(d.α)
+proxy(d::Dirichlet{(:α,)}) = Dists.Dirichlet(d.α)
 
 function testvalue(d::Dirichlet{(:α,)})
     n = length(d.α)

@@ -13,7 +13,7 @@ export Beta
     beta => β
 ]
 
-xform(::Beta) = as𝕀
+TV.as(::Beta) = as𝕀
 
 @inline function logdensity_def(d::Beta{(:α, :β),Tuple{A,B}}, x::X) where {A,B,X}
     return xlogy(d.α - 1, x) + xlog1py(d.β - 1, -x)
@@ -28,7 +28,7 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Beta(μ.α, μ.β))
 
-distproxy(d::Beta{(:α, :β)}) = Dists.Beta(d.α, d.β)
+proxy(d::Beta{(:α, :β)}) = Dists.Beta(d.α, d.β)
 
 asparams(::Type{<:Beta}, ::StaticSymbol{:α}) = asℝ₊
 asparams(::Type{<:Beta}, ::StaticSymbol{:β}) = asℝ₊

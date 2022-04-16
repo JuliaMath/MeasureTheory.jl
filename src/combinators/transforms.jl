@@ -28,7 +28,7 @@ end
 
 Pullback(f, ν) = Pullback(f, ν, True())
 
-insupport(d::Pullback, x) = insupport(d.μ, d.f(x))
+insupport(d::Pullback, x) = insupport(d.ν, d.f(x))
 
 function Pretty.tile(pf::Pullback{<:TV.CallableTransform})
     Pretty.list_layout(Pretty.tile.([pf.f.t, pf.ν, pf.logjac]); prefix=:Pullback)
@@ -87,14 +87,14 @@ basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν), False())
 
 basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ), False())
 
-xform(ν::Pushforward) = ν.f ∘ as(ν.μ)
+TV.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
 
-xform(μ::Pullback) = TV.inverse(μ.f) ∘ μ.ν
+TV.as(μ::Pullback) = TV.inverse(μ.f) ∘ μ.ν
 
-xform(::Lebesgue) = asℝ
+TV.as(::Lebesgue) = asℝ
 
 # TODO: Make this work for affine embeddings
-xform(d::Affine) = _as_affine(_firstval(d))
+TV.as(d::Affine) = _as_affine(_firstval(d))
 
 _firstval(d::Affine) = first(values(getfield(getfield(d, :f), :par)))
 _as_affine(x::Real) = asℝ

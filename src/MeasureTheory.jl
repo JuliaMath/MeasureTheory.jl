@@ -45,8 +45,9 @@ import LogExpFunctions
 import NamedTupleTools
 import InverseFunctions: inverse
 export inverse
+export ifelse
 
-import MeasureBase: insupport, instance_type, instance, marginals
+import MeasureBase: insupport, instance, marginals
 import MeasureBase:
     testvalue, logdensity_def, density_def, basemeasure, kleisli, params, paramnames, ∫, 𝒹, ∫exp
 import MeasureBase: ≪
@@ -64,6 +65,8 @@ import Base: rand
 
 using Reexport
 @reexport using MeasureBase
+import IfElse: ifelse
+@reexport using IfElse
 
 using Tricks: static_hasmethod
 
@@ -114,7 +117,6 @@ include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
 include("combinators/exponential-families.jl")
-include("combinators/conditional.jl")
 
 include("resettable-rng.jl")
 include("realized.jl")
@@ -122,7 +124,6 @@ include("combinators/chain.jl")
 
 include("distributions.jl")
 include("smart-constructors.jl")
-
 
 include("parameterized/normal.jl")
 include("parameterized/studentt.jl")
@@ -141,6 +142,8 @@ include("parameterized/binomial.jl")
 include("parameterized/multinomial.jl")
 include("parameterized/lkj-cholesky.jl")
 include("parameterized/negativebinomial.jl")
+
+include("combinators/ifelse.jl")
 
 include("transforms/corrcholesky.jl")
 include("transforms/ordered.jl")

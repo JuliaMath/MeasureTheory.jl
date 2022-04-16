@@ -26,7 +26,7 @@ function test_measure(μ)
     logdensity_def(μ, testvalue(μ)) isa AbstractFloat
 end
 
-test_measures = [
+test_measures = Any[
     # Chain(x -> Normal(μ=x), Normal(μ=0.0))
     For(3) do j Normal(σ=j) end
     For(2,3) do i,j Normal(i,j) end
@@ -52,11 +52,10 @@ test_measures = [
     Dirac(0.0) + Normal()
 ]
 
-testbroken_measures = [
+testbroken_measures = Any[
     Pushforward(as𝕀, Normal())
     # InverseGamma(2) # Not defined yet
     # MvNormal(I(3)) # Entirely broken for now
-    Likelihood
     TrivialMeasure()
 ]
 
@@ -535,6 +534,7 @@ end
     d = ∫exp(x -> -x^2, Lebesgue(ℝ))
 
     μ = randn(3)
+    # σ = LowerTriangular(randn(3, 3))
     σ = let x = randn(10,3)
             cholesky(x' * x).L
     end
@@ -557,4 +557,11 @@ end
     b = Affine((ω = [1 0]'',), d^1)
     @test logdensityof(b, x) ≈ logdensityof(d, inverse(b.f)(x)[1])
     @test logdensityof(b, b.f(y)) ≈ logdensityof(d^1, y)
+end
+
+@testset "IfElseMeasure" begin
+    p = rand()
+    x = randn()
+    @test logdensityof(MeasureTheory.ifelse(Bernoulli(p), Normal(), Normal()), x) ≈ logdensityof(Normal(), x)
+    @test logdensityof(MeasureTheory.ifelse(Bernoulli(p), Normal(2,3), Normal()), x) ≈ logdensityof(p*Normal(2,3) + (1-p) * Normal(), x)
 end

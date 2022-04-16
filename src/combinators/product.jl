@@ -1,21 +1,21 @@
-function xform(d::PowerMeasure)
-    as(Array, xform(d.parent), length.(d.axes)...)
+function TV.as(d::PowerMeasure)
+    as(Array, as(d.parent), length.(d.axes)...)
 end
 
-function xform(d::ProductMeasure{A}) where {A<:AbstractArray}
+function TV.as(d::ProductMeasure{A}) where {A<:AbstractArray}
     d1 = marginals(d).f(first(marginals(d).data))
-    as(Array, xform(d1), size(marginals(d))...)
+    as(Array, TV.as(d1), size(marginals(d))...)
 end
 
 ###############################################################################
 # I <: Base.Generator
 
-function xform(d::ProductMeasure{<:Base.Generator})
+function TV.as(d::ProductMeasure{<:Base.Generator})
     d1 = marginals(d).f(first(marginals(d).iter))
-    as(Array, xform(d1), size(marginals(d))...)
+    as(Array, as(d1), size(marginals(d))...)
 end
 
-# function xform(d::ProductMeasure{Returns{T},F,A}) where {T,F,A<:AbstractArray}
+# function TV.as(d::ProductMeasure{Returns{T},F,A}) where {T,F,A<:AbstractArray}
 #     as(Array, as(d.f.f.value), size(d.xs))
 # end
 

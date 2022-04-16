@@ -9,7 +9,9 @@ probit(p) = sqrt2 * erfinv(2p - 1)
 
 @parameterized Binomial(n, p)
 
-basemeasure(d::Binomial) = Counting(BoundedInts(static(0), d.n))
+basemeasure(d::Binomial) = CountingMeasure()
+
+testvalue(::Binomial) = 0
 
 ###############################################################################
 @kwstruct Binomial(n, p)
@@ -53,9 +55,9 @@ function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :probitp), Tuple{I
     rand(rng, Dists.Binomial(d.n, Φ(d.probitp)))
 end
 
-distproxy(d::Binomial{(:n, :p), Tuple{I, A}}) where {I<:Integer, A} = Dists.Binomial(d.n, d.p)
-distproxy(d::Binomial{(:n, :logitp), Tuple{I, A}}) where {I<:Integer, A} = Dists.Binomial(d.n, logistic(d.logitp))
-distproxy(d::Binomial{(:n, :probitp), Tuple{I, A}}) where {I<:Integer, A} = Dists.Binomial(d.n, Φ(d.probitp))
+proxy(d::Binomial{(:n, :p), Tuple{I, A}}) where {I<:Integer, A} = Dists.Binomial(d.n, d.p)
+proxy(d::Binomial{(:n, :logitp), Tuple{I, A}}) where {I<:Integer, A} = Dists.Binomial(d.n, logistic(d.logitp))
+proxy(d::Binomial{(:n, :probitp), Tuple{I, A}}) where {I<:Integer, A} = Dists.Binomial(d.n, Φ(d.probitp))
 
 asparams(::Type{<:Binomial}, ::StaticSymbol{:p}) = as𝕀
 asparams(::Type{<:Binomial}, ::StaticSymbol{:logitp}) = asℝ

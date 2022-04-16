@@ -7,7 +7,11 @@ import Base
 
 @kwstruct Bernoulli(p)
 
-basemeasure(::Bernoulli) = Counting(Bool)
+basemeasure(::Bernoulli) = CountingMeasure()
+
+testvalue(::Bernoulli) = true
+
+insupport(::Bernoulli, x) = x == true || x == false
 
 @inline function logdensity_def(d::Bernoulli{(:p,)}, y)
     p = d.p
@@ -40,7 +44,5 @@ Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logitp,)}) =
 asparams(::Type{<:Bernoulli}, ::StaticSymbol{:p}) = as𝕀
 asparams(::Type{<:Bernoulli}, ::StaticSymbol{:logitp}) = asℝ
 
-distproxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
-distproxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))
-
-insupport(::Bernoulli, x) = x ∈ (true, false)
+proxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
+proxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))

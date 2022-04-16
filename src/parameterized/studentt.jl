@@ -59,12 +59,7 @@ xform(::StudentT) = asℝ
 
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 
-distproxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
-distproxy(d::StudentT{(:ν, :μ)}) = Dists.LocationScale(d.μ, 1.0, Dists.TDist(d.ν))
-distproxy(d::StudentT{(:ν, :σ)}) = Dists.LocationScale(0.0, d.σ, Dists.TDist(d.ν))
-distproxy(d::StudentT{(:ν, :ω)}) = Dists.LocationScale(0.0, inv(d.ω), Dists.TDist(d.ν))
-distproxy(d::StudentT{(:ν, :μ, :σ)}) = Dists.LocationScale(d.μ, d.σ, Dists.TDist(d.ν))
-distproxy(d::StudentT{(:ν, :μ, :ω)}) = Dists.LocationScale(d.μ, inv(d.ω), Dists.TDist(d.ν))
+proxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
 
 @half StudentT
 
@@ -72,4 +67,5 @@ HalfStudentT(ν, σ) = HalfStudentT((ν = ν, σ = σ))
 
 asparams(::Type{<:StudentT}, ::StaticSymbol{:ν}) = asℝ₊
 
-insupport(::StudentT, x) = static(true)
+insupport(::StudentT, x) = true
+insupport(::StudentT) = Returns(true)

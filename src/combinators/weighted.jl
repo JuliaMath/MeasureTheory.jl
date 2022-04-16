@@ -1,2 +1,2 @@
 
-xform(μ::AbstractWeightedMeasure) = xform(μ.base)
+TV.as(μ::AbstractWeightedMeasure) = TV.as(μ.base)
