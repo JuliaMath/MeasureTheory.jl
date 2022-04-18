@@ -351,6 +351,7 @@ end
         d = MvNormal(σ=σ)
         x = rand(d)
         @test logdensityof(d, x) ≈ logdensityof(Dists.MvNormal(Σ), x)
+        @test logdensityof(MvNormal(zeros(3), σ), x) ≈ logdensityof(d, x)
     end
 
     @testset "NegativeBinomial" begin
