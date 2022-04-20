@@ -46,3 +46,5 @@ asparams(::Type{<:Bernoulli}, ::StaticSymbol{:logitp}) = asℝ
 
 proxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
 proxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))
+
+entropy(d::Bernoulli) = -xlogx(d.p) - xlogx(1-d.p)

@@ -36,3 +36,5 @@ Uniform(a,b) = Uniform((a=a,b=b))
 proxy(d::Uniform{(:a,:b)}) = affine((μ=d.a, σ=d.b - d.a), Uniform())
 @useproxy Uniform{(:a,:b)}
 Base.rand(rng::Random.AbstractRNG, ::Type{T}, μ::Uniform) where {T} = rand(rng, T, proxy(μ))
+
+entropy(::Uniform{()}) = 0.0

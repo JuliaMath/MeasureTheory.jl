@@ -104,3 +104,5 @@ function func_string(f, types)
         return string(f)
     end
 end
+
+entropy(d::PowerMeasure) = prod(length.(d.axes)) * entropy(d.parent)

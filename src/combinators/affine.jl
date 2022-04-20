@@ -293,3 +293,6 @@ end
 @inline function insupport(d::Affine, x)
     insupport(d.parent, inverse(d.f)(x))
 end
+
+# TODO: Correct this for discrete
+entropy(d::Affine) = logjac(d) + entropy(d.parent)

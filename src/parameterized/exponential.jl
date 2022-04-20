@@ -89,3 +89,5 @@ end
 proxy(d::Exponential{(:logλ,)}) = Dists.Exponential(exp(-d.logλ))
 
 asparams(::Type{<:Exponential}, ::StaticSymbol{:logλ}) = asℝ
+
+extropy(::Exponential{()}) = 1.0
