@@ -228,8 +228,14 @@ end
 # #     lmul!(d.ω, z)
 # #     logdensity_def(d.parent, z)
 # # end
- 
-@inline basemeasure(d::Affine{N,M,Tuple{Vararg{T,K}}}) where {K,N,M,T<:AbstractArray} = affine(getfield(d, :f), rootmeasure(d.parent))
+
+@inline function basemeasure(d::Affine{N,M,Tuple{A}}) where {N,M,A<:AbstractArray}
+    weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
+end
+
+@inline function basemeasure(d::Affine{N,M,Tuple{A1,A2}}) where {N,M,A1<:AbstractArray, A2<:AbstractArray}
+    weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
+end
 
 @inline basemeasure(d::Affine) = affine(getfield(d, :f), basemeasure(d.parent))
 
@@ -237,11 +243,6 @@ end
 # example it wouldn't make sense to apply a log-Jacobian to a point measure
 @inline basemeasure(d::Affine{N,L}) where {N,L<:Lebesgue} = weightedmeasure(-logjac(d), d.parent)
 @inline basemeasure(d::Affine{N,L}) where {N,L<:LebesgueMeasure} = weightedmeasure(-logjac(d), d.parent)
-
-
-@inline function basemeasure(d::Affine{N,P, Tuple{Vararg{T, K}}}) where {K,N,L<:Union{<:Lebesgue, <:LebesgueMeasure},P<:PowerMeasure{L}, T<:AbstractArray} 
-    weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
-end
 
 logjac(d::Affine) = logjac(getfield(d, :f))
 
