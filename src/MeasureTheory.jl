@@ -55,6 +55,9 @@ using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, In
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractKleisli
 
+import MeasureBase: likelihood
+export likelihood
+
 using StaticArrays
 
 import PrettyPrinting
