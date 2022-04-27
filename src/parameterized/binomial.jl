@@ -7,14 +7,36 @@ using SpecialFunctions
 probit(p) = sqrt2 * erfinv(2p - 1)
 Φ(z) = (1 + erf(invsqrt2 * z)) / 2
 
+
 @parameterized Binomial(n, p)
 
 basemeasure(d::Binomial) = CountingMeasure()
 
 testvalue(::Binomial) = 0
 
+@kwstruct Binomial()
+
+
+@inline function logdensity_def(d::Binomial{()}, y)
+    return -logtwo
+end
+
+@inline function insupport(d::Binomial{()}, x)
+    x ∈ (0, 1)
+end
+
+function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :p)}) 
+    rand(rng, Dists.Binomial(d.n, d.p))
+end
+
+
+
+Binomial(n) = Binomial(n, 0.5)
+
 ###############################################################################
 @kwstruct Binomial(n, p)
+
+
 
 @inline function insupport(d::Binomial, x)
     isinteger(x) && 0 ≤ x ≤ d.n

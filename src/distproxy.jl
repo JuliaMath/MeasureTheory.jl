@@ -1,13 +1,23 @@
 export proxy
 function proxy end
 
+import Statistics
+import StatsBase
+
 PROXIES = Dict(
-    :Distributions => [
+    :Statistics => [
         :mean
         :std
-        :entropy
-        :cdf
+        :var
+        :quantile
     ],
+    :StatsBase => [
+        :entropy
+    ],
+    :Distributions => [
+        :cdf
+        :ccdf
+    ]
 )
 
 for m in keys(PROXIES)

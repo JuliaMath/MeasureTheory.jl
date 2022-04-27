@@ -18,10 +18,13 @@ end
 ###############################################################################
 @kwstruct NegativeBinomial(r, p)
 
+NegativeBinomial(n) = NegativeBinomial(n, 0.5)
+
 @inline function logdensity_def(d::NegativeBinomial{(:r, :p)}, y)
     (r, p) = (d.r, d.p)
-    return -log(y + r) - logbeta(r, y + 1) + xlogy(y, p) + xlog1py(r, -p)
+    return -log(y + r) - logbeta(r, y + 1) + xlog1py(y, -p) + xlogy(r, p)
 end
+
 
 proxy(d::NegativeBinomial{(:r, :p)}) = Dists.NegativeBinomial(d.r, d.p)
 

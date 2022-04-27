@@ -31,3 +31,6 @@ asparams(::Type{<:SnedecorF}, ::StaticSymbol{:ν1}) = asℝ₊
 asparams(::Type{<:SnedecorF}, ::StaticSymbol{:ν2}) = asℝ₊
 
 insupport(::SnedecorF, x) = x > 0
+
+# cdf(d::SnedecorF, x) = StatsFuns.fdistcdf(d.ν1, d.ν2, x)
+# ccdf(d::SnedecorF, x) = StatsFuns.fdistccdf(d.ν1, d.ν2, x)

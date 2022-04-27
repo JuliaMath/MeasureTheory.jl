@@ -38,6 +38,6 @@ end
 
 logdensity_def(μ::Dists.Distribution, x) = Dists.logpdf(μ, x)
 
-density(μ::Dists.Distribution, x) = Dists.pdf(μ, x)
+density_def(μ::Dists.Distribution, x) = Dists.pdf(μ, x)
 
 testvalue(d::Dists.Distribution) = rand(d)

@@ -55,6 +55,8 @@ using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, In
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractKleisli
 
+import Statistics: mean, var, std
+
 import MeasureBase: likelihood
 export likelihood
 
@@ -145,6 +147,9 @@ include("parameterized/binomial.jl")
 include("parameterized/multinomial.jl")
 include("parameterized/lkj-cholesky.jl")
 include("parameterized/negativebinomial.jl")
+include("parameterized/gamma.jl")
+include("parameterized/snedecorf.jl")
+include("parameterized/inverse-gaussian.jl")
 
 include("combinators/ifelse.jl")
 

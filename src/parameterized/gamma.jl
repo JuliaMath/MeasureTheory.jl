@@ -3,14 +3,15 @@
 
 export Gamma
 
-@parameterized Gamma(k)
+@parameterized Gamma()
+
+@kwstruct Gamma()
+
+@inline function logdensity_def(d::Gamma{()}, x)
+    return -x
+end
 
 @kwstruct Gamma(k)
-@kwstruct Gamma(k, θ)
-
-Gamma(k,θ) = Gamma((k=k, θ=θ))
-
-@useproxy Gamma{(:k, :θ)}
 
 @inline function logdensity_def(d::Gamma{(:k,)}, x)
     return xlogy(d.k - 1, x) - x
@@ -23,10 +24,17 @@ function basemeasure(d::Gamma{(:k,)})
     FactoredBase(constℓ, varℓ, base)
 end
 
+@kwstruct Gamma(k, θ)
+
+Gamma(k,θ) = Gamma((k=k, θ=θ))
+
+@useproxy Gamma{(:k, :θ)}
 function proxy(d::Gamma{(:k, :θ)})
     affine(NamedTuple{(:σ,)}(d.θ), Gamma((k = d.k,)))
 end
 
+Base.rand(rng::AbstractRNG, T::Type, μ::Gamma{()}) =
+    rand(rng, T, Exponential())
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Gamma{(:k,)}) =
     rand(rng, Dists.Gamma(μ.k))
