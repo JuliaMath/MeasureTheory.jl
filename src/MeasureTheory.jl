@@ -97,10 +97,6 @@ gentype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
 # gentype(μ::AbstractMeasure) = gentype(basemeasure(μ))
 
-import Distributions: logpdf, pdf
-
-export pdf, logpdf
-
 xlogx(x::Number) = LogExpFunctions.xlogx(x)
 xlogx(x, y) = x * log(x)
 
