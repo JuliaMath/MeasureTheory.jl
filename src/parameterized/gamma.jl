@@ -54,7 +54,7 @@ end
 function basemeasure(d::Gamma{(:μ,:ϕ)})
     constℓ = 0.0
     function varℓ()
-        ϕ = d.ϕ
+        ϕ = dynamic(d.ϕ)
         ϕinv = inv(ϕ)
         -ϕinv * log(ϕ) - first(logabsgamma(ϕinv))
     end

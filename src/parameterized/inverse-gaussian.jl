@@ -38,9 +38,23 @@ function basemeasure(::InverseGaussian)
 end
 
 Base.rand(rng::AbstractRNG, T::Type, d::InverseGaussian) =
-    rand(rng, Dists.InverseGaussian(params(d)...))
+    rand(rng, proxy(d))
 
 
 TV.as(::InverseGaussian) = asℝ₊
 
 insupport(::InverseGaussian, x) = x > 0
+
+@kwstruct InverseGaussian(μ, ϕ)
+
+function logdensity_def(d::InverseGaussian{(:μ,:ϕ)}, x) 
+    μ, ϕ = d.μ, d.ϕ
+    return ( - 3log(x) - (x - μ)^2 / (ϕ * μ^2 * x))/2
+end
+
+function basemeasure(d::InverseGaussian{(:μ,:ϕ)})
+    constℓ = - log2π / 2
+    varℓ() = -log(d.ϕ) / 2
+    base = LebesgueMeasure()
+    FactoredBase(constℓ, varℓ, base)
+end
