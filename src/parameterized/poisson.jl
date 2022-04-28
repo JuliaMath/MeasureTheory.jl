@@ -13,8 +13,8 @@ Poisson(λ) = Poisson((λ=λ,))
 
 basemeasure(::Poisson) = Counting(BoundedInts(static(0), static(Inf)))
 
-@inline function logdensity_def(d::Poisson{()}, y)
-    return y - λ - loggamma(1 + y)
+@inline function logdensity_def(d::Poisson{()}, y::T) where {T}
+    return y - one(T) - loggamma(one(T) + y)
 end
 
 @inline function logdensity_def(d::Poisson{(:λ,)}, y)
