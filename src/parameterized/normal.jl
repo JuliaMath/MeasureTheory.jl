@@ -135,21 +135,26 @@ Base.rand(rng::Random.AbstractRNG, ::Type{T}, μ::Normal) where {T} = rand(rng, 
 @half Normal
 
 # A single unnamed parameter for `HalfNormal` should be interpreted as a `σ`
-HalfNormal(σ) = HalfNormal(σ = σ)
+HalfNormal(σ) = HalfNormal((σ = σ,))
 
 ###############################################################################
+@kwstruct Normal(σ²)
 @kwstruct Normal(μ, σ²)
 
-@inline function logdensity_def(d::Normal{(:σ²)}, x)
-    σ² = d.σ²
-    -0.5 * (log(σ²) + (x^2 / σ²))
+@inline function logdensity_def(d::Normal{(:σ²,)}, x)
+    -0.5 * x^2 / d.σ²
 end
 
-@inline function logdensity_def(d::Normal{(:μ, :σ²)}, x)
-    μ = d.μ
-    σ² = d.σ²
-    -0.5 * (log(σ²) + ((x - μ)^2 / σ²))
+@inline function basemeasure(d::Normal{(:σ²,)})
+    constℓ = -0.5 * log2π
+    varℓ() = -0.5 * log(d.σ²)
+    base = Lebesgue()
+    FactoredBase(constℓ, varℓ, base)
 end
+
+proxy(d::Normal{(:μ, :σ²)}) = affine((μ=d.μ,), Normal((σ²=d.σ²,)))
+@useproxy Normal{(:μ, :σ²)}
+
 
 ###############################################################################
 @kwstruct Normal(μ, τ)
