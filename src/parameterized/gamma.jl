@@ -43,3 +43,21 @@ Base.rand(rng::AbstractRNG, T::Type, μ::Gamma{(:k,)}) =
 TV.as(::Gamma) = asℝ₊
 
 insupport(::Gamma, x) = x > 0
+
+@kwstruct Gamma(μ, ϕ)
+
+@inline function logdensity_def(d::Gamma{(:μ,:ϕ)}, x)
+    x_μ = x / d.μ
+    inv(d.ϕ) * (log(x_μ) - x_μ) - log(x)
+end
+
+function basemeasure(d::Gamma{(:μ,:ϕ)})
+    constℓ = 0.0
+    function varℓ()
+        ϕ = d.ϕ
+        ϕinv = inv(ϕ)
+        -ϕinv * log(ϕ) - first(logabsgamma(ϕinv))
+    end
+    base = LebesgueMeasure()
+    FactoredBase(constℓ, varℓ, base)
+end
