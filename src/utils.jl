@@ -1,6 +1,5 @@
 using LinearAlgebra
 export mydot
-using LazyArrays
 
 function solve(A::Union{AbstractMatrix, Factorization}, y::AbstractArray)
     (m, n) = size(A)
