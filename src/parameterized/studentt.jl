@@ -49,10 +49,8 @@ end
 end
 
 @inline function basemeasure(d::StudentT{(:ν,)})
-    constℓ = 0.0
-    varℓ() = loggamma((d.ν + 1) / 2) - loggamma(d.ν / 2) - log(π * d.ν) / 2
-    base = Lebesgue(ℝ)
-    FactoredBase(constℓ, varℓ, base)
+    ℓ = loggamma((d.ν + 1) / 2) - loggamma(d.ν / 2) - log(π * d.ν) / 2
+    weightedmeasure(ℓ, Lebesgue(ℝ))
 end
 
 xform(::StudentT) = asℝ

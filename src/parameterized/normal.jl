@@ -147,10 +147,8 @@ HalfNormal(σ) = HalfNormal((σ = σ,))
 end
 
 @inline function basemeasure(d::Normal{(:σ²,)})
-    constℓ = -0.5 * log2π
-    varℓ() = -0.5 * log(d.σ²)
-    base = Lebesgue()
-    FactoredBase(constℓ, varℓ, base)
+    ℓ = static(-0.5) * (static(log2π) + log(d.σ²))
+    weightedmeasure(ℓ, Lebesgue())
 end
 
 proxy(d::Normal{(:μ, :σ²)}) = affine((μ=d.μ,), Normal((σ²=d.σ²,)))

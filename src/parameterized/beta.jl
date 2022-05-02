@@ -20,10 +20,8 @@ TV.as(::Beta) = as𝕀
 end
 
 @inline function basemeasure(d::Beta{(:α, :β)})
-    constℓ = 0.0
-    varℓ = Returns(-logbeta(d.α, d.β))
-    base = Lebesgue(ℝ)
-    FactoredBase(constℓ, varℓ, base)
+    ℓ = -logbeta(d.α, d.β)
+    weightedmeasure(ℓ, Lebesgue())
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Beta(μ.α, μ.β))

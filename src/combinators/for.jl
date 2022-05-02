@@ -12,18 +12,7 @@ struct For{T, F, I} <: AbstractProductMeasure
     end
 
     @inline For{T,F,I}(f::F, inds::I) where {T,F,I} = new{T,F,I}(f,inds)
-
-    function For{Union{},F,I}(f::F, inds::I) where {F,I}
-        println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        @warn "Empty `For` construction. This should not be happening"
-        @show f(first(zip(inds...))...)
-        println.(stacktrace())
-        println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        # @error "Empty `For` construction"
-        return ProductMeasure(mappedarray(i -> f(Tuple(i)...), CartesianIndices(inds...))) 
-    end
 end
-
 
 @generated function For(f::F, inds::I) where {F,I<:Tuple}
     eltypes = Tuple{eltype.(I.types)...}
@@ -34,6 +23,7 @@ end
     end
 end
 
+TV.as(d::For) = as(Array, as(first(marginals(d))), size(first(d.inds))...)
 
 # For(f, gen::Base.Generator) = ProductMeasure(Base.Generator(f ∘ gen.f, gen.iter))
 
@@ -70,10 +60,12 @@ end
 
 @inline function logdensity_def(d::For{T,F,I}, x::AbstractVector{X}; exec=SequentialEx(simd = true)) where {X,T,F,I<:Tuple{<:AbstractVector}}
     ind = only(d.inds)
-    @floop exec for j in eachindex(x)
-        local i = getindex(ind, j)
-        local Δℓ = @inbounds logdensity_def(d.f(i), x[j])
-        @reduce ℓ += Δℓ
+    js =  eachindex(x)
+    ℓ = 0
+    @simd for j in js
+        i = getindex(ind, j)
+        Δℓ = @inbounds logdensity_def(d.f(i), x[j])
+        ℓ += Δℓ
     end
     ℓ
 end
@@ -128,13 +120,10 @@ function marginals(d::For{T,F,I}) where {N,T,F,I<:NTuple{N,<:Base.Generator}}
     Iterators.map(d.f, d.inds...)
 end
 
-@generated function basemeasure(d::For{T,F,I}) where {T,F,I}
-    B = Core.Compiler.return_type(basemeasure, Tuple{T})
+function basemeasure(d::For{T,F,I}) where {T,F,I}
+    B = typeof(basemeasure(d.f(map(first, d.inds)...)))
     sing = static(Base.issingletontype(B))
-    quote
-        $(Expr(:meta, :inline))
-        _basemeasure(d, $B, $sing)
-    end    
+    _basemeasure(d, B, sing)
 end
 
 @inline function _basemeasure(d::For{T,F,I}, ::Type{<:WeightedMeasure{StaticFloat64{N}, B}}, ::True) where {T,F,I,N,B}

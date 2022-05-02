@@ -7,9 +7,10 @@ export Gamma
 
 @kwstruct Gamma()
 
-@inline function logdensity_def(d::Gamma{()}, x)
-    return -x
-end
+proxy(::Gamma{()}) = Exponential()
+
+@useproxy Gamma{()}
+
 
 @kwstruct Gamma(k)
 
@@ -18,10 +19,8 @@ end
 end
 
 function basemeasure(d::Gamma{(:k,)})
-    constℓ = 0.0
-    varℓ() = -loggamma(d.k)
-    base = LebesgueMeasure()
-    FactoredBase(constℓ, varℓ, base)
+    ℓ = -loggamma(d.k)
+    weightedmeasure(ℓ, Lebesgue())
 end
 
 @kwstruct Gamma(k, θ)
@@ -52,12 +51,14 @@ insupport(::Gamma, x) = x > 0
 end
 
 function basemeasure(d::Gamma{(:μ,:ϕ)})
-    constℓ = 0.0
-    function varℓ()
-        ϕ = dynamic(d.ϕ)
-        ϕinv = inv(ϕ)
-        -ϕinv * log(ϕ) - first(logabsgamma(ϕinv))
-    end
-    base = LebesgueMeasure()
-    FactoredBase(constℓ, varℓ, base)
+    ϕ = d.ϕ
+    ϕinv = inv(ϕ)
+    ℓ = -ϕinv * log(ϕ) - first(logabsgamma(ϕinv))
+    weightedmeasure(ℓ, Lebesgue())
+end
+
+function basemeasure(d::Gamma{(:μ,:ϕ), Tuple{M,StaticFloat64{ϕ}}}) where {M,ϕ}
+    ϕinv = inv(ϕ)
+    ℓ = static(-ϕinv * log(ϕ) - first(logabsgamma(ϕinv)))
+    weightedmeasure(ℓ, Lebesgue())
 end

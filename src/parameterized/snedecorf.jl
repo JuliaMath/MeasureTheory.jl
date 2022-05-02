@@ -15,10 +15,8 @@ export SnedecorF
 end
 
 @inline function basemeasure(d::SnedecorF{(:ν1, :ν2)})
-    constℓ = 0.0
-    varℓ() = -logbeta(d.ν1 / 2, d.ν2 / 2)
-    base = LebesgueMeasure()
-    FactoredBase(constℓ, varℓ, base)
+    ℓ = -logbeta(d.ν1 / 2, d.ν2 / 2)
+    weightedmeasure(ℓ, Lebesgue())
 end
 
 xform(::SnedecorF) = asℝ₊

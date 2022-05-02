@@ -31,10 +31,8 @@ function logdensity_def(d::InverseGaussian{(:μ,:λ)}, x)
 end
 
 function basemeasure(::InverseGaussian)
-    constℓ = - log2π / 2
-    varℓ() = 0.0
-    base = LebesgueMeasure()
-    FactoredBase(constℓ, varℓ, base)
+    ℓ = static(- log2π / 2)
+    weightedmeasure(ℓ, Lebesgue())
 end
 
 Base.rand(rng::AbstractRNG, T::Type, d::InverseGaussian) =
@@ -53,8 +51,6 @@ function logdensity_def(d::InverseGaussian{(:μ,:ϕ)}, x)
 end
 
 function basemeasure(d::InverseGaussian{(:μ,:ϕ)})
-    constℓ = - log2π / 2
-    varℓ() = -log(d.ϕ) / 2
-    base = LebesgueMeasure()
-    FactoredBase(constℓ, varℓ, base)
+    ℓ = static(-0.5) * (static(log2π) + log(d.ϕ))
+    weightedmeasure(ℓ, Lebesgue())
 end

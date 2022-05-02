@@ -7,6 +7,10 @@ function TV.as(d::ProductMeasure{A}) where {A<:AbstractArray}
     as(Array, TV.as(d1), size(marginals(d))...)
 end
 
+function TV.as(d::ProductMeasure{T}) where {T<:Tuple}
+    as(map(as, d.marginals))
+end
+
 ###############################################################################
 # I <: Base.Generator
 
