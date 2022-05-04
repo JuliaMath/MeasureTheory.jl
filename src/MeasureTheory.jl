@@ -30,7 +30,7 @@ export CountingMeasure
 export TrivialMeasure
 export Likelihood
 export testvalue
-export basekleisli
+export basekernel
 
 using Infinities
 using DynamicIterators
@@ -48,11 +48,11 @@ export inverse
 
 import MeasureBase: insupport, instance, marginals
 import MeasureBase:
-    testvalue, logdensity_def, density_def, basemeasure, kleisli, params, paramnames, ∫, 𝒹, ∫exp
+    testvalue, logdensity_def, density_def, basemeasure, kernel, params, paramnames, ∫, 𝒹, ∫exp
 import MeasureBase: ≪
 using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
-using MeasureBase: AbstractKleisli
+using MeasureBase: AbstractTransitionKernel
 
 import Statistics: mean, var, std
 

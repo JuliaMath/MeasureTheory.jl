@@ -145,7 +145,7 @@ end
 end
 
 @inline function _basemeasure(d::For{T,F,I}, ::Type{B}, ::False) where {T,F,I,B<:AbstractMeasure}
-    f = basekleisli(d.f)
+    f = basekernel(d.f)
     For{B}(f, d.inds)
 end
 
@@ -158,7 +158,7 @@ function _basemeasure(d::For{T,F,I}, ::Type{B}, ::True) where {N,T<:AbstractMeas
 end
 
 function _basemeasure(d::For{T,F,I}, ::Type{B}, ::False) where {N,T<:AbstractMeasure,F,I<:NTuple{N,<:Base.Generator},B}
-    f = basekleisli(d.f)
+    f = basekernel(d.f)
     For{B}(f, d.inds)
 end
 

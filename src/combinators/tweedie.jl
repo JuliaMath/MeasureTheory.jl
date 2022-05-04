@@ -1,6 +1,6 @@
 export Tweedie
 
-abstract type AbstractEDM <: AbstractKleisli end
+abstract type AbstractEDM <: AbstractTransitionKernel end
 
 
 """

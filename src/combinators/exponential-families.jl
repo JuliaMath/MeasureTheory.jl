@@ -1,6 +1,6 @@
 export ExponentialFamily
 
-@concrete terse struct ExponentialFamily <: AbstractKleisli
+@concrete terse struct ExponentialFamily <: AbstractTransitionKernel
     support_contains
     base
     mdim
