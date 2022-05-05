@@ -17,6 +17,8 @@ PROXIES = Dict(
     :Distributions => [
         :cdf
         :ccdf
+        :logcdf
+        :logccdf
     ]
 )
 

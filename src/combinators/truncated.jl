@@ -5,12 +5,13 @@ struct Truncated{P,L,U,W} <: AbstractMeasure
     logweight::W
 
     function Truncated(d::P, lower::L, upper::U) where {P,L,U}
-        logweight = logsubexp(logcdf(d, upper), logcdf(d,lower))
+        tails = cdf(d, lower) + ccdf(d, upper)
+        logweight = -log1p(-tails)
         new{P,L,U,typeof(logweight)}(d, lower, upper, logweight)
     end
 
     function Truncated(d::P, ::Nothing, upper::U) where {P,U}
-        logweight = logcdf(d, upper)
+        logweight = -logcdf(d, upper)
         new{P,Nothing,U,typeof(logweight)}(d, nothing, upper, logweight)
     end
 
@@ -24,7 +25,7 @@ insupport(d::Truncated, x) = insupport(d.base, x) && d.lower < x < d.upper
 
 insupport(d::Truncated{P,L,Nothing}, x) where {P,L} = insupport(d.base, x) && d.lower < x
 
-insupport(d::Truncated{P,Nothing,U}, x) where {P,U} = insupport(d.base, x) && d.lower < x < d.upper
+insupport(d::Truncated{P,Nothing,U}, x) where {P,U} = insupport(d.base, x) && x < d.upper
 
 export truncated
 
@@ -36,6 +37,6 @@ truncated(d; lower=nothing, upper=nothing) = truncated(d, lower, upper)
 
 
 
-logdensity_def(d::Truncated, x) = d.logweight
+logdensity_def(d::Truncated, x) = logdensity_def(d.base, x)
 
-basemeasure(d::Truncated, x) = d.base
+basemeasure(d::Truncated, x) = weightedmeasure(d.logweight, basemeasure(d.base, x))
