@@ -9,6 +9,7 @@ using FillArrays
 
 using MeasureTheory
 using MeasureBase.Interface
+using MeasureTheory: kernel
 
 using Aqua
 Aqua.test_all(MeasureTheory; ambiguities=false, unbound_args=false)
@@ -278,7 +279,7 @@ end
 
     for (d,p) in dps
         for ℓ in ℓs
-            @test logdensity_def(d ⊙ ℓ, p) ≈ logdensity_def(d, p) + logdensity_def(ℓ, p)
+            @test logdensityof(d ⊙ ℓ, p) ≈ logdensityof(d, p) + logdensityof(ℓ.k(p), ℓ.x)
         end
     end
 end

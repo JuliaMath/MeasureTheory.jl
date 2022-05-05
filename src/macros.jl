@@ -148,6 +148,7 @@ function _half(__module__, ex)
             halfdist = esc(Symbol(:Half, dist))
             dist = esc(dist)
             quote
+                $halfdist(arg::NamedTuple) = Half($dist(arg))
                 $halfdist(args...) = Half($dist(args...))
                 $halfdist(; kwargs...) = Half($dist(; kwargs...))
             end
