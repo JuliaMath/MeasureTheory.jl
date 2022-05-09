@@ -12,7 +12,6 @@ export Cauchy, HalfCauchy
 @kwstruct Cauchy(ω)
 @kwstruct Cauchy(μ, ω)
 
-
 logdensity_def(d::Cauchy, x) = logdensity_def(proxy(d), x)
 
 basemeasure(d::Cauchy) = WeightedMeasure(static(-logπ), Lebesgue(ℝ))
@@ -33,10 +32,10 @@ for N in AFFINEPARS
     @eval begin
         proxy(d::Cauchy{$N}) = affine(params(d), Cauchy())
         @useproxy Cauchy{$N}
-        rand(rng::AbstractRNG, ::Type{T}, d::Cauchy{$N}) where {T} = rand(rng, T, affine(params(d), Cauchy()))
+        rand(rng::AbstractRNG, ::Type{T}, d::Cauchy{$N}) where {T} =
+            rand(rng, T, affine(params(d), Cauchy()))
     end
 end
-
 
 ≪(::Cauchy, ::Lebesgue{X}) where {X<:Real} = true
 

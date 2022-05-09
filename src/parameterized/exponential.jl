@@ -3,7 +3,7 @@
 
 export Exponential
 
-@parameterized Exponential(β) 
+@parameterized Exponential(β)
 
 insupport(::Exponential, x) = x ≥ 0
 basemeasure(::Exponential) = Lebesgue()

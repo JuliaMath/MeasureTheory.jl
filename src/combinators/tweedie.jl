@@ -26,17 +26,17 @@ end
     return inv(log(-θ))
 end
 
-@generated function tweedie_mean(::StaticFloat64{p}, θ) where p
-    α_minus_1 = (p-2) / (p-1) - 1
+@generated function tweedie_mean(::StaticFloat64{p}, θ) where {p}
+    α_minus_1 = (p - 2) / (p - 1) - 1
 
     quote
         $(Expr(:meta, :inline))
-        (θ / α_minus_1) ^ α_minus_1
+        (θ / α_minus_1)^α_minus_1
     end
 end
 
 @inline function tweedie_cumulant(::StaticFloat64{0.0}, θ)
-    return 0.5 * θ ^ 2
+    return 0.5 * θ^2
 end
 
 @inline function tweedie_cumulant(::StaticFloat64{1.0}, θ)
@@ -47,13 +47,13 @@ end
     return -log(-θ)
 end
 
-@generated function tweedie_cumulant(::StaticFloat64{p}, θ) where p
-    α = (p-2) / (p-1)
-    coeff = (α-1) / α
+@generated function tweedie_cumulant(::StaticFloat64{p}, θ) where {p}
+    α = (p - 2) / (p - 1)
+    coeff = (α - 1) / α
 
     quote
         $(Expr(:meta, :inline))
-        coeff * (θ/(α-1)) ^ α
+        coeff * (θ / (α - 1))^α
     end
 end
 
@@ -72,11 +72,10 @@ function logdensity_def(d::TweedieMeasure, x)
     mydot(x, d.θ) - d.cumulant
 end
 
-
 function MeasureBase.powermeasure(fam::Tweedie, dims::NTuple{N,I}) where {N,I}
-    base(σ) = fam.base(σ) ^ dims
-    a = AffineTransform((σ=prod(dims),)) ∘ fam.a
-    Tweedie(fam.base ^ dims, fam.θ, fam.η, t, a)
+    base(σ) = fam.base(σ)^dims
+    a = AffineTransform((σ = prod(dims),)) ∘ fam.a
+    Tweedie(fam.base^dims, fam.θ, fam.η, t, a)
 end
 
 struct TweedieLikelihood{C,Θ,H,T,A} <: AbstractLikelihood
@@ -97,7 +96,7 @@ end
 
 @inline function logdensity_def(ℓ::TweedieLikelihood, par)
     θ = ℓ.θ(par)
-    mydot(θ, ℓ.t) - ℓ.a(θ) + ℓ.c 
+    mydot(θ, ℓ.t) - ℓ.a(θ) + ℓ.c
 end
 
 basemeasure(fam::Tweedie) = fam.base

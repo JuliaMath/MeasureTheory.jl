@@ -3,7 +3,7 @@ export For
 using Random
 import Base
 
-struct For{T, F, I} <: AbstractProductMeasure
+struct For{T,F,I} <: AbstractProductMeasure
     f::F
     inds::I
 
@@ -11,7 +11,7 @@ struct For{T, F, I} <: AbstractProductMeasure
         new{T,Core.Typeof(f),I}(f, inds)
     end
 
-    @inline For{T,F,I}(f::F, inds::I) where {T,F,I} = new{T,F,I}(f,inds)
+    @inline For{T,F,I}(f::F, inds::I) where {T,F,I} = new{T,F,I}(f, inds)
 
     function For{Union{},F,I}(f::F, inds::I) where {F,I}
         println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
@@ -20,10 +20,9 @@ struct For{T, F, I} <: AbstractProductMeasure
         println.(stacktrace())
         println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
         # @error "Empty `For` construction"
-        return ProductMeasure(mappedarray(i -> f(Tuple(i)...), CartesianIndices(inds...))) 
+        return ProductMeasure(mappedarray(i -> f(Tuple(i)...), CartesianIndices(inds...)))
     end
 end
-
 
 @generated function For(f::F, inds::I) where {F,I<:Tuple}
     eltypes = Tuple{eltype.(I.types)...}
@@ -33,7 +32,6 @@ end
         For{T,F,I}(f, inds)
     end
 end
-
 
 # For(f, gen::Base.Generator) = ProductMeasure(Base.Generator(f ∘ gen.f, gen.iter))
 
@@ -52,7 +50,7 @@ end
 # @inline function tailcall_iter(f, iter, (val, state))
 #     tailcall_iter(f, iter, (val, state), unit(f))
 # end
-  
+
 # @inline function tailcall_iter(f, iter, (val, state), acc)
 #     tailcall_iter(f, iter, iterate(iter, state), f(val, acc))
 # end
@@ -68,7 +66,11 @@ end
 #     tailcall_iter(f, eachindex(x))
 # end
 
-@inline function logdensity_def(d::For{T,F,I}, x::AbstractVector{X}; exec=SequentialEx(simd = true)) where {X,T,F,I<:Tuple{<:AbstractVector}}
+@inline function logdensity_def(
+    d::For{T,F,I},
+    x::AbstractVector{X};
+    exec = SequentialEx(simd = true),
+) where {X,T,F,I<:Tuple{<:AbstractVector}}
     ind = only(d.inds)
     @floop exec for j in eachindex(x)
         local i = getindex(ind, j)
@@ -78,24 +80,27 @@ end
     ℓ
 end
 
-function logdensity_def(d::For, x::AbstractVector; exec=SequentialEx(simd = true)) 
+function logdensity_def(d::For, x::AbstractVector; exec = SequentialEx(simd = true))
     @floop exec for j in eachindex(x)
         local i = (getindex(ind, j) for ind in d.inds)
         local Δℓ = @inbounds logdensity_def(d.f(i...), x[j])
         @reduce ℓ += Δℓ
     end
- 
+
     ℓ
 end
-   
 
-function logdensity_def(d::For{T,F,I}, x::AbstractArray{X}; exec=SequentialEx(simd = true)) where {T,F,I,X}
+function logdensity_def(
+    d::For{T,F,I},
+    x::AbstractArray{X};
+    exec = SequentialEx(simd = true),
+) where {T,F,I,X}
     @floop exec for j in CartesianIndices(x)
         local i = (getindex(ind, j) for ind in d.inds)
         local Δℓ = @inbounds logdensity_def(d.f(i...), x[j])
         @reduce ℓ += Δℓ
     end
- 
+
     ℓ
 end
 
@@ -106,7 +111,7 @@ end
 # end
 
 # function logdensity_def(d::For{T,F,I}, x::AbstractVector) where {N,T,F,I<:NTuple{N,<:Base.Generator}}
-    
+
 #     sum(zip(x, d.inds...)) do (xⱼ, dⱼ...)
 #         logdensity_def(d.f(dⱼ...), xⱼ)
 #     end
@@ -121,7 +126,10 @@ end
 function marginals(d::For{T,F,I}) where {T,F,I}
     f = d.f
     data = d.inds
-    MappedArrays.ReadonlyMultiMappedArray{T,ndims(first(data)),typeof(data),typeof(f)}(f, data)
+    MappedArrays.ReadonlyMultiMappedArray{T,ndims(first(data)),typeof(data),typeof(f)}(
+        f,
+        data,
+    )
 end
 
 function marginals(d::For{T,F,I}) where {N,T,F,I<:NTuple{N,<:Base.Generator}}
@@ -134,16 +142,23 @@ end
     quote
         $(Expr(:meta, :inline))
         _basemeasure(d, $B, $sing)
-    end    
+    end
 end
 
-@inline function _basemeasure(d::For{T,F,I}, ::Type{<:WeightedMeasure{StaticFloat64{N}, B}}, ::True) where {T,F,I,N,B}
+@inline function _basemeasure(
+    d::For{T,F,I},
+    ::Type{<:WeightedMeasure{StaticFloat64{N},B}},
+    ::True,
+) where {T,F,I,N,B}
     dim = size(first(d.inds))
-    weightedmeasure(static(N) * prod(dim), instance(B) ^ dim)
+    weightedmeasure(static(N) * prod(dim), instance(B)^dim)
 end
 
-
-@inline function _basemeasure(d::For{T,F,I}, ::Type{<:WeightedMeasure{StaticFloat64{N}, B}}, ::False) where {T,F,I,N,B}
+@inline function _basemeasure(
+    d::For{T,F,I},
+    ::Type{<:WeightedMeasure{StaticFloat64{N},B}},
+    ::False,
+) where {T,F,I,N,B}
     dim = size(first(d.inds))
     base = For(d.inds) do j
         basemeasure(d.f(j)).base
@@ -152,10 +167,14 @@ end
 end
 
 @inline function _basemeasure(d::For{T,F,I}, ::Type{B}, ::True) where {T,F,I,B}
-    instance(B) ^ size(first(d.inds))
+    instance(B)^size(first(d.inds))
 end
 
-@inline function _basemeasure(d::For{T,F,I}, ::Type{B}, ::False) where {T,F,I,B<:AbstractMeasure}
+@inline function _basemeasure(
+    d::For{T,F,I},
+    ::Type{B},
+    ::False,
+) where {T,F,I,B<:AbstractMeasure}
     f = basekleisli(d.f)
     For{B}(f, d.inds)
 end
@@ -164,11 +183,19 @@ end
     MeasureBase.productmeasure(basemeasure.(marginals(d)))
 end
 
-function _basemeasure(d::For{T,F,I}, ::Type{B}, ::True) where {N,T<:AbstractMeasure,F,I<:NTuple{N,<:Base.Generator},B}
-    return instance(B) ^ minimum(length, d.inds)
+function _basemeasure(
+    d::For{T,F,I},
+    ::Type{B},
+    ::True,
+) where {N,T<:AbstractMeasure,F,I<:NTuple{N,<:Base.Generator},B}
+    return instance(B)^minimum(length, d.inds)
 end
 
-function _basemeasure(d::For{T,F,I}, ::Type{B}, ::False) where {N,T<:AbstractMeasure,F,I<:NTuple{N,<:Base.Generator},B}
+function _basemeasure(
+    d::For{T,F,I},
+    ::Type{B},
+    ::False,
+) where {N,T<:AbstractMeasure,F,I<:NTuple{N,<:Base.Generator},B}
     f = basekleisli(d.f)
     For{B}(f, d.inds)
 end
@@ -177,15 +204,11 @@ function Pretty.tile(d::For{T}) where {T}
     result = Pretty.literal("For{")
     result *= Pretty.tile(T)
     result *= Pretty.literal("}")
-    result *= Pretty.list_layout(
-        [
-            Pretty.literal(func_string(d.f, Tuple{_eltype.(d.inds)...})),
-            Pretty.tile.(d.inds)...
-        ]
-    )
+    result *= Pretty.list_layout([
+        Pretty.literal(func_string(d.f, Tuple{_eltype.(d.inds)...})),
+        Pretty.tile.(d.inds)...,
+    ])
 end
-
-
 
 """
     For(f, base...)
@@ -260,17 +283,18 @@ julia> For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end |> marginals |> colle
 """
 @inline For{T}(f, inds...) where {T} = For{T}(f, inds)
 @inline For{T}(f, n::Integer) where {T} = For{T}(f, static(1):n)
-@inline For{T}(f, inds::Integer...) where {T} = For{T}(i -> f(Tuple(i)...), Base.CartesianIndices(inds))
+@inline For{T}(f, inds::Integer...) where {T} =
+    For{T}(i -> f(Tuple(i)...), Base.CartesianIndices(inds))
 
 @inline For(f, inds...) = For(f, inds)
 @inline For(f, n::Integer) = For(f, static(1):n)
 @inline For(f, inds::Integer...) = For(i -> f(Tuple(i)...), Base.CartesianIndices(inds))
 # For(f, inds::Base.Generator) = productmeasure(mymap(f, inds))
 
-function Random.rand!(rng::AbstractRNG, d::For{T,F,I}, x) where {T,F,I} 
+function Random.rand!(rng::AbstractRNG, d::For{T,F,I}, x) where {T,F,I}
     mar = marginals(d)
     @inbounds for (j, dⱼ) in enumerate(mar)
-        x[j] = rand(rng,dⱼ)
+        x[j] = rand(rng, dⱼ)
     end
     return x
 end

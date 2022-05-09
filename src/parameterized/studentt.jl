@@ -12,7 +12,6 @@ export StudentT, HalfStudentT
 @kwstruct StudentT(ν, μ, σ)
 @kwstruct StudentT(ν, μ, ω)
 
-
 for N in AFFINEPARS
     @eval begin
         proxy(d::StudentT{(:ν, $N...)}) =
