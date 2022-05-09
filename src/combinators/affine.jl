@@ -23,8 +23,7 @@ Base.propertynames(d::AffineTransform{N}) where {N} = N
 
 import InverseFunctions: inverse
 
-@inline inverse(f::AffineTransform{(:μ, :σ)}) =
-    AffineTransform((μ = -(f.σ \ f.μ), ω = f.σ))
+@inline inverse(f::AffineTransform{(:μ, :σ)}) = AffineTransform((μ = -(f.σ \ f.μ), ω = f.σ))
 @inline inverse(f::AffineTransform{(:μ, :ω)}) = AffineTransform((μ = -f.ω * f.μ, σ = f.ω))
 @inline inverse(f::AffineTransform{(:σ,)}) = AffineTransform((ω = f.σ,))
 @inline inverse(f::AffineTransform{(:ω,)}) = AffineTransform((σ = f.ω,))
@@ -121,13 +120,11 @@ logjac(f::AffineTransform{(:μ,)}) = 0.0
 
 ###############################################################################
 
-
 struct OrthoLebesgue{N,T} <: PrimitiveMeasure
     par::NamedTuple{N,T}
 
     OrthoLebesgue(nt::NamedTuple{N,T}) where {N,T} = new{N,T}(nt)
 end
-
 
 basemeasure(d::OrthoLebesgue) = d
 
@@ -139,7 +136,7 @@ struct Affine{N,M,T} <: AbstractMeasure
 end
 
 function Pretty.tile(d::Affine)
-    Pretty.list_layout(Pretty.tile.([params(d.f), d.parent]); prefix=:Affine)
+    Pretty.list_layout(Pretty.tile.([params(d.f), d.parent]); prefix = :Affine)
 end
 
 function testvalue(d::Affine)
@@ -233,7 +230,9 @@ end
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
 end
 
-@inline function basemeasure(d::Affine{N,M,Tuple{A1,A2}}) where {N,M,A1<:AbstractArray, A2<:AbstractArray}
+@inline function basemeasure(
+    d::Affine{N,M,Tuple{A1,A2}},
+) where {N,M,A1<:AbstractArray,A2<:AbstractArray}
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
 end
 
@@ -241,8 +240,10 @@ end
 
 # We can't do this until we know we're working with Lebesgue measure, since for
 # example it wouldn't make sense to apply a log-Jacobian to a point measure
-@inline basemeasure(d::Affine{N,L}) where {N,L<:Lebesgue} = weightedmeasure(-logjac(d), d.parent)
-@inline basemeasure(d::Affine{N,L}) where {N,L<:LebesgueMeasure} = weightedmeasure(-logjac(d), d.parent)
+@inline basemeasure(d::Affine{N,L}) where {N,L<:Lebesgue} =
+    weightedmeasure(-logjac(d), d.parent)
+@inline basemeasure(d::Affine{N,L}) where {N,L<:LebesgueMeasure} =
+    weightedmeasure(-logjac(d), d.parent)
 
 logjac(d::Affine) = logjac(getfield(d, :f))
 

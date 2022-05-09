@@ -102,7 +102,6 @@ proxy(d::Normal{()}) = Dists.Normal()
 # Instead of setting default values, the `@kwstruct` call above makes a
 # parameter-free instance available. The log-density for this is very efficient.
 
-
 Base.rand(rng::Random.AbstractRNG, ::Type{T}, ::Normal{()}) where {T} = randn(rng, T)
 Base.rand(rng::Random.AbstractRNG, ::Type{T}, μ::Normal) where {T} = rand(rng, T, proxy(μ))
 

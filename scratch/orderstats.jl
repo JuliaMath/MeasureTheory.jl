@@ -3,7 +3,7 @@ struct OrderStatistic{n,r,B} <: AbstractMeasure
 end
 
 @inline function basemeasure(d::OrderStatistic{n,r})
-    WeightedMeasure(logbeta(n+1, r+1), d.base)
+    WeightedMeasure(logbeta(n + 1, r + 1), d.base)
 end
 
 @inline function logdensity_def(d::OrderStatistic{n,r}, x)

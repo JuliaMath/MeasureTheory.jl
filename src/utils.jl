@@ -1,26 +1,25 @@
 using LinearAlgebra
 export mydot
 
-function solve(A::Union{AbstractMatrix, Factorization}, y::AbstractArray)
+function solve(A::Union{AbstractMatrix,Factorization}, y::AbstractArray)
     (m, n) = size(A)
     n == 1 && return [dot(A, y) / sum(a -> a^2, A)]
     return A \ y
 end
 
-
 @inline function mydot(a::Real, b::Real)
     return a * b
 end
 
-@inline function mydot(a::Ta, b::Tb) where {Ta<:AbstractArray, Tb<:AbstractArray}
+@inline function mydot(a::Ta, b::Tb) where {Ta<:AbstractArray,Tb<:AbstractArray}
     return dot(a, b)
 end
 
-@inline function _mydot(a::NTuple{0}, b::NTuple{0}, s) 
+@inline function _mydot(a::NTuple{0}, b::NTuple{0}, s)
     return s
 end
 
-@inline function mydot(a::Tuple, b::Tuple) 
+@inline function mydot(a::Tuple, b::Tuple)
     z = 0.0
     _mydot(a, b, z)
 end
@@ -44,15 +43,16 @@ end
 in𝕀(x) = static(0.0) ≤ x ≤ static(1.0)
 inℝ₊(x) = static(0.0) ≤ x
 
-
 _eltype(T) = eltype(T)
 
 function _eltype(g::Base.Generator{I}) where {I}
     Core.Compiler.return_type(g.f, Tuple{_eltype(I)})
 end
 
-function _eltype(::Type{Base.Generator{I,ComposedFunction{Outer,Inner}}}) where {Outer,Inner,I}
-    _eltype(Base.Generator{_eltype(Base.Generator{I,Inner}), Outer})
+function _eltype(
+    ::Type{Base.Generator{I,ComposedFunction{Outer,Inner}}},
+) where {Outer,Inner,I}
+    _eltype(Base.Generator{_eltype(Base.Generator{I,Inner}),Outer})
 end
 
 function _eltype(::Type{Base.Generator{I,F}}) where {F<:Function,I}
@@ -63,8 +63,6 @@ end
 function _eltype(::Type{Z}) where {Z<:Iterators.Zip}
     map(_eltype, Z.types[1].types)
 end
-
-
 
 # Adapted from https://github.com/JuliaArrays/MappedArrays.jl/blob/46bf47f3388d011419fe43404214c1b7a44a49cc/src/MappedArrays.jl#L229
 function func_string(f, types)
@@ -79,7 +77,10 @@ function func_string(f, types)
         end
         lwrd = lwrds[1]
         c = lwrd.code
-        if length(c) == 2 && ((isa(c[2], Expr) && c[2].head === :return) || (isdefined(Core, :ReturnNode) && isa(c[2], Core.ReturnNode)))
+        if length(c) == 2 && (
+            (isa(c[2], Expr) && c[2].head === :return) ||
+            (isdefined(Core, :ReturnNode) && isa(c[2], Core.ReturnNode))
+        )
             # This is a single-line anonymous function, we should handle it
             s = lwrd.slotnames[2:end]
             result = ""
@@ -91,8 +92,8 @@ function func_string(f, types)
                 result *= "->"
             end
             c1 = string(c[1])
-            for i = 1:length(s)
-                c1 = replace(c1, "_"*string(i+1)=>string(s[i]))
+            for i in 1:length(s)
+                c1 = replace(c1, "_" * string(i + 1) => string(s[i]))
             end
             result *= c1
             return result

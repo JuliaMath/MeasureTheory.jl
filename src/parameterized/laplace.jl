@@ -3,7 +3,7 @@
 
 export Laplace
 
-@parameterized Laplace() 
+@parameterized Laplace()
 
 @kwstruct Laplace()
 @kwstruct Laplace(μ)
@@ -27,11 +27,9 @@ end
 
 logdensity_def(d::Laplace, x) = logdensity_def(proxy(d), x)
 
-
 basemeasure(::Laplace{()}) = WeightedMeasure(static(-logtwo), Lebesgue(ℝ))
 
 # @affinepars Laplace
-
 
 Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace{()}) where {T} =
     rand(rng, Dists.Laplace())

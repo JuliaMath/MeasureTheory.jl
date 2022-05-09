@@ -1,8 +1,8 @@
 using Documenter
 using MeasureTheory
 
-DocMeta.setdocmeta!(MeasureBase, :DocTestSetup, :(using MeasureBase); recursive=true)
-DocMeta.setdocmeta!(MeasureTheory, :DocTestSetup, :(using MeasureTheory); recursive=true)
+DocMeta.setdocmeta!(MeasureBase, :DocTestSetup, :(using MeasureBase); recursive = true)
+DocMeta.setdocmeta!(MeasureTheory, :DocTestSetup, :(using MeasureTheory); recursive = true)
 
 pages = [
     "Home" => "index.md",
@@ -18,18 +18,16 @@ pages = [
 ]
 
 makedocs(;
-    modules=[MeasureBase, MeasureTheory],
-    authors="Chad Scherrer <chad.scherrer@gmail.com> and contributors",
-    repo="https://github.com/cscherrer/MeasureTheory.jl/blob/{commit}{path}#L{line}",
-    sitename="MeasureTheory.jl",
-    format=Documenter.HTML(;
-        prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://cscherrer.github.io/MeasureTheory.jl",
-        assets=String[],
+    modules = [MeasureBase, MeasureTheory],
+    authors = "Chad Scherrer <chad.scherrer@gmail.com> and contributors",
+    repo = "https://github.com/cscherrer/MeasureTheory.jl/blob/{commit}{path}#L{line}",
+    sitename = "MeasureTheory.jl",
+    format = Documenter.HTML(;
+        prettyurls = get(ENV, "CI", "false") == "true",
+        canonical = "https://cscherrer.github.io/MeasureTheory.jl",
+        assets = String[],
     ),
-    pages=pages
+    pages = pages,
 )
 
-deploydocs(;
-    repo="github.com/cscherrer/MeasureTheory.jl",
-)
+deploydocs(; repo = "github.com/cscherrer/MeasureTheory.jl")

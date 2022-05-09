@@ -14,11 +14,11 @@ insupport(d::Pushforward, x) = insupport(d.μ, inverse(d.f)(x))
 Pushforward(f, μ) = Pushforward(f, μ, True())
 
 function Pretty.tile(pf::Pushforward{<:TV.CallableTransform})
-    Pretty.list_layout(Pretty.tile.([pf.f.t, pf.μ, pf.logjac]); prefix=:Pushforward)
+    Pretty.list_layout(Pretty.tile.([pf.f.t, pf.μ, pf.logjac]); prefix = :Pushforward)
 end
 
 function Pretty.tile(pf::Pushforward)
-    Pretty.list_layout(Pretty.tile.([pf.f, pf.μ, pf.logjac]); prefix=:Pushforward)
+    Pretty.list_layout(Pretty.tile.([pf.f, pf.μ, pf.logjac]); prefix = :Pushforward)
 end
 struct Pullback{F,M,L} <: AbstractMeasure
     f::F
@@ -31,11 +31,11 @@ Pullback(f, ν) = Pullback(f, ν, True())
 insupport(d::Pullback, x) = insupport(d.ν, d.f(x))
 
 function Pretty.tile(pf::Pullback{<:TV.CallableTransform})
-    Pretty.list_layout(Pretty.tile.([pf.f.t, pf.ν, pf.logjac]); prefix=:Pullback)
+    Pretty.list_layout(Pretty.tile.([pf.f.t, pf.ν, pf.logjac]); prefix = :Pullback)
 end
 
 function Pretty.tile(pf::Pullback)
-    Pretty.list_layout(Pretty.tile.([pf.f, pf.ν, pf.logjac]); prefix=:Pullback)
+    Pretty.list_layout(Pretty.tile.([pf.f, pf.ν, pf.logjac]); prefix = :Pullback)
 end
 
 @inline function logdensity_def(pb::Pullback{F,M,True}, x) where {F<:CallableTransform,M}
@@ -60,7 +60,10 @@ end
     return logdensity_def(μ, x) - logJ
 end
 
-@inline function logdensity_def(pf::Pushforward{F,M,False}, y) where {F<:CallableTransform,M}
+@inline function logdensity_def(
+    pf::Pushforward{F,M,False},
+    y,
+) where {F<:CallableTransform,M}
     f = pf.f
     μ = pf.μ
     x = TV.inverse(f.t)(y)
@@ -69,7 +72,8 @@ end
 
 Pullback(f::AbstractTransform, ν, logjac = True()) = Pullback(TV.transform(f), ν, logjac)
 
-Pushforward(f::AbstractTransform, ν, logjac = True()) = Pushforward(TV.transform(f), ν, logjac)
+Pushforward(f::AbstractTransform, ν, logjac = True()) =
+    Pushforward(TV.transform(f), ν, logjac)
 
 Pullback(f::CallableInverse, ν, logjac = True()) = Pushforward(TV.transform(f.t), ν, logjac)
 

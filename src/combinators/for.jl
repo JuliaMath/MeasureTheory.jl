@@ -3,7 +3,7 @@ export For
 using Random
 import Base
 
-struct For{T, F, I} <: AbstractProductMeasure
+struct For{T,F,I} <: AbstractProductMeasure
     f::F
     inds::I
 
@@ -42,7 +42,7 @@ TV.as(d::For) = as(Array, as(first(marginals(d))), size(first(d.inds))...)
 # @inline function tailcall_iter(f, iter, (val, state))
 #     tailcall_iter(f, iter, (val, state), unit(f))
 # end
-  
+
 # @inline function tailcall_iter(f, iter, (val, state), acc)
 #     tailcall_iter(f, iter, iterate(iter, state), f(val, acc))
 # end
@@ -58,7 +58,11 @@ TV.as(d::For) = as(Array, as(first(marginals(d))), size(first(d.inds))...)
 #     tailcall_iter(f, eachindex(x))
 # end
 
-@inline function logdensity_def(d::For{T,F,I}, x::AbstractVector{X}) where {X,T,F,I<:Tuple{<:AbstractVector}}
+@inline function logdensity_def(
+    d::For{T,F,I},
+    x::AbstractVector{X};
+    exec = SequentialEx(simd = true),
+) where {X,T,F,I<:Tuple{<:AbstractVector}}
     ind = only(d.inds)
     sum(eachindex(x)) do j
         i = getindex(ind, j)
@@ -83,7 +87,10 @@ end
 function marginals(d::For{T,F,I}) where {T,F,I}
     f = d.f
     data = d.inds
-    MappedArrays.ReadonlyMultiMappedArray{T,ndims(first(data)),typeof(data),typeof(f)}(f, data)
+    MappedArrays.ReadonlyMultiMappedArray{T,ndims(first(data)),typeof(data),typeof(f)}(
+        f,
+        data,
+    )
 end
 
 function marginals(d::For{T,F,I}) where {N,T,F,I<:NTuple{N,<:Base.Generator}}
@@ -96,13 +103,20 @@ function basemeasure(d::For{T,F,I}) where {T,F,I}
     _basemeasure(d, B, sing)
 end
 
-@inline function _basemeasure(d::For{T,F,I}, ::Type{<:WeightedMeasure{StaticFloat64{N}, B}}, ::True) where {T,F,I,N,B}
+@inline function _basemeasure(
+    d::For{T,F,I},
+    ::Type{<:WeightedMeasure{StaticFloat64{N},B}},
+    ::True,
+) where {T,F,I,N,B}
     dim = size(first(d.inds))
-    weightedmeasure(static(N) * prod(dim), instance(B) ^ dim)
+    weightedmeasure(static(N) * prod(dim), instance(B)^dim)
 end
 
-
-@inline function _basemeasure(d::For{T,F,I}, ::Type{<:WeightedMeasure{StaticFloat64{N}, B}}, ::False) where {T,F,I,N,B}
+@inline function _basemeasure(
+    d::For{T,F,I},
+    ::Type{<:WeightedMeasure{StaticFloat64{N},B}},
+    ::False,
+) where {T,F,I,N,B}
     dim = size(first(d.inds))
     base = For(d.inds) do j
         basemeasure(d.f(j)).base
@@ -111,7 +125,7 @@ end
 end
 
 @inline function _basemeasure(d::For{T,F,I}, ::Type{B}, ::True) where {T,F,I,B}
-    instance(B) ^ size(first(d.inds))
+    instance(B)^size(first(d.inds))
 end
 
 @inline function _basemeasure(d::For{T,F,I}, ::Type{B}, ::False) where {T,F,I,B<:AbstractMeasure}
@@ -123,8 +137,12 @@ end
     MeasureBase.productmeasure(basemeasure.(marginals(d)))
 end
 
-function _basemeasure(d::For{T,F,I}, ::Type{B}, ::True) where {N,T<:AbstractMeasure,F,I<:NTuple{N,<:Base.Generator},B}
-    return instance(B) ^ minimum(length, d.inds)
+function _basemeasure(
+    d::For{T,F,I},
+    ::Type{B},
+    ::True,
+) where {N,T<:AbstractMeasure,F,I<:NTuple{N,<:Base.Generator},B}
+    return instance(B)^minimum(length, d.inds)
 end
 
 function _basemeasure(d::For{T,F,I}, ::Type{B}, ::False) where {N,T<:AbstractMeasure,F,I<:NTuple{N,<:Base.Generator},B}
@@ -136,15 +154,11 @@ function Pretty.tile(d::For{T}) where {T}
     result = Pretty.literal("For{")
     result *= Pretty.tile(T)
     result *= Pretty.literal("}")
-    result *= Pretty.list_layout(
-        [
-            Pretty.literal(func_string(d.f, Tuple{_eltype.(d.inds)...})),
-            Pretty.tile.(d.inds)...
-        ]
-    )
+    result *= Pretty.list_layout([
+        Pretty.literal(func_string(d.f, Tuple{_eltype.(d.inds)...})),
+        Pretty.tile.(d.inds)...,
+    ])
 end
-
-
 
 """
     For(f, base...)
@@ -219,17 +233,18 @@ julia> For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end |> marginals |> colle
 """
 @inline For{T}(f, inds...) where {T} = For{T}(f, inds)
 @inline For{T}(f, n::Integer) where {T} = For{T}(f, static(1):n)
-@inline For{T}(f, inds::Integer...) where {T} = For{T}(i -> f(Tuple(i)...), Base.CartesianIndices(inds))
+@inline For{T}(f, inds::Integer...) where {T} =
+    For{T}(i -> f(Tuple(i)...), Base.CartesianIndices(inds))
 
 @inline For(f, inds...) = For(f, inds)
 @inline For(f, n::Integer) = For(f, static(1):n)
 @inline For(f, inds::Integer...) = For(i -> f(Tuple(i)...), Base.CartesianIndices(inds))
 # For(f, inds::Base.Generator) = productmeasure(mymap(f, inds))
 
-function Random.rand!(rng::AbstractRNG, d::For{T,F,I}, x) where {T,F,I} 
+function Random.rand!(rng::AbstractRNG, d::For{T,F,I}, x) where {T,F,I}
     mar = marginals(d)
     @inbounds for (j, dⱼ) in enumerate(mar)
-        x[j] = rand(rng,dⱼ)
+        x[j] = rand(rng, dⱼ)
     end
     return x
 end
