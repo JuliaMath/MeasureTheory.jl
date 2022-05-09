@@ -84,9 +84,9 @@ end
 
 export likelihood
 
-function regression(fam, uᵀ, vᵀ)
+# function regression(fam, uᵀ, vᵀ)
 
-end
+# end
 
 function MeasureBase.likelihood(fam::ExponentialFamily, y)
     c = logdensityof(fam.base, y) 
