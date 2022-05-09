@@ -5,7 +5,7 @@ export ExponentialFamily
     mdim
     pdim
     t
-    x    
+    x
     a
 end
 
@@ -17,7 +17,7 @@ function MeasureBase.powermeasure(fam::ExponentialFamily, dims::NTuple{N,I}) whe
     t = Tuple((y -> f.(y) for f in fam.t))
     a(η) = BroadcastArray(fam.a, η)
     p = prod(dims)
-    ExponentialFamily(fam.base ^ dims, fam.mdim * p, fam.pdim * p,  t, fam.x, a)
+    ExponentialFamily(fam.base^dims, fam.mdim * p, fam.pdim * p, t, fam.x, a)
 end
 
 @concrete terse struct ExpFamMeasure <: AbstractMeasure
@@ -26,24 +26,24 @@ end
     a # instantiated to a value
 end
 
-
 @inline function (fam::ExponentialFamily)(β)
-    η = fam.x * β 
+    η = fam.x * β
     a = fam.a(η)
     ExpFamMeasure(fam, η, a)
 end
 
 MeasureBase.basemeasure(d::ExpFamMeasure) = d.fam.base
 
-tracedot(a::AbstractVector,b::AbstractVector) = dot(a, b)
+tracedot(a::AbstractVector, b::AbstractVector) = dot(a, b)
 
-tracedot(a::AbstractVector,x,b::AbstractVector) = dot(a, x, b)
+tracedot(a::AbstractVector, x, b::AbstractVector) = dot(a, x, b)
 
-tracedot(a,b) = sum((dot(view(a,:,j), view(b,:,j)) for j in 1:size(a,2)))
+tracedot(a, b) = sum((dot(view(a, :, j), view(b, :, j)) for j in 1:size(a, 2)))
 
-tracedot(a,x,b) = sum(1:size(a,2)) do j
-    dot(view(a,:,j), x, view(b,:,j))
-end
+tracedot(a, x, b) =
+    sum(1:size(a, 2)) do j
+        dot(view(a, :, j), x, view(b, :, j))
+    end
 
 # @inline function tracedot(a::BlockDiag, b::BlockDiag)
 #     numblocks = length(a.blocks)
@@ -61,13 +61,12 @@ function logdensity_def(d::ExpFamMeasure, y)
     dot(t, η)
 end
 
-
 function withX(fam::ExponentialFamily, x)
     @inline t(y) = fam.t.(y)
     newx = ApplyArray(kron, x, fam.x)
     η(β) = fam.η.(β)
     a(β) = sum(fam.a, β)
-    ExponentialFamily(fam.base ^ size(x,1), t, x, η, a)
+    ExponentialFamily(fam.base^size(x, 1), t, x, η, a)
 end
 
 @concrete terse struct ExpFamLikelihood <: AbstractLikelihood
@@ -80,11 +79,10 @@ end
 export likelihood
 
 function regression(fam, uᵀ, vᵀ)
-
 end
 
 function likelihood(fam::ExponentialFamily, y)
-    c = logdensityof(fam.base, y) 
+    c = logdensityof(fam.base, y)
     t = ApplyArray(vcat, (f.(y) for f in fam.t)...)
     tᵀx = t' * fam.x
     ExpFamLikelihood(fam, y, tᵀx, c)

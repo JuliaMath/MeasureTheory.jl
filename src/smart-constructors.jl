@@ -21,7 +21,7 @@ end
 using MeasureBase: RealNumbers
 
 function affine(f::AffineTransform{(:μ, :σ)}, parent::Lebesgue{RealNumbers})
-    affine(AffineTransform((σ=f.σ,)), parent)
+    affine(AffineTransform((σ = f.σ,)), parent)
 end
 
 function affine(f::AffineTransform{(:μ, :ω)}, parent::Lebesgue{RealNumbers})

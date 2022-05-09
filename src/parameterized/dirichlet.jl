@@ -39,6 +39,6 @@ function testvalue(d::Dirichlet{(:α,)})
     Fill(1 / n, n)
 end
 
-@inline function insupport(d::Dirichlet{(:α,)}, x) 
-    length(x) == length(d.α) && sum(x) ≈ 1.0 
+@inline function insupport(d::Dirichlet{(:α,)}, x)
+    length(x) == length(d.α) && sum(x) ≈ 1.0
 end
