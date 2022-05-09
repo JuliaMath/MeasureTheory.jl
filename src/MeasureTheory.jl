@@ -1,7 +1,6 @@
 module MeasureTheory
 
 using Random
-using FLoops
 
 using MeasureBase
 using MLStyle

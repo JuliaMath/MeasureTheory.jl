@@ -58,51 +58,21 @@ TV.as(d::For) = as(Array, as(first(marginals(d))), size(first(d.inds))...)
 #     tailcall_iter(f, eachindex(x))
 # end
 
-@inline function logdensity_def(d::For{T,F,I}, x::AbstractVector{X}; exec=SequentialEx(simd = true)) where {X,T,F,I<:Tuple{<:AbstractVector}}
+@inline function logdensity_def(d::For{T,F,I}, x::AbstractVector{X}) where {X,T,F,I<:Tuple{<:AbstractVector}}
     ind = only(d.inds)
-    js =  eachindex(x)
-    ℓ = 0
-    @simd for j in js
+    sum(eachindex(x)) do j
         i = getindex(ind, j)
-        Δℓ = @inbounds logdensity_def(d.f(i), x[j])
-        ℓ += Δℓ
+        @inbounds logdensity_def(d.f(i), x[j])
     end
-    ℓ
 end
 
-function logdensity_def(d::For, x::AbstractVector; exec=SequentialEx(simd = true)) 
-    @floop exec for j in eachindex(x)
-        local i = (getindex(ind, j) for ind in d.inds)
-        local Δℓ = @inbounds logdensity_def(d.f(i...), x[j])
-        @reduce ℓ += Δℓ
+function logdensity_def(d::For, x::AbstractVector)
+    get_i(j) = tuple((getindex(ind, j) for ind in d.inds)...)
+    sum(eachindex(x)) do j
+        i = get_i(j)
+        @inbounds logdensity_def(d.f(i...), x[j])
     end
- 
-    ℓ
 end
-   
-
-function logdensity_def(d::For{T,F,I}, x::AbstractArray{X}; exec=SequentialEx(simd = true)) where {T,F,I,X}
-    @floop exec for j in CartesianIndices(x)
-        local i = (getindex(ind, j) for ind in d.inds)
-        local Δℓ = @inbounds logdensity_def(d.f(i...), x[j])
-        @reduce ℓ += Δℓ
-    end
- 
-    ℓ
-end
-
-# function logdensity_def(d::For{T,F,I}, x) where {N,T,F,I<:NTuple{N,<:Base.Generator}}
-#     sum(zip(x, d.inds...)) do (xⱼ, dⱼ...)
-#         logdensity_def(d.f(dⱼ...), xⱼ)
-#     end
-# end
-
-# function logdensity_def(d::For{T,F,I}, x::AbstractVector) where {N,T,F,I<:NTuple{N,<:Base.Generator}}
-    
-#     sum(zip(x, d.inds...)) do (xⱼ, dⱼ...)
-#         logdensity_def(d.f(dⱼ...), xⱼ)
-#     end
-# end
 
 function marginals(d::For{T,F,Tuple{I}}) where {T,F,I}
     f = d.f
