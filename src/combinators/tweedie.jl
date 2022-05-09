@@ -3,9 +3,9 @@ export Tweedie
 abstract type AbstractEDM <: AbstractTransitionKernel end
 
 """
-https://en.wikipedia.org/wiki/Tweedie_distribution
+From https://en.wikipedia.org/wiki/Tweedie_distribution:
 
-The Tweedie distributions include a number of familiar distributions as well as
+> The Tweedie distributions include a number of familiar distributions as well as
 some unusual ones, each being specified by the domain of the index parameter. We
 have the
 
