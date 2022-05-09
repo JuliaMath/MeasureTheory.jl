@@ -145,8 +145,6 @@ struct TweedieLikelihood{C,Θ,H,T,A} <: AbstractLikelihood
     a::A
 end
 
-export likelihood
-
 function likelihood(fam::Tweedie, x)
     c = logdensityof(fam.base, x)
     t = fam.t(x)

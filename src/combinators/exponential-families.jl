@@ -90,8 +90,6 @@ end
     c
 end
 
-export likelihood
-
 # function regression(fam, uᵀ, vᵀ)
 
 # end
