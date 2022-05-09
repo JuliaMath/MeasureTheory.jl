@@ -9,7 +9,7 @@ using SpecialFunctions: loggamma
 @kwstruct Poisson()
 @kwstruct Poisson(λ)
 
-Poisson(λ) = Poisson((λ=λ,))
+Poisson(λ) = Poisson((λ = λ,))
 
 basemeasure(::Poisson) = Counting(BoundedInts(static(0), static(Inf)))
 
@@ -34,8 +34,9 @@ asparams(::Type{<:Poisson}, ::StaticSymbol{:logλ}) = asℝ
 gentype(::Poisson) = Int
 
 Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:λ,)}) = rand(rng, Dists.Poisson(d.λ))
-Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:logλ,)}) =
+function Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:logλ,)})
     rand(rng, Dists.Poisson(exp(d.logλ)))
+end
 
 @inline function insupport(::Poisson, x)
     isinteger(x) && x ≥ 0

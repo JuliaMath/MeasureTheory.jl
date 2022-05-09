@@ -32,8 +32,9 @@ reset!(rv::Realized) = reset!(rv.rng)
 
 Base.show(io::IO, r::Realized) = Pretty.pprint(io, r)
 
-Pretty.quoteof(r::Realized) =
+function Pretty.quoteof(r::Realized)
     :(Realized($(Pretty.quoteof(r.rng)), $(Pretty.quoteof(r.iter))))
+end
 
 Base.IteratorEltype(mc::Realized) = Base.HasEltype()
 
@@ -96,8 +97,9 @@ end
 
 Base.show(io::IO, r::RealizedMeasures) = Pretty.pprint(io, r)
 
-Pretty.quoteof(r::RealizedMeasures) =
+function Pretty.quoteof(r::RealizedMeasures)
     :(RealizedMeasures($(Pretty.quoteof(r.rng)), $(Pretty.quoteof(r.iter))))
+end
 
 function Base.iterate(rm::RealizedMeasures, s = nothing)
     val, s = iterate(rm, s)
@@ -119,8 +121,9 @@ RealizedSamples(rng::AbstractRNG, iter) = RealizedSamples(Realized(rng, iter))
 
 Base.show(io::IO, r::RealizedSamples) = Pretty.pprint(io, r)
 
-Pretty.quoteof(r::RealizedSamples) =
+function Pretty.quoteof(r::RealizedSamples)
     :(RealizedSamples($(Pretty.quoteof(r.parent.rng)), $(Pretty.quoteof(r.parent.iter))))
+end
 
 function iter_helper(x)
     isnothing(x) && return x

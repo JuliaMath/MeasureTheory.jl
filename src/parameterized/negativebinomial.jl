@@ -25,7 +25,6 @@ NegativeBinomial(n) = NegativeBinomial(n, 0.5)
     return -log(y + r) - logbeta(r, y + 1) + xlogy(y, p) + xlog1py(r, -p)
 end
 
-
 proxy(d::NegativeBinomial{(:r, :p)}) = Dists.NegativeBinomial(d.r, d.p)
 
 ###############################################################################

@@ -14,8 +14,9 @@ export StudentT, HalfStudentT
 
 for N in AFFINEPARS
     @eval begin
-        proxy(d::StudentT{(:ν, $N...)}) =
+        function proxy(d::StudentT{(:ν, $N...)})
             affine(NamedTuple{$N}(params(d)), StudentT((ν = d.ν,)))
+        end
     end
 end
 

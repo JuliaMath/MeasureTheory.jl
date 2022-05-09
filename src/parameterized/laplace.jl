@@ -31,8 +31,9 @@ basemeasure(::Laplace{()}) = WeightedMeasure(static(-logtwo), Lebesgue(ℝ))
 
 # @affinepars Laplace
 
-Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace{()}) where {T} =
+function Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace{()}) where {T}
     rand(rng, Dists.Laplace())
+end
 Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace) where {T} = Base.rand(rng, T, proxy(μ))
 
 ≪(::Laplace, ::Lebesgue{X}) where {X<:Real} = true

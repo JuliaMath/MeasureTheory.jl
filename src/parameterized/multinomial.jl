@@ -24,8 +24,9 @@ end
     return s
 end
 
-Base.rand(rng::AbstractRNG, T::Type, μ::Multinomial) =
+function Base.rand(rng::AbstractRNG, T::Type, μ::Multinomial)
     rand(rng, Dists.Multinomial(μ.n, μ.p))
+end
 
 proxy(d::Multinomial{(:p,)}) = Dists.Multinomial(d.n, d.p)
 

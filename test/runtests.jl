@@ -211,7 +211,8 @@ end
 end
 
 import MeasureTheory: ⋅
-function ⋅(μ::Normal, kernel) 
+
+function ⋅(μ::Normal, kernel)
     m = kernel(μ)
     Normal(μ = m.μ.μ, σ = sqrt(m.μ.σ^2 + m.σ^2))
 end
@@ -251,11 +252,10 @@ end
 
 #     μ = Normal(μ=ξ0, σ=sqrt(P0))
 #     kernel = MeasureTheory.kernel(Normal; μ=AffineMap(Φ, β), σ=MeasureTheory.AsConst(Q))
-    
+
 #     @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
-    
+
 #     chain = Chain(kernel, μ)
-    
 
 #     dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing) 
 #     tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
@@ -292,7 +292,7 @@ end
     ]
 
     ℓs = [
-        Likelihood(Normal{(:μ,)},              3.0)
+        Likelihood(Normal{(:μ,)}, 3.0),
         # Likelihood(kernel(Normal, x -> (μ=x, σ=2.0)), 3.0)
     ]
 

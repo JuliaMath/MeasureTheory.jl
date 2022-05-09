@@ -21,7 +21,15 @@ function MeasureBase.powermeasure(fam::ExponentialFamily, dims::NTuple{N,I}) whe
     t = Tuple((y -> f.(y) for f in fam.t))
     a(η) = BroadcastArray(fam.a, η)
     p = prod(dims)
-    ExponentialFamily(support_contains, fam.base ^ dims, fam.mdim * p, fam.pdim * p,  t, fam.x, a)
+    ExponentialFamily(
+        support_contains,
+        fam.base^dims,
+        fam.mdim * p,
+        fam.pdim * p,
+        t,
+        fam.x,
+        a,
+    )
 end
 
 @concrete terse struct ExpFamMeasure <: AbstractMeasure
@@ -89,7 +97,7 @@ export likelihood
 # end
 
 function MeasureBase.likelihood(fam::ExponentialFamily, y)
-    c = logdensityof(fam.base, y) 
+    c = logdensityof(fam.base, y)
     t = ApplyArray(vcat, (f.(y) for f in fam.t)...)
     tᵀx = t' * fam.x
     ExpFamLikelihood(fam, y, tᵀx, c)

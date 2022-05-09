@@ -150,9 +150,8 @@ end
     weightedmeasure(ℓ, Lebesgue())
 end
 
-proxy(d::Normal{(:μ, :σ²)}) = affine((μ=d.μ,), Normal((σ²=d.σ²,)))
+proxy(d::Normal{(:μ, :σ²)}) = affine((μ = d.μ,), Normal((σ² = d.σ²,)))
 @useproxy Normal{(:μ, :σ²)}
-
 
 ###############################################################################
 @kwstruct Normal(μ, τ)

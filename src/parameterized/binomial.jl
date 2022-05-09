@@ -7,7 +7,6 @@ using SpecialFunctions
 probit(p) = sqrt2 * erfinv(2p - 1)
 Φ(z) = (1 + erf(invsqrt2 * z)) / 2
 
-
 @parameterized Binomial(n, p)
 
 basemeasure(d::Binomial) = CountingMeasure()
@@ -15,7 +14,6 @@ basemeasure(d::Binomial) = CountingMeasure()
 testvalue(::Binomial) = 0
 
 @kwstruct Binomial()
-
 
 @inline function logdensity_def(d::Binomial{()}, y)
     return -logtwo
@@ -25,18 +23,14 @@ end
     x ∈ (0, 1)
 end
 
-function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :p)}) 
+function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :p)})
     rand(rng, Dists.Binomial(d.n, d.p))
 end
-
-
 
 Binomial(n) = Binomial(n, 0.5)
 
 ###############################################################################
 @kwstruct Binomial(n, p)
-
-
 
 @inline function insupport(d::Binomial, x)
     isinteger(x) && 0 ≤ x ≤ d.n
@@ -90,10 +84,12 @@ function Base.rand(
 end
 
 proxy(d::Binomial{(:n, :p),Tuple{I,A}}) where {I<:Integer,A} = Dists.Binomial(d.n, d.p)
-proxy(d::Binomial{(:n, :logitp),Tuple{I,A}}) where {I<:Integer,A} =
+function proxy(d::Binomial{(:n, :logitp),Tuple{I,A}}) where {I<:Integer,A}
     Dists.Binomial(d.n, logistic(d.logitp))
-proxy(d::Binomial{(:n, :probitp),Tuple{I,A}}) where {I<:Integer,A} =
+end
+function proxy(d::Binomial{(:n, :probitp),Tuple{I,A}}) where {I<:Integer,A}
     Dists.Binomial(d.n, Φ(d.probitp))
+end
 
 asparams(::Type{<:Binomial}, ::StaticSymbol{:p}) = as𝕀
 asparams(::Type{<:Binomial}, ::StaticSymbol{:logitp}) = asℝ

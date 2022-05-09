@@ -9,7 +9,7 @@ import Base
 
 @kwstruct Bernoulli(p)
 
-Bernoulli(p) = Bernoulli((p=p,))
+Bernoulli(p) = Bernoulli((p = p,))
 
 basemeasure(::Bernoulli) = CountingMeasure()
 
@@ -26,11 +26,9 @@ function density_def(::Bernoulli{()}, y)
     return 0.5
 end
 
-
 @inline function logdensity_def(d::Bernoulli{()}, y)
     return -logtwo
 end
-
 
 function density_def(d::Bernoulli{(:p,)}, y)
     p = d.p
@@ -53,8 +51,9 @@ Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{()}) = rand(rng, T) < one(T) /
 
 Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:p,)}) = rand(rng, T) < d.p
 
-Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logitp,)}) =
+function Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logitp,)})
     rand(rng, T) < logistic(d.logitp)
+end
 
 asparams(::Type{<:Bernoulli}, ::StaticSymbol{:p}) = as𝕀
 asparams(::Type{<:Bernoulli}, ::StaticSymbol{:logitp}) = asℝ

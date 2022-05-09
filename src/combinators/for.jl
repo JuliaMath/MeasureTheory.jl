@@ -11,7 +11,7 @@ struct For{T,F,I} <: AbstractProductMeasure
         new{T,Core.Typeof(f),I}(f, inds)
     end
 
-    @inline For{T,F,I}(f::F, inds::I) where {T,F,I} = new{T,F,I}(f,inds)
+    @inline For{T,F,I}(f::F, inds::I) where {T,F,I} = new{T,F,I}(f, inds)
 end
 
 @generated function For(f::F, inds::I) where {F,I<:Tuple}
@@ -128,7 +128,11 @@ end
     instance(B)^size(first(d.inds))
 end
 
-@inline function _basemeasure(d::For{T,F,I}, ::Type{B}, ::False) where {T,F,I,B<:AbstractMeasure}
+@inline function _basemeasure(
+    d::For{T,F,I},
+    ::Type{B},
+    ::False,
+) where {T,F,I,B<:AbstractMeasure}
     f = basekernel(d.f)
     For{B}(f, d.inds)
 end
@@ -145,7 +149,11 @@ function _basemeasure(
     return instance(B)^minimum(length, d.inds)
 end
 
-function _basemeasure(d::For{T,F,I}, ::Type{B}, ::False) where {N,T<:AbstractMeasure,F,I<:NTuple{N,<:Base.Generator},B}
+function _basemeasure(
+    d::For{T,F,I},
+    ::Type{B},
+    ::False,
+) where {N,T<:AbstractMeasure,F,I<:NTuple{N,<:Base.Generator},B}
     f = basekernel(d.f)
     For{B}(f, d.inds)
 end
@@ -233,8 +241,9 @@ julia> For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end |> marginals |> colle
 """
 @inline For{T}(f, inds...) where {T} = For{T}(f, inds)
 @inline For{T}(f, n::Integer) where {T} = For{T}(f, static(1):n)
-@inline For{T}(f, inds::Integer...) where {T} =
+@inline function For{T}(f, inds::Integer...) where {T}
     For{T}(i -> f(Tuple(i)...), Base.CartesianIndices(inds))
+end
 
 @inline For(f, inds...) = For(f, inds)
 @inline For(f, n::Integer) = For(f, static(1):n)

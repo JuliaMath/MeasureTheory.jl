@@ -11,15 +11,13 @@ PROXIES = Dict(
         :var
         :quantile
     ],
-    :StatsBase => [
-        :entropy
-    ],
+    :StatsBase => [:entropy],
     :Distributions => [
         :cdf
         :ccdf
         :logcdf
         :logccdf
-    ]
+    ],
 )
 
 for m in keys(PROXIES)

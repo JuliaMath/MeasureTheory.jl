@@ -72,8 +72,9 @@ end
 
 Pullback(f::AbstractTransform, ν, logjac = True()) = Pullback(TV.transform(f), ν, logjac)
 
-Pushforward(f::AbstractTransform, ν, logjac = True()) =
+function Pushforward(f::AbstractTransform, ν, logjac = True())
     Pushforward(TV.transform(f), ν, logjac)
+end
 
 Pullback(f::CallableInverse, ν, logjac = True()) = Pushforward(TV.transform(f.t), ν, logjac)
 
@@ -104,11 +105,16 @@ _firstval(d::Affine) = first(values(getfield(getfield(d, :f), :par)))
 _as_affine(x::Real) = asℝ
 _as_affine(x::AbstractArray) = as(Vector, size(x, 1))
 
-basemeasure(
+function basemeasure(
     ::Pushforward{TV.CallableTransform{T},Lebesgue{ℝ}},
-) where {T<:TV.ScalarTransform} = Lebesgue(ℝ)
-basemeasure(::Pullback{TV.CallableTransform{T},Lebesgue{ℝ}}) where {T<:TV.ScalarTransform} =
+) where {T<:TV.ScalarTransform}
     Lebesgue(ℝ)
+end
+function basemeasure(
+    ::Pullback{TV.CallableTransform{T},Lebesgue{ℝ}},
+) where {T<:TV.ScalarTransform}
+    Lebesgue(ℝ)
+end
 # t = as𝕀
 # μ = Normal()
 # ν = Pushforward(t, μ)

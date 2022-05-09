@@ -2,7 +2,6 @@ export Tweedie
 
 abstract type AbstractEDM <: AbstractTransitionKernel end
 
-
 """
 https://en.wikipedia.org/wiki/Tweedie_distribution
 
@@ -37,26 +36,24 @@ struct TweedieMeasure{B,Θ,P,S,C} <: AbstractMeasure
     cumulant::C
 end
 
-
-
 mean(d::TweedieMeasure) = tweedie_mean(d.fam.p, d.θ)
 
-var(d::TweedieMeasure) = d.σ^2 * mean(d) ^ d.fam.p
+var(d::TweedieMeasure) = d.σ^2 * mean(d)^d.fam.p
 
 ###############################################################################
 # Tweedie cumulants
 
 @inline function tweedie_cumulant(p::P, θ) where {P}
     if p == zero(P)
-        return 0.5 * θ ^ 2
+        return 0.5 * θ^2
     elseif p == one(P)
         return exp(θ)
     elseif p == 2
         return -log(-θ)
     else
-        α = (p-2) / (p-1)
-        coeff = (α-1) / α
-        return coeff * (θ/(α-1)) ^ α
+        α = (p - 2) / (p - 1)
+        coeff = (α - 1) / α
+        return coeff * (θ / (α - 1))^α
     end
 end
 
@@ -102,8 +99,8 @@ end
     elseif p == 2
         return inv(log(-θ))
     else
-        α_minus_1 = (p-2) / (p-1) - 1
-        return (θ / α_minus_1) ^ α_minus_1
+        α_minus_1 = (p - 2) / (p - 1) - 1
+        return (θ / α_minus_1)^α_minus_1
     end
 end
 
@@ -119,15 +116,14 @@ end
     return inv(log(-θ))
 end
 
-@generated function tweedie_mean(::StaticFloat64{p}, θ) where p
-    α_minus_1 = (p-2) / (p-1) - 1
+@generated function tweedie_mean(::StaticFloat64{p}, θ) where {p}
+    α_minus_1 = (p - 2) / (p - 1) - 1
 
     quote
         $(Expr(:meta, :inline))
-        (θ / α_minus_1) ^ α_minus_1
+        (θ / α_minus_1)^α_minus_1
     end
 end
-
 
 basemeasure(d::TweedieMeasure) = d.base
 
