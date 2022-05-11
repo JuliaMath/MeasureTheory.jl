@@ -482,7 +482,7 @@ In \verb|MeasureTheory|, a kernel is represented as either a Julia function or a
 
 A Markov kernel, in particular, corresponds to the distribution of a \emph{parametrized random variable}, a function with random outcomes (or to ``mechanisms'' in causal inference, for example in \cite{https://doi.org/10.5281/zenodo.1005091}). For example in \verb|MeasureTheory|, the kernel
 \[
-\kappa\colon x \mapsto \cN(x,\sqrt{x})
+\kappa\colon x \mapsto \text{Normal}(x,\sqrt{x})
 \]
 can be expressed as
 \begin{verbatim}
@@ -657,7 +657,7 @@ A second special case is when we have a collection of values together with a ker
 \end{verbatim}
 This is exactly the product measure
 \[
-\bigotimes_{j=1}^n \cN(\beta x_j,\ \sigma)\ .
+\bigotimes_{j=1}^n \text{Normal}(\beta x_j,\ \sigma)\ .
 \]
 
 More generally, suppose we have a measure $\mu$ on a space $X$ and a kernel $\kappa\colon X \to \cM(Y)$. Then we can define a measure on $X \times Y$ as follows.
