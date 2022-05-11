@@ -398,7 +398,7 @@ logdensity_def(::Normal{()} , x) = - x^2 / 2
 insupport(::Normal{()}, x) = true
 \end{verbatim}
 
-Note the difference from a typical distribution-oriented implementation; we have changed the base measure in order to simplify the log-density. This leads to better compositional efficiency.
+Note the difference from a typical distribution-oriented implementation; we have changed the base measure in order to simplify the log-density. This leads to better compositional efficiency. {\bf XXX "compositional efficiency" is kind of vague, reword XXX}
 
 This leaves us with the question of how to compute the three-argument \verb|logdensity(μ, ν, x)| for general $\nu$. We implement this recursively, in an approach we refer to as \emph{density recursion}.
 
