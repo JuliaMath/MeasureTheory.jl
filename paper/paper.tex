@@ -64,6 +64,8 @@
 \newunicodechar{ℓ}{\ensuremath{\ell}}
 \newunicodechar{√}{\ensuremath{\sqrt{}}}
 \newunicodechar{⊗}{\ensuremath{\otimes}}
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
 \usepackage{booktabs}
 \usepackage{multirow}
 \renewcommand{\arraystretch}{1.2}
@@ -349,16 +351,17 @@ Even with such a capability, this approach would have its problems. It seems lik
 
 Because of this, we instead define $\mu$ to be \emph{locally dominated} by $\nu$ near $x$, written $\mu \ll_x \nu$, if there is some neighborhood $N \ni x$ such that $\nu(N)>0$ (so it's not a degenerate case) and $\mu|_N \ll \nu|_N$ (absolute continuity between the restricted measures). A \emph{local density} can be defined similarly. In \verb|MeasureTheory|, the \verb|density| and \verb|logdensity| functions work in exactly these terms. For the remainder of this paper, ``(log-)density'' will always refer to the local (log-)density, and ``local'' will often be taken as understood.
 
-Density computations are typically done in log space. For example, if we're interested in $\frac{\dd \mu}{\dd \nu}$, we'll typically instead compute \verb|logdensity(μ, ν, x)|. Here and below, we'll often write the math in terms of densities and the code in terms of log-densities, despite unfortunate inconsistency between the two.
+Density computations are typically done in log space. For example, if we're interested in $\frac{\dd \mu}{\dd \nu}$, we'll typically instead compute \verb|logdensity_rel(μ, ν, x)|.\footnote{Density and log-density are \emph{always} relative; the \texttt{rel} here is to indicate that we want the density relative to a second measure which is explicitly specified.}
+Here and below, we'll often write the math in terms of densities and the code in terms of log-densities, despite unfortunate inconsistency between the two.
 
 There are several benefits to working in log-space. Results are much less likely to overflow or underflow, and the many products and exponents become sums and products, respectively. which are much more efficient to compute and to differentiate.
 
 Working locally and in log-space also gives us a convenient \emph{antisymmetry},
 \begin{verbatim}
-logdensity(μ, ν, x) == -logdensity(ν, μ, x)
+logdensity_rel(μ, ν, x) == -logdensity_rel(ν, μ, x)
 \end{verbatim}
 
-In particular, \verb|logdensity(μ, ν, x)| takes special values in some common cases:
+In particular, \verb|logdensity_rel(μ, ν, x)| takes special values in some common cases:
 \newcommand{\notllx}{\mathrel{\centernot{\ll}\!\!_x}}
 
 % works now
@@ -374,18 +377,28 @@ $\mu\ll_x \nu$& (finite) & \verb|-Inf|  \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Base measures and density recursion}
-To this point, we've described the implementation in terms of the three-argument \verb|logdensity(μ, ν, x)|. But implementing things directly in these terms would require a definition for every pair of possible measures, which is of course intractable.
+It's very useful for users to be able to \emph{call} \verb|logdensity_rel(μ, ν, x)|. But \emph{defining} things directly in these terms would require a definition for every pair of possible measures, which is of course intractable.
 
-We address this by instead assigning every measure a \emph{base measure}. This is defined locally, with default method
+We'll now discuss the mechanics of defining a measure, followed by {\bf XXX description of the next subsection XXX}
+
+\subsection*{Defining a measure}
+
+To define a new measure requires a \emph{base measure}, the \emph{log-density} with respect to that base measure, and a \emph{support}. 
+A base measure can be defined locally or globally. In the latter case, the local base measure defaults to 
 \begin{verbatim}
 basemeasure(μ::AbstractMeasure, x) = basemeasure(μ)
 \end{verbatim}
-This allows users to define a base measure specific to a given neighborhood if they prefer, or to define a global base measure when that suffices.
+This allows users to define a base measure specific to a given neighborhood if they prefer, or to define a global base measure when that suffices. 
 
-The log-density is then fundamentally expressed in term of the two-argument \verb|logdensity(μ, x)|, which gives the log-density with respect to this base measure. Thus we have
+For example, for a standard \verb|Normal| measure, we have
+
 \begin{verbatim}
-logdensity(μ, x) == logdensity(μ, basemeasure(μ, x), x)
+basemeasure(::Normal{()}) = (1/sqrt2π) * Lebesgue(ℝ)
+logdensity_def(::Normal{()} , x) = - x^2 / 2 
+insupport(::Normal{()}, x) = true
 \end{verbatim}
+
+Note the difference from a typical distribution-oriented implementation; we have changed the base measure in order to simplify the log-density. This leads to better compositional efficiency.
 
 This leaves us with the question of how to compute the three-argument \verb|logdensity(μ, ν, x)| for general $\nu$. We implement this recursively, in an approach we refer to as \emph{density recursion}.
 
