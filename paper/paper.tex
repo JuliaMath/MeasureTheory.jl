@@ -81,7 +81,7 @@
 \usepackage{inconsolata}
 \usepackage[normalem]{ulem} %\sout
 \usepackage{centernot} %\centernot
-%\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorinlistoftodos]{todonotes}
 \usepackage{hyperref}
 \setcounter{page}{1}
 \include{moritzdefs}
@@ -398,7 +398,10 @@ logdensity_def(::Normal{()} , x) = - x^2 / 2
 insupport(::Normal{()}, x) = true
 \end{verbatim}
 
-Note the difference from a typical distribution-oriented implementation; we have changed the base measure in order to simplify the log-density. This leads to better compositional efficiency. {\bf XXX "compositional efficiency" is kind of vague, reword XXX}
+Note the difference from a typical distribution-oriented implementation; we have changed the base measure in order to simplify the log-density. This leads to better compositional efficiency. \chad{"compositional efficiency" is kind of vague, reword}
+
+Next, a user may optionally define 
+
 
 This leaves us with the question of how to compute the three-argument \verb|logdensity(μ, ν, x)| for general $\nu$. We implement this recursively, in an approach we refer to as \emph{density recursion}.
 
@@ -455,21 +458,21 @@ or
     NegativeBinomial(α=10, β=3)
 \end{verbatim}
 
-Calls to \verb|rand|, \verb|logdensity|, etc then delegate to methods according to the appropriate names. We use \verb|KeywordCalls.jl| \cite{KeywordCalls.jl}, so all names are resolved statically at compile time.
+Calls to \verb|rand|, \verb|logdensity_def|, etc then delegate to methods according to the appropriate names. We use \verb|KeywordCalls.jl| \cite{KeywordCalls.jl}, so all names are resolved statically at compile time.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Kernels}
 
 A \emph{kernel} is a (measurable\footnote{That is, the function $x \mapsto \kappa(x)(A)$ must be measurable for every fixed $A$.}) function $\kappa$ that returns a measure. Equivalently, it represents a family of measures parameterized by its argument. Writing $\cM(Y)$ for ``measures on $Y$'', we can write this as
 \[
-\kappa\colon X \to \mathscr{M}(Y)\ .
+\kappa\colon X \to \cM(Y)\ .
 \]
 
 A prominent application is a \href{https://en.wikipedia.org/wiki/Conditional_probability_distribution}{\emph{conditional distribution}}. In this case $\kappa$ is further restricted to be a \href{https://en.wikipedia.org/wiki/Markov_kernel}{\emph{Markov kernel}}, 
 \[
-\kappa\colon X \to \mathscr{P}(Y)\ ,
+\kappa\colon X \to \cP(Y)\ ,
 \]
-where $\mathscr{P}(Y)$ represents ``probability measures on $Y$''.
+where $\cP(Y)$ represents ``probability measures on $Y$''.
 If $\bX$ and $\bY$ are random variables defined on $X$ and $Y$, the kernel $\kappa$ defines a probability measure assigning every measurable $B\subset Y$ probability
 \[
 P(\bY \in B \mid \bX = x) =: (\kappa(x))(B)\ .
