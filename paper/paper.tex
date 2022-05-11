@@ -182,19 +182,15 @@ We'll now describe some foundations to help the reader get a deeper understandin
 
 Throughout this discussion, it's important to keep in mind that for us the measure-theoretic abstractions are only means to an end.% 
 \footnote{The stackoverflow discussion \url{https://mathoverflow.net/q/11591} discusses books on measure theory; M.S.~likes \cite{Shiryaev1996} as starting point and uses \cite{Elstrodt2011} and \cite{Bauer_Heinz1982-01-01} as reference. As we anticipate interest in connecting with the actual theory, we give some pointers to more technical details in the footnotes.}
-
-Our primary interest, and the goal of \verb|MeasureTheory|, is to offer support for \emph{applied probabilistic modeling}.
-
+Our primary interest, and the goal of \verb|MeasureTheory|, is to offer support for \emph{applied probabilistic modeling}. 
 The package name is owed to the fact, that the word measure alone is too vague.
 
 Given a space $X$ of possible outcomes and a set of subsets of $X$ called \href{https://en.wikipedia.org/wiki/Event_(probability_theory)}{\emph{events}}, a probability distribution assigns each event a non-negative quantity, called the \emph{probability} or \emph{probability mass}.
-
 Likewise, a \emph{measure} assigns each \emph{measurable set} a non-negative quantity, also called a ``mass''.
 
 The space $X$ could be the space $\{1,2,3,4,5,6\}$ suitable to model a six-sided die, or $X$ might be the 3-dimensional Euclidean space $\RR^3$ suitable to model ``volume'', to give two examples.
 
 One further such space that deserves mention is traditionally denoted $\Omega$. This is an abstract space connected to the real-world notion of \emph{probability}, which we denote as $\operatorname{Prob}$.
-
 Computationally, $\Omega$ can be considered to be the set of possible states of a random number generator \verb|rng::AbstractRNG|, which is the source of computational randomness.
 
 $\Omega$ has a special role of tying random quantities a program produces and their
@@ -290,7 +286,7 @@ One says the $\sigma$-algebra is \emph{generated} by these sets.
 Indeed, \verb|Distributions.jl| does not give means to compute probability for arbitrary subsets of floating point numbers,
 but gives a way of computing probability mass just of intervals of the form $(-\infty, x]$ throught the function \verb|cdf|.
 
-In fact, it is possible for small enough spaces to assign meaningful probabilities to all subsets of the space, but impossible for any space containing a continuum such as the real line. Just representing a single arbitrary subset of the \verb|Float64|-range, the computational abstraction of the real line, would require staggering 2\,306 Petabytes of memory. This is not practical.
+For spaces that are ``small enough'', it is in fact possible to assign meaningful probabilities to all subsets of the space. Unfortunately, this is impossible for any space containing a continuum such as the real line. Just representing a single arbitrary subset of the \verb|Float64|-range, the computational abstraction of the real line, would require staggering 2\,306 Petabytes of memory. This is not practical.
 
 But even the mathematical measure theory needs to stay clear of the set of all subsets of uncountable spaces, because it turns out that not even volume can be properly defined for all subsets of the Euclidean space.\footnote{Another thing to keep in mind is that, for a function $f\colon X \to Y$ to be measurable requires that ``the inverse image of a measurable set must be measurable''. So allowing more sets to $B\subset Y$ to be measurable requires either allowing more measurable $A\subset X$, or restricting the set of measurable functions.}
 
