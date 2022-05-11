@@ -113,7 +113,7 @@ giving a gentle introduction to the concepts in this article.
 
 The task is foremost achieved by recognizing \href{https://en.wikipedia.org/wiki/Measure_(mathematics)}{\emph{measure}} as the central object. This enables us to develop a proper concept of \href{https://en.wikipedia.org/wiki/Probability_density_function}{\emph{densities}} as objects relating measures with each others. As densities provide local perspective on measures, they are the key to efficient implementations.
 
-The need to preserve this computationally so important locality leads to the new notion of \emph{locally-dominated measure} solving the so-called ``base measure problem'' and making work with densities and distributions in Julia easier and more flexible.
+The need to preserve this computationally so important locality leads to the new notion of \emph{locally-dominated measure}, solving the so-called ``base measure problem'' and making work with densities and distributions in Julia easier and more flexible.
 
 %Because it will be new to many who can benefit from this package, this article serves a dual role of a gentle introduction to the concepts of measure theory (the field), as well as an overview of the core capabilities of \verb|MeasureTheory.jl| (the package).
 \end{abstract}
@@ -131,7 +131,6 @@ p(\theta \mid x) = \frac{p(\theta)\ p(x \mid \theta)}{p(x)}\ ,
 the denominator is called the \href{https://en.wikipedia.org/wiki/Marginal_likelihood}{\emph{model evidence}}. Computing it efficiently is often difficult or unfeasible.
 
 Some sampling algorithms circumvent this problem and only require knowing the density up to a constant factor.
-
 We then can work with the ``unnormalized posterior density'' instead, but we want to distinguish it from a proper probability density, because that difference determines which algorithms are available.
 
 
@@ -146,7 +145,8 @@ Thus, starting with elements of our class of interest, a simple and common opera
 
 
 As a second example, people working in Bayesian modeling sometimes use \href{https://en.wikipedia.org/wiki/Prior_probability#Improper_priors}{\emph{improper priors}}. Whatever one's position on the merits of this, we think it's reasonable to make this approach possible. But an improper prior does not integrate to one, so it's not a distribution.
-Also, there's an elegant correspondence between frequentist and Bayesian methods, where regularization corresponds to a prior. But limiting ourselves to distributions restrains us from fully realizing this, because the corresponding ``prior'' might be improper or even flat, as in maximum likelihood estimation.
+
+There's also an elegant correspondence between frequentist and Bayesian methods, where regularization corresponds to a prior. But limiting ourselves to distributions restrains us from fully realizing this, because the corresponding ``prior'' might be improper or even flat, as in maximum likelihood estimation.
 
 A final and very different concern is the structure of most distribution libraries, in which distributions are classified primarily according to whether they are ``discrete'' or ``continuous''. Such systems often lack facilities to use these in combination; some go so far as to encode the distinction in the type system, making them fundamentally incompatible.
 
