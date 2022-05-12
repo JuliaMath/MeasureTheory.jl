@@ -381,7 +381,7 @@ $\mu\ll_x \nu$& (finite) & \verb|-Inf|  \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Base measures and density recursion}
-It's very useful for users to be able to \emph{call} \verb|logdensity_rel(μ, ν, x)|. But \emph{defining} things directly in these terms would require a definition for every pair of possible measures, which is of course intractable.
+It's very useful for users to be able to \emph{call} \verb|logdensity_rel| for arbitrary measures. But \emph{defining} things directly in these terms would require a definition for every pair of possible measures, which is of course intractable.
 
 We'll now discuss the mechanics of defining a measure, followed by {\bf XXX description of the next subsection XXX}
 
@@ -487,29 +487,29 @@ If $\bX$ and $\bY$ are random variables defined on $X$ and $Y$, the kernel $\kap
 P(\bY \in B \mid \bX = x) =: (\kappa(x))(B)\ .
 \]
 
-In \verb|MeasureTheory|, a kernel is represented as either a Julia function or an \verb|AbstractTransitionKernel| object. 
+In \verb|MeasureTheory|, a kernel is represented as either a Julia function or an \verb|AbstractTransitionKernel| object.
 As a common special case, a \verb|ParameterizedTransitionKernel| pairs a measure constructor with a mapping into its parameter space, and makes the functional relationship between argument of $\kappa$ and the returned measure transparent.
 
-A Markov kernel, in particular, corresponds to the distribution of a \emph{parametrized random variable}, a function with random outcomes (or to ``mechanisms'' in causal inference, for example in \cite{https://doi.org/10.5281/zenodo.1005091}). For example in \verb|MeasureTheory|, the kernel
+A Markov kernel, in particular, corresponds to the distribution of a \emph{parametrized random variable}, a function with random outcomes (or to ``mechanisms'' in causal inference, for example in \cite{https://doi.org/10.5281/zenodo.1005091}). For example, the kernel
 \[
 \kappa\colon x \mapsto \text{Normal}(x,\sqrt{x})
 \]
-can be expressed as
+corresponds to the random function
+\begin{verbatim}
+    f(rng, x) = x + √x * randn(rng)
+\end{verbatim}
+and can be expressed in \verb|MeasureTheory| as
 \begin{verbatim}
     κ = kernel(Normal) do x
         (μ=x, σ=√x)
     end
 \end{verbatim}
-or equivalently
+or
 \begin{verbatim}
     κ = kernel(Normal; μ=identity, σ=sqrt)
 \end{verbatim}
-corresponding to the random function
-\begin{verbatim}
-    f(rng, x) = x + √x * randn(rng)
-\end{verbatim}
 
-In this example, working in terms of a \verb|kernel| allows us to make the linear relationship between the argument \verb|x| and \verb|mean(κ(x))| transparent. 
+The latter formulation decomposes the kernel into separate ``parameter maps'', making relationships like the one between \verb|x| and \verb|mean(κ(x))| more explicit.
 
 This could of course also be expressed as a parameterized measure. The difference is that kernels are lighter weight to build and have all the dynamism of functions, while the static nature of parameterized measures can make it easier to express some optimizations.
 
