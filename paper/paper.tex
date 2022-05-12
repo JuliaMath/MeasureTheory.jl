@@ -633,8 +633,8 @@ In the absence of conjugacy, the extra structure of this suspended form is conve
 
 The above \verb|Likelihood| type is specified using a kernel and observed data. Though it is not an \verb|AbstractMeasure|, we include a \verb|logdensity| method for computational convenience. The core of the implementation is then
 \begin{verbatim}
-    struct Likelihood{F,S,X}
-        k::Kernel{F,S}
+    struct Likelihood{K,X}
+        k::K
         x::X
     end
 \end{verbatim}
