@@ -2,26 +2,36 @@
 
 export Beta
 
-@parameterized Beta(α,β) ≃ Lebesgue(𝕀)
+@parameterized Beta(α, β)
 
 @kwstruct Beta(α, β)
 
 @kwalias Beta [
-    a     => α
+    a => α
     alpha => α
-    b     => β
-    beta  => β
+    b => β
+    beta => β
 ]
 
 TV.as(::Beta) = as𝕀
 
-function logdensity(d::Beta{(:α, :β)}, x)
-    return xlogy(d.α - 1, x) + xlog1py(d.β - 1, -x) - logbeta(d.α, d.β)
+@inline function logdensity_def(d::Beta{(:α, :β),Tuple{A,B}}, x::X) where {A,B,X}
+    return xlogy(d.α - 1, x) + xlog1py(d.β - 1, -x)
+end
+
+@inline function basemeasure(d::Beta{(:α, :β)})
+    constℓ = 0.0
+    varℓ = Returns(-logbeta(d.α, d.β))
+    base = Lebesgue(ℝ)
+    FactoredBase(constℓ, varℓ, base)
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Beta(μ.α, μ.β))
 
-distproxy(d::Beta{(:α, :β)}) = Dists.Beta(d.α, d.β)
+proxy(d::Beta{(:α, :β)}) = Dists.Beta(d.α, d.β)
 
-asparams(::Type{<:Beta}, ::Val{:α}) = asℝ₊
-asparams(::Type{<:Beta}, ::Val{:β}) = asℝ₊
+asparams(::Type{<:Beta}, ::StaticSymbol{:α}) = asℝ₊
+asparams(::Type{<:Beta}, ::StaticSymbol{:β}) = asℝ₊
+
+insupport(::Beta, x) = in𝕀(x)
+insupport(::Beta) = in𝕀

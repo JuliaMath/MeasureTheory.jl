@@ -3,25 +3,38 @@
 
 export Laplace
 
-@parameterized Laplace() ≪ (1/2) * Lebesgue(ℝ)
+@parameterized Laplace()
 
-Laplace(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Laplace())
-Laplace(nt::NamedTuple{(:μ,:ω)}) = Affine(nt, Laplace())
-Laplace(nt::NamedTuple{(:σ,)}) = Affine(nt, Laplace())
-Laplace(nt::NamedTuple{(:ω,)}) = Affine(nt, Laplace())
-Laplace(nt::NamedTuple{(:μ,)}) = Affine(nt, Laplace())
+@kwstruct Laplace()
+@kwstruct Laplace(μ)
+@kwstruct Laplace(σ)
+@kwstruct Laplace(μ, σ)
+@kwstruct Laplace(ω)
+@kwstruct Laplace(μ, ω)
 
-@affinepars Laplace
+for N in AFFINEPARS
+    @eval begin
+        proxy(d::Laplace{$N}) = affine(params(d), Laplace())
+        @useproxy Laplace{$N}
+    end
+end
 
+insupport(::Laplace, x) = true
 
-function logdensity(d::Laplace{()} , x)
+@inline function logdensity_def(d::Laplace{()}, x)
     return -abs(x)
 end
 
-Base.rand(rng::AbstractRNG, μ::Laplace{()}) = rand(rng, Dists.Laplace())
+logdensity_def(d::Laplace, x) = logdensity_def(proxy(d), x)
 
-≪(::Laplace, ::Lebesgue{X}) where X <: Real = true
+basemeasure(::Laplace{()}) = WeightedMeasure(static(-logtwo), Lebesgue(ℝ))
+
+# @affinepars Laplace
+
+Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace{()}) where {T} =
+    rand(rng, Dists.Laplace())
+Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace) where {T} = Base.rand(rng, T, proxy(μ))
+
+≪(::Laplace, ::Lebesgue{X}) where {X<:Real} = true
 
 TV.as(::Laplace) = asℝ
-
-distproxy(::Laplace{()}) = Dists.Laplace()

@@ -2,16 +2,27 @@
 
 export Gumbel
 
-@parameterized Gumbel() ≃ Lebesgue(ℝ)
+@parameterized Gumbel()
+
+basemeasure(::Gumbel{()}) = Lebesgue(ℝ)
 
 @kwstruct Gumbel()
 
-Gumbel(nt::NamedTuple{(:σ,)}) = Affine(nt, Gumbel())
+@kwstruct Gumbel(β)
 
-@affinepars Gumbel
+@kwstruct Gumbel(μ, β)
 
+# map affine names to those more common for Gumbel
+for N in [(:μ,), (:σ,), (:μ, :σ)]
+    G = tuple(replace(collect(N), :σ => :β)...)
+    @eval begin
+        proxy(d::Gumbel{$G}) = affine(NamedTuple{$N}(values(params(d))), Gumbel())
+        logdensity_def(d::Gumbel{$G}, x) = logdensity_def(proxy(d), x)
+        basemeasure(d::Gumbel{$G}) = basemeasure(proxy(d))
+    end
+end
 
-function logdensity(d::Gumbel{()} , x)
+@inline function logdensity_def(d::Gumbel{()}, x)
     return -exp(-x) - x
 end
 
@@ -24,6 +35,8 @@ end
 
 TV.as(::Gumbel) = asℝ
 
-≪(::Gumbel, ::Lebesgue{X}) where X <: Real = true
+≪(::Gumbel, ::Lebesgue{X}) where {X<:Real} = true
 
-distproxy(::Gumbel{()}) = Dists.Gumbel()
+proxy(::Gumbel{()}) = Dists.Gumbel()
+
+insupport(::Gumbel, x) = true
