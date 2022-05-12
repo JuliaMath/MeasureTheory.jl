@@ -487,7 +487,8 @@ If $\bX$ and $\bY$ are random variables defined on $X$ and $Y$, the kernel $\kap
 P(\bY \in B \mid \bX = x) =: (\kappa(x))(B)\ .
 \]
 
-In \verb|MeasureTheory|, a kernel is represented as either a Julia function or a \verb|TransitionKernel| object. The latter pairs a measure constructor with a mapping into its parameter space, and makes the functional relationship between argument of $\kappa$ and the returned measure transparent.
+In \verb|MeasureTheory|, a kernel is represented as either a Julia function or an \verb|AbstractTransitionKernel| object. 
+As a common special case, a \verb|ParameterizedTransitionKernel| pairs a measure constructor with a mapping into its parameter space, and makes the functional relationship between argument of $\kappa$ and the returned measure transparent.
 
 A Markov kernel, in particular, corresponds to the distribution of a \emph{parametrized random variable}, a function with random outcomes (or to ``mechanisms'' in causal inference, for example in \cite{https://doi.org/10.5281/zenodo.1005091}). For example in \verb|MeasureTheory|, the kernel
 \[
@@ -636,11 +637,9 @@ The above \verb|Likelihood| type is specified using a kernel and observed data. 
         k::Kernel{F,S}
         x::X
     end
-
-    function logdensity(ℓ::Likelihood, p) 
-        return logdensity(ℓ.k(p), ℓ.x)
-    end
 \end{verbatim}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Product and power measures}
