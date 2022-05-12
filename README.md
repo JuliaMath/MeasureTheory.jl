@@ -10,7 +10,7 @@
 ## Why?
 
 
-Probabilistic programming and statistical computing are vibrant areas in the development of the Julia programming language, but the underlying infrastructure dramatically predates recent developments. The goal of MeasureTheory.jl is to provide Julia with the right vocabulary and tools for these tasks. In this package we introduce a well-chosen foundational primitives together centered around the notion of measure, density and conditional probability with powerful combinators and transforms intended to power and unify work on probabilistic programming and statistical computing within Julia. Check out our [JuliaCon 2021 submission](https://arxiv.org/abs/2110.00602) detailing our ideas for and with this package.
+Probabilistic programming and statistical computing are vibrant areas in the development of the Julia programming language, but the underlying infrastructure dramatically predates recent developments. The goal of MeasureTheory.jl is to provide Julia with the right vocabulary and tools for these tasks. In this package we introduce a well-chosen foundational primitives centered around the notion of measure, density and conditional probability with powerful combinators and transforms intended to power and unify work on probabilistic programming and statistical computing within Julia. Check out our [JuliaCon 2021 submission](https://arxiv.org/abs/2110.00602) detailing our ideas for and with this package.
 
 ## Getting started
 
