@@ -66,6 +66,7 @@ import Statistics: mean, var, std
 
 import MeasureBase: likelihood
 export likelihood
+export log_likelihood_ratio
 
 using StaticArrays
 
@@ -90,6 +91,7 @@ export AffineTransform
 export insupport
 export For
 
+using MeasureBase: kernel
 using MeasureBase: Returns
 import MeasureBase: proxy, @useproxy
 import MeasureBase: basemeasure_depth
