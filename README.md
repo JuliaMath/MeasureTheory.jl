@@ -9,9 +9,8 @@
 
 ## Why?
 
-A distribution (as provided by `Distributions.jl`) is also called a _probability measure_, and carries with it the constraint of adding (or integrating) to one. Statistical work usually requires this "at the end of the day", but enforcing it at each step of a computation can have considerable overhead. For instance, Bayesian modeling often requires working with unnormalized posterior densities or improper priors.
 
-As a generalization of the concept of volume, measures also have applications outside of probability theory.
+Probabilistic programming and statistical computing are vibrant areas in the development of the Julia programming language, but the underlying infrastructure dramatically predates recent developments. The goal of MeasureTheory.jl is to provide Julia with the right vocabulary and tools for these tasks. In this package we introduce a well-chosen foundational primitives centered around the notion of measure, density and conditional probability with powerful combinators and transforms intended to power and unify work on probabilistic programming and statistical computing within Julia. Check out our [JuliaCon 2021 submission](https://arxiv.org/abs/2110.00602) detailing our ideas for and with this package.
 
 ## Getting started
 
@@ -23,7 +22,15 @@ pkg> add MeasureTheory
 
 To get an idea of the possibilities offered by this package, go to the [documentation](https://cscherrer.github.io/MeasureTheory.jl/stable).
 
-To know more about the underlying theory and its applications to probabilistic programming, check out our [JuliaCon 2021 submission](https://arxiv.org/abs/2110.00602).
+
+
+## Coordination and support
+
+For interaction and shorter usage questions, there is the dedicated channel [#measuretheory on Julia's Zulip chat julialang.zulipchat.com](https://julialang.zulipchat.com/#narrow/stream/259730-measuretheory.2Ejl) and the #measuretheory channel on the [Julia language Slack chat](https://julialang.org/slack/) and for broader discussions [Julia's discourse forum](https://discourse.julialang.org).
+
+Development takes place on Github with [Github's issue ticker](https://github.com/cscherrer/MeasureTheory.jl/issues) for bug reports and coordination.
+
+We adhere to the [community standards set forward by the Julia community.](https://julialang.org/community/standards/)
 
 ## Support
 
