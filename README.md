@@ -24,6 +24,14 @@ To get an idea of the possibilities offered by this package, go to the [document
 
 
 
+## Coordination and support
+
+For interaction and shorter usage questions, there is the dedicated channel [#measuretheory on Julia's Zulip chat julialang.zulipchat.com](https://julialang.zulipchat.com/#narrow/stream/259730-measuretheory.2Ejl) and the #measuretheory channel on the [Julia language Slack chat](https://julialang.org/slack/) and for broader discussions [Julia's discourse forum](https://discourse.julialang.org).
+
+Development takes place on Github with [Github's issue ticker](https://github.com/cscherrer/MeasureTheory.jl/issues) for bug reports and coordination.
+
+We adhere to the [community standards set forward by the Julia community.](https://julialang.org/community/standards/)
+
 ## Support
 
 [<img src=https://user-images.githubusercontent.com/1184449/140397787-9b7e3eb7-49cd-4c63-8f3c-e5cdc41e393d.png width="49%">](https://informativeprior.com/) [<img src=https://planting.space/sponsor/PlantingSpace-sponsor-3.png width=49%>](https://planting.space)
