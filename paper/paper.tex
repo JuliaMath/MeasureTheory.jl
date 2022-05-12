@@ -400,8 +400,13 @@ insupport(::Normal{()}, x) = true
 
 Note the difference from a typical distribution-oriented implementation; we have changed the base measure in order to simplify the log-density. This leads to better compositional efficiency. \chad{"compositional efficiency" is kind of vague, reword}
 
-Next, a user may optionally define 
+The way \verb|MeasureTheory.jl| is set up, repeated application of \verb|basemeasure| will eventually reach a fix point. That is, some measure will eventually be its own base measure. For such a measure, \verb|logdensity_def| is required to return zero. We refer to the fix point reached in this way from a given measure as that measure's \emph{root measure}.
 
+\subsection*{The end-user perspective}
+
+We could easily have chosen a different base measure and adjusted \verb|logdensity_def| accordingly.
+From the perspective of an end user, this could be considered arbitrary.
+Therefore, \verb|basemeasure| and \verb|logdensity_def| should be considered implementation details, and not part of the user-facing interface.
 
 This leaves us with the question of how to compute the three-argument \verb|logdensity(μ, ν, x)| for general $\nu$. We implement this recursively, in an approach we refer to as \emph{density recursion}.
 
