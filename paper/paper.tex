@@ -209,7 +209,10 @@ derived from $\Omega$ as  core principle.
 
 From a computational perspective,
 a Julia function taking only an \verb|rng::AbstractRNG| argument, making a number of calls to \verb|rand(rng)|, and returning a value $x\in X$ is a random variable $\bX \colon \Omega\to X$.
-A simple example is  \verb|X(rng=Random.GLOBAL_RNG) = rand(rng, 1:6)|.
+A simple example is  
+\begin{verbatim}
+    X(rng=Random.GLOBAL_RNG) = rand(rng, 1:6)
+\end{verbatim}
 While mathematically $\bX$ is a function from $\Omega$, the argument $\omega$ is often hidden like the function argument \verb|rng| of its computational counterpart---not a coincidence.
 
 
@@ -484,7 +487,7 @@ If $\bX$ and $\bY$ are random variables defined on $X$ and $Y$, the kernel $\kap
 P(\bY \in B \mid \bX = x) =: (\kappa(x))(B)\ .
 \]
 
-In \verb|MeasureTheory|, a kernel is represented as either a Julia function or a \verb|Kernel| object. The latter pairs a measure constructor with a mapping into its parameter space, and makes the functional relationship between argument of $\kappa$ and the returned measure transparent.
+In \verb|MeasureTheory|, a kernel is represented as either a Julia function or a \verb|TransitionKernel| object. The latter pairs a measure constructor with a mapping into its parameter space, and makes the functional relationship between argument of $\kappa$ and the returned measure transparent.
 
 A Markov kernel, in particular, corresponds to the distribution of a \emph{parametrized random variable}, a function with random outcomes (or to ``mechanisms'' in causal inference, for example in \cite{https://doi.org/10.5281/zenodo.1005091}). For example in \verb|MeasureTheory|, the kernel
 \[
