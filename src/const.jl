@@ -5,10 +5,9 @@ end
 
 asConst(x) = AsConst(x)
 
-TV.as(c::Returns) = AsConst(c.value)
+TV.as(d::Dirac) = AsConst(d.x)
 
 TV.dimension(t::AsConst) = 0
-
 
 function TV.transform_with(flag::TV.NoLogJac, t::AsConst, x, index)
     return (t.value, TV.NoLogJac(), index)

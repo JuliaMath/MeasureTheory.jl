@@ -2,7 +2,6 @@
 
 export CorrCholesky
 
-
 """
     CorrCholesky(n)
 Cholesky factor of a correlation matrix of size `n`.
@@ -32,6 +31,8 @@ function TV.transform_with(flag::TV.LogJacFlag, t::CorrCholesky, x::AbstractVect
 end
 
 TV.inverse_eltype(t::CorrCholesky, x::AbstractMatrix) = TV.extended_eltype(x)
+
+TV.inverse_eltype(t::CorrCholesky, x::Cholesky) = TV.extended_eltype(x)
 
 function TV.inverse_at!(x::AbstractVector, index, t::CorrCholesky, L::LowerTriangular)
     return TV.inverse_at!(x, index, CorrCholeskyUpper(t.n), L')

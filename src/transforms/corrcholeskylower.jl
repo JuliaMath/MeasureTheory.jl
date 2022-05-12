@@ -28,7 +28,12 @@ TV.dimension(t::CorrCholeskyLower) = TV.dimension(CorrCholeskyUpper(t.n))
 # TODO: For now we just transpose the CorrCholeskyUpper result. We should
 # consider whether it can help performance to implement this directly for the
 # lower triangular case
-function TV.transform_with(flag::TV.LogJacFlag, t::CorrCholeskyLower, x::AbstractVector, index)
+function TV.transform_with(
+    flag::TV.LogJacFlag,
+    t::CorrCholeskyLower,
+    x::AbstractVector,
+    index,
+)
     U, ℓ, index = TV.transform_with(flag, CorrCholeskyUpper(t.n), x, index)
     return U', ℓ, index
 end

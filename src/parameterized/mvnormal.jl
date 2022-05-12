@@ -1,61 +1,49 @@
 
 # Multivariate Normal distribution
 
-using LinearAlgebra
 export MvNormal
-using Random
-import Base
 
+@parameterized MvNormal(μ, σ)
 
-struct MvNormal{N, T, I, J} <: ParameterizedMeasure{N}
-    par::NamedTuple{N, T}
-end
+# MvNormal(;kwargs...) = MvNormal(kwargs)
 
+@kwstruct MvNormal(μ)
+@kwstruct MvNormal(σ)
+@kwstruct MvNormal(ω)
+@kwstruct MvNormal(μ, σ)
+@kwstruct MvNormal(μ, ω)
 
-function MvNormal(nt::NamedTuple{N,T}) where {N,T}
-    I,J = mvnormaldims(nt)
+supportdim(d::MvNormal) = supportdim(params(d))
 
-    cache = Vector{Float64}(undef, max(I,J))
-    MvNormal{N,T,I,J}(cache, nt)
-end
+@useproxy MvNormal
 
-function Base.size(d::MvNormal{N, T, I, J}) where {N,T,I,J}
-    return (I,)
-end
+proxy(d::MvNormal) = affine(params(d), Normal()^supportdim(d))
 
-mvnormaldims(nt::NamedTuple{(:A, :b)}) = size(nt.A)
+rand(rng::AbstractRNG, ::Type{T}, d::MvNormal) where {T} = rand(rng, T, proxy(d))
 
-function MeasureTheory.basemeasure(μ::MvNormal{N, T, I,I}) where {N, T, I}
-    return (1 / sqrt2π)^I * Lebesgue(ℝ)^I
-end
+insupport(::MvNormal, x) = true
 
-sampletype(d::MvNormal{N, T, I, J}) where {N,T,I,J} = Vector{Float64}
-
-MvNormal(; kwargs...) = begin
-    MvNormal((; kwargs...))
-end
-
-
-
-function Random.rand!(rng::AbstractRNG, d::MvNormal{(:A, :b),T,I,J}, x::AbstractArray) where {T,I,J}
-    z = getcache(d, J)
-    rand!(rng, Normal()^J, z)
-    copyto!(x, d.b)
-    mul!(x, d.A, z, 1.0, 1.0)
-    return x
-end
-
-function logdensity(d::MvNormal{(:A,:b)}, x)
-    cache = getcache(d, size(d))
-    z = d.A \ (x - d.b)
-    return logdensity(MvNormal(), z) - logabsdet(d.A)
-end
-
-≪(::MvNormal, ::Lebesgue{ℝ}) = true
-
-# function logdensity(d::MvNormal{(:Σ⁻¹,)}, x)
-#     @tullio ℓ = -0.5 * x[i] * d.Σ⁻¹[i,j] * x[j]
-#     return ℓ
+# function MvNormal(nt::NamedTuple{(:μ,)})
+#     dim = size(nt.μ)
+#     affine(nt, Normal() ^ dim)
 # end
 
-mvnormaldims(nt::NamedTuple{(:Σ⁻¹,)}) = size(nt.Σ⁻¹)
+# function MvNormal(nt::NamedTuple{(:σ,)})
+#     dim = colsize(nt.σ)
+#     affine(nt, Normal() ^ dim)
+# end
+
+# function MvNormal(nt::NamedTuple{(:ω,)})
+#     dim = rowsize(nt.ω)
+#     affine(nt, Normal() ^ dim)
+# end
+
+# function MvNormal(nt::NamedTuple{(:μ, :σ,)})
+#     dim = colsize(nt.σ)
+#     affine(nt, Normal() ^ dim)
+# end
+
+# function MvNormal(nt::NamedTuple{(:μ, :ω,)})
+#     dim = rowsize(nt.ω)
+#     affine(nt, Normal() ^ dim)
+# end

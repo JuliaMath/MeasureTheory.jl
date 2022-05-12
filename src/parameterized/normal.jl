@@ -23,22 +23,33 @@ export Normal, HalfNormal
 #
 #    Normal(μ, σ) = Normal((μ=μ, σ=σ))
 #
-@parameterized Normal() ≪ (1/sqrt2π) * Lebesgue(ℝ)
+@parameterized Normal()
+
+for N in AFFINEPARS
+    @eval begin
+        proxy(d::Normal{$N}) = affine(params(d), Normal())
+        @useproxy Normal{$N}
+    end
+end
+
+insupport(d::Normal, x) = true
+
+insupport(d::Normal) = Returns(true)
+
+@inline logdensity_def(d::Normal{()}, x) = -x^2 / 2
+@inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), Lebesgue(ℝ))
+
+@kwstruct Normal(μ)
+@kwstruct Normal(σ)
+@kwstruct Normal(μ, σ)
+@kwstruct Normal(ω)
+@kwstruct Normal(μ, ω)
 
 params(::Type{N}) where {N<:Normal} = ()
 
-Normal(μ,σ) = Affine((;μ,σ), Normal())
+Normal(μ, σ) = Normal((μ = μ, σ = σ))
 
-Normal(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:μ,:ω)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:σ,)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:ω,)}) = Affine(nt, Normal())
-Normal(nt::NamedTuple{(:μ,)}) = Affine(nt, Normal())
-
-@affinepars Normal
-
-@kwstruct Normal(μ,Σ)
-@kwstruct Normal(μ,Σ⁻¹)
+Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
 TV.as(::Normal) = asℝ
 
@@ -52,7 +63,6 @@ TV.as(::Normal) = asℝ
     std   => σ
     sigma => σ
     var   => σ²
-    cov   => Σ
 ]
 
 # It's often useful to be able to map into the parameter space for a given
@@ -71,19 +81,18 @@ TV.as(::Normal) = asℝ
 #
 # And of course, you can apply `Normal` to any one of the above.
 #
-asparams(::Type{<:Normal}, ::Val{:σ²}) = asℝ₊
-asparams(::Type{<:Normal}, ::Val{:τ}) = asℝ₊
-asparams(::Type{<:Normal}, ::Val{:logτ}) = asℝ
-
+asparams(::Type{<:Normal}, ::StaticSymbol{:σ²}) = asℝ₊
+asparams(::Type{<:Normal}, ::StaticSymbol{:τ}) = asℝ₊
+asparams(::Type{<:Normal}, ::StaticSymbol{:logτ}) = asℝ
 
 # Rather than try to reimplement everything in Distributions, measures can have
-# a `distproxy` method. This just delegates some methods to the corresponding
+# a `proxy` method. This just delegates some methods to the corresponding
 # Distributions.jl methods. For example,
 #
 #     julia> entropy(Normal(2,4))
 #     2.805232894324563
 #
-distproxy(d::Normal{()}) = Dists.Normal()
+proxy(d::Normal{()}) = Dists.Normal()
 
 ###############################################################################
 # Some distributions have a "standard" version that takes no parameters
@@ -91,9 +100,9 @@ distproxy(d::Normal{()}) = Dists.Normal()
 
 # Instead of setting default values, the `@kwstruct` call above makes a
 # parameter-free instance available. The log-density for this is very efficient.
-logdensity(d::Normal{()} , x) = - x^2 / 2 
 
-Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
+Base.rand(rng::Random.AbstractRNG, ::Type{T}, ::Normal{()}) where {T} = randn(rng, T)
+Base.rand(rng::Random.AbstractRNG, ::Type{T}, μ::Normal) where {T} = rand(rng, T, proxy(μ))
 
 ###############################################################################
 # `μ` and `σ` parameterizations are so common, we have a macro to make them easy
@@ -124,45 +133,42 @@ Base.rand(rng::Random.AbstractRNG, T::Type, μ::Normal{()}) = randn(rng, T)
 # a truncated version. 
 @half Normal
 
-
 # A single unnamed parameter for `HalfNormal` should be interpreted as a `σ`
 HalfNormal(σ) = HalfNormal(σ = σ)
 
-
 ###############################################################################
-@kwstruct Normal(μ,σ²)
+@kwstruct Normal(μ, σ²)
 
-function logdensity(d::Normal{(:σ²)}, x)
+@inline function logdensity_def(d::Normal{(:σ²)}, x)
     σ² = d.σ²
-    -0.5 * (log(σ²) + (x^2/σ²))
+    -0.5 * (log(σ²) + (x^2 / σ²))
 end
 
-function logdensity(d::Normal{(:μ,:σ²)}, x)
+@inline function logdensity_def(d::Normal{(:μ, :σ²)}, x)
     μ = d.μ
     σ² = d.σ²
-    -0.5 * (log(σ²) + ((x - μ)^2/σ²))
+    -0.5 * (log(σ²) + ((x - μ)^2 / σ²))
 end
 
 ###############################################################################
-@kwstruct Normal(μ,τ)
+@kwstruct Normal(μ, τ)
 
-function logdensity(d::Normal{(:τ)}, x)
+@inline function logdensity_def(d::Normal{(:τ)}, x)
     τ = d.τ
     0.5 * (log(τ) - τ * x^2)
 end
 
-function logdensity(d::Normal{(:μ,:τ)}, x)
+@inline function logdensity_def(d::Normal{(:μ, :τ)}, x)
     μ = d.μ
     τ = d.τ
     0.5 * (log(τ) - τ * (x - μ)^2)
 end
 
-
 ###############################################################################
 @kwstruct Normal(μ, logσ)
 
-function logdensity(d::Normal{(:μ,:logσ)}, x)
+@inline function logdensity_def(d::Normal{(:μ, :logσ)}, x)
     μ = d.μ
     logσ = d.logσ
-    -logσ - 0.5(exp(-2logσ)*((x - μ)^2))
+    -logσ - 0.5(exp(-2logσ) * ((x - μ)^2))
 end

@@ -1,21 +1,23 @@
 module MeasureTheory
 
 using Random
+using FLoops
 
 using MeasureBase
-using ConcreteStructs
 using MLStyle
 using NestedTuples
-using TransformVariables
+import TransformVariables
 const TV = TransformVariables
+
+using TransformVariables: as, asℝ₊, as𝕀, asℝ
 
 import Base
 import Distributions
 const Dists = Distributions
 
-# export TV
+export TV
 export ≪
-export sampletype
+export gentype
 export For
 
 export AbstractMeasure
@@ -28,84 +30,109 @@ export CountingMeasure
 export TrivialMeasure
 export Likelihood
 export testvalue
+export basekleisli
 
-using InfiniteArrays
-using ConcreteStructs
+using Infinities
 using DynamicIterators
 using KeywordCalls
 using ConstructionBase
 using Accessors
 using StatsFuns
 using SpecialFunctions
-using LogExpFunctions 
+using ConcreteStructs
 
-import MeasureBase: testvalue, logdensity, density, basemeasure, kernel, params, ∫
+import LogExpFunctions
+import NamedTupleTools
+import InverseFunctions: inverse
+export inverse
+export ifelse
+
+import MeasureBase: insupport, instance, marginals
+import MeasureBase:
+    testvalue,
+    logdensity_def,
+    density_def,
+    basemeasure,
+    kleisli,
+    params,
+    paramnames,
+    ∫,
+    𝒹,
+    ∫exp
+import MeasureBase: ≪
+using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
+using MeasureBase: weightedmeasure, restrict
+using MeasureBase: AbstractKleisli
+
+using StaticArrays
+
+import PrettyPrinting
+
+const Pretty = PrettyPrinting
+
+import Base: rand
 
 using Reexport
 @reexport using MeasureBase
+import IfElse: ifelse
+@reexport using IfElse
 
 using Tricks: static_hasmethod
-const ∞ = InfiniteArrays.∞
 
-export ∞
+using Static
 
 export as
 export Affine
 export AffineTransform
+export insupport
+export For
 
-if VERSION < v"1.7.0-beta1.0"
-    @eval begin
-        struct Returns{T}
-            value::T
-        end
+using MeasureBase: Returns
+import MeasureBase: proxy, @useproxy
+import MeasureBase: basemeasure_depth
+using MeasureBase: LebesgueMeasure
 
-        (f::Returns)(x) = f.value
-    end
-end
+import DensityInterface: logdensityof
+import DensityInterface: densityof
+import DensityInterface: DensityKind
+using DensityInterface
 
-sampletype(μ::AbstractMeasure) = typeof(testvalue(μ))
+gentype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
-# sampletype(μ::AbstractMeasure) = sampletype(basemeasure(μ))
+# gentype(μ::AbstractMeasure) = gentype(basemeasure(μ))
 
-import Distributions: pdf, logpdf
-
+import Distributions: logpdf, pdf
 
 export pdf, logpdf
 
-function logpdf(d::AbstractMeasure, x)
-    _logpdf(d, x, logdensity(d,x))
-end
+xlogx(x::Number) = LogExpFunctions.xlogx(x)
+xlogx(x, y) = x * log(x)
 
-function _logpdf(d::AbstractMeasure, x, acc::Float64)
-    β = basemeasure(d)
-    d === β && return acc
+xlogy(x::Number, y::Number) = LogExpFunctions.xlogy(x, y)
+xlogy(x, y) = x * log(y)
 
-    _logpdf(β, x, acc + logdensity(β, x))
-end
+xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
+xlog1py(x, y) = x * log(1 + y)
 
-
-pdf(d::AbstractMeasure, x) = exp(logpdf(d, x))
-
-"""
-    logdensity(μ::AbstractMeasure [, ν::AbstractMeasure], x::X)
-
-Compute the logdensity of the measure μ at the point x. This is the standard way
-to define `logdensity` for a new measure. the base measure is implicit here, and
-is understood to be `basemeasure(μ)`.
-"""
-function logdensity end
-
+include("utils.jl")
 include("const.jl")
+include("combinators/for.jl")
 # include("traits.jl")
 include("parameterized.jl")
-# include("resettablerng.jl")
 
+include("macros.jl")
+include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
+include("combinators/exponential-families.jl")
+
+include("resettable-rng.jl")
+include("realized.jl")
 include("combinators/chain.jl")
 
 include("distributions.jl")
+include("smart-constructors.jl")
 
 include("parameterized/normal.jl")
 include("parameterized/studentt.jl")
@@ -124,6 +151,8 @@ include("parameterized/binomial.jl")
 include("parameterized/multinomial.jl")
 include("parameterized/lkj-cholesky.jl")
 include("parameterized/negativebinomial.jl")
+
+include("combinators/ifelse.jl")
 
 include("transforms/corrcholesky.jl")
 include("transforms/ordered.jl")

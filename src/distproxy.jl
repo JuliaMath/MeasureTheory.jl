@@ -1,45 +1,19 @@
-export distproxy
-function distproxy end
+export proxy
+function proxy end
 
-# import MonteCarloMeasurements
-
-PROXIES = Dict(
-    :Distributions => [
-        :mean
-        :std
-        :entropy
-        :cdf
-        ],
-    # :MonteCarloMeasurements => [
-    #     :Particles
-    # ]
-)
+PROXIES = Dict(:Distributions => [
+    :mean
+    :std
+    :entropy
+    :cdf
+])
 
 for m in keys(PROXIES)
     for f in PROXIES[m]
         @eval begin
             import $m: $f
             export $f
-            $m.$f(d::AbstractMeasure, args...) = $m.$f(MeasureTheory.distproxy(d), args...)
+            $m.$f(d::AbstractMeasure, args...) = $m.$f(MeasureTheory.proxy(d), args...)
         end
     end
 end
-
-
-Base.rand(rng::AbstractRNG, T::Type, d::ParameterizedMeasure) = rand(rng, distproxy(d))
-
-# MonteCarloMeasurements.Particles(N::Int, d::AbstractMeasure) = MonteCarloMeasurements.Particles(N, distproxy(d))
-
-# using MonteCaroMeasurements
-
-# MonteCaroMeasurementsPROXIES = [
-#     :Particles
-# ]
-
-# for f in DistributionsPROXIES
-#     @eval begin
-#         import Distributions: $f
-#         export $f
-#         Distributions.$f(d::AbstractMeasure) = Distributions.$f(MeasureTheory.distproxy(d))
-#     end
-# end

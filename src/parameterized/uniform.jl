@@ -5,26 +5,33 @@ export Uniform
 
 @parameterized Uniform()
 @kwstruct Uniform()
-
+@kwstruct Uniform(a, b)
 
 ###############################################################################
 # Standard Uniform
 
-function basemeasure(::Uniform{()})
-    inbounds(x) = 0 < x < 1
-    constℓ = 0.0
-    varℓ() = 0.0
-    base = Lebesgue(ℝ)
-    FactoredBase(inbounds, constℓ, varℓ, base)
-end
+insupport(::Uniform{()}) = in𝕀
+insupport(::Uniform{()}, x) = in𝕀(x)
 
-distproxy(::Uniform{()}) = Dists.Uniform()
+@inline basemeasure(::Uniform{()}) = Lebesgue(ℝ)
 
-logdensity(d::Uniform{()}, x) = 0.0
+proxy(::Uniform{()}) = Dists.Uniform()
 
-TV.as(::Uniform{()}) = as𝕀
+density_def(::Uniform{()}, x) = 1.0
+
+logdensity_def(d::Uniform{()}, x) = 0.0
+
+xform(::Uniform{()}) = as𝕀
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Uniform{()}) = rand(rng, T)
 
 ###############################################################################
 # Uniform
+
+@inline insupport(d::Uniform{(:a, :b)}, x) = d.a ≤ x ≤ d.b
+
+Uniform(a, b) = Uniform((a = a, b = b))
+
+proxy(d::Uniform{(:a, :b)}) = affine((μ = d.a, σ = d.b - d.a), Uniform())
+@useproxy Uniform{(:a, :b)}
+Base.rand(rng::Random.AbstractRNG, ::Type{T}, μ::Uniform) where {T} = rand(rng, T, proxy(μ))

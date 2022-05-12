@@ -3,34 +3,48 @@
 
 export Cauchy, HalfCauchy
 
-@parameterized Cauchy(μ,σ) ≃ (1/π) * Lebesgue(ℝ)
+@parameterized Cauchy(μ, σ)
 
 @kwstruct Cauchy()
+@kwstruct Cauchy(μ)
+@kwstruct Cauchy(σ)
+@kwstruct Cauchy(μ, σ)
+@kwstruct Cauchy(ω)
+@kwstruct Cauchy(μ, ω)
 
-Cauchy(nt::NamedTuple{(:μ,:σ)}) = Affine(nt, Cauchy())
-Cauchy(nt::NamedTuple{(:μ,:ω)}) = Affine(nt, Cauchy())
-Cauchy(nt::NamedTuple{(:σ,)}) = Affine(nt, Cauchy())
-Cauchy(nt::NamedTuple{(:ω,)}) = Affine(nt, Cauchy())
-Cauchy(nt::NamedTuple{(:μ,)}) = Affine(nt, Cauchy())
+logdensity_def(d::Cauchy, x) = logdensity_def(proxy(d), x)
 
-@affinepars Cauchy
+basemeasure(d::Cauchy) = WeightedMeasure(static(-logπ), Lebesgue(ℝ))
 
-function logdensity(d::Cauchy{()} , x) 
+# @affinepars Cauchy
+
+@inline function logdensity_def(d::Cauchy{()}, x)
     return -log1p(x^2)
 end
 
-function density(d::Cauchy{()} , x) 
+function density_def(d::Cauchy{()}, x)
     return inv(1 + x^2)
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng, T)
 
-≪(::Cauchy, ::Lebesgue{X}) where X <: Real = true
+for N in AFFINEPARS
+    @eval begin
+        proxy(d::Cauchy{$N}) = affine(params(d), Cauchy())
+        @useproxy Cauchy{$N}
+        rand(rng::AbstractRNG, ::Type{T}, d::Cauchy{$N}) where {T} =
+            rand(rng, T, affine(params(d), Cauchy()))
+    end
+end
+
+≪(::Cauchy, ::Lebesgue{X}) where {X<:Real} = true
 
 TV.as(::Cauchy) = asℝ
 
 @half Cauchy
 
-HalfCauchy(σ) = HalfCauchy(σ=σ)
+HalfCauchy(σ) = HalfCauchy(σ = σ)
 
-distproxy(d::Cauchy{()}) = Dists.Cauchy()
+proxy(d::Cauchy{()}) = Dists.Cauchy()
+
+insupport(::Cauchy, x) = true
