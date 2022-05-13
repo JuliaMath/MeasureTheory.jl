@@ -398,7 +398,9 @@ For example, for a standard \verb|Normal| measure, we have
 
 \begin{verbatim}
 basemeasure(::Normal{()}) = (1/sqrt2π) * Lebesgue(ℝ)
+
 logdensity_def(::Normal{()} , x) = - x^2 / 2 
+
 insupport(::Normal{()}, x) = true
 \end{verbatim}
 
@@ -411,6 +413,8 @@ The way \verb|MeasureTheory.jl| is set up, repeated application of \verb|basemea
 We could easily have chosen a different base measure and adjusted \verb|logdensity_def| accordingly.
 From the perspective of an end user, this could be considered arbitrary.
 Therefore, \verb|basemeasure| and \verb|logdensity_def| should be considered implementation details, and not part of the user-facing interface.
+
+\chad{need edits here}
 
 This leaves us with the question of how to compute the three-argument \verb|logdensity(μ, ν, x)| for general $\nu$. We implement this recursively, in an approach we refer to as \emph{density recursion}.
 
@@ -676,13 +680,7 @@ For a given $x \in X$ with $\mu \ll_x \alpha$, let $\nu_x = \kappa(x)$ have base
 \[
 \frac{\dd(\mu \otimes \nu_x)}{\dd(\alpha \otimes \beta_x)} = \frac{\dd\mu}{\dd\alpha}\ \frac{\dd\nu_x}{\dd\beta_x}\ .
 \]
-Because the types are always available to help us distinguish this from the independent case, it's safe to use the same notation, \verb|μ ⊗ κ|.
 
-Note that this defines a function
-\[
-\otimes \colon \cM(X) \times (X \to \cM(Y)) \to \cM(Y)\ .
-\]
-In functional programming, this (together with some laws) is called a \href{https://en.wikipedia.org/wiki/Monad_(functional_programming)}{\emph{monadic bind}} \cite{ramsey2002stochastic}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Superposition and mixtures \label{superposition}}
