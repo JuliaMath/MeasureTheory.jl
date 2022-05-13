@@ -639,6 +639,8 @@ Rather, a given likelihood acts on measures, taking a ``prior'' measure $\mu$ to
     {\underbrace{\frac{\dd\mu}{\dd\alpha}(\theta)}_{\text{prior}}}\ {\underbrace{\vphantom{\frac{\dd(\mu\odot\ell)}{\dd\alpha}(\theta)}\ell(\theta)}_{\text{likelihood}}}
 \]
 
+Treating likelihoods and pointwise products explicitly in this way gives an easy route to many performance optimizations. For example, the likelihood of a linear model can be computed very efficiently in terms of basic linear algebra, and in cases of conjugacy the pointwise product simplifies to a measure that can be expressed in closed form.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Product and power measures}
 
