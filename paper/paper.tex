@@ -605,7 +605,9 @@ Finally, kernels are key to expressing \href{https://en.wikipedia.org/wiki/Likel
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Pointwise products and likelihoods \label{Likelihoods}}
 
-For a parameter $\theta$ and data $x$, suppose we have a \href{https://en.wikipedia.org/wiki/Prior_probability}{\emph{prior}} $p(\theta)$ (momentarily assuming Lebesgue base measure) and \href{https://en.wikipedia.org/wiki/Likelihood_function}{\emph{likelihood}} $p(x | \theta)$. Then Bayes's Law gives the posterior density
+The \href{https://en.wikipedia.org/wiki/Pointwise_product}{\emph{pointwise product}} in probability often describes the fusion of information, in this case the fusion of information from prior and from the observations via the likelihood, but also shows up in related situation, such as \href{https://en.wikipedia.org/wiki/Sensor_fusion}{\emph{sensor fusion}} in signal processing.
+
+Let us momentarily assume the common case of Lebesgue base measure. For a parameter $\theta$ and data $x$, suppose we have a \href{https://en.wikipedia.org/wiki/Prior_probability}{\emph{prior density}} $p(\theta)$ and \href{https://en.wikipedia.org/wiki/Likelihood_function}{\emph{likelihood}} $p(x | \theta)$. Then Bayes's Law gives the posterior density
 \[
 p(\theta \mid x) = \frac{p(\theta)\ p(x \mid \theta)}{p(x)}\ .
 \]
@@ -619,7 +621,7 @@ In practice, we rarely know the normalization factor $p(x)$, so we often work in
 \]
 Because the product does not include normalization, in general it does not integrate to one, and so it's not a probability density function. But there are no such problems as a density for a measure.
 
-The \href{https://en.wikipedia.org/wiki/Pointwise_product}{\emph{pointwise product}} in probability often describes the fusion of information, in this case the fusion of information from prior and from the observations via the likelihood, but also shows up in related situation, such as \href{https://en.wikipedia.org/wiki/Sensor_fusion}{\emph{sensor fusion}} in signal processing.
+
 
 Given a \emph{parameter space} $\Theta$ and \emph{observation space} $X$, a \verb|Likelihood| $\ell$ consists of a kernel $\ell_κ : \Theta \to \cM(X)$ and an observation $\ell_x \in X$. Given a measure $\rho \in \cM(X)$, $\ell$ can be treated as a function $\Theta \to \RR_{\ge 0}$, given by
 \[
