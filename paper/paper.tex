@@ -305,9 +305,10 @@ The practical importance of $\sigma$-algebras here lies therein that they also e
  
  Then we also know that the answer to the complement $A^c$ (no or yes), and we always know that $\Omega$ has probability 1 and the corresponding question is answered by `yes'. Likewise, if both $A$ and $B$ can be answered given what we know, we also know the answer to $A \cup B$. That means, these known events form an $\sigma$-algebra, and in particular for each random variable $\bX$ there is a $\sigma$-algebra associated with $\bX$ which encodes what else we know knowing $\bX$ and how we should assign (conditional) probabilities to other events knowing $\bX$.
  
- This is a very relevant question for probabilistic programming tasks and causal inference, and with \emph{kernels} \verb|MeasureTheory| does provide tools to reason about it which are computationally appropriate, because they are local.
+ This is a very relevant question for probabilistic programming tasks and causal inference, and with \emph{kernels} (Section~\ref{Kernels}) \verb|MeasureTheory| does provide tools to reason about it which are computationally appropriate, because they are local.
  
- 
+\chad{above paragraph needs editing} 
+
 
 \subsection*{Densities}
 
@@ -475,7 +476,7 @@ or
 Calls to \verb|rand|, \verb|logdensity_def|, etc then delegate to methods according to the appropriate names. We use \verb|KeywordCalls.jl| \cite{KeywordCalls.jl}, so all names are resolved statically at compile time.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Kernels}
+\section{Kernels\label{Kernels}}
 
 A \emph{kernel} is a (measurable\footnote{That is, the function $x \mapsto \kappa(x)(A)$ must be measurable for every fixed $A$.}) function $\kappa$ that returns a measure. Equivalently, it represents a family of measures parameterized by its argument. Writing $\cM(Y)$ for ``measures on $Y$'', we can write this as
 \[
