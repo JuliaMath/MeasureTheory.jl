@@ -625,13 +625,26 @@ In practice, we rarely know the normalization factor $p(x)$, so we often work in
 \]
 Because the product does not include normalization, in general it does not integrate to one, and so it's not a probability density function. But there are no such problems as a density for a measure. We now consider this more general formulation.
 
-Given a \emph{parameter space} $\Theta$ and \emph{observation space} $X$, a \verb|Likelihood| $\ell$ consists of a kernel $\ell_κ : \Theta \to \cM(X)$ and an observation $\ell_x \in X$. Given a measure $\rho \in \cM(X)$, $\ell$ can be treated as a function $\Theta \to \RR_{\ge 0}$, given by
+Given a \emph{parameter space} $\Theta$ and \emph{observation space} $X$, a \verb|Likelihood| $\ell$ consists of 
+\begin{enumerate}
+    \item a kernel $\ell_κ : \Theta \to \cM(X)$,
+    \item an observation $\ell_x \in X$, and
+    \item a base measure $\ell_\beta \in\cM(X)$.
+\end{enumerate}
+
+A likelihood can be treated as a function $\Theta \to \RR_{\ge 0}$, by defining
 \[
-    \ell(\theta) \equiv \frac{\dd\ell_\kappa(\theta)}{\dd\rho}(\ell_x)
+    \ell(\theta) = \frac{\dd\ell_\kappa(\theta)}{\dd\ell_\beta}(\ell_x)
 \]
 
-In \verb|MeasureTheory|, we take $\rho$ to be the \emph{root measure} of $\ell_\kappa(\theta)$
-Note that $\ell$ takes a point in $\Theta$ to an evaluated density in a different space (the observation space $X$). In particular, a likelihood is neither a measure nor a density.
+Of particular interest for the base measure is the case
+\[
+    \ell_\beta = \hat{\theta} \equiv \arg\max_\theta \frac{\dd\ell_\kappa(\theta)}{\dd\rho}(\ell_x)
+\]
+
+for any non-singular measure $\rho$; this corresponds to the \href{https://en.wikipedia.org/wiki/Likelihood_function#Relative_likelihood_function}{\emph{relative likelihood}}. In \verb|MeasureTheory|, we allow the base measure to be specified, but take as a default the \emph{root measure} of $\ell_\kappa(\theta)$.
+
+Note that a likelihood $\ell$ takes a point in $\Theta$ to an evaluated density in a different space (the observation space $X$). In particular, a likelihood is neither a measure nor a density.
 
 Rather, a given likelihood acts on measures, taking a ``prior'' measure $\mu$ to ``unnormalized posterior'' measure $\mu \odot \ell$. Relative to another measure $\alpha$, this has density
 
