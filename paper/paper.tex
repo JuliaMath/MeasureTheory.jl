@@ -826,19 +826,21 @@ In many cases, we prefer the density (or log-density, really) to be fast to eval
 
 \subsection*{Inverse parameterization}
 
-An alternative parameterization of a multivariate Gaussian is in terms of its \href{https://en.wikipedia.org/wiki/Precision_(statistics)}{\emph{precision matrix}}, $\Psi = \VV[\bX]^{-1}$. Similarly to above, we'll write $\psi$ for the lower Cholesky factor of $\Psi$, so $\psi \psi^t = \Psi$. The parameterization is then specified by
+An alternative parameterization of a multivariate Gaussian is in terms of its \href{https://en.wikipedia.org/wiki/Precision_(statistics)}{\emph{precision matrix}}, $\Lambda = \VV[\bX]^{-1}$. Similarly to above, we'll write $\lambda$ for the lower Cholesky factor of $\Lambda$, so $\lambda \lambda^t = \Lambda$. The parameterization is then specified by
 \[
-\bZ = \psi(\bX - \mu)\ .
+\bZ = \lambda(\bX - \mu)\ .
 \]
 
+In this parameterization, $\lambda$ is an \emph{inverse scale} or \emph{rate} parameter.
 Solving for $z$ is of course now very simple, and the density becomes
 \[
-p_\bX(x) = |\psi|\ p_\bZ(z) = |\psi|\ p_\bZ(\psi (x - \mu))\ .
+p_\bX(x) = |\lambda|\ p_\bZ(z) = |\lambda|\ p_\bZ(\lambda (x - \mu))\ .
 \]
+
 
 In exchange, forward sampling becomes awkward,
 \[
-\bX = \psi^{-1}\bZ + \mu\ .
+\bX = \lambda^{-1}\bZ + \mu\ .
 \]
 
 \subsection*{Generalization}
