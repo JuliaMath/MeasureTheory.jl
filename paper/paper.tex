@@ -180,8 +180,7 @@ Some parts of our approach can been seen in existing systems, though these are s
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{What are measures?}
 
-We'll now describe some foundations to help the reader get a deeper understanding of our approach, in particular what measures and probability distributions are and how they relate to notions such as the probability of something happening in the real world or the notion of volume of the space we are living in. 
-\chad{Above sentence is very long, can we break it up?}
+We'll now describe some foundations to help the reader get a deeper understanding of our approach. In particular, we'll define \emph{measures} and \emph{probability distributions}, relate them to familiar notions such as \emph{volume} and the \emph{probability of an event}.
 
 Throughout this discussion, it's important to keep in mind that for us the measure-theoretic abstractions are only means to an end.% 
 \footnote{The stackoverflow discussion \url{https://mathoverflow.net/q/11591} discusses books on measure theory; M.S.~likes \cite{Shiryaev1996} as starting point and uses \cite{Elstrodt2011} and \cite{Bauer_Heinz1982-01-01} as reference. As we anticipate interest in connecting with the actual theory, we give some pointers to more technical details in the footnotes.}
@@ -303,12 +302,11 @@ The practical importance of $\sigma$-algebras here lies therein that they also e
  For example, an event $A = \{\bX \in  [c, d]\}$ corresponds to the question whether the random variable $\bX$ is in the interval $[c, d]$ and there is a probability $\operatorname{Prob}(A)$ that this will be the case. 
  Assume we know whether some of such questions $A$, $B$ are answered (each with yes or no).
  
- Then we also know that the answer to the complement $A^c$ (no or yes), and we always know that $\Omega$ has probability 1 and the corresponding question is answered by `yes'. Likewise, if both $A$ and $B$ can be answered given what we know, we also know the answer to $A \cup B$. That means, these known events form an $\sigma$-algebra, and in particular for each random variable $\bX$ there is a $\sigma$-algebra associated with $\bX$ which encodes what else we know knowing $\bX$ and how we should assign (conditional) probabilities to other events knowing $\bX$.
+ Then we also know that the answer to the complement $A^c$ (no or yes), and we always know that $\Omega$ has probability 1 and the corresponding question is answered by `yes'. Likewise, if both $A$ and $B$ can be answered given what we know, we also know the answer to $A \cup B$. 
  
- This is a very relevant question for probabilistic programming tasks and causal inference, and with \emph{kernels} (Section~\ref{Kernels}) \verb|MeasureTheory| does provide tools to reason about it which are computationally appropriate, because they are local.
+ As the reader might now suspect, such known events form a $\sigma$-algebra. In particular, for each random variable $\bX$ there is a $\sigma$-algebra associated with $\bX$ that encodes what else we know knowing $\bX$ and how we should assign (conditional) probabilities to other events knowing $\bX$.
  
-\chad{above paragraph needs editing} 
-
+ This is a very relevant question for probabilistic programming tasks and causal inference. But we've already mentioned that \verb|MeasureTheory| does not explicitly represent $\sigma$-algebras. Instead, questions like these can be addressed using \emph{kernels} (Section~\ref{Kernels}). These give a way to reason about local behavior, and be much more computationally efficient.
 
 \subsection*{Densities}
 
