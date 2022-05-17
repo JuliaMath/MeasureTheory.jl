@@ -404,15 +404,26 @@ logdensity_def(::Normal{()} , x) = - x^2 / 2
 insupport(::Normal{()}, x) = true
 \end{verbatim}
 
-Note the difference from a typical distribution-oriented implementation; we have changed the base measure in order to simplify the log-density. This leads to better compositional efficiency. \chad{"compositional efficiency" is kind of vague, reword}
+Note the difference from a typical distribution-oriented implementation; the log-density consists only of $-x^2/2$, with the normalization term pushed into the base measure. 
 
-The way \verb|MeasureTheory.jl| is set up, repeated application of \verb|basemeasure| will eventually reach a fix point. That is, some measure will eventually be its own base measure. For such a measure, \verb|logdensity_def| is required to return zero. We refer to the fix point reached in this way from a given measure as that measure's \emph{root measure}.
+The normalization term is present for any normal distribution, even those with a different mean or variance. So if we have a product of normals, for example in a regression problem, the normalization can be shared across them. Taking $n$ iid standard \verb|Normal|s as a simple example, this effectively rewrites the log-pdf
+\[
+    \sum_{j=1}^n \left(-\frac{1}{2}\log 2π -\frac{x_j^2}{2}\right)
+    \quad \text{as} \quad
+    -\frac{n}{2}\log 2π + \sum_{j=1}^n \left(-\frac{x_j^2}{2}\right)
+\]
+
+Further simplification is clearly possible; doing this efficiently in a composable way is the subject of ongoing work.
 
 \subsection*{The end-user perspective}
 
-We could easily have chosen a different base measure and adjusted \verb|logdensity_def| accordingly.
-From the perspective of an end user, this could be considered arbitrary.
-Therefore, \verb|basemeasure| and \verb|logdensity_def| should be considered implementation details, and not part of the user-facing interface.
+From our above discussion of moving terms between the log-density and the base measure, the reader may suspect that this can be done arbitrarily, leaving no ``natural'' log-density for a given measure. This is indeed the case; the log-density of a measure is only determined \emph{relative to a particular base measure}.
+
+Our choice of \verb|basemeasure| doesn't reflect any mathematical invariant, only computational convenience. Accordingly, \verb|basemeasure| and \verb|logdensity_def| should be considered implementation details, and not part of the user-facing interface.
+
+
+
+The way \verb|MeasureTheory.jl| is set up, repeated application of \verb|basemeasure| will eventually reach a fix point. That is, some measure will eventually be its own base measure. For such a measure, \verb|logdensity_def| is required to return zero. We refer to the fix point reached in this way from a given measure as that measure's \emph{root measure}.
 
 \chad{need edits here}
 
