@@ -379,7 +379,7 @@ $\mu\ll_x \nu$& (finite) & \verb|-Inf|  \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Base measures and density recursion}
+\section{Base measures and log-densities}
 It's very useful for users to be able to \emph{call} \verb|logdensity_rel| for arbitrary measures. But \emph{defining} things directly in these terms would require a definition for every pair of possible measures, which is of course intractable.
 
 We'll now discuss the mechanics of defining a measure, followed by 
@@ -406,14 +406,14 @@ insupport(::Normal{()}, x) = true
 
 Note the difference from a typical distribution-oriented implementation; the log-density consists only of $-x^2/2$, with the normalization term pushed into the base measure. 
 
-The normalization term is present for any normal distribution, even those with a different mean or variance. So if we have a product of normals, for example in a regression problem, the normalization can be shared across them. Taking $n$ iid standard \verb|Normal|s as a simple example, this effectively rewrites the log-pdf
+The normalization term is present for any normal distribution, even those with a different mean or variance. So if we have a product of normals, for example in a regression problem, the normalization can be shared across them. For the simple example of $n$ iid standard \verb|Normal|s, this effectively rewrites the log-pdf
 \[
     \sum_{j=1}^n \left(-\frac{1}{2}\log 2π -\frac{x_j^2}{2}\right)
     \quad \text{as} \quad
     -\frac{n}{2}\log 2π + \sum_{j=1}^n \left(-\frac{x_j^2}{2}\right)
 \]
 
-Further simplification is clearly possible; doing this efficiently in a composable way is the subject of ongoing work.
+Further simplification is clearly possible; doing this in a composable way without sacrificing efficiency is the subject of ongoing work.
 
 \subsection*{The end-user perspective}
 
@@ -421,30 +421,9 @@ From our above discussion of moving terms between the log-density and the base m
 
 Our choice of \verb|basemeasure| doesn't reflect any mathematical invariant, only computational convenience. Accordingly, \verb|basemeasure| and \verb|logdensity_def| should be considered implementation details, and not part of the user-facing interface.
 
-
-
 The way \verb|MeasureTheory.jl| is set up, repeated application of \verb|basemeasure| will eventually reach a fix point. That is, some measure will eventually be its own base measure. For such a measure, \verb|logdensity_def| is required to return zero. We refer to the fix point reached in this way from a given measure as that measure's \emph{root measure}.
 
-\chad{need edits here}
-
-This leaves us with the question of how to compute the three-argument \verb|logdensity(μ, ν, x)| for general $\nu$. We implement this recursively, in an approach we refer to as \emph{density recursion}.
-
-
-
-If $\alpha$ is the base measure of $\mu$ and $\beta$ is the base measure of $\nu$, then
-\[
-\frac{\dd \mu}{\dd \nu} =
-\frac{\dd \mu}{\dd \alpha}
-\frac{\dd \alpha}{\dd \beta}
-\left(\frac{\dd \nu}{\dd \beta}\right)^{-1}\ .
-\]
-
-In the implementation, \verb|logdensity(μ, α, x)| and \verb|logdensity(ν, β, x)| can be computed directly using the two-argument \verb|logdensity|. There may be a specific method for \verb|logdensity(α, β, x)|; if not, it will require a recursion step.
-
-In this process, we may reach a measure that serves as its own base measure. Such measures are \emph{primitive}, for example Lebesgue or counting measure. If \verb|logdensity| is called on two primitive measures with no explicit method, an error is thrown.
-
-The above serves as a high-level specification  of the computational process. The low-level implementation will differ in some ways as we continue to tune it for performance.
-
+Instead of \verb|logdensity_def|, users should typically call \verb|logdensity_rel(μ,ν,x)| (which computes $\frac{\dd μ}{\dd ν}(x)$), or \verb|logdensityof(μ,x)|, which gives the log-density relative to the root measure. \verb|logdensityof| was originally defined in \cite{DensityInterface.jl}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Parameterized measures}
