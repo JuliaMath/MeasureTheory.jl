@@ -23,7 +23,7 @@ end
     end
 end
 
-TV.as(d::For) = as(Array, as(first(marginals(d))), size(first(d.inds))...)
+as(d::For) = as(Array, as(first(marginals(d))), size(first(d.inds))...)
 
 # For(f, gen::Base.Generator) = ProductMeasure(Base.Generator(f ∘ gen.f, gen.iter))
 

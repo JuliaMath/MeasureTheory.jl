@@ -500,7 +500,7 @@ end
     end
 
     for (M, nt) in testmeasures
-        for p in [(μ = 1,), (μ = 1, σ = 2), (μ = 1, ω = 2), (σ = 2,), (ω = 2,)]
+        for p in [(μ = 1,), (μ = 1, σ = 2), (μ = 1, λ = 2), (σ = 2,), (λ = 2,)]
             d = M(merge(nt, p))
             @info "Testing $d"
             test_noerrors(d)
@@ -509,7 +509,7 @@ end
         #     @show n
         #     for k in 1:n
         #         @show k
-        #         pars = [(μ=randn(n),), (μ=randn(n),σ=randn(n,k)), (μ=randn(n),ω=randn(k,n)), (σ=randn(n,k),), (ω=randn(k,n),)]
+        #         pars = [(μ=randn(n),), (μ=randn(n),σ=randn(n,k)), (μ=randn(n),λ=randn(k,n)), (σ=randn(n,k),), (λ=randn(k,n),)]
         #         for p in pars
         #             @show p
         #             d = M(merge(nt, p))
@@ -525,7 +525,7 @@ end
     @test f(inverse(f)(1)) == 1
     @test inverse(f)(f(1)) == 1
 
-    f = AffineTransform((μ = 3, ω = 2))
+    f = AffineTransform((μ = 3, λ = 2))
     @test f(inverse(f)(1)) == 1
     @test inverse(f)(f(1)) == 1
 
@@ -533,7 +533,7 @@ end
     @test f(inverse(f)(1)) == 1
     @test inverse(f)(f(1)) == 1
 
-    f = AffineTransform((ω = 2,))
+    f = AffineTransform((λ = 2,))
     @test f(inverse(f)(1)) == 1
     @test inverse(f)(f(1)) == 1
 
@@ -545,10 +545,10 @@ end
 @testset "Affine" begin
     unif = ∫(x -> 0 < x < 1, Lebesgue(ℝ))
     f1 = AffineTransform((μ = 3.0, σ = 2.0))
-    f2 = AffineTransform((μ = 3.0, ω = 2.0))
+    f2 = AffineTransform((μ = 3.0, λ = 2.0))
     f3 = AffineTransform((μ = 3.0,))
     f4 = AffineTransform((σ = 2.0,))
-    f5 = AffineTransform((ω = 2.0,))
+    f5 = AffineTransform((λ = 2.0,))
 
     for f in [f1, f2, f3, f4, f5]
         par = getfield(f, :par)
@@ -563,14 +563,14 @@ end
     σ = let x = randn(10, 3)
         cholesky(x' * x).L
     end
-    ω = inv(σ)
+    λ = inv(σ)
 
     x = randn(3)
 
     @test logdensity_def(Affine((μ = μ, σ = σ), d^3), x) ≈
-          logdensity_def(Affine((μ = μ, ω = ω), d^3), x)
+          logdensity_def(Affine((μ = μ, λ = λ), d^3), x)
     @test logdensity_def(Affine((σ = σ,), d^3), x) ≈
-          logdensity_def(Affine((ω = ω,), d^3), x)
+          logdensity_def(Affine((λ = λ,), d^3), x)
     @test logdensity_def(Affine((μ = μ,), d^3), x) ≈ logdensity_def(d^3, x - μ)
 
     d = ∫exp(x -> -x^2, Lebesgue(ℝ))
@@ -580,7 +580,7 @@ end
     @test logdensityof(a, x) ≈ logdensityof(d, inverse(a.f)(x)[1])
     @test logdensityof(a, a.f(y)) ≈ logdensityof(d^1, y)
 
-    b = Affine((ω = [1 0]'',), d^1)
+    b = Affine((λ = [1 0]'',), d^1)
     @test logdensityof(b, x) ≈ logdensityof(d, inverse(b.f)(x)[1])
     @test logdensityof(b, b.f(y)) ≈ logdensityof(d^1, y)
 end

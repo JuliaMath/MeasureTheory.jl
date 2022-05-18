@@ -5,7 +5,7 @@ end
 
 asConst(x) = AsConst(x)
 
-TV.as(d::Dirac) = AsConst(d.x)
+as(d::Dirac) = AsConst(d.x)
 
 TV.dimension(t::AsConst) = 0
 

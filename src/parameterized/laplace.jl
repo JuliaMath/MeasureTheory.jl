@@ -9,8 +9,8 @@ export Laplace
 @kwstruct Laplace(μ)
 @kwstruct Laplace(σ)
 @kwstruct Laplace(μ, σ)
-@kwstruct Laplace(ω)
-@kwstruct Laplace(μ, ω)
+@kwstruct Laplace(λ)
+@kwstruct Laplace(μ, λ)
 
 for N in AFFINEPARS
     @eval begin
@@ -38,4 +38,4 @@ Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace) where {T} = Base.rand(rng, T
 
 ≪(::Laplace, ::Lebesgue{X}) where {X<:Real} = true
 
-TV.as(::Laplace) = asℝ
+as(::Laplace) = asℝ

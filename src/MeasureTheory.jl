@@ -8,13 +8,15 @@ using NestedTuples
 import TransformVariables
 const TV = TransformVariables
 
-using TransformVariables: as, asℝ₊, as𝕀, asℝ
+using TransformVariables: asℝ₊, as𝕀, asℝ, transform
+
 
 import Base
 import Distributions
 const Dists = Distributions
 
 export TV
+export transform
 export ≪
 export gentype
 export For
@@ -78,8 +80,8 @@ import Base: rand
 
 using Reexport
 @reexport using MeasureBase
-import IfElse: ifelse
-@reexport using IfElse
+import IfElse
+using IfElse
 
 using Tricks: static_hasmethod
 
@@ -114,6 +116,8 @@ xlogy(x, y) = x * log(y)
 
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
+
+as(args...; kwargs...) = TV.as(args...; kwargs...)
 
 include("utils.jl")
 include("const.jl")

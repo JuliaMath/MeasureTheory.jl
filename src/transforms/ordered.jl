@@ -37,7 +37,7 @@ function TV.transform_with(flag::TV.LogJacFlag, t::Ordered, x, index::T) where {
 
     x = mappedarray(xj -> xj + OrderedΔx, x)
 
-    @inbounds (y[1], ℓ, _) = TV.transform_with(flag, TV.as(Real, lo, hi), x, index)
+    @inbounds (y[1], ℓ, _) = TV.transform_with(flag, as(Real, lo, hi), x, index)
     index += 1
 
     @inbounds for i in 2:len

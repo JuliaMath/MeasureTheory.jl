@@ -35,7 +35,7 @@ Base.rand(rng::AbstractRNG, T::Type, μ::Gamma{()}) = rand(rng, T, Exponential()
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Gamma{(:k,)}) = rand(rng, Dists.Gamma(μ.k))
 
-TV.as(::Gamma) = asℝ₊
+as(::Gamma) = asℝ₊
 
 insupport(::Gamma, x) = x > 0
 

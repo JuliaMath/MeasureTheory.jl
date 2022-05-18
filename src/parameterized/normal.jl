@@ -42,8 +42,8 @@ insupport(d::Normal) = Returns(true)
 @kwstruct Normal(μ)
 @kwstruct Normal(σ)
 @kwstruct Normal(μ, σ)
-@kwstruct Normal(ω)
-@kwstruct Normal(μ, ω)
+@kwstruct Normal(λ)
+@kwstruct Normal(μ, λ)
 
 params(::Type{N}) where {N<:Normal} = ()
 
@@ -51,7 +51,7 @@ Normal(μ, σ) = Normal((μ = μ, σ = σ))
 
 Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
-TV.as(::Normal) = asℝ
+as(::Normal) = asℝ
 
 # `@kwalias` defines some alias names, giving users flexibility in the names
 # they use. For example, σ² is standard notation for the variance parameter, but

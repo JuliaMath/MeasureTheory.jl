@@ -8,9 +8,9 @@ export StudentT, HalfStudentT
 @kwstruct StudentT(ν)
 @kwstruct StudentT(ν, μ)
 @kwstruct StudentT(ν, σ)
-@kwstruct StudentT(ν, ω)
+@kwstruct StudentT(ν, λ)
 @kwstruct StudentT(ν, μ, σ)
-@kwstruct StudentT(ν, μ, ω)
+@kwstruct StudentT(ν, μ, λ)
 
 for N in AFFINEPARS
     @eval begin

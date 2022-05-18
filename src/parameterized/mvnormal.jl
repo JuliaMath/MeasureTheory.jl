@@ -9,9 +9,9 @@ export MvNormal
 
 @kwstruct MvNormal(μ)
 @kwstruct MvNormal(σ)
-@kwstruct MvNormal(ω)
+@kwstruct MvNormal(λ)
 @kwstruct MvNormal(μ, σ)
-@kwstruct MvNormal(μ, ω)
+@kwstruct MvNormal(μ, λ)
 
 supportdim(d::MvNormal) = supportdim(params(d))
 
@@ -33,8 +33,8 @@ insupport(::MvNormal, x) = true
 #     affine(nt, Normal() ^ dim)
 # end
 
-# function MvNormal(nt::NamedTuple{(:ω,)})
-#     dim = rowsize(nt.ω)
+# function MvNormal(nt::NamedTuple{(:λ,)})
+#     dim = rowsize(nt.λ)
 #     affine(nt, Normal() ^ dim)
 # end
 
@@ -43,7 +43,7 @@ insupport(::MvNormal, x) = true
 #     affine(nt, Normal() ^ dim)
 # end
 
-# function MvNormal(nt::NamedTuple{(:μ, :ω,)})
-#     dim = rowsize(nt.ω)
+# function MvNormal(nt::NamedTuple{(:μ, :λ,)})
+#     dim = rowsize(nt.λ)
 #     affine(nt, Normal() ^ dim)
 # end

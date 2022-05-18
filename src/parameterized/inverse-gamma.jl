@@ -18,6 +18,6 @@ end
 
 ≪(::InverseGamma, ::Lebesgue{X}) where {X<:Real} = true
 
-TV.as(::InverseGamma) = asℝ₊
+as(::InverseGamma) = asℝ₊
 
 # @μσ_methods InverseGamma(shape)

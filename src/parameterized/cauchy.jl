@@ -9,8 +9,8 @@ export Cauchy, HalfCauchy
 @kwstruct Cauchy(μ)
 @kwstruct Cauchy(σ)
 @kwstruct Cauchy(μ, σ)
-@kwstruct Cauchy(ω)
-@kwstruct Cauchy(μ, ω)
+@kwstruct Cauchy(λ)
+@kwstruct Cauchy(μ, λ)
 
 logdensity_def(d::Cauchy, x) = logdensity_def(proxy(d), x)
 
@@ -40,7 +40,7 @@ end
 
 ≪(::Cauchy, ::Lebesgue{X}) where {X<:Real} = true
 
-TV.as(::Cauchy) = asℝ
+as(::Cauchy) = asℝ
 
 @half Cauchy
 
