@@ -382,8 +382,7 @@ $\mu\ll_x \nu$& (finite) & \verb|-Inf|  \\
 \section{Base measures and log-densities}
 It's very useful for users to be able to \emph{call} \verb|logdensity_rel| for arbitrary measures. But \emph{defining} things directly in these terms would require a definition for every pair of possible measures, which is of course intractable.
 
-We'll now discuss the mechanics of defining a measure, followed by 
-\chad{add a description of the next subseciton here}
+We'll now discuss the mechanics of defining a measure, followed by a description of the end-user perspective.
 
 \subsection*{Defining a measure}
 
@@ -423,7 +422,7 @@ Our choice of \verb|basemeasure| doesn't reflect any mathematical invariant, onl
 
 The way \verb|MeasureTheory.jl| is set up, repeated application of \verb|basemeasure| will eventually reach a fix point. That is, some measure will eventually be its own base measure. For such a measure, \verb|logdensity_def| is required to return zero. We refer to the fix point reached in this way from a given measure as that measure's \emph{root measure}.
 
-Instead of \verb|logdensity_def|, users should typically call \verb|logdensity_rel(μ,ν,x)| (which computes $\frac{\dd μ}{\dd ν}(x)$), or \verb|logdensityof(μ,x)|, which gives the log-density relative to the root measure. \verb|logdensityof| was originally defined in \cite{DensityInterface.jl}.
+Instead of \verb|logdensity_def|, users should typically call \verb|logdensity_rel(μ,ν,x)| (which computes $\frac{\dd μ}{\dd ν}(x)$), or \verb|logdensityof(μ,x)|, which gives the log-density relative to the root measure. \verb|logdensityof| was originally defined in \cite{DensityInterface.jl}, and provides a convenient common ground for those not accustomed to thinking of densities as being relative. We expect this to be especially useful for new users.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Parameterized measures}
