@@ -61,7 +61,6 @@ TV.as(d::For) = as(Array, as(first(marginals(d))), size(first(d.inds))...)
 @inline function logdensity_def(
     d::For{T,F,I},
     x::AbstractVector{X};
-    exec = SequentialEx(simd = true),
 ) where {X,T,F,I<:Tuple{<:AbstractVector}}
     ind = only(d.inds)
     sum(eachindex(x)) do j
