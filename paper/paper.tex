@@ -283,7 +283,7 @@ Statements we make about sets should be understood as restricted to this set-of-
 
 Now, Kolmogorov's axioms require a given measure to be defined for $X$, and they also require that this set of measurable sets is closed under the operations which the axioms allow (complements and unions of sets or sequences of sets). This imposes an algebraic structure to the measurable sets, called a \emph{$\sigma$-algebra}, which is exactly that: A set of sets $\subset X$ (or $\subset \Omega$ in particular) closed under complementation and countable unions and intersections.
 
-This begs the question: Why not just use the \href{https://en.wikipedia.org/wiki/Power_set}{\emph{power set}}, the ``set of all sets'', which is, after thinking about it, such a $\sigma$-algebra?
+This raises the question: Why not just use the \href{https://en.wikipedia.org/wiki/Power_set}{\emph{power set}}, the ``set of all sets'', which is, after thinking about it, such a $\sigma$-algebra?
 
 A key observation is that having defined probability mass for a number of relatively simple sets, for example on all intervals,
 Kolmogorov's axioms give a recipe to compute the probability mass of more complicated sets, and with those, even more in new applications of the axioms, etc.
@@ -901,7 +901,7 @@ As mentioned in Section~\ref{superposition}, \verb|ZigZagBoomerang.jl|\cite{http
 While the vast majority of research in computational statistics works explicitly in terms of probability distributions, a few authors have addressed measures more generally:
 
 \begin{itemize}
-\item[$\bullet\!$]Borgstr\"om et al \cite{Borgstr_m_2013} describes the \verb|Fun| system in F\# in terms of \emph{measure transformer semantics}, but discusses only \emph{finite} measures.
+\item[$\bullet\!$]Borgstr\"om et al \cite{Borgstr_m_2013} describe the \verb|Fun| system in F\# in terms of \emph{measure transformer semantics}, but discusses only \emph{finite} measures.
 
 \item[$\bullet\!$]Narayanan et al \cite{narayanan2016probabilistic} describe \verb|Hakaru|, a system for Bayesian modeling using measures. Here, a measure is a functional
 \[
