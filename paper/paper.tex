@@ -304,7 +304,7 @@ The practical importance of $\sigma$-algebras here lies therein that they also e
  
  Then we also know that the answer to the complement $A^c$ (no or yes), and we always know that $\Omega$ has probability 1 and the corresponding question is answered by `yes'. Likewise, if both $A$ and $B$ can be answered given what we know, we also know the answer to $A \cup B$. 
  
- As the reader might now suspect, such known events form a $\sigma$-algebra. In particular, for each random variable $\bX$ there is a $\sigma$-algebra associated with $\bX$ that encodes what else we know knowing $\bX$ and how we should assign (conditional) probabilities to other events knowing $\bX$.
+ As the reader might now suspect, such systems of known events form a $\sigma$-algebra. In particular, for each random variable $\bX$ there is a $\sigma$-algebra associated with $\bX$ that encodes what else we know knowing $\bX$ and how we should assign (conditional) probabilities to other events knowing $\bX$.
  
  This is a very relevant question for probabilistic programming tasks and causal inference. But we've already mentioned that \verb|MeasureTheory| does not explicitly represent $\sigma$-algebras. Instead, questions like these can be addressed using \emph{kernels} (Section~\ref{Kernels}). These give a way to reason about local behavior, and be much more computationally efficient.
 
