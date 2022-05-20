@@ -64,6 +64,8 @@
 \newunicodechar{ℓ}{\ensuremath{\ell}}
 \newunicodechar{√}{\ensuremath{\sqrt{}}}
 \newunicodechar{⊗}{\ensuremath{\otimes}}
+\newunicodechar{π}{\ensuremath{\pi}}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
 \usepackage{booktabs}
 \usepackage{multirow}
 \renewcommand{\arraystretch}{1.2}
@@ -79,7 +81,7 @@
 \usepackage{inconsolata}
 \usepackage[normalem]{ulem} %\sout
 \usepackage{centernot} %\centernot
-%\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorinlistoftodos]{todonotes}
 \usepackage{hyperref}
 \setcounter{page}{1}
 \include{moritzdefs}
@@ -113,7 +115,7 @@ giving a gentle introduction to the concepts in this article.
 
 The task is foremost achieved by recognizing \href{https://en.wikipedia.org/wiki/Measure_(mathematics)}{\emph{measure}} as the central object. This enables us to develop a proper concept of \href{https://en.wikipedia.org/wiki/Probability_density_function}{\emph{densities}} as objects relating measures with each others. As densities provide local perspective on measures, they are the key to efficient implementations.
 
-The need to preserve this computationally so important locality leads to the new notion of \emph{locally-dominated measure} solving the so-called ``base measure problem'' and making work with densities and distributions in Julia easier and more flexible.
+The need to preserve this computationally so important locality leads to the new notion of \emph{locally-dominated measure}, solving the so-called ``base measure problem'' and making work with densities and distributions in Julia easier and more flexible.
 
 %Because it will be new to many who can benefit from this package, this article serves a dual role of a gentle introduction to the concepts of measure theory (the field), as well as an overview of the core capabilities of \verb|MeasureTheory.jl| (the package).
 \end{abstract}
@@ -131,14 +133,12 @@ p(\theta \mid x) = \frac{p(\theta)\ p(x \mid \theta)}{p(x)}\ ,
 the denominator is called the \href{https://en.wikipedia.org/wiki/Marginal_likelihood}{\emph{model evidence}}. Computing it efficiently is often difficult or unfeasible.
 
 Some sampling algorithms circumvent this problem and only require knowing the density up to a constant factor.
-
 We then can work with the ``unnormalized posterior density'' instead, but we want to distinguish it from a proper probability density, because that difference determines which algorithms are available.
 
 
 In developments like this using distributions, it's common to begin in terms of a distribution, but then carry around the unnormalized posterior as a function. Fortunately, the meaning of this function is usually clear from context. But structurally, this representation is now divorced from its meaning. It's no longer a Distribution object, so the tools from the original library can no longer help. This is a perspective we will take often.
 
 
-%While it does uniquely identify a probability density, it is not a probability density. 
 
 
 Thus, starting with elements of our class of interest, a simple and common operation has led us to something outside of this class. This is analogous to the way polynomials over the reals lead to the complex numbers. If ``the shortest path between two truths in the real domain passes through the complex domain'' (Hadamard), then the same argument can be made for measures as connection between distributions.
@@ -146,7 +146,8 @@ Thus, starting with elements of our class of interest, a simple and common opera
 
 
 As a second example, people working in Bayesian modeling sometimes use \href{https://en.wikipedia.org/wiki/Prior_probability#Improper_priors}{\emph{improper priors}}. Whatever one's position on the merits of this, we think it's reasonable to make this approach possible. But an improper prior does not integrate to one, so it's not a distribution.
-Also, there's an elegant correspondence between frequentist and Bayesian methods, where regularization corresponds to a prior. But limiting ourselves to distributions restrains us from fully realizing this, because the corresponding ``prior'' might be improper or even flat, as in maximum likelihood estimation.
+
+Also, other computational and statistical inverse problems can often be framed as Bayesian inversion problem with corresponding ``prior'' for example taking the role of a regularization parameter that might be improper, or even flat as in maximum likelihood estimation.
 
 A final and very different concern is the structure of most distribution libraries, in which distributions are classified primarily according to whether they are ``discrete'' or ``continuous''. Such systems often lack facilities to use these in combination; some go so far as to encode the distinction in the type system, making them fundamentally incompatible.
 
@@ -162,10 +163,10 @@ Of course, this special case is particularly useful. The point is not to disrega
 
 Our work is novel in several ways. \verb|MeasureTheory.jl| has
 \begin{enumerate}
-    \item Explicitly represented \emph{base measures} with the same sophistication as the rest of the system, in particular more than just ``discrete or continuous'';
-    \item A \emph{local} approach for determining \href{https://en.wikipedia.org/wiki/Absolute_continuity}{\emph{absolute continuity}}, which is usually a global characteristic;
-    \item Multiple parameterizations for a given measure, without a proliferation of constructors; and
-    \item Normalization and support constraints held separately from the data-dependent computation, allowing for greater efficiency.
+    \item[$\bullet\!$]Explicitly represented \emph{base measures} with the same sophistication as the rest of the system, in particular more than just ``discrete or continuous'';
+    \item[$\bullet\!$]A \emph{local} approach for determining \href{https://en.wikipedia.org/wiki/Absolute_continuity}{\emph{absolute continuity}}, which is usually a global characteristic;
+    \item[$\bullet\!$]Multiple parameterizations for a given measure, without a proliferation of constructors; and
+    \item[$\bullet\!$]Normalization and support constraints held separately from the data-dependent computation, allowing for greater efficiency.
 \end{enumerate}
 
 Some parts of our approach can been seen in existing systems, though these are still far from universal:
@@ -178,24 +179,20 @@ Some parts of our approach can been seen in existing systems, though these are s
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{What are measures?}
 
-We'll now describe some foundations to help the reader get a deeper understanding of our approach, in particular what measures and probability distributions are and how they relate to notions such as the probability of something happening in the real world or the notion of volume of the space we are living in. 
+We'll now describe some foundations to help the reader get a deeper understanding of our approach. In particular, we'll define \emph{measures} and \emph{probability distributions}, relate them to familiar notions such as \emph{volume} and the \emph{probability of an event}.
 
 Throughout this discussion, it's important to keep in mind that for us the measure-theoretic abstractions are only means to an end.% 
 \footnote{The stackoverflow discussion \url{https://mathoverflow.net/q/11591} discusses books on measure theory; M.S.~likes \cite{Shiryaev1996} as starting point and uses \cite{Elstrodt2011} and \cite{Bauer_Heinz1982-01-01} as reference. As we anticipate interest in connecting with the actual theory, we give some pointers to more technical details in the footnotes.}
-
-Our primary interest, and the goal of \verb|MeasureTheory|, is to offer support for \emph{applied probabilistic modeling}.
-
+Our primary interest, and the goal of \verb|MeasureTheory|, is to offer support for \emph{applied probabilistic modeling}. 
 The package name is owed to the fact, that the word measure alone is too vague.
 
 Given a space $X$ of possible outcomes and a set of subsets of $X$ called \href{https://en.wikipedia.org/wiki/Event_(probability_theory)}{\emph{events}}, a probability distribution assigns each event a non-negative quantity, called the \emph{probability} or \emph{probability mass}.
-
 Likewise, a \emph{measure} assigns each \emph{measurable set} a non-negative quantity, also called a ``mass''.
 
 The space $X$ could be the space $\{1,2,3,4,5,6\}$ suitable to model a six-sided die, or $X$ might be the 3-dimensional Euclidean space $\RR^3$ suitable to model ``volume'', to give two examples.
 
 One further such space that deserves mention is traditionally denoted $\Omega$. This is an abstract space connected to the real-world notion of \emph{probability}, which we denote as $\operatorname{Prob}$.
-
-Computationally, $\Omega$ can be considered to be the set of possible states of a random number generator \verb|rng::AbstractRNG|, which is the source of computational randomness.
+Computationally, $\Omega$ can be considered to be the set of possible initial states of a random number generator \verb|rng::AbstractRNG|, which is the source of computational randomness.
 
 $\Omega$ has a special role of tying random quantities a program produces and their
 distributions together, through the notion of random variables, which are
@@ -210,7 +207,10 @@ derived from $\Omega$ as  core principle.
 
 From a computational perspective,
 a Julia function taking only an \verb|rng::AbstractRNG| argument, making a number of calls to \verb|rand(rng)|, and returning a value $x\in X$ is a random variable $\bX \colon \Omega\to X$.
-A simple example is  \verb|X(rng=Random.GLOBAL_RNG) = rand(rng, 1:6)|.
+A simple example is  
+\begin{verbatim}
+    X(rng=Random.GLOBAL_RNG) = rand(rng, 1:6)
+\end{verbatim}
 While mathematically $\bX$ is a function from $\Omega$, the argument $\omega$ is often hidden like the function argument \verb|rng| of its computational counterpart---not a coincidence.
 
 
@@ -282,15 +282,16 @@ Statements we make about sets should be understood as restricted to this set-of-
 
 Now, Kolmogorov's axioms require a given measure to be defined for $X$, and they also require that this set of measurable sets is closed under the operations which the axioms allow (complements and unions of sets or sequences of sets). This imposes an algebraic structure to the measurable sets, called a \emph{$\sigma$-algebra}, which is exactly that: A set of sets $\subset X$ (or $\subset \Omega$ in particular) closed under complementation and countable unions and intersections.
 
-This begs the question: Why not just use the \href{https://en.wikipedia.org/wiki/Power_set}{\emph{power set}}, the ``set of all sets'', which is, after thinking about it, such a $\sigma$-algebra?
+This raises the question: Why not just use the \href{https://en.wikipedia.org/wiki/Power_set}{\emph{power set}}, the ``set of all sets'', which is, after thinking about it, such a $\sigma$-algebra?
 
 A key observation is that having defined probability mass for a number of relatively simple sets, for example on all intervals,
 Kolmogorov's axioms give a recipe to compute the probability mass of more complicated sets, and with those, even more in new applications of the axioms, etc.
 One says the $\sigma$-algebra is \emph{generated} by these sets.
 Indeed, \verb|Distributions.jl| does not give means to compute probability for arbitrary subsets of floating point numbers,
-but gives a way of computing probability mass just of intervals of the form $(-\infty, x]$ throught the function \verb|cdf|.
+but gives a way of computing probability mass just of intervals of the form $(-\infty, x]$ through the function \verb|cdf|.
 
-In fact, it is possible for small enough spaces to assign meaningful probabilities to all subsets of the space, but impossible for any space containing a continuum such as the real line. Just representing a single arbitrary subset of the \verb|Float64|-range, the computational abstraction of the real line, would require staggering 2\,306 Petabytes of memory. This is not practical.
+For spaces that are ``small enough'', a meaningful probability can be assigned to each subset of the space. 
+But even in moderately sized spaces this can become infeasible: Just representing a single arbitrary subset of the \verb|Float64|-range, the computational abstraction of the real line, would require staggering 2\,306 Petabytes of memory. This is not practical. And for any space containing a continuum such as the real line it becomes not impractical but mathematically impossible to assign a meaningful probability to all subsets. 
 
 But even the mathematical measure theory needs to stay clear of the set of all subsets of uncountable spaces, because it turns out that not even volume can be properly defined for all subsets of the Euclidean space.\footnote{Another thing to keep in mind is that, for a function $f\colon X \to Y$ to be measurable requires that ``the inverse image of a measurable set must be measurable''. So allowing more sets to $B\subset Y$ to be measurable requires either allowing more measurable $A\subset X$, or restricting the set of measurable functions.}
 
@@ -301,11 +302,11 @@ The practical importance of $\sigma$-algebras here lies therein that they also e
  For example, an event $A = \{\bX \in  [c, d]\}$ corresponds to the question whether the random variable $\bX$ is in the interval $[c, d]$ and there is a probability $\operatorname{Prob}(A)$ that this will be the case. 
  Assume we know whether some of such questions $A$, $B$ are answered (each with yes or no).
  
- Then we also know that the answer to the complement $A^c$ (no or yes), and we always know that $\Omega$ has probability 1 and the corresponding question is answered by `yes'. Likewise, if both $A$ and $B$ can be answered given what we know, we also know the answer to $A \cup B$. That means, these known events form an $\sigma$-algebra, and in particular for each random variable $\bX$ there is a $\sigma$-algebra associated with $\bX$ which encodes what else we know knowing $\bX$ and how we should assign (conditional) probabilities to other events knowing $\bX$.
+ Then we also know that the answer to the complement $A^c$ (no or yes), and we always know that $\Omega$ has probability 1 and the corresponding question is answered by `yes'. Likewise, if both $A$ and $B$ can be answered given what we know, we also know the answer to $A \cup B$. 
  
- This is a very relevant question for probabilistic programming tasks and causal inference, and with \emph{kernels} \verb|MeasureTheory| does provide tools to reason about it which are computationally appropriate, because they are local.
+ As the reader might now suspect, such systems of known events form a $\sigma$-algebra. In particular, for each random variable $\bX$ there is a $\sigma$-algebra associated with $\bX$ that encodes what else we know knowing $\bX$ and how we should assign (conditional) probabilities to other events knowing $\bX$.
  
- 
+ This is a very relevant question for probabilistic programming tasks and causal inference. But we've already mentioned that \verb|MeasureTheory| does not explicitly represent $\sigma$-algebras. Instead, questions like these can be addressed using \emph{kernels} (Section~\ref{Kernels}), structures which can hold the conditional probabilities given we find a way to assign them in a computationally efficient way.
 
 \subsection*{Densities}
 
@@ -353,16 +354,17 @@ Even with such a capability, this approach would have its problems. It seems lik
 
 Because of this, we instead define $\mu$ to be \emph{locally dominated} by $\nu$ near $x$, written $\mu \ll_x \nu$, if there is some neighborhood $N \ni x$ such that $\nu(N)>0$ (so it's not a degenerate case) and $\mu|_N \ll \nu|_N$ (absolute continuity between the restricted measures). A \emph{local density} can be defined similarly. In \verb|MeasureTheory|, the \verb|density| and \verb|logdensity| functions work in exactly these terms. For the remainder of this paper, ``(log-)density'' will always refer to the local (log-)density, and ``local'' will often be taken as understood.
 
-Density computations are typically done in log space. For example, if we're interested in $\frac{\dd \mu}{\dd \nu}$, we'll typically instead compute \verb|logdensity(μ, ν, x)|. Here and below, we'll often write the math in terms of densities and the code in terms of log-densities, despite unfortunate inconsistency between the two.
+Density computations are typically done in log space. For example, if we're interested in $\frac{\dd \mu}{\dd \nu}$, we'll typically instead compute \verb|logdensity_rel(μ, ν, x)|.\footnote{Density and log-density are \emph{always} relative; the \texttt{rel} here is to indicate that we want the density relative to a second measure which is explicitly specified.}
+Here and below, we'll often write the math in terms of densities and the code in terms of log-densities, despite unfortunate inconsistency between the two.
 
 There are several benefits to working in log-space. Results are much less likely to overflow or underflow, and the many products and exponents become sums and products, respectively. which are much more efficient to compute and to differentiate.
 
 Working locally and in log-space also gives us a convenient \emph{antisymmetry},
 \begin{verbatim}
-logdensity(μ, ν, x) == -logdensity(ν, μ, x)
+logdensity_rel(μ, ν, x) == -logdensity_rel(ν, μ, x)
 \end{verbatim}
 
-In particular, \verb|logdensity(μ, ν, x)| takes special values in some common cases:
+In particular, \verb|logdensity_rel(μ, ν, x)| takes special values in some common cases:
 \newcommand{\notllx}{\mathrel{\centernot{\ll}\!\!_x}}
 
 % works now
@@ -377,38 +379,55 @@ $\mu\ll_x \nu$& (finite) & \verb|-Inf|  \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Base measures and density recursion}
-To this point, we've described the implementation in terms of the three-argument \verb|logdensity(μ, ν, x)|. But implementing things directly in these terms would require a definition for every pair of possible measures, which is of course intractable.
+\section{Base measures and log-densities}
+It's very useful for users to be able to \emph{call} \verb|logdensity_rel| for arbitrary measures. But \emph{defining} things directly in these terms would require a definition for every pair of possible measures, which is of course intractable.
 
-We address this by instead assigning every measure a \emph{base measure}. This is defined locally, with default method
+We'll now discuss the mechanics of defining a measure, followed by a description of the end-user perspective.
+
+\subsection*{Defining a measure}
+
+To define a new measure requires a \emph{base measure}, the \emph{log-density} with respect to that base measure, and a \emph{support}. 
+A base measure can be defined locally or globally. In the latter case, the local base measure defaults to 
 \begin{verbatim}
 basemeasure(μ::AbstractMeasure, x) = basemeasure(μ)
 \end{verbatim}
-This allows users to define a base measure specific to a given neighborhood if they prefer, or to define a global base measure when that suffices.
+This allows users to define a base measure specific to a given neighborhood if they prefer, or to define a global base measure when that suffices. 
 
-The log-density is then fundamentally expressed in term of the two-argument \verb|logdensity(μ, x)|, which gives the log-density with respect to this base measure. Thus we have
+For example, for a standard \verb|Normal| measure, we have
+
 \begin{verbatim}
-logdensity(μ, x) == logdensity(μ, basemeasure(μ, x), x)
+basemeasure(::Normal{()}) = (1/sqrt2π) * Lebesgue(ℝ)
+
+logdensity_def(::Normal{()} , x) = - x^2 / 2 
+
+insupport(::Normal{()}, x) = true
 \end{verbatim}
 
-This leaves us with the question of how to compute the three-argument \verb|logdensity(μ, ν, x)| for general $\nu$. We implement this recursively, in an approach we refer to as \emph{density recursion}.
+Note the difference from a typical distribution-oriented implementation; the log-density consists only of $-x^2/2$, with the normalization term pushed into the base measure. 
 
-
-
-If $\alpha$ is the base measure of $\mu$ and $\beta$ is the base measure of $\nu$, then
+The normalization term is present for any normal distribution, even those with a different mean or variance. So if we have a product of normals, for example in a regression problem, the normalization can be shared across them. For the simple example of $n$ iid standard \verb|Normal|s, this effectively rewrites the log-pdf
 \[
-\frac{\dd \mu}{\dd \nu} =
-\frac{\dd \mu}{\dd \alpha}
-\frac{\dd \alpha}{\dd \beta}
-\left(\frac{\dd \nu}{\dd \beta}\right)^{-1}\ .
+    \sum_{j=1}^n \left(-\frac{1}{2}\log 2π -\frac{x_j^2}{2}\right)
+    \quad \text{as} \quad
+    -\frac{n}{2}\log 2π + \sum_{j=1}^n \left(-\frac{x_j^2}{2}\right)
 \]
 
-In the implementation, \verb|logdensity(μ, α, x)| and \verb|logdensity(ν, β, x)| can be computed directly using the two-argument \verb|logdensity|. There may be a specific method for \verb|logdensity(α, β, x)|; if not, it will require a recursion step.
+Further simplification is clearly possible; doing this in a composable way without sacrificing efficiency is the subject of ongoing work.
 
-In this process, we may reach a measure that serves as its own base measure. Such measures are \emph{primitive}, for example Lebesgue or counting measure. If \verb|logdensity| is called on two primitive measures with no explicit method, an error is thrown.
+Just as \verb|logdensity_def(μ,x)| defines the log-density relative to the default base measure, it's often useful to be able to define the log-density between two measures that are given explicitly. For this, we have the three-argument \verb|logdensity_def(μ,ν,x)|. 
 
-The above serves as a high-level specification  of the computational process. The low-level implementation will differ in some ways as we continue to tune it for performance.
+Though this three-argument form is available as a primitive, it would be intractable to use it to define log-densities for every pair of measures. Instead, \verb|basemeasure| forms a \emph{forest} (a collection of trees, with $μ \rightarrow \nu$ if \verb|ν=basemeasure(μ)|). The three-argument \verb|logdensity_def| connects trees to form a graph. For any two measures, \verb|MeasureTheory| can traverse this graph at compile time to determine how to compute the log-density.
 
+\subsection*{The end-user perspective}
+
+From our above discussion of moving terms between the log-density and the base measure, the reader may suspect that this can be done arbitrarily, leaving no ``natural'' log-density for a given measure. This is indeed the case; the log-density of a measure is only determined \emph{relative to a particular base measure}.
+
+Our choice of \verb|basemeasure| doesn't reflect any mathematical invariant, only computational convenience. Accordingly, \verb|basemeasure| and \verb|logdensity_def| should be considered implementation details, and not part of the user-facing interface. 
+
+
+The way \verb|MeasureTheory.jl| is set up, repeated application of \verb|basemeasure| will eventually reach a fix point. That is, some measure will eventually be its own base measure. For such a measure, \verb|logdensity_def| is required to return zero. We refer to the fix point reached in this way from a given measure as that measure's \emph{root measure}.
+
+Instead of \verb|logdensity_def|, users should typically call \verb|logdensity_rel(μ,ν,x)| (which computes $\frac{\dd μ}{\dd ν}(x)$), or \verb|logdensityof(μ,x)|, which gives the log-density relative to the root measure. \verb|logdensityof| was originally defined in \cite{DensityInterface.jl}, and provides a convenient common ground for those not accustomed to thinking of densities as being relative. We expect this to be especially useful for new users.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Parameterized measures}
@@ -446,132 +465,132 @@ or
     NegativeBinomial(α=10, β=3)
 \end{verbatim}
 
-Calls to \verb|rand|, \verb|logdensity|, etc then delegate to methods according to the appropriate names. We use \verb|KeywordCalls.jl| \cite{KeywordCalls.jl}, so all names are resolved statically at compile time.
+Calls to \verb|rand|, \verb|logdensity_def|, etc then delegate to methods according to the appropriate names. We use \verb|KeywordCalls.jl| \cite{KeywordCalls.jl}, so all names are resolved statically at compile time.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Kernels}
+\section{Kernels\label{Kernels}}
 
 A \emph{kernel} is a (measurable\footnote{That is, the function $x \mapsto \kappa(x)(A)$ must be measurable for every fixed $A$.}) function $\kappa$ that returns a measure. Equivalently, it represents a family of measures parameterized by its argument. Writing $\cM(Y)$ for ``measures on $Y$'', we can write this as
 \[
-\kappa\colon X \to \mathscr{M}(Y)\ .
+\kappa\colon X \to \cM(Y)\ .
 \]
 
 A prominent application is a \href{https://en.wikipedia.org/wiki/Conditional_probability_distribution}{\emph{conditional distribution}}. In this case $\kappa$ is further restricted to be a \href{https://en.wikipedia.org/wiki/Markov_kernel}{\emph{Markov kernel}}, 
 \[
-\kappa\colon X \to \mathscr{P}(Y)\ ,
+\kappa\colon X \to \cP(Y)\ ,
 \]
-where $\mathscr{P}(Y)$ represents ``probability measures on $Y$''.
+where $\cP(Y)$ represents ``probability measures on $Y$''.
 If $\bX$ and $\bY$ are random variables defined on $X$ and $Y$, the kernel $\kappa$ defines a probability measure assigning every measurable $B\subset Y$ probability
 \[
 P(\bY \in B \mid \bX = x) =: (\kappa(x))(B)\ .
 \]
 
-In \verb|MeasureTheory|, a kernel is represented as either a Julia function or a \verb|Kernel| object. The latter pairs a measure constructor with a mapping into its parameter space, and makes the functional relationship between argument of $\kappa$ and the returned measure transparent.
+In \verb|MeasureTheory|, a kernel is represented as either a Julia function or an \verb|AbstractTransitionKernel| object.
+As a common special case, a \verb|ParameterizedTransitionKernel| pairs a measure constructor with a mapping into its parameter space, and makes the functional relationship between argument of $\kappa$ and the returned measure transparent.
 
-A Markov kernel, in particular, corresponds to the distribution of a \emph{parametrized random variable}, a function with random outcomes (or to ``mechanisms'' in causal inference, for example in \cite{https://doi.org/10.5281/zenodo.1005091}). For example in \verb|MeasureTheory|, the kernel
+A Markov kernel, in particular, corresponds to the distribution of a \emph{parametrized random variable}, a function with random outcomes (or to ``mechanisms'' in causal inference, for example in \cite{https://doi.org/10.5281/zenodo.1005091}). For example, the kernel
 \[
-\kappa\colon x \mapsto \cN(x,\sqrt{x})
+\kappa\colon x \mapsto \text{Normal}(x,\sqrt{x})
 \]
-can be expressed as
+corresponds to the random function
+\begin{verbatim}
+    f(rng, x) = x + √x * randn(rng)
+\end{verbatim}
+and can be expressed in \verb|MeasureTheory| as
 \begin{verbatim}
     κ = kernel(Normal) do x
         (μ=x, σ=√x)
     end
 \end{verbatim}
-or equivalently
+or
 \begin{verbatim}
     κ = kernel(Normal; μ=identity, σ=sqrt)
 \end{verbatim}
-corresponding to the random function
-\begin{verbatim}
-    f(rng, x) = x + √x * randn(rng)
-\end{verbatim}
 
-In this example, working in terms of a \verb|kernel| allows us to make the linear relationship between the argument \verb|x| and \verb|mean(κ(x))| transparent. 
+The latter formulation decomposes the kernel into separate ``parameter maps'', making relationships between \verb|x| and the parameters of \verb|κ(x)| more explicit.
 
 This could of course also be expressed as a parameterized measure. The difference is that kernels are lighter weight to build and have all the dynamism of functions, while the static nature of parameterized measures can make it easier to express some optimizations.
 
 % \moritz{Add example where composition of linear Gaussian kernels gives linear Gaussian kernels.}
 % \chad{Let's talk about composition in the product section, otherwise the easy stuff comes after the hard stuff. Update: I added some discussion there, but nothing yet about Gaussian kernels.}
 
-Finally, kernels are key to expressing \href{https://en.wikipedia.org/wiki/Likelihood_function}{\emph{likelihoods}}, which we can use to formulate Bayesian conjugacy properties. We'll discuss this further in Section~\ref{Likelihoods}.
-
-
 % \moritz{Ok, I just figured out: A kernel can represent a "random measure" (then it looks like $\kappa(\omega, A)$) or a parametrized distribution, then it looks $\kappa(x, A)$ and then it's the image measure of a parametrized random variable $X_x$. Both cases differ on which of the two arguments of $\kappa$ is related to the $\Omega$ or `rng`. Sorry}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Markov chains}
+
+% Some kernels $\kappa$ map elements of a state space $X$ to measures on the same space.
+
+% In this case, repeated application of the kernel ``walks'' through $X$, yielding the law of a \href{https://en.wikipedia.org/wiki/Markov_chain}{\emph{Markov chain}}. We support this in \verb|MeasureTheory| through the \verb|Chain| combinator. This takes a kernel (or function) and a starting measure, and can be used with Julia's convenient \verb|do| notation. For example, we can write a Gaussian random walk as
+
+% \begin{verbatim}
+%     mc = Chain(Normal(μ=0.0)) do x Normal(μ=x) end
+% \end{verbatim}
+
+% A random sample from a \verb|Chain| is an infinite sequence expressed as a iterator, e.g.
+
+% \begin{verbatim}
+%     julia> r = rand(mc);
+
+%     julia> x = Iterators.take(r, 3) |> collect
+%     3-element Vector{Any}:
+%      -0.4931543737034523
+%      -0.5661895116186417
+%      -1.3286977670590228
+% \end{verbatim}
+
+
+
+% Thus, for example, we can evaluate \verb|mc| on the \verb|x| we just computed:
+% \begin{verbatim}
+%     julia> logdensity(mc, x)
+%     -0.4149771036439342
+% \end{verbatim}
+
+% Crucially, the call to \verb|rand| builds a struct containing a random seed, to ensure that repeated realizations of \verb|r| will be identical.
+
+% To give us more control over the sampling procedure, \verb|Chain| is implemented using \emph{dynamic iterators} from \verb|DynamicIterators.jl| \cite{DynamicIterators.jl}.
+
+% The appropriate $\sigma$-algebra for infinite sequences requires some care. A Markov chain on $X$ has $\sigma$-algebra generated by sets of \emph{sequences with finitely many constraints}.\footnote{That is,  the smallest $\sigma$-algebra containing all sets of sequences which can be written as $\{x \colon x_i \in A_i \mid i \in I\}$ using collections of measurable sets $\{A_i \mid i\in I\}$ indexed by finite index sets $I$, called \href{https://en.wikipedia.org/wiki/Cylinder_set_measure}{\emph{cylinder sets.}}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Markov chains}
+% \section{Densities and integrals}
 
-Some kernels $\kappa$ map elements of a state space $X$ to measures on the same space.
+% \chad{I think our adoption of DensityInterface complicates this section - needs some review}
 
-In this case, repeated application of the kernel ``walks'' through $X$, yielding the law of a \href{https://en.wikipedia.org/wiki/Markov_chain}{\emph{Markov chain}}. We support this in \verb|MeasureTheory| through the \verb|Chain| combinator. This takes a kernel (or function) and a starting measure, and can be used with Julia's convenient \verb|do| notation. For example, we can write a Gaussian random walk as
+% In working with measures, two computations that come up quite often are (Radon-Nikodym) \emph{differentiation} and (Lebesgue) \emph{integration}. It's often important to be able to do things like
+% \begin{enumerate}
+%     \item[$\bullet\!$]For measures $\mu$ and $\nu$, obtain $f=\frac{\dd\mu}{\dd\nu}$
+%     \item[$\bullet\!$]Given a measure $\nu$ and a function $f$, obtain a measure $\mu$ with $\mu(A)=\int_A f\ \dd\nu$
+% \end{enumerate}
 
-\begin{verbatim}
-    mc = Chain(Normal(μ=0.0)) do x Normal(μ=x) end
-\end{verbatim}
+% Note that (1) is different from our current \verb|density| function, because no $x$ is specified. Computationally, this is called a \href{https://en.wikipedia.org/wiki/Closure_(computer_programming)}{\emph{closure}}.
 
-A random sample from a \verb|Chain| is an infinite sequence expressed as a iterator, e.g.
+% In \verb|MeasureTheory|, we write these as 
 
-\begin{verbatim}
-    julia> r = rand(mc);
+% \begin{center}
+%     \verb|f = ∂(μ, ν)|\quad and\quad \verb|μ = ∫(f, ν)|\ .
+% \end{center}
 
-    julia> x = Iterators.take(r, 3) |> collect
-    3-element Vector{Any}:
-     -0.4931543737034523
-     -0.5661895116186417
-     -1.3286977670590228
-\end{verbatim}
+% This allows the Radon-Nikodym theorem to be expressed as
+% \begin{center}
+%     \verb|f == ∂(∫(f, ν), ν)|\quad and\quad \verb|μ == ∫(∂(μ, ν), ν)|\ .
+% \end{center}
 
+% Because we often we want to work instead in log-space, we also include (and tend to prefer) the functions \verb|log∂| and \verb|∫exp|, for which we would write
+% \begin{center}
+%     \verb|ℓ = log∂(μ, ν)|\quad and\quad \verb|μ = ∫exp(ℓ, ν)|\ ,
+% \end{center}
+% which follow a similar law,
+% \begin{center}
+% \verb|f == log∂(∫exp(f, ν), ν)|\quad and\quad \verb|μ == ∫exp(log∂(μ, ν), ν)|
+% \end{center}
 
-
-Thus, for example, we can evaluate \verb|mc| on the \verb|x| we just computed:
-\begin{verbatim}
-    julia> logdensity(mc, x)
-    -0.4149771036439342
-\end{verbatim}
-
-Crucially, the call to \verb|rand| builds a struct containing a random seed, to ensure that repeated realizations of \verb|r| will be identical.
-
-To give us more control over the sampling procedure, \verb|Chain| is implemented using \emph{dynamic iterators} from \verb|DynamicIterators.jl| \cite{DynamicIterators.jl}.
-
-The appropriate $\sigma$-algebra for infinite sequences requires some care. A Markov chain on $X$ has $\sigma$-algebra generated by sets of \emph{sequences with finitely many constraints}.\footnote{That is,  the smallest $\sigma$-algebra containing all sets of sequences which can be written as $\{x \colon x_i \in A_i \mid i \in I\}$ using collections of measurable sets $\{A_i \mid i\in I\}$ indexed by finite index sets $I$, called \href{https://en.wikipedia.org/wiki/Cylinder_set_measure}{\emph{cylinder sets.}}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Densities and integrals}
-
-In working with measures, two computations that come up quite often are (Radon-Nikodym) \emph{differentiation} and (Lebesgue) \emph{integration}. It's often important to be able to do things like
-\begin{enumerate}
-    \item For measures $\mu$ and $\nu$, obtain $f=\frac{\dd\mu}{\dd\nu}$
-    \item Given a measure $\nu$ and a function $f$, obtain a measure $\mu$ with $\mu(A)=\int_A f\ \dd\nu$
-\end{enumerate}
-
-Note that (1) is different from our current \verb|density| function, because no $x$ is specified. Computationally, this is called a \href{https://en.wikipedia.org/wiki/Closure_(computer_programming)}{\emph{closure}}.
-
-In \verb|MeasureTheory|, we write these as 
-
-\begin{center}
-    \verb|f = ∂(μ, ν)|\quad and\quad \verb|μ = ∫(f, ν)|\ .
-\end{center}
-
-This allows the Radon-Nikodym theorem to be expressed as
-\begin{center}
-    \verb|f == ∂(∫(f, ν), ν)|\quad and\quad \verb|μ == ∫(∂(μ, ν), ν)|\ .
-\end{center}
-
-Because we often we want to work instead in log-space, we also include (and tend to prefer) the functions \verb|log∂| and \verb|∫exp|, for which we would write
-\begin{center}
-    \verb|ℓ = log∂(μ, ν)|\quad and\quad \verb|μ = ∫exp(ℓ, ν)|\ ,
-\end{center}
-which follow a similar law,
-\begin{center}
-\verb|f == log∂(∫exp(f, ν), ν)|\quad and\quad \verb|μ == ∫exp(log∂(μ, ν), ν)|
-\end{center}
-
-Finally, in terms of \verb|density| and \verb|logdensity|, we have
-\begin{verbatim}
-              ∂(μ, ν)(x) == density(μ, ν, x)
-           log∂(μ, ν)(x) == logdensity(μ, ν, x)
-\end{verbatim}
+% Finally, in terms of \verb|density| and \verb|logdensity|, we have
+% \begin{verbatim}
+%               ∂(μ, ν)(x) == density(μ, ν, x)
+%            log∂(μ, ν)(x) == logdensity(μ, ν, x)
+% \end{verbatim}
 
 
 % \moritz{I'd prefer "logdensity" as name and an alias density for the scrd. Update: I see now the $d$ is in script, that makes sense. We still have `density` as an alias, right?}
@@ -581,43 +600,53 @@ Finally, in terms of \verb|density| and \verb|logdensity|, we have
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Pointwise products and likelihoods \label{Likelihoods}}
 
-For a parameter $\theta$ and data $x$, suppose we have a \href{https://en.wikipedia.org/wiki/Prior_probability}{\emph{prior}} $p(\theta)$ (momentarily assuming Lebesgue base measure) and \href{https://en.wikipedia.org/wiki/Likelihood_function}{\emph{likelihood}} $p(x | \theta)$. Then Bayes's Law gives the posterior density
+The \href{https://en.wikipedia.org/wiki/Pointwise_product}{\emph{pointwise product}} in probability often describes the fusion of information, in this case the fusion of information from prior and from the observations via the likelihood, but also shows up in related situation, such as \href{https://en.wikipedia.org/wiki/Sensor_fusion}{\emph{sensor fusion}} in signal processing.
+
+To begin, let's consider the case of probability distributions dominated by Lebesgue measure.
+For a parameter $\theta$ and data $x$, suppose we have a \href{https://en.wikipedia.org/wiki/Prior_probability}{\emph{prior density}} $p(\theta)$ and \href{https://en.wikipedia.org/wiki/Likelihood_function}{\emph{likelihood}} $p(x | \theta)$. Then Bayes's Law gives the posterior density
 \[
 p(\theta \mid x) = \frac{p(\theta)\ p(x \mid \theta)}{p(x)}\ .
 \]
 
-In practice, we rarely know the normalization factor $p(x)$, so we often work in terms of the unnormalized posterior density,
+In practice, we rarely know the normalization factor $p(x)$, so we often work in terms of the unnormalized posterior density, and write
 \[
-p(\theta)\ p(x \mid \theta)\ .
+{\underbrace{p(θ \mid x)}_\text{posterior}}
+ \propto 
+{\underbrace{p(\theta)}_\text{prior}}\ 
+{\underbrace{p(x \mid \theta)}_\text{likelihood}} .
 \]
-Because this does not include the normalization, this does not integrate to one, and so it's not a probability density function. But there are no such problems as a density for a measure; the measure defined in this way has the same base measure as that of the prior.
+Because the product does not include normalization, in general it does not integrate to one, and so it's not a probability density function. But there are no such problems as a density for a measure. We now consider this more general formulation.
 
-This \href{https://en.wikipedia.org/wiki/Pointwise_product}{\emph{pointwise product}} in probability often describes the fusion of information, in this case the fusion of information from prior and from the observations via the likelihood, but also shows up in related situation, such as \href{https://en.wikipedia.org/wiki/Sensor_fusion}{\emph{sensor fusion}} in signal processing.
+Given a \emph{parameter space} $\Theta$ and \emph{observation space} $X$, a \verb|Likelihood| $\ell$ consists of 
+\begin{enumerate}
+    \item a kernel $\ell_κ : \Theta \to \cM(X)$,
+    \item an observation $\ell_x \in X$, and
+    \item a base measure $\ell_\beta \in\cM(X)$.
+\end{enumerate}
 
-More generally, this ``prior times likelihood'' can be considered as an operation that takes a measure and a function, and returns a new measure. Given a measure $\mu$ with base measure $\alpha$, and a function $f$ defined on the support of $\mu$, $\mu \odot f$ is a measure with
+A likelihood can be treated as a function $\Theta \to \RR_{\ge 0}$, by defining
 \[
-\frac{\dd (\mu \odot f)}{\dd \alpha}(x) = \frac{\dd\mu}{\dd\alpha}(x)\ f(x)\ .
+    \ell(\theta) = \frac{\dd\ell_\kappa(\theta)}{\dd\ell_\beta}(\ell_x)
 \]
 
-In the special case where $f$ is a likelihood, it's important to keep track of whether it's represented in log space. For this, we have a \verb|Likelihood| type that ``knows'' about the measure it was derived from and adapts according to whether the user calls \verb|density| or \verb|logdensity|. The general method
-\begin{verbatim}
-    ⊙(::AbstractMeasure, ::Likelihood)
-\end{verbatim}
-defaults to constructing a \verb|PointwiseProductMeasure| to hold the prior and likelihood, but we'll be extending this with more efficient methods for cases with conjugate priors. 
+Of particular interest is the case where the base measure $\ell_\beta$ is
+\[
+    \ell_\beta = \hat{\theta} \equiv \arg\max_\theta \frac{\dd\ell_\kappa(\theta)}{\dd\rho}(\ell_x)
+\]
 
-In the absence of conjugacy, the extra structure of this suspended form is convenient, for example to build approximations to a given measure of interest.
+for any non-singular measure $\rho$; this corresponds to the \href{https://en.wikipedia.org/wiki/Likelihood_function#Relative_likelihood_function}{\emph{relative likelihood}}. In \verb|MeasureTheory|, we allow the base measure to be specified, but take as a default the \emph{root measure} of $\ell_\kappa(\theta)$.
 
-The above \verb|Likelihood| type is specified using a kernel and observed data. Though it is not an \verb|AbstractMeasure|, we include a \verb|logdensity| method for computational convenience. The core of the implementation is then
-\begin{verbatim}
-    struct Likelihood{F,S,X}
-        k::Kernel{F,S}
-        x::X
-    end
+Note that a likelihood $\ell$ takes a point in $\Theta$ to an evaluated density in a different space (the observation space $X$). In particular, a likelihood is not a measure.
 
-    function logdensity(ℓ::Likelihood, p) 
-        return logdensity(ℓ.k(p), ℓ.x)
-    end
-\end{verbatim}
+Rather, a given likelihood acts on measures, taking a ``prior'' measure $\mu$ to ``unnormalized posterior'' measure $\mu \odot \ell$. Relative to another measure $\alpha$, this has density
+
+\[
+    {\underbrace{\frac{\dd(\mu\odot\ell)}{\dd\alpha}(\theta)}_\text{unnormalized posterior}}
+    \equiv
+    {\underbrace{\frac{\dd\mu}{\dd\alpha}(\theta)}_{\text{prior}}}\ {\underbrace{\vphantom{\frac{\dd(\mu\odot\ell)}{\dd\alpha}(\theta)}\ell(\theta)}_{\text{likelihood}}}
+\]
+
+Treating likelihoods and pointwise products explicitly in this way gives an easy route to many performance optimizations. For example, the likelihood of a linear model can be computed very efficiently in terms of basic linear algebra, and in cases of conjugacy the pointwise product simplifies to a measure that can be expressed in closed form.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Product and power measures}
@@ -635,7 +664,7 @@ If $\mu$ is defined in terms of a base measure $\alpha$ and likewise $\nu$ over 
 
 
 
-A special case of this is when $\mu = \nu$. In \verb|MeasureTheory| we refer to this as a \emph{power measure}, written \verb|μ ^ 2| or \verb|μ ^ n| for higher dimensions. More generally, the second argument can be a \verb|Tuple|, so for example \verb|μ ^ (2, 3)| extends $\mu$ as a product measure over $2\times 3$ matrices.
+A special case of this is when $\mu = \nu$. In \verb|MeasureTheory| we refer to this as a \emph{power measure}, written \verb|μ^2| or \verb|μ^n| for higher dimensions. More generally, the second argument can be a \verb|Tuple|, so for example \verb|μ^(2,3)| extends $\mu$ as a product measure over $2\times 3$ matrices.
 
 A second special case is when we have a collection of values together with a kernel. For this we use the \verb|For| combinator. So in a regression model, we might express the response as coming from
 \begin{verbatim}
@@ -645,7 +674,7 @@ A second special case is when we have a collection of values together with a ker
 \end{verbatim}
 This is exactly the product measure
 \[
-\bigotimes_{j=1}^n \cN(\beta x_j,\ \sigma)\ .
+\bigotimes_{j=1}^n \text{Normal}(\beta x_j,\ \sigma)\ .
 \]
 
 More generally, suppose we have a measure $\mu$ on a space $X$ and a kernel $\kappa\colon X \to \cM(Y)$. Then we can define a measure on $X \times Y$ as follows.
@@ -654,13 +683,7 @@ For a given $x \in X$ with $\mu \ll_x \alpha$, let $\nu_x = \kappa(x)$ have base
 \[
 \frac{\dd(\mu \otimes \nu_x)}{\dd(\alpha \otimes \beta_x)} = \frac{\dd\mu}{\dd\alpha}\ \frac{\dd\nu_x}{\dd\beta_x}\ .
 \]
-Because the types are always available to help us distinguish this from the independent case, it's safe to use the same notation, \verb|μ ⊗ κ|.
 
-Note that this defines a function
-\[
-\otimes \colon \cM(X) \times (X \to \cM(Y)) \to \cM(Y)\ .
-\]
-In functional programming, this (together with some laws) is called a \href{https://en.wikipedia.org/wiki/Monad_(functional_programming)}{\emph{monadic bind}} \cite{ramsey2002stochastic}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Superposition and mixtures \label{superposition}}
@@ -745,9 +768,9 @@ That is, 76\% of the time is spent in normalization. If our application doesn't 
 
 For these reasons, we break the representation of the log-density into several pieces (now additive terms in log-space):
 \begin{enumerate}
-    \item \emph{Constant} terms,  $-\frac{1}{2}\log 2\pi$\ .
-    \item \emph{Parameter-dependent} terms,  $-\log \sigma$\ .
-    \item \emph{Data-dependent} terms, $-\frac{1}{2}\left(\frac{x - \mu}{\sigma}\right)^2$\ .
+    \item[$\bullet\!$]\emph{Constant} terms,  $-\frac{1}{2}\log 2\pi$\ .
+    \item[$\bullet\!$]\emph{Parameter-dependent} terms,  $-\log \sigma$\ .
+    \item[$\bullet\!$]\emph{Data-dependent} terms, $-\frac{1}{2}\left(\frac{x - \mu}{\sigma}\right)^2$\ .
 \end{enumerate}
 
 The two-argument \verb|logdensity| then computes only the data-dependent terms, with the constant and parameter-dependent terms pushed to the base measure. This makes it easy to defer computation of these terms until they are required.
@@ -795,19 +818,21 @@ In many cases, we prefer the density (or log-density, really) to be fast to eval
 
 \subsection*{Inverse parameterization}
 
-An alternative parameterization of a multivariate Gaussian is in terms of its \href{https://en.wikipedia.org/wiki/Precision_(statistics)}{\emph{precision matrix}}, $\Psi = \VV[\bX]^{-1}$. Similarly to above, we'll write $\psi$ for the lower Cholesky factor of $\Psi$, so $\psi \psi^t = \Psi$. The parameterization is then specified by
+An alternative parameterization of a multivariate Gaussian is in terms of its \href{https://en.wikipedia.org/wiki/Precision_(statistics)}{\emph{precision matrix}}, $\Lambda = \VV[\bX]^{-1}$. Similarly to above, we'll write $\lambda$ for the lower Cholesky factor of $\Lambda$, so $\lambda \lambda^t = \Lambda$. The parameterization is then specified by
 \[
-\bZ = \psi(\bX - \mu)\ .
+\bZ = \lambda\,(\bX - \mu)\ .
 \]
 
+In this parameterization, $\lambda$ is an \emph{inverse scale} or \emph{rate} parameter.
 Solving for $z$ is of course now very simple, and the density becomes
 \[
-p_\bX(x) = |\psi|\ p_\bZ(z) = |\psi|\ p_\bZ(\psi (x - \mu))\ .
+p_\bX(x) = |\lambda|\ p_\bZ(z) = |\lambda|\ p_\bZ(\lambda (x - \mu))\ .
 \]
+
 
 In exchange, forward sampling becomes awkward,
 \[
-\bX = \psi^{-1}\bZ + \mu\ .
+\bX = \lambda^{-1}\bZ + \mu\ .
 \]
 
 \subsection*{Generalization}
@@ -878,15 +903,24 @@ As mentioned in Section~\ref{superposition}, \verb|ZigZagBoomerang.jl|\cite{http
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related work}
 
-Narayanan et al \cite{narayanan2016probabilistic} describe \verb|Hakaru|, a system for Bayesian modeling using measures. Here, a measure is a functional
+While the vast majority of research in computational statistics works explicitly in terms of probability distributions, a few authors have addressed measures more generally:
+
+\begin{itemize}
+\item[$\bullet\!$]Borgstr\"om et al \cite{Borgstr_m_2013} describe the \verb|Fun| system in F\# in terms of \emph{measure transformer semantics}, but discusses only \emph{finite} measures.
+
+\item[$\bullet\!$]Narayanan et al \cite{narayanan2016probabilistic} describe \verb|Hakaru|, a system for Bayesian modeling using measures. Here, a measure is a functional
 \[
 \mu[f] = \int f\ \dd\mu\ ,
 \]
 represented as a program. Hakaru's combinators are then expressed as compilers taking programs as the inputs.
 
-Radul and Alexeev \cite{Radul2020} describe the \emph{base measure problem} of losing track of a base measure when applying a transformation, and suggest standardizing around Hausdorff measure as a solution. This problem doesn't arise for us, because the base measure is always taken into account.
+\item[$\bullet\!$]Radul and Alexeev \cite{Radul2020} describe the \emph{base measure problem} of losing track of a base measure when applying a transformation, and suggest standardizing around Hausdorff measure as a solution. This problem doesn't arise for us, because the base measure is always taken into account.
 
-Borgstr\"om et al \cite{Borgstr_m_2013} describes the \verb|Fun| system in F\# in terms of \emph{measure transformer semantics}, but discusses only \emph{finite} measures.
+
+\end{itemize}
+
+In Julia \cite{bezanson2017julia}, the \verb|Distributions.jl| package \cite{Distributions.jl-2019} is very popular for computations on distributions. The drawbacks of \verb|Distributions.jl| are essentially those described in the first few sections of this paper. 
+Current advantages over \verb|MeasureTheory| are the extensive range of distributions it implements and its popularity and familiarity to many Julia users. \verb|MeasureTheory.jl| currently has \verb|Distributions.jl| as a dependency, and uses it as a fall-back for many computations. For convenience, we also re-export the \verb|Distributions| module under the handle \verb|Dists|.
 
 
 % Base \verb|R| does not treat distributions or random variables as first class objects (Strachey), for example a normal distribution is entirely handled via a set of functions \verb|rnorm|, \verb|dnorm|, \verb|pnorm| which are only associated by a naming convention, beyond acrobatic involving \verb|eval|
@@ -901,10 +935,8 @@ Borgstr\"om et al \cite{Borgstr_m_2013} describes the \verb|Fun| system in F\# i
 
 % This dichotomy between either discrete (supported on countable sets)  or absolute continuous breaks down in higher dimension.
 
-In Julia \cite{bezanson2017julia}, the \verb|Distributions.jl| package \cite{Distributions.jl-2019} is very popular for computations on distributions. The drawbacks of \verb|Distributions.jl| are essentially those described in the first few sections of this paper. 
-Current advantages over \verb|MeasureTheory| are the extensive range of distributions it implements and its popularity and familiarity to many Julia users. 
 
-\verb|MeasureTheory.jl| currently has \verb|Distributions.jl| as a dependency, and uses it as a fall-back for many computations. For convenience, we also re-export the \verb|Distributions| module under the handle \verb|Dists|.
+
 
 \section{Conclusion}
 
