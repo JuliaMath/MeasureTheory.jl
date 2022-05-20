@@ -148,7 +148,7 @@ Thus, starting with elements of our class of interest, a simple and common opera
 
 As a second example, people working in Bayesian modeling sometimes use \href{https://en.wikipedia.org/wiki/Prior_probability#Improper_priors}{\emph{improper priors}}. Whatever one's position on the merits of this, we think it's reasonable to make this approach possible. But an improper prior does not integrate to one, so it's not a distribution.
 
-There's also an elegant correspondence between frequentist and Bayesian methods, where regularization corresponds to a prior. But limiting ourselves to distributions restrains us from fully realizing this, because the corresponding ``prior'' might be improper or even flat, as in maximum likelihood estimation.
+Also, other computational and statistical inverse problems can often be framed as Bayesian inversion problem with corresponding ``prior'' for example taking the role of a regularization parameter that might be improper, or even flat as in maximum likelihood estimation.
 
 A final and very different concern is the structure of most distribution libraries, in which distributions are classified primarily according to whether they are ``discrete'' or ``continuous''. Such systems often lack facilities to use these in combination; some go so far as to encode the distinction in the type system, making them fundamentally incompatible.
 
