@@ -183,6 +183,24 @@ end
 @testset "TransitionKernel" begin
     κ = kernel(Dirac)
     @test rand(κ(1.1)) == 1.1
+
+    k1 = kernel() do x
+        Normal(x, x^2)
+    end
+    
+    
+    k2 = kernel(Normal) do x
+        (μ=x, σ=x^2)
+    end
+    
+    
+    k3 = kernel(Normal; μ=identity, σ=abs2)
+    
+    k4 = kernel(Normal; μ=first, σ=last) do x
+        (x, x^2)
+    end
+    
+    @test k1(3) == k2(3) == k3(3) == k4(3) == Normal(3,9)
 end
 
 @testset "For" begin
