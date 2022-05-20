@@ -9,3 +9,11 @@
 /.vscode/
 /coverage
 coverage-lcov.info
+paper/paper.aux
+paper/paper.bbl
+paper/paper.blg
+paper/paper.fdb_latexmk
+paper/paper.fls
+paper/paper.log
+paper/paper.out
+paper/paper.synctex.gz
