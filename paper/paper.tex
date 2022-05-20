@@ -414,11 +414,16 @@ The normalization term is present for any normal distribution, even those with a
 
 Further simplification is clearly possible; doing this in a composable way without sacrificing efficiency is the subject of ongoing work.
 
+Just as \verb|logdensity_def(μ,x)| defines the log-density relative to the default base measure, it's often useful to be able to define the log-density between two measures that are given explicitly. For this, we have the three-argument \verb|logdensity_def(μ,ν,x)|. 
+
+Though this three-argument form is available as a primitive, it would be intractable to use it to define log-densities for every pair of measures. Instead, \verb|basemeasure| forms a \emph{forest} (a collection of trees, with $μ \rightarrow \nu$ if \verb|ν=basemeasure(μ)|). The three-argument \verb|logdensity_def| connects trees to form a graph. For any two measures, \verb|MeasureTheory| can traverse this graph at compile time to determine how to compute the log-density.
+
 \subsection*{The end-user perspective}
 
 From our above discussion of moving terms between the log-density and the base measure, the reader may suspect that this can be done arbitrarily, leaving no ``natural'' log-density for a given measure. This is indeed the case; the log-density of a measure is only determined \emph{relative to a particular base measure}.
 
-Our choice of \verb|basemeasure| doesn't reflect any mathematical invariant, only computational convenience. Accordingly, \verb|basemeasure| and \verb|logdensity_def| should be considered implementation details, and not part of the user-facing interface.
+Our choice of \verb|basemeasure| doesn't reflect any mathematical invariant, only computational convenience. Accordingly, \verb|basemeasure| and \verb|logdensity_def| should be considered implementation details, and not part of the user-facing interface. 
+
 
 The way \verb|MeasureTheory.jl| is set up, repeated application of \verb|basemeasure| will eventually reach a fix point. That is, some measure will eventually be its own base measure. For such a measure, \verb|logdensity_def| is required to return zero. We refer to the fix point reached in this way from a given measure as that measure's \emph{root measure}.
 
