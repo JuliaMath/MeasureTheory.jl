@@ -94,10 +94,20 @@ Eprint = {arXiv:2103.08478},
    url = {https://www.jstatsoft.org/v098/i16}
 }
 
-@misc{tavares2019language,
-  title={A language for counterfactual generative models},
-  author={Tavares, Zenna and Koppel, James and Zhang, Xin and Solar-Lezama, Armando},
-  year={2019}
+@InProceedings{tavares2019language,
+title = {A Language for Counterfactual Generative Models},
+author = {Tavares, Zenna and Koppel, James and Zhang, Xin and Das, Ria and Solar-Lezama, Armando},
+booktitle = {Proceedings of the 38th International Conference on Machine Learning},
+pages = {10173--10182},
+year = {2021},
+editor = {Meila, Marina and Zhang, Tong},
+volume = {139},
+series = {Proceedings of Machine Learning Research},
+month = {18--24 Jul},
+publisher = {PMLR},
+pdf = {http://proceedings.mlr.press/v139/tavares21a/tavares21a.pdf},
+url = {https://proceedings.mlr.press/v139/tavares21a.html},
+abstract = {We present Omega, a probabilistic programming language with support for counterfactual inference. Counterfactual inference means to observe some fact in the present, and infer what would have happened had some past intervention been taken, e.g. “given that medication was not effective at dose x, what is the probability that it would have been effective at dose 2x?.” We accomplish this by introducing a new operator to probabilistic programming akin to Pearl’s do, define its formal semantics, provide an implementation, and demonstrate its utility through examples in a variety of simulation models.}
 }
 
 % reference for the software itself
@@ -238,19 +248,20 @@ ABSTRACT={This review treats the mathematical and algorithmic foundations of non
   biburl    = {https://dblp.org/rec/bib/conf/aistats/GeXG18},
 }
 
-@article{Radul2020,
-  author    = {Alexey Radul and
-               Boris Alexeev},
-  title     = {The Base Measure Problem and its Solution},
-  journal   = {CoRR},
-  volume    = {abs/2010.09647},
-  year      = {2020},
-  url       = {https://arxiv.org/abs/2010.09647},
-  eprinttype = {arXiv},
-  eprint    = {2010.09647},
-  timestamp = {Wed, 21 Oct 2020 12:11:48 +0200},
-  biburl    = {https://dblp.org/rec/journals/corr/abs-2010-09647.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+@InProceedings{Radul2020,
+title = { The Base Measure Problem and its Solution },
+author = {Radul, Alexey and Alexeev, Boris},
+booktitle = {Proceedings of The 24th International Conference on Artificial Intelligence and Statistics},
+pages = {3583--3591},
+year = {2021},
+editor = {Banerjee, Arindam and Fukumizu, Kenji},
+volume = {130},
+series = {Proceedings of Machine Learning Research},
+month = {13--15 Apr},
+publisher = {PMLR},
+pdf = {http://proceedings.mlr.press/v130/radul21a/radul21a.pdf},
+url = {https://proceedings.mlr.press/v130/radul21a.html},
+abstract = { Probabilistic programming systems generally compute with probability density functions, leaving the base measure of each such function implicit. This mostly works, but creates problems when densities with respect to different base measures are accidentally combined or compared. Mistakes also happen when computing volume corrections for continuous changes of variables, which in general depend on the support measure. We motivate and clarify the problem in the context of a composable library of probability distributions and bijective transformations. We solve the problem by standardizing on Hausdorff measure as a base, and deriving formulas for comparing and combining mixed-dimension densities, as well as updating densities with respect to Hausdorff measure under diffeomorphic transformations. We also propose a software architecture that implements these formulas efficiently in the common case. We hope that by adopting our solution, probabilistic programming systems can become more robust and general, and make a broader class of models accessible to practitioners. }
 }
 
 @article{Borgstr_m_2013,
