@@ -52,7 +52,7 @@ import MeasureBase:
     logdensity_def,
     density_def,
     basemeasure,
-    kleisli,
+    kernel,
     params,
     paramnames,
     ∫,
