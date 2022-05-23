@@ -15,7 +15,7 @@ end
 
 function Pretty.tile(f::AffineTransform)
     result = Pretty.literal("AffineTransform")
-    result *= Pretty.literal(sprint(show, params(f); context=:compact => true))
+    result *= Pretty.literal(sprint(show, params(f); context = :compact => true))
     result
 end
 
@@ -142,7 +142,7 @@ struct Affine{N,M,T} <: AbstractMeasure
 end
 
 function Pretty.tile(d::Affine)
-    pars = Pretty.literal(sprint(show, params(d.f); context=:compact => true))
+    pars = Pretty.literal(sprint(show, params(d.f); context = :compact => true))
 
     Pretty.list_layout([pars, Pretty.tile(d.parent)]; prefix = :Affine)
 end
