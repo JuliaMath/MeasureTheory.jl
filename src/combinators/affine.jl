@@ -13,7 +13,13 @@ struct AffineTransform{N,T}
     par::NamedTuple{N,T}
 end
 
-quoteof(f::AffineTransform) = :(AffineTransform($(quoteof(f.par))))
+function Pretty.tile(f::AffineTransform)
+    result = Pretty.literal("AffineTransform")
+    result *= Pretty.literal(sprint(show, params(f); context=:compact => true))
+    result
+end
+
+Base.show(io::IO, f::AffineTransform) = Pretty.pprint(io, f)
 
 params(f::AffineTransform) = getfield(f, :par)
 
@@ -136,7 +142,9 @@ struct Affine{N,M,T} <: AbstractMeasure
 end
 
 function Pretty.tile(d::Affine)
-    Pretty.list_layout(Pretty.tile.([params(d.f), d.parent]); prefix = :Affine)
+    pars = Pretty.literal(sprint(show, params(d.f); context=:compact => true))
+
+    Pretty.list_layout([pars, Pretty.tile(d.parent)]; prefix = :Affine)
 end
 
 function testvalue(d::Affine)
