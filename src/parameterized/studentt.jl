@@ -8,14 +8,15 @@ export StudentT, HalfStudentT
 @kwstruct StudentT(ν)
 @kwstruct StudentT(ν, μ)
 @kwstruct StudentT(ν, σ)
-@kwstruct StudentT(ν, ω)
+@kwstruct StudentT(ν, λ)
 @kwstruct StudentT(ν, μ, σ)
-@kwstruct StudentT(ν, μ, ω)
+@kwstruct StudentT(ν, μ, λ)
 
 for N in AFFINEPARS
     @eval begin
-        proxy(d::StudentT{(:ν, $N...)}) =
+        function proxy(d::StudentT{(:ν, $N...)})
             affine(NamedTuple{$N}(params(d)), StudentT((ν = d.ν,)))
+        end
     end
 end
 
@@ -48,10 +49,8 @@ end
 end
 
 @inline function basemeasure(d::StudentT{(:ν,)})
-    constℓ = 0.0
-    varℓ() = loggamma((d.ν + 1) / 2) - loggamma(d.ν / 2) - log(π * d.ν) / 2
-    base = Lebesgue(ℝ)
-    FactoredBase(constℓ, varℓ, base)
+    ℓ = loggamma((d.ν + 1) / 2) - loggamma(d.ν / 2) - log(π * d.ν) / 2
+    weightedmeasure(ℓ, Lebesgue(ℝ))
 end
 
 xform(::StudentT) = asℝ

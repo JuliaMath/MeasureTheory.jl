@@ -9,8 +9,8 @@ export Cauchy, HalfCauchy
 @kwstruct Cauchy(μ)
 @kwstruct Cauchy(σ)
 @kwstruct Cauchy(μ, σ)
-@kwstruct Cauchy(ω)
-@kwstruct Cauchy(μ, ω)
+@kwstruct Cauchy(λ)
+@kwstruct Cauchy(μ, λ)
 
 logdensity_def(d::Cauchy, x) = logdensity_def(proxy(d), x)
 
@@ -32,14 +32,15 @@ for N in AFFINEPARS
     @eval begin
         proxy(d::Cauchy{$N}) = affine(params(d), Cauchy())
         @useproxy Cauchy{$N}
-        rand(rng::AbstractRNG, ::Type{T}, d::Cauchy{$N}) where {T} =
+        function rand(rng::AbstractRNG, ::Type{T}, d::Cauchy{$N}) where {T}
             rand(rng, T, affine(params(d), Cauchy()))
+        end
     end
 end
 
 ≪(::Cauchy, ::Lebesgue{X}) where {X<:Real} = true
 
-TV.as(::Cauchy) = asℝ
+as(::Cauchy) = asℝ
 
 @half Cauchy
 

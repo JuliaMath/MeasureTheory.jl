@@ -1,7 +1,6 @@
 module MeasureTheory
 
 using Random
-using FLoops
 
 using MeasureBase
 using MLStyle
@@ -9,13 +8,14 @@ using NestedTuples
 import TransformVariables
 const TV = TransformVariables
 
-using TransformVariables: as, asℝ₊, as𝕀, asℝ
+using TransformVariables: asℝ₊, as𝕀, asℝ, transform
 
 import Base
 import Distributions
 const Dists = Distributions
 
 export TV
+export transform
 export ≪
 export gentype
 export For
@@ -30,7 +30,7 @@ export CountingMeasure
 export TrivialMeasure
 export Likelihood
 export testvalue
-export basekleisli
+export basekernel
 
 using Infinities
 using DynamicIterators
@@ -45,7 +45,6 @@ import LogExpFunctions
 import NamedTupleTools
 import InverseFunctions: inverse
 export inverse
-export ifelse
 
 import MeasureBase: insupport, instance, marginals
 import MeasureBase:
@@ -53,7 +52,7 @@ import MeasureBase:
     logdensity_def,
     density_def,
     basemeasure,
-    kleisli,
+    kernel,
     params,
     paramnames,
     ∫,
@@ -62,7 +61,13 @@ import MeasureBase:
 import MeasureBase: ≪
 using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
-using MeasureBase: AbstractKleisli
+using MeasureBase: AbstractTransitionKernel
+
+import Statistics: mean, var, std
+
+import MeasureBase: likelihood
+export likelihood
+export log_likelihood_ratio
 
 using StaticArrays
 
@@ -74,8 +79,8 @@ import Base: rand
 
 using Reexport
 @reexport using MeasureBase
-import IfElse: ifelse
-@reexport using IfElse
+import IfElse
+using IfElse
 
 using Tricks: static_hasmethod
 
@@ -87,6 +92,7 @@ export AffineTransform
 export insupport
 export For
 
+using MeasureBase: kernel
 using MeasureBase: Returns
 import MeasureBase: proxy, @useproxy
 import MeasureBase: basemeasure_depth
@@ -101,10 +107,6 @@ gentype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
 # gentype(μ::AbstractMeasure) = gentype(basemeasure(μ))
 
-import Distributions: logpdf, pdf
-
-export pdf, logpdf
-
 xlogx(x::Number) = LogExpFunctions.xlogx(x)
 xlogx(x, y) = x * log(x)
 
@@ -113,6 +115,8 @@ xlogy(x, y) = x * log(y)
 
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
+
+as(args...; kwargs...) = TV.as(args...; kwargs...)
 
 include("utils.jl")
 include("const.jl")
@@ -126,7 +130,6 @@ include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
 include("combinators/exponential-families.jl")
-
 include("resettable-rng.jl")
 include("realized.jl")
 include("combinators/chain.jl")
@@ -151,6 +154,9 @@ include("parameterized/binomial.jl")
 include("parameterized/multinomial.jl")
 include("parameterized/lkj-cholesky.jl")
 include("parameterized/negativebinomial.jl")
+include("parameterized/gamma.jl")
+include("parameterized/snedecorf.jl")
+include("parameterized/inverse-gaussian.jl")
 
 include("combinators/ifelse.jl")
 

@@ -42,8 +42,8 @@ insupport(d::Normal) = Returns(true)
 @kwstruct Normal(μ)
 @kwstruct Normal(σ)
 @kwstruct Normal(μ, σ)
-@kwstruct Normal(ω)
-@kwstruct Normal(μ, ω)
+@kwstruct Normal(λ)
+@kwstruct Normal(μ, λ)
 
 params(::Type{N}) where {N<:Normal} = ()
 
@@ -51,7 +51,7 @@ Normal(μ, σ) = Normal((μ = μ, σ = σ))
 
 Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
-TV.as(::Normal) = asℝ
+as(::Normal) = asℝ
 
 # `@kwalias` defines some alias names, giving users flexibility in the names
 # they use. For example, σ² is standard notation for the variance parameter, but
@@ -63,6 +63,7 @@ TV.as(::Normal) = asℝ
     std   => σ
     sigma => σ
     var   => σ²
+    ϕ     => σ²
 ]
 
 # It's often useful to be able to map into the parameter space for a given
@@ -134,21 +135,23 @@ Base.rand(rng::Random.AbstractRNG, ::Type{T}, μ::Normal) where {T} = rand(rng, 
 @half Normal
 
 # A single unnamed parameter for `HalfNormal` should be interpreted as a `σ`
-HalfNormal(σ) = HalfNormal(σ = σ)
+HalfNormal(σ) = HalfNormal((σ = σ,))
 
 ###############################################################################
+@kwstruct Normal(σ²)
 @kwstruct Normal(μ, σ²)
 
-@inline function logdensity_def(d::Normal{(:σ²)}, x)
-    σ² = d.σ²
-    -0.5 * (log(σ²) + (x^2 / σ²))
+@inline function logdensity_def(d::Normal{(:σ²,)}, x)
+    -0.5 * x^2 / d.σ²
 end
 
-@inline function logdensity_def(d::Normal{(:μ, :σ²)}, x)
-    μ = d.μ
-    σ² = d.σ²
-    -0.5 * (log(σ²) + ((x - μ)^2 / σ²))
+@inline function basemeasure(d::Normal{(:σ²,)})
+    ℓ = static(-0.5) * (static(log2π) + log(d.σ²))
+    weightedmeasure(ℓ, Lebesgue())
 end
+
+proxy(d::Normal{(:μ, :σ²)}) = affine((μ = d.μ,), Normal((σ² = d.σ²,)))
+@useproxy Normal{(:μ, :σ²)}
 
 ###############################################################################
 @kwstruct Normal(μ, τ)

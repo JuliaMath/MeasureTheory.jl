@@ -1,6 +1,7 @@
 export ExponentialFamily
 
-@concrete terse struct ExponentialFamily <: AbstractKleisli
+@concrete terse struct ExponentialFamily <: AbstractTransitionKernel
+    support_contains
     base
     mdim
     pdim
@@ -9,15 +10,26 @@ export ExponentialFamily
     a
 end
 
-function ExponentialFamily(base, mdim, pdim, t, a)
-    return ExponentialFamily(base, mdim, pdim, t, I, a)
+MeasureBase.insupport(fam::ExponentialFamily, x) = fam.support_contains(x)
+
+function ExponentialFamily(support_contains, base, mdim, pdim, t, a)
+    return ExponentialFamily(support_contains, base, mdim, pdim, t, I, a)
 end
 
 function MeasureBase.powermeasure(fam::ExponentialFamily, dims::NTuple{N,I}) where {N,I}
+    support_contains(x) = all(xj -> fam.support_contains(xj), x)
     t = Tuple((y -> f.(y) for f in fam.t))
     a(η) = BroadcastArray(fam.a, η)
     p = prod(dims)
-    ExponentialFamily(fam.base^dims, fam.mdim * p, fam.pdim * p, t, fam.x, a)
+    ExponentialFamily(
+        support_contains,
+        fam.base^dims,
+        fam.mdim * p,
+        fam.pdim * p,
+        t,
+        fam.x,
+        a,
+    )
 end
 
 @concrete terse struct ExpFamMeasure <: AbstractMeasure
@@ -25,6 +37,8 @@ end
     η # instantiated to a value
     a # instantiated to a value
 end
+
+MeasureBase.insupport(μ::ExpFamMeasure, x) = μ.fam.support_contains(x)
 
 @inline function (fam::ExponentialFamily)(β)
     η = fam.x * β
@@ -76,19 +90,18 @@ end
     c
 end
 
-export likelihood
+# function regression(fam, uᵀ, vᵀ)
 
-function regression(fam, uᵀ, vᵀ)
-end
+# end
 
-function likelihood(fam::ExponentialFamily, y)
+function MeasureBase.likelihood(fam::ExponentialFamily, y)
     c = logdensityof(fam.base, y)
     t = ApplyArray(vcat, (f.(y) for f in fam.t)...)
     tᵀx = t' * fam.x
     ExpFamLikelihood(fam, y, tᵀx, c)
 end
 
-@inline function logdensity_def(ℓ::ExpFamLikelihood, β)
+@inline function logdensityof(ℓ::ExpFamLikelihood, β)
     xβ = ApplyArray(*, ℓ.fam.x, β)
     a = sum(ℓ.fam.a(xβ))
     # a = sum(ℓ.fam.a, ApplyArray(*, ℓ.fam.uᵀ', ℓ.fam.vᵀ, β))

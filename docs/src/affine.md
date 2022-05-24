@@ -69,17 +69,17 @@ Here the `- logdet(σ)` is the "log absolute Jacobian", required to account for 
 
 The above requires solving a linear system, which adds some overhead. Even with the convenience of a lower triangular system, it's still not quite as efficient as multiplication.
 
-In addition to the covariance ``Σ``, it's also common to parameterize a multivariate normal by its _precision matrix_, defined as the inverse of the covariance matrix, ``Ω = Σ⁻¹``. Similar to our use of ``σ`` for the lower Cholesky factor of `Σ`, we'll use ``ω`` for the lower Cholesky factor of ``Ω``.
+In addition to the covariance ``Σ``, it's also common to parameterize a multivariate normal by its _precision matrix_, defined as the inverse of the covariance matrix, ``Ω = Σ⁻¹``. Similar to our use of ``σ`` for the lower Cholesky factor of `Σ`, we'll use ``λ`` for the lower Cholesky factor of ``Ω``.
 
 This parameterization enables more efficient calculation of the log-density using only multiplication and addition,
 
 ```julia
-logdensity_def(d::Normal{(:μ,:ω)}, x) = logdensity_def(d.ω * (x - d.μ)) + logdet(d.ω)
+logdensity_def(d::Normal{(:μ,:λ)}, x) = logdensity_def(d.λ * (x - d.μ)) + logdet(d.λ)
 ```
 
 ## `AffineTransform`
 
-Transforms like ``z → σ z + μ`` and ``z → ω \ z + μ`` can be specified in MeasureTheory.jl using an `AffineTransform`. For example,
+Transforms like ``z → σ z + μ`` and ``z → λ \ z + μ`` can be specified in MeasureTheory.jl using an `AffineTransform`. For example,
 
 ```julia
 julia> f = AffineTransform((μ=3.,σ=2.))
@@ -91,11 +91,11 @@ julia> f(1.0)
 
 In the univariate case this is relatively simple to invert. But if `σ` is a matrix, matrix inversion becomes necessary. This is not always possible as lower triangular matrices are not closed under matrix inversion and as such are not guaranteed to exist. 
 
-With multiple parameterizations of a given family of measures, we can work around these issues. The inverse transform of a ``(μ,σ)`` transform will be in terms of ``(μ,ω)``, and vice-versa. So
+With multiple parameterizations of a given family of measures, we can work around these issues. The inverse transform of a ``(μ,σ)`` transform will be in terms of ``(μ,λ)``, and vice-versa. So
 
 ```julia
 julia> f⁻¹ = inverse(f)
-AffineTransform{(:μ, :ω), Tuple{Float64, Float64}}((μ = -1.5, ω = 2.0))
+AffineTransform{(:μ, :λ), Tuple{Float64, Float64}}((μ = -1.5, λ = 2.0))
 
 julia> f(f⁻¹(4))
 4.0

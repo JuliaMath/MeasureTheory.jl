@@ -9,6 +9,7 @@ using FillArrays
 
 using MeasureTheory
 using MeasureBase.Interface
+using MeasureTheory: kernel
 
 using Aqua
 Aqua.test_all(MeasureTheory; ambiguities = false, unbound_args = false)
@@ -179,9 +180,25 @@ end
     end
 end
 
-@testset "Kleisli" begin
-    κ = kleisli(Dirac)
+@testset "TransitionKernel" begin
+    κ = kernel(Dirac)
     @test rand(κ(1.1)) == 1.1
+
+    k1 = kernel() do x
+        Normal(x, x^2)
+    end
+
+    k2 = kernel(Normal) do x
+        (μ = x, σ = x^2)
+    end
+
+    k3 = kernel(Normal; μ = identity, σ = abs2)
+
+    k4 = kernel(Normal; μ = first, σ = last) do x
+        (x, x^2)
+    end
+
+    @test k1(3) == k2(3) == k3(3) == k4(3) == Normal(3, 9)
 end
 
 @testset "For" begin
@@ -209,10 +226,10 @@ end
     end
 end
 
-import MeasureTheory.:⋅ 
+import MeasureTheory: ⋅
 
-function ⋅(μ::Normal, kleisli)
-    m = kleisli(μ)
+function ⋅(μ::Normal, kernel)
+    m = kernel(μ)
     Normal(μ = m.μ.μ, σ = sqrt(m.μ.σ^2 + m.σ^2))
 end
 struct AffineMap{S,T}
@@ -250,11 +267,11 @@ end
 #     Q = 0.2
 
 #     μ = Normal(μ=ξ0, σ=sqrt(P0))
-#     kleisli = MeasureTheory.kleisli(Normal; μ=AffineMap(Φ, β), σ=MeasureTheory.AsConst(Q))
+#     kernel = MeasureTheory.kernel(Normal; μ=AffineMap(Φ, β), σ=MeasureTheory.AsConst(Q))
 
-#     @test (μ ⋅ kleisli).μ == Normal(μ = 0.9, σ = 0.824621).μ
+#     @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
 
-#     chain = Chain(kleisli, μ)
+#     chain = Chain(kernel, μ)
 
 #     dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing) 
 #     tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
@@ -292,12 +309,12 @@ end
 
     ℓs = [
         Likelihood(Normal{(:μ,)}, 3.0),
-        # Likelihood(kleisli(Normal, x -> (μ=x, σ=2.0)), 3.0)
+        # Likelihood(kernel(Normal, x -> (μ=x, σ=2.0)), 3.0)
     ]
 
     for (d, p) in dps
         for ℓ in ℓs
-            @test logdensity_def(d ⊙ ℓ, p) ≈ logdensity_def(d, p) + logdensity_def(ℓ, p)
+            @test logdensityof(d ⊙ ℓ, p) ≈ logdensityof(d, p) + logdensityof(ℓ.k(p), ℓ.x)
         end
     end
 end
@@ -499,7 +516,7 @@ end
     end
 
     for (M, nt) in testmeasures
-        for p in [(μ = 1,), (μ = 1, σ = 2), (μ = 1, ω = 2), (σ = 2,), (ω = 2,)]
+        for p in [(μ = 1,), (μ = 1, σ = 2), (μ = 1, λ = 2), (σ = 2,), (λ = 2,)]
             d = M(merge(nt, p))
             @info "Testing $d"
             test_noerrors(d)
@@ -508,7 +525,7 @@ end
         #     @show n
         #     for k in 1:n
         #         @show k
-        #         pars = [(μ=randn(n),), (μ=randn(n),σ=randn(n,k)), (μ=randn(n),ω=randn(k,n)), (σ=randn(n,k),), (ω=randn(k,n),)]
+        #         pars = [(μ=randn(n),), (μ=randn(n),σ=randn(n,k)), (μ=randn(n),λ=randn(k,n)), (σ=randn(n,k),), (λ=randn(k,n),)]
         #         for p in pars
         #             @show p
         #             d = M(merge(nt, p))
@@ -524,7 +541,7 @@ end
     @test f(inverse(f)(1)) == 1
     @test inverse(f)(f(1)) == 1
 
-    f = AffineTransform((μ = 3, ω = 2))
+    f = AffineTransform((μ = 3, λ = 2))
     @test f(inverse(f)(1)) == 1
     @test inverse(f)(f(1)) == 1
 
@@ -532,7 +549,7 @@ end
     @test f(inverse(f)(1)) == 1
     @test inverse(f)(f(1)) == 1
 
-    f = AffineTransform((ω = 2,))
+    f = AffineTransform((λ = 2,))
     @test f(inverse(f)(1)) == 1
     @test inverse(f)(f(1)) == 1
 
@@ -544,10 +561,10 @@ end
 @testset "Affine" begin
     unif = ∫(x -> 0 < x < 1, Lebesgue(ℝ))
     f1 = AffineTransform((μ = 3.0, σ = 2.0))
-    f2 = AffineTransform((μ = 3.0, ω = 2.0))
+    f2 = AffineTransform((μ = 3.0, λ = 2.0))
     f3 = AffineTransform((μ = 3.0,))
     f4 = AffineTransform((σ = 2.0,))
-    f5 = AffineTransform((ω = 2.0,))
+    f5 = AffineTransform((λ = 2.0,))
 
     for f in [f1, f2, f3, f4, f5]
         par = getfield(f, :par)
@@ -562,14 +579,14 @@ end
     σ = let x = randn(10, 3)
         cholesky(x' * x).L
     end
-    ω = inv(σ)
+    λ = inv(σ)
 
     x = randn(3)
 
     @test logdensity_def(Affine((μ = μ, σ = σ), d^3), x) ≈
-          logdensity_def(Affine((μ = μ, ω = ω), d^3), x)
+          logdensity_def(Affine((μ = μ, λ = λ), d^3), x)
     @test logdensity_def(Affine((σ = σ,), d^3), x) ≈
-          logdensity_def(Affine((ω = ω,), d^3), x)
+          logdensity_def(Affine((λ = λ,), d^3), x)
     @test logdensity_def(Affine((μ = μ,), d^3), x) ≈ logdensity_def(d^3, x - μ)
 
     d = ∫exp(x -> -x^2, Lebesgue(ℝ))
@@ -579,7 +596,7 @@ end
     @test logdensityof(a, x) ≈ logdensityof(d, inverse(a.f)(x)[1])
     @test logdensityof(a, a.f(y)) ≈ logdensityof(d^1, y)
 
-    b = Affine((ω = [1 0]'',), d^1)
+    b = Affine((λ = [1 0]'',), d^1)
     @test logdensityof(b, x) ≈ logdensityof(d, inverse(b.f)(x)[1])
     @test logdensityof(b, b.f(y)) ≈ logdensityof(d^1, y)
 end
@@ -587,8 +604,10 @@ end
 @testset "IfElseMeasure" begin
     p = rand()
     x = randn()
-    @test logdensityof(MeasureTheory.ifelse(Bernoulli(p), Normal(), Normal()), x) ≈
+    @test logdensityof(MeasureTheory.IfElse.ifelse(Bernoulli(p), Normal(), Normal()), x) ≈
           logdensityof(Normal(), x)
-    @test logdensityof(MeasureTheory.ifelse(Bernoulli(p), Normal(2, 3), Normal()), x) ≈
-          logdensityof(p * Normal(2, 3) + (1 - p) * Normal(), x)
+    @test logdensityof(
+        MeasureTheory.IfElse.ifelse(Bernoulli(p), Normal(2, 3), Normal()),
+        x,
+    ) ≈ logdensityof(p * Normal(2, 3) + (1 - p) * Normal(), x)
 end

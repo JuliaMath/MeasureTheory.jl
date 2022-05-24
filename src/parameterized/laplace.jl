@@ -9,8 +9,8 @@ export Laplace
 @kwstruct Laplace(μ)
 @kwstruct Laplace(σ)
 @kwstruct Laplace(μ, σ)
-@kwstruct Laplace(ω)
-@kwstruct Laplace(μ, ω)
+@kwstruct Laplace(λ)
+@kwstruct Laplace(μ, λ)
 
 for N in AFFINEPARS
     @eval begin
@@ -31,10 +31,11 @@ basemeasure(::Laplace{()}) = WeightedMeasure(static(-logtwo), Lebesgue(ℝ))
 
 # @affinepars Laplace
 
-Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace{()}) where {T} =
+function Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace{()}) where {T}
     rand(rng, Dists.Laplace())
+end
 Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace) where {T} = Base.rand(rng, T, proxy(μ))
 
 ≪(::Laplace, ::Lebesgue{X}) where {X<:Real} = true
 
-TV.as(::Laplace) = asℝ
+as(::Laplace) = asℝ

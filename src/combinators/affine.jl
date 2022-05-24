@@ -3,9 +3,9 @@ using LinearAlgebra
 
 const AFFINEPARS = [
     (:μ, :σ)
-    (:μ, :ω)
+    (:μ, :λ)
     (:σ,)
-    (:ω,)
+    (:λ,)
     (:μ,)
 ]
 
@@ -13,7 +13,13 @@ struct AffineTransform{N,T}
     par::NamedTuple{N,T}
 end
 
-quoteof(f::AffineTransform) = :(AffineTransform($(quoteof(f.par))))
+function Pretty.tile(f::AffineTransform)
+    result = Pretty.literal("AffineTransform")
+    result *= Pretty.literal(sprint(show, params(f); context = :compact => true))
+    result
+end
+
+Base.show(io::IO, f::AffineTransform) = Pretty.pprint(io, f)
 
 params(f::AffineTransform) = getfield(f, :par)
 
@@ -23,17 +29,17 @@ Base.propertynames(d::AffineTransform{N}) where {N} = N
 
 import InverseFunctions: inverse
 
-@inline inverse(f::AffineTransform{(:μ, :σ)}) = AffineTransform((μ = -(f.σ \ f.μ), ω = f.σ))
-@inline inverse(f::AffineTransform{(:μ, :ω)}) = AffineTransform((μ = -f.ω * f.μ, σ = f.ω))
-@inline inverse(f::AffineTransform{(:σ,)}) = AffineTransform((ω = f.σ,))
-@inline inverse(f::AffineTransform{(:ω,)}) = AffineTransform((σ = f.ω,))
+@inline inverse(f::AffineTransform{(:μ, :σ)}) = AffineTransform((μ = -(f.σ \ f.μ), λ = f.σ))
+@inline inverse(f::AffineTransform{(:μ, :λ)}) = AffineTransform((μ = -f.λ * f.μ, σ = f.λ))
+@inline inverse(f::AffineTransform{(:σ,)}) = AffineTransform((λ = f.σ,))
+@inline inverse(f::AffineTransform{(:λ,)}) = AffineTransform((σ = f.λ,))
 @inline inverse(f::AffineTransform{(:μ,)}) = AffineTransform((μ = -f.μ,))
 
 # `size(f) == (m,n)` means `f : ℝⁿ → ℝᵐ`  
 Base.size(f::AffineTransform{(:μ, :σ)}) = size(f.σ)
-Base.size(f::AffineTransform{(:μ, :ω)}) = size(f.ω)
+Base.size(f::AffineTransform{(:μ, :λ)}) = size(f.λ)
 Base.size(f::AffineTransform{(:σ,)}) = size(f.σ)
-Base.size(f::AffineTransform{(:ω,)}) = size(f.ω)
+Base.size(f::AffineTransform{(:λ,)}) = size(f.λ)
 
 function Base.size(f::AffineTransform{(:μ,)})
     (n,) = size(f.μ)
@@ -44,9 +50,9 @@ Base.size(f::AffineTransform, n::Int) = @inbounds size(f)[n]
 
 (f::AffineTransform{(:μ,)})(x) = x + f.μ
 (f::AffineTransform{(:σ,)})(x) = f.σ * x
-(f::AffineTransform{(:ω,)})(x) = f.ω \ x
+(f::AffineTransform{(:λ,)})(x) = f.λ \ x
 (f::AffineTransform{(:μ, :σ)})(x) = f.σ * x + f.μ
-(f::AffineTransform{(:μ, :ω)})(x) = f.ω \ x + f.μ
+(f::AffineTransform{(:μ, :λ)})(x) = f.λ \ x + f.μ
 
 rowsize(x) = ()
 rowsize(x::AbstractArray) = (size(x, 1),)
@@ -78,13 +84,13 @@ end
     return x
 end
 
-@inline function apply!(x, f::AffineTransform{(:ω,),Tuple{F}}, z) where {F<:Factorization}
-    ldiv!(x, f.ω, z)
+@inline function apply!(x, f::AffineTransform{(:λ,),Tuple{F}}, z) where {F<:Factorization}
+    ldiv!(x, f.λ, z)
     return x
 end
 
-@inline function apply!(x, f::AffineTransform{(:ω,)}, z)
-    ldiv!(x, factorize(f.ω), z)
+@inline function apply!(x, f::AffineTransform{(:λ,)}, z)
+    ldiv!(x, factorize(f.λ), z)
     return x
 end
 
@@ -94,8 +100,8 @@ end
     return x
 end
 
-@inline function apply!(x, f::AffineTransform{(:μ, :ω)}, z)
-    apply!(x, AffineTransform((ω = f.ω,)), z)
+@inline function apply!(x, f::AffineTransform{(:μ, :λ)}, z)
+    apply!(x, AffineTransform((λ = f.λ,)), z)
     apply!(x, AffineTransform((μ = f.μ,)), x)
     return x
 end
@@ -113,9 +119,9 @@ logjac(x::Number) = log(abs(x))
 
 # TODO: `log` doesn't work for the multivariate case, we need the log absolute determinant
 logjac(f::AffineTransform{(:μ, :σ)}) = logjac(f.σ)
-logjac(f::AffineTransform{(:μ, :ω)}) = -logjac(f.ω)
+logjac(f::AffineTransform{(:μ, :λ)}) = -logjac(f.λ)
 logjac(f::AffineTransform{(:σ,)}) = logjac(f.σ)
-logjac(f::AffineTransform{(:ω,)}) = -logjac(f.ω)
+logjac(f::AffineTransform{(:λ,)}) = -logjac(f.λ)
 logjac(f::AffineTransform{(:μ,)}) = 0.0
 
 ###############################################################################
@@ -136,7 +142,9 @@ struct Affine{N,M,T} <: AbstractMeasure
 end
 
 function Pretty.tile(d::Affine)
-    Pretty.list_layout(Pretty.tile.([params(d.f), d.parent]); prefix = :Affine)
+    pars = Pretty.literal(sprint(show, params(d.f); context = :compact => true))
+
+    Pretty.list_layout([pars, Pretty.tile(d.parent)]; prefix = :Affine)
 end
 
 function testvalue(d::Affine)
@@ -175,15 +183,15 @@ end
 
 Base.size(d::Affine) = size(d.μ)
 Base.size(d::Affine{(:σ,)}) = (size(d.σ, 1),)
-Base.size(d::Affine{(:ω,)}) = (size(d.ω, 2),)
+Base.size(d::Affine{(:λ,)}) = (size(d.λ, 2),)
 
 @inline function logdensity_def(d::Affine{(:σ,)}, x::AbstractArray)
     z = solve(d.σ, x)
     MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
-@inline function logdensity_def(d::Affine{(:ω,)}, x::AbstractArray)
-    z = d.ω * x
+@inline function logdensity_def(d::Affine{(:λ,)}, x::AbstractArray)
+    z = d.λ * x
     MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
@@ -197,8 +205,8 @@ end
     MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
-@inline function logdensity_def(d::Affine{(:μ, :ω)}, x::AbstractArray)
-    z = d.ω * mappedarray(-, x, d.μ)
+@inline function logdensity_def(d::Affine{(:μ, :λ)}, x::AbstractArray)
+    z = d.λ * mappedarray(-, x, d.μ)
     MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
@@ -207,7 +215,7 @@ end
     logdensity_def(d.parent, z)
 end
 
-# # # logdensity_def(d::Affine{(:μ,:ω)}, x) = logdensity_def(d.parent, d.σ \ (x - d.μ))
+# # # logdensity_def(d::Affine{(:μ,:λ)}, x) = logdensity_def(d.parent, d.σ \ (x - d.μ))
 # # @inline function logdensity_def(d::Affine{(:μ,:σ), P, Tuple{V,M}}, x) where {P, V<:AbstractVector, M<:AbstractMatrix}
 # #     z = x - d.μ
 # #     σ = d.σ
@@ -219,10 +227,10 @@ end
 # #     sum(zⱼ -> logdensity_def(d.parent, zⱼ), z)
 # # end
 
-# # # logdensity_def(d::Affine{(:μ,:ω)}, x) = logdensity_def(d.parent, d.ω * (x - d.μ))
-# # @inline function logdensity_def(d::Affine{(:μ,:ω), P,Tuple{V,M}}, x) where {P,V<:AbstractVector, M<:AbstractMatrix}
+# # # logdensity_def(d::Affine{(:μ,:λ)}, x) = logdensity_def(d.parent, d.λ * (x - d.μ))
+# # @inline function logdensity_def(d::Affine{(:μ,:λ), P,Tuple{V,M}}, x) where {P,V<:AbstractVector, M<:AbstractMatrix}
 # #     z = x - d.μ
-# #     lmul!(d.ω, z)
+# #     lmul!(d.λ, z)
 # #     logdensity_def(d.parent, z)
 # # end
 
@@ -240,10 +248,12 @@ end
 
 # We can't do this until we know we're working with Lebesgue measure, since for
 # example it wouldn't make sense to apply a log-Jacobian to a point measure
-@inline basemeasure(d::Affine{N,L}) where {N,L<:Lebesgue} =
+@inline function basemeasure(d::Affine{N,L}) where {N,L<:Lebesgue}
     weightedmeasure(-logjac(d), d.parent)
-@inline basemeasure(d::Affine{N,L}) where {N,L<:LebesgueMeasure} =
+end
+@inline function basemeasure(d::Affine{N,L}) where {N,L<:LebesgueMeasure}
     weightedmeasure(-logjac(d), d.parent)
+end
 
 logjac(d::Affine) = logjac(getfield(d, :f))
 
@@ -267,9 +277,9 @@ end
 # end
 
 supportdim(nt::NamedTuple{(:μ, :σ)}) = colsize(nt.σ)
-supportdim(nt::NamedTuple{(:μ, :ω)}) = rowsize(nt.ω)
+supportdim(nt::NamedTuple{(:μ, :λ)}) = rowsize(nt.λ)
 supportdim(nt::NamedTuple{(:σ,)}) = colsize(nt.σ)
-supportdim(nt::NamedTuple{(:ω,)}) = rowsize(nt.ω)
+supportdim(nt::NamedTuple{(:λ,)}) = rowsize(nt.λ)
 supportdim(nt::NamedTuple{(:μ,)}) = size(nt.μ)
 
 asparams(::Affine, ::StaticSymbol{:μ}) = asℝ

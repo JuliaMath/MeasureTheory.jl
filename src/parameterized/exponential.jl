@@ -16,7 +16,7 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Exponential{()}) = randexp(rng, T)
 
-TV.as(::Exponential) = asℝ₊
+as(::Exponential) = asℝ₊
 
 ##########################
 # Scale β

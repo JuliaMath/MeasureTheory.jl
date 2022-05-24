@@ -18,6 +18,8 @@ end
 ###############################################################################
 @kwstruct NegativeBinomial(r, p)
 
+NegativeBinomial(n) = NegativeBinomial(n, 0.5)
+
 @inline function logdensity_def(d::NegativeBinomial{(:r, :p)}, y)
     (r, p) = (d.r, d.p)
     return -log(y + r) - logbeta(r, y + 1) + xlogy(y, p) + xlog1py(r, -p)

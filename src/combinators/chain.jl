@@ -63,8 +63,9 @@ struct DynamicFor{T,K,S} <: AbstractMeasure
     iter::S
 end
 
-Pretty.quoteof(r::DynamicFor) =
+function Pretty.quoteof(r::DynamicFor)
     :(DynamicFor($(Pretty.quoteof(r.κ)), $(Pretty.quoteof(r.iter))))
+end
 
 function DynamicFor(κ::K, iter::S) where {K,S}
     T = typeof(κ(first(iter)))

@@ -12,16 +12,6 @@ struct For{T,F,I} <: AbstractProductMeasure
     end
 
     @inline For{T,F,I}(f::F, inds::I) where {T,F,I} = new{T,F,I}(f, inds)
-
-    function For{Union{},F,I}(f::F, inds::I) where {F,I}
-        println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        @warn "Empty `For` construction. This should not be happening"
-        @show f(first(zip(inds...))...)
-        println.(stacktrace())
-        println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        # @error "Empty `For` construction"
-        return ProductMeasure(mappedarray(i -> f(Tuple(i)...), CartesianIndices(inds...)))
-    end
 end
 
 @generated function For(f::F, inds::I) where {F,I<:Tuple}
@@ -32,6 +22,8 @@ end
         For{T,F,I}(f, inds)
     end
 end
+
+as(d::For) = as(Array, as(first(marginals(d))), size(first(d.inds))...)
 
 # For(f, gen::Base.Generator) = ProductMeasure(Base.Generator(f ∘ gen.f, gen.iter))
 
@@ -69,53 +61,21 @@ end
 @inline function logdensity_def(
     d::For{T,F,I},
     x::AbstractVector{X};
-    exec = SequentialEx(simd = true),
 ) where {X,T,F,I<:Tuple{<:AbstractVector}}
     ind = only(d.inds)
-    @floop exec for j in eachindex(x)
-        local i = getindex(ind, j)
-        local Δℓ = @inbounds logdensity_def(d.f(i), x[j])
-        @reduce ℓ += Δℓ
+    sum(eachindex(x)) do j
+        i = getindex(ind, j)
+        @inbounds logdensity_def(d.f(i), x[j])
     end
-    ℓ
 end
 
-function logdensity_def(d::For, x::AbstractVector; exec = SequentialEx(simd = true))
-    @floop exec for j in eachindex(x)
-        local i = (getindex(ind, j) for ind in d.inds)
-        local Δℓ = @inbounds logdensity_def(d.f(i...), x[j])
-        @reduce ℓ += Δℓ
+function logdensity_def(d::For, x::AbstractVector)
+    get_i(j) = tuple((getindex(ind, j) for ind in d.inds)...)
+    sum(eachindex(x)) do j
+        i = get_i(j)
+        @inbounds logdensity_def(d.f(i...), x[j])
     end
-
-    ℓ
 end
-
-function logdensity_def(
-    d::For{T,F,I},
-    x::AbstractArray{X};
-    exec = SequentialEx(simd = true),
-) where {T,F,I,X}
-    @floop exec for j in CartesianIndices(x)
-        local i = (getindex(ind, j) for ind in d.inds)
-        local Δℓ = @inbounds logdensity_def(d.f(i...), x[j])
-        @reduce ℓ += Δℓ
-    end
-
-    ℓ
-end
-
-# function logdensity_def(d::For{T,F,I}, x) where {N,T,F,I<:NTuple{N,<:Base.Generator}}
-#     sum(zip(x, d.inds...)) do (xⱼ, dⱼ...)
-#         logdensity_def(d.f(dⱼ...), xⱼ)
-#     end
-# end
-
-# function logdensity_def(d::For{T,F,I}, x::AbstractVector) where {N,T,F,I<:NTuple{N,<:Base.Generator}}
-
-#     sum(zip(x, d.inds...)) do (xⱼ, dⱼ...)
-#         logdensity_def(d.f(dⱼ...), xⱼ)
-#     end
-# end
 
 function marginals(d::For{T,F,Tuple{I}}) where {T,F,I}
     f = d.f
@@ -136,13 +96,10 @@ function marginals(d::For{T,F,I}) where {N,T,F,I<:NTuple{N,<:Base.Generator}}
     Iterators.map(d.f, d.inds...)
 end
 
-@generated function basemeasure(d::For{T,F,I}) where {T,F,I}
-    B = Core.Compiler.return_type(basemeasure, Tuple{T})
+function basemeasure(d::For{T,F,I}) where {T,F,I}
+    B = typeof(basemeasure(d.f(map(first, d.inds)...)))
     sing = static(Base.issingletontype(B))
-    quote
-        $(Expr(:meta, :inline))
-        _basemeasure(d, $B, $sing)
-    end
+    _basemeasure(d, B, sing)
 end
 
 @inline function _basemeasure(
@@ -175,7 +132,7 @@ end
     ::Type{B},
     ::False,
 ) where {T,F,I,B<:AbstractMeasure}
-    f = basekleisli(d.f)
+    f = basekernel(d.f)
     For{B}(f, d.inds)
 end
 
@@ -196,7 +153,7 @@ function _basemeasure(
     ::Type{B},
     ::False,
 ) where {N,T<:AbstractMeasure,F,I<:NTuple{N,<:Base.Generator},B}
-    f = basekleisli(d.f)
+    f = basekernel(d.f)
     For{B}(f, d.inds)
 end
 
@@ -206,7 +163,7 @@ function Pretty.tile(d::For{T}) where {T}
     result *= Pretty.literal("}")
     result *= Pretty.list_layout([
         Pretty.literal(func_string(d.f, Tuple{_eltype.(d.inds)...})),
-        Pretty.tile.(d.inds)...,
+        Pretty.literal(sprint(show, d.inds; context = :compact => true)),
     ])
 end
 
@@ -283,8 +240,9 @@ julia> For(eachrow(rand(4,2))) do x Normal(x[1], x[2]) end |> marginals |> colle
 """
 @inline For{T}(f, inds...) where {T} = For{T}(f, inds)
 @inline For{T}(f, n::Integer) where {T} = For{T}(f, static(1):n)
-@inline For{T}(f, inds::Integer...) where {T} =
+@inline function For{T}(f, inds::Integer...) where {T}
     For{T}(i -> f(Tuple(i)...), Base.CartesianIndices(inds))
+end
 
 @inline For(f, inds...) = For(f, inds)
 @inline For(f, n::Integer) = For(f, static(1):n)

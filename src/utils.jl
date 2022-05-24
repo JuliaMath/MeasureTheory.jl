@@ -1,6 +1,5 @@
 using LinearAlgebra
 export mydot
-using LazyArrays
 
 function solve(A::Union{AbstractMatrix,Factorization}, y::AbstractArray)
     (m, n) = size(A)
@@ -89,7 +88,7 @@ function func_string(f, types)
                 result *= string(s[1])
                 result *= "->"
             else
-                result *= string(tuple(s...))
+                result *= "(" * join(string.(tuple(s...)), ", ") * ")"
                 result *= "->"
             end
             c1 = string(c[1])

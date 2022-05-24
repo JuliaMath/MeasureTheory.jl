@@ -12,11 +12,12 @@ export InverseGamma
     return xlogy(α + 1, xinv) - xinv - loggamma(α)
 end
 
-Base.rand(rng::AbstractRNG, T::Type, μ::InverseGamma{(:shape,)}) =
+function Base.rand(rng::AbstractRNG, T::Type, μ::InverseGamma{(:shape,)})
     rand(rng, Dists.InverseGamma(μ.shape))
+end
 
 ≪(::InverseGamma, ::Lebesgue{X}) where {X<:Real} = true
 
-TV.as(::InverseGamma) = asℝ₊
+as(::InverseGamma) = asℝ₊
 
 # @μσ_methods InverseGamma(shape)

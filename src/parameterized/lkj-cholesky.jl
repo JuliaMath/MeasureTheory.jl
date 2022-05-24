@@ -77,16 +77,16 @@ end
     return s
 end
 
-TV.as(d::LKJCholesky) = CorrCholesky(d.k)
+as(d::LKJCholesky) = CorrCholesky(d.k)
 
 @inline function basemeasure(d::LKJCholesky{(:k, :η)})
-    t = TV.as(d)
+    t = as(d)
     base = Pushforward(t, Lebesgue(ℝ)^TV.dimension(t), False())
     WeightedMeasure(Dists.lkj_logc0(d.k, d.η), base)
 end
 
 @inline function basemeasure(d::LKJCholesky{(:k, :logη)})
-    t = TV.as(d)
+    t = as(d)
     η = exp(d.logη)
     base = Pushforward(t, Lebesgue(ℝ)^TV.dimension(t), False())
     WeightedMeasure(Dists.lkj_logc0(d.k, η), base)

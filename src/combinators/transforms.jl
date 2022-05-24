@@ -72,8 +72,9 @@ end
 
 Pullback(f::AbstractTransform, ν, logjac = True()) = Pullback(TV.transform(f), ν, logjac)
 
-Pushforward(f::AbstractTransform, ν, logjac = True()) =
+function Pushforward(f::AbstractTransform, ν, logjac = True())
     Pushforward(TV.transform(f), ν, logjac)
+end
 
 Pullback(f::CallableInverse, ν, logjac = True()) = Pushforward(TV.transform(f.t), ν, logjac)
 
@@ -91,24 +92,29 @@ basemeasure(μ::Pullback) = Pullback(μ.f, basemeasure(μ.ν), False())
 
 basemeasure(ν::Pushforward) = Pushforward(ν.f, basemeasure(ν.μ), False())
 
-TV.as(ν::Pushforward) = ν.f ∘ as(ν.μ)
+as(ν::Pushforward) = ν.f ∘ as(ν.μ)
 
-TV.as(μ::Pullback) = TV.inverse(μ.f) ∘ μ.ν
+as(μ::Pullback) = TV.inverse(μ.f) ∘ μ.ν
 
-TV.as(::Lebesgue) = asℝ
+as(::Lebesgue) = asℝ
 
 # TODO: Make this work for affine embeddings
-TV.as(d::Affine) = _as_affine(_firstval(d))
+as(d::Affine) = _as_affine(_firstval(d))
 
 _firstval(d::Affine) = first(values(getfield(getfield(d, :f), :par)))
 _as_affine(x::Real) = asℝ
 _as_affine(x::AbstractArray) = as(Vector, size(x, 1))
 
-basemeasure(
+function basemeasure(
     ::Pushforward{TV.CallableTransform{T},Lebesgue{ℝ}},
-) where {T<:TV.ScalarTransform} = Lebesgue(ℝ)
-basemeasure(::Pullback{TV.CallableTransform{T},Lebesgue{ℝ}}) where {T<:TV.ScalarTransform} =
+) where {T<:TV.ScalarTransform}
     Lebesgue(ℝ)
+end
+function basemeasure(
+    ::Pullback{TV.CallableTransform{T},Lebesgue{ℝ}},
+) where {T<:TV.ScalarTransform}
+    Lebesgue(ℝ)
+end
 # t = as𝕀
 # μ = Normal()
 # ν = Pushforward(t, μ)
