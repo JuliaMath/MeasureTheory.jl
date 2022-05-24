@@ -606,6 +606,8 @@ end
     x = randn()
     @test logdensityof(MeasureTheory.IfElse.ifelse(Bernoulli(p), Normal(), Normal()), x) ≈
           logdensityof(Normal(), x)
-    @test logdensityof(MeasureTheory.IfElse.ifelse(Bernoulli(p), Normal(2, 3), Normal()), x) ≈
-          logdensityof(p * Normal(2, 3) + (1 - p) * Normal(), x)
+    @test logdensityof(
+        MeasureTheory.IfElse.ifelse(Bernoulli(p), Normal(2, 3), Normal()),
+        x,
+    ) ≈ logdensityof(p * Normal(2, 3) + (1 - p) * Normal(), x)
 end

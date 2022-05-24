@@ -163,7 +163,7 @@ function Pretty.tile(d::For{T}) where {T}
     result *= Pretty.literal("}")
     result *= Pretty.list_layout([
         Pretty.literal(func_string(d.f, Tuple{_eltype.(d.inds)...})),
-        Pretty.literal(sprint(show, d.inds; context = :compact => true))
+        Pretty.literal(sprint(show, d.inds; context = :compact => true)),
     ])
 end
 
