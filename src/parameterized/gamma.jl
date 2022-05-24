@@ -22,13 +22,20 @@ function basemeasure(d::Gamma{(:k,)})
     weightedmeasure(ℓ, Lebesgue())
 end
 
-@kwstruct Gamma(k, θ)
+@kwstruct Gamma(k, σ)
 
-Gamma(k, θ) = Gamma((k = k, θ = θ))
+Gamma(k, σ) = Gamma((k = k, σ = σ))
 
-@useproxy Gamma{(:k, :θ)}
-function proxy(d::Gamma{(:k, :θ)})
-    affine(NamedTuple{(:σ,)}(d.θ), Gamma((k = d.k,)))
+@useproxy Gamma{(:k, :σ)}
+function proxy(d::Gamma{(:k, :σ)})
+    affine(NamedTuple{(:σ,)}(d.σ), Gamma((k = d.k,)))
+end
+
+@kwstruct Gamma(k, λ)
+
+@useproxy Gamma{(:k, :λ)}
+function proxy(d::Gamma{(:k, :λ)})
+    affine(NamedTuple{(:λ,)}(d.λ), Gamma((k = d.k,)))
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Gamma{()}) = rand(rng, T, Exponential())
