@@ -3,6 +3,18 @@ function as(d::PowerMeasure)
 end
 
 function as(d::ProductMeasure{A}) where {A<:AbstractArray}
+    mar = marginals(d)
+    ts = map(as, mar)
+    if allequal(ts)
+        return as(Array, first(ts), size(ts))
+    else
+        error("Not yet implemented")
+    end
+end
+
+using MappedArrays
+
+function as(d::ProductMeasure{A}) where {A<:MappedArrays.ReadonlyMappedArray}
     d1 = marginals(d).f(first(marginals(d).data))
     as(Array, as(d1), size(marginals(d))...)
 end
