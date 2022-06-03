@@ -9,6 +9,8 @@ import Base
 
 @kwstruct Bernoulli(p)
 
+@kwstruct Bernoulli(logitp)
+
 Bernoulli(p) = Bernoulli((p = p,))
 
 basemeasure(::Bernoulli) = CountingMeasure()

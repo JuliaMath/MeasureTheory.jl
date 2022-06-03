@@ -121,6 +121,8 @@ RealizedSamples(rng::AbstractRNG, iter) = RealizedSamples(Realized(rng, iter))
 
 Base.show(io::IO, r::RealizedSamples) = Pretty.pprint(io, r)
 
+Base.size(r::RealizedSamples) = size(r.parent)
+
 function Pretty.quoteof(r::RealizedSamples)
     :(RealizedSamples($(Pretty.quoteof(r.parent.rng)), $(Pretty.quoteof(r.parent.iter))))
 end
