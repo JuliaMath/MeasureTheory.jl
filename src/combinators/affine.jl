@@ -132,9 +132,16 @@ struct OrthoLebesgue{N,T} <: PrimitiveMeasure
     OrthoLebesgue(nt::NamedTuple{N,T}) where {N,T} = new{N,T}(nt)
 end
 
+function insupport(d::OrthoLebesgue, x)
+    f = AffineTransform(d.par)
+    finv = inverse(f)
+    z = finv(x)
+    f(z) ≈ x
+end
+
 basemeasure(d::OrthoLebesgue) = d
 
-logdensity_def(::OrthoLebesgue, x) = static(0)
+logdensity_def(::OrthoLebesgue, x) = static(0.0)
 
 struct Affine{N,M,T} <: AbstractMeasure
     f::AffineTransform{N,T}
