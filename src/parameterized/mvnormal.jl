@@ -22,12 +22,12 @@ export MvNormal
 
 as(d::MvNormal{(:μ,)}) = as(Array, length(d.μ))
 
-as(d::MvNormal{(:Σ,), Tuple{C}}) where {C<:Cholesky}= as(Array, size(d.Σ, 1))
-as(d::MvNormal{(:Λ,), Tuple{C}}) where {C<:Cholesky}= as(Array, size(d.Λ, 1))
-as(d::MvNormal{(:μ, :Σ,), Tuple{C}}) where {C<:Cholesky}= as(Array, size(d.Σ, 1))
-as(d::MvNormal{(:μ, :Λ,), Tuple{C}}) where {C<:Cholesky}= as(Array, size(d.Λ, 1))
+as(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}    = as(Array, size(d.Σ, 1))
+as(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}    = as(Array, size(d.Λ, 1))
+as(d::MvNormal{(:μ, :Σ),Tuple{C}}) where {C<:Cholesky} = as(Array, size(d.Σ, 1))
+as(d::MvNormal{(:μ, :Λ),Tuple{C}}) where {C<:Cholesky} = as(Array, size(d.Λ, 1))
 
-function as(d::MvNormal{(:σ,), Tuple{M}}) where {M<:Triangular} 
+function as(d::MvNormal{(:σ,),Tuple{M}}) where {M<:Triangular}
     σ = d.σ
     if @inbounds all(i -> σ[i] > 0, diagind(σ))
         return as(Array, size(σ, 1))
@@ -36,7 +36,7 @@ function as(d::MvNormal{(:σ,), Tuple{M}}) where {M<:Triangular}
     end
 end
 
-function as(d::MvNormal{(:λ,), Tuple{M}}) where {M<:Triangular} 
+function as(d::MvNormal{(:λ,),Tuple{M}}) where {M<:Triangular}
     λ = d.λ
     if @inbounds all(i -> λ[i] > 0, diagind(λ))
         return as(Array, size(λ, 1))
@@ -55,10 +55,10 @@ rand(rng::AbstractRNG, ::Type{T}, d::MvNormal) where {T} = rand(rng, T, proxy(d)
 
 insupport(d::MvNormal, x) = insupport(proxy(d), x)
 
-proxy(d::MvNormal{(:Σ,), Tuple{C}}) where {C<:Cholesky}= MvNormal(σ=getL(d.Σ))
-proxy(d::MvNormal{(:Λ,), Tuple{C}}) where {C<:Cholesky}= MvNormal(λ=getL(d.λ))
-proxy(d::MvNormal{(:μ, :Σ,), Tuple{C}}) where {C<:Cholesky}= MvNormal(μ=d.μ, σ=getL(d.Σ))
-proxy(d::MvNormal{(:μ, :Λ,), Tuple{C}}) where {C<:Cholesky}= MvNormal(μ=d.μ, λ=getL(d.Λ))
+proxy(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}    = MvNormal(σ = getL(d.Σ))
+proxy(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}    = MvNormal(λ = getL(d.λ))
+proxy(d::MvNormal{(:μ, :Σ),Tuple{C}}) where {C<:Cholesky} = MvNormal(μ = d.μ, σ = getL(d.Σ))
+proxy(d::MvNormal{(:μ, :Λ),Tuple{C}}) where {C<:Cholesky} = MvNormal(μ = d.μ, λ = getL(d.Λ))
 
 # function MvNormal(nt::NamedTuple{(:μ,)})
 #     dim = size(nt.μ)

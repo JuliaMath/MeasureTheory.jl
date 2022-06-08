@@ -119,4 +119,4 @@ function getU(C::Cholesky)
     UpperTriangular(Cuplo === 'U' ? Cfactors : Cfactors')
 end
 
-const Triangular = Union{L,U} where {L<:LowerTriangular, U<:UpperTriangular}
+const Triangular = Union{L,U} where {L<:LowerTriangular,U<:UpperTriangular}
