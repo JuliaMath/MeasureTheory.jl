@@ -23,10 +23,6 @@ function draw2(μ)
     return (x, y)
 end
 
-function test_measure(μ)
-    logdensity_def(μ, testvalue(μ)) isa AbstractFloat
-end
-
 test_measures = Any[
     # Chain(x -> Normal(μ=x), Normal(μ=0.0))
     For(3) do j
@@ -52,6 +48,8 @@ test_measures = Any[
     Normal(2, 3)
     Poisson(3.1)
     StudentT(ν = 2.1)
+    MvNormal(σ = [1 0; 0 1; 1 1])
+    MvNormal(λ = [1 0 1; 0 1 1])
     Uniform()
     Counting(Float64)
     Dirac(0.0) + Normal()
@@ -67,7 +65,6 @@ testbroken_measures = Any[
 @testset "testvalue" begin
     for μ in test_measures
         @info "testing $μ"
-        @test test_measure(μ)
         test_interface(μ)
     end
 
