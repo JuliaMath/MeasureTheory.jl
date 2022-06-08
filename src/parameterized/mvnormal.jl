@@ -21,7 +21,7 @@ proxy(d::MvNormal) = affine(params(d), Normal()^supportdim(d))
 
 rand(rng::AbstractRNG, ::Type{T}, d::MvNormal) where {T} = rand(rng, T, proxy(d))
 
-insupport(::MvNormal, x) = true
+insupport(d::MvNormal, x) = insupport(proxy(d), x)
 
 # function MvNormal(nt::NamedTuple{(:μ,)})
 #     dim = size(nt.μ)
