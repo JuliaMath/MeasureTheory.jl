@@ -159,7 +159,7 @@ function Pretty.tile(d::Affine)
     Pretty.list_layout([pars, Pretty.tile(d.parent)]; prefix = :Affine)
 end
 
-function testvalue(d::Affine)
+@inline function testvalue(d::Affine)
     f = getfield(d, :f)
     z = testvalue(parent(d))
     return f(z)
