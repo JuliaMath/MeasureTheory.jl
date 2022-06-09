@@ -23,6 +23,12 @@ function draw2(μ)
     return (x, y)
 end
 
+x = randn(10,3)
+Σ = cholesky(x'*x)
+Λ = cholesky(inv(Σ))
+σ = MeasureTheory.getL(Σ)
+λ = MeasureTheory.getL(Λ)
+
 test_measures = Any[
     # Chain(x -> Normal(μ=x), Normal(μ=0.0))
     For(3) do j
@@ -50,6 +56,10 @@ test_measures = Any[
     StudentT(ν = 2.1)
     MvNormal(σ = [1 0; 0 1; 1 1])
     MvNormal(λ = [1 0 1; 0 1 1])
+    MvNormal(Σ = Σ)
+    MvNormal(Λ = Λ)
+    MvNormal(σ = σ)
+    MvNormal(λ = λ)
     Uniform()
     Counting(Float64)
     Dirac(0.0) + Normal()

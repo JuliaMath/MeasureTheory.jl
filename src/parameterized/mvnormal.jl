@@ -60,7 +60,16 @@ end
 
 supportdim(d::MvNormal) = supportdim(params(d))
 
+supportdim(nt::NamedTuple{(:Σ,)}) = size(nt.Σ, 1)
+supportdim(nt::NamedTuple{(:μ,:Σ)}) = size(nt.Σ, 1)
+supportdim(nt::NamedTuple{(:Λ,)}) = size(nt.Λ, 1)
+supportdim(nt::NamedTuple{(:μ,:Λ)}) = size(nt.Λ, 1)
+
 @useproxy MvNormal
+
+for N in [(:Σ,), (:μ,:Σ), (:Λ,), (:μ,:Λ)]
+    @eval basemeasure_depth(d::MvNormal{$N}) = static(2)
+end
 
 proxy(d::MvNormal) = affine(params(d), Normal()^supportdim(d))
 
@@ -68,10 +77,10 @@ rand(rng::AbstractRNG, ::Type{T}, d::MvNormal) where {T} = rand(rng, T, proxy(d)
 
 insupport(d::MvNormal, x) = insupport(proxy(d), x)
 
-proxy(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}    = MvNormal(σ = getL(d.Σ))
-proxy(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}    = MvNormal(λ = getL(d.λ))
-proxy(d::MvNormal{(:μ, :Σ),Tuple{C}}) where {C<:Cholesky} = MvNormal(μ = d.μ, σ = getL(d.Σ))
-proxy(d::MvNormal{(:μ, :Λ),Tuple{C}}) where {C<:Cholesky} = MvNormal(μ = d.μ, λ = getL(d.Λ))
+@inline proxy(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}    = affine((σ = getL(d.Σ),), Normal()^supportdim(d))
+@inline proxy(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}    = affine((λ = getL(d.Λ),), Normal()^supportdim(d))
+@inline proxy(d::MvNormal{(:μ, :Σ),Tuple{C}}) where {C<:Cholesky} = affine((μ = d.μ, σ = getL(d.Σ)), Normal()^supportdim(d))
+@inline proxy(d::MvNormal{(:μ, :Λ),Tuple{C}}) where {C<:Cholesky} = affine((μ = d.μ, λ = getL(d.Λ)), Normal()^supportdim(d))
 
 # function MvNormal(nt::NamedTuple{(:μ,)})
 #     dim = size(nt.μ)
