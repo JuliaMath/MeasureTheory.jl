@@ -77,10 +77,18 @@ rand(rng::AbstractRNG, ::Type{T}, d::MvNormal) where {T} = rand(rng, T, proxy(d)
 
 insupport(d::MvNormal, x) = insupport(proxy(d), x)
 
-@inline proxy(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}    = affine((σ = getL(d.Σ),), Normal()^supportdim(d))
-@inline proxy(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}    = affine((λ = getL(d.Λ),), Normal()^supportdim(d))
-@inline proxy(d::MvNormal{(:μ, :Σ),Tuple{C}}) where {C<:Cholesky} = affine((μ = d.μ, σ = getL(d.Σ)), Normal()^supportdim(d))
-@inline proxy(d::MvNormal{(:μ, :Λ),Tuple{C}}) where {C<:Cholesky} = affine((μ = d.μ, λ = getL(d.Λ)), Normal()^supportdim(d))
+# Note: (C::Cholesky).L may or may not make a copy, depending on C.uplo, which is not included in the type
+@inline proxy(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}    = affine((σ = d.Σ.L,), Normal()^supportdim(d))
+@inline proxy(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}    = affine((λ = d.Λ.L,), Normal()^supportdim(d))
+@inline proxy(d::MvNormal{(:μ, :Σ),Tuple{C}}) where {C<:Cholesky} = affine((μ = d.μ, σ = d.Σ.L), Normal()^supportdim(d))
+@inline proxy(d::MvNormal{(:μ, :Λ),Tuple{C}}) where {C<:Cholesky} = affine((μ = d.μ, λ = d.Λ.L), Normal()^supportdim(d))
+
+# # Shouldn't need these, but it was having trouble inferring the type
+# @inline testvalue(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}    = zeros(size(d.Σ, 1))
+# @inline testvalue(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}    = zeros(size(d.Λ, 1))
+# @inline testvalue(d::MvNormal{(:μ, :Σ),Tuple{C}}) where {C<:Cholesky} = zeros(size(d.Σ, 1))
+# @inline testvalue(d::MvNormal{(:μ, :Λ),Tuple{C}}) where {C<:Cholesky} = zeros(size(d.Λ, 1))
+
 
 # function MvNormal(nt::NamedTuple{(:μ,)})
 #     dim = size(nt.μ)
