@@ -41,6 +41,11 @@ Base.size(f::AffineTransform{(:μ, :λ)}) = size(f.λ)
 Base.size(f::AffineTransform{(:σ,)}) = size(f.σ)
 Base.size(f::AffineTransform{(:λ,)}) = size(f.λ)
 
+LinearAlgebra.rank(f::AffineTransform{(:σ,)})    = rank(f.σ)
+LinearAlgebra.rank(f::AffineTransform{(:λ,)})    = rank(f.λ)
+LinearAlgebra.rank(f::AffineTransform{(:μ,:σ,)}) = rank(f.σ)
+LinearAlgebra.rank(f::AffineTransform{(:μ,:λ,)}) = rank(f.λ)
+
 function Base.size(f::AffineTransform{(:μ,)})
     (n,) = size(f.μ)
     return (n, n)
@@ -132,9 +137,16 @@ struct OrthoLebesgue{N,T} <: PrimitiveMeasure
     OrthoLebesgue(nt::NamedTuple{N,T}) where {N,T} = new{N,T}(nt)
 end
 
+function insupport(d::OrthoLebesgue, x)
+    f = AffineTransform(d.par)
+    finv = inverse(f)
+    z = finv(x)
+    f(z) ≈ x
+end
+
 basemeasure(d::OrthoLebesgue) = d
 
-logdensity_def(::OrthoLebesgue, x) = static(0)
+logdensity_def(::OrthoLebesgue, x) = static(0.0)
 
 struct Affine{N,M,T} <: AbstractMeasure
     f::AffineTransform{N,T}
@@ -147,7 +159,7 @@ function Pretty.tile(d::Affine)
     Pretty.list_layout([pars, Pretty.tile(d.parent)]; prefix = :Affine)
 end
 
-function testvalue(d::Affine)
+@inline function testvalue(d::Affine)
     f = getfield(d, :f)
     z = testvalue(parent(d))
     return f(z)
