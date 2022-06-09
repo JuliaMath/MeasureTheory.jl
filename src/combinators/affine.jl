@@ -41,6 +41,11 @@ Base.size(f::AffineTransform{(:μ, :λ)}) = size(f.λ)
 Base.size(f::AffineTransform{(:σ,)}) = size(f.σ)
 Base.size(f::AffineTransform{(:λ,)}) = size(f.λ)
 
+LinearAlgebra.rank(f::AffineTransform{(:σ,)})    = rank(f.σ)
+LinearAlgebra.rank(f::AffineTransform{(:λ,)})    = rank(f.λ)
+LinearAlgebra.rank(f::AffineTransform{(:μ,:σ,)}) = rank(f.σ)
+LinearAlgebra.rank(f::AffineTransform{(:μ,:λ,)}) = rank(f.λ)
+
 function Base.size(f::AffineTransform{(:μ,)})
     (n,) = size(f.μ)
     return (n, n)

@@ -45,6 +45,19 @@ function as(d::MvNormal{(:λ,),Tuple{M}}) where {M<:Triangular}
     end
 end
 
+for N in setdiff(AFFINEPARS, [(:μ,)])
+    @eval begin
+        function as(d::MvNormal{$N})
+            p = proxy(d)
+            if rank(getfield(p,:f)) == only(supportdim(d))
+                return as(Array, supportdim(d))
+            else
+                @error "Not yet implemented"
+            end
+        end
+    end
+end
+
 supportdim(d::MvNormal) = supportdim(params(d))
 
 @useproxy MvNormal
