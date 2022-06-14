@@ -137,8 +137,20 @@ struct OrthoLebesgue{N,T} <: PrimitiveMeasure
     OrthoLebesgue(nt::NamedTuple{N,T}) where {N,T} = new{N,T}(nt)
 end
 
+params(d::OrthoLebesgue) = getfield(d, :par)
+
+Base.getproperty(d::OrthoLebesgue, s::Symbol) = getproperty(params(d), s)
+Base.propertynames(d::OrthoLebesgue) = propertynames(params(d))
+
+testvalue(d::OrthoLebesgue{(:μ, :σ)}) = d.μ
+testvalue(d::OrthoLebesgue{(:μ, :λ)}) = d.μ
+testvalue(d::OrthoLebesgue{(:μ,)}) = d.μ
+
+testvalue(d::OrthoLebesgue{(:σ,)}) = zeros(size(d.σ, 1))
+testvalue(d::OrthoLebesgue{(:λ,)}) = zeros(size(d.λ, 2))
+
 function insupport(d::OrthoLebesgue, x)
-    f = AffineTransform(d.par)
+    f = AffineTransform(params(d))
     finv = inverse(f)
     z = finv(x)
     f(z) ≈ x
