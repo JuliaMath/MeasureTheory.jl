@@ -10,8 +10,8 @@ using FillArrays
 using MeasureTheory
 using MeasureBase.Interface
 using MeasureTheory: kernel
-
 using Aqua
+using IfElse
 Aqua.test_all(MeasureTheory; ambiguities = false, unbound_args = false)
 
 function draw2(μ)
@@ -611,10 +611,16 @@ end
 @testset "IfElseMeasure" begin
     p = rand()
     x = randn()
-    @test logdensityof(MeasureTheory.IfElse.ifelse(Bernoulli(p), Normal(), Normal()), x) ≈
-          logdensityof(Normal(), x)
-    @test logdensityof(
-        MeasureTheory.IfElse.ifelse(Bernoulli(p), Normal(2, 3), Normal()),
-        x,
-    ) ≈ logdensityof(p * Normal(2, 3) + (1 - p) * Normal(), x)
+    
+    @test let
+        a = logdensityof(IfElse.ifelse(Bernoulli(p), Normal(), Normal()), x)
+        b = logdensityof(Normal(), x)
+        a ≈ b
+    end
+
+    @test let
+        a = logdensityof(IfElse.ifelse(Bernoulli(p), Normal(2, 3), Normal()), x)
+        b = logdensityof(p * Normal(2, 3) + (1 - p) * Normal(), x)
+        a ≈ b
+    end
 end
