@@ -9,6 +9,7 @@ pages = [
     "Tutorials" => [
         "Adding a new measure" => "adding.md",
         "Affine transformations" => "affine.md",
+        "Variate transformations" => "vartransform.md",
     ],
     "API Reference" => [
         "MeasureBase" => "api_measurebase.md",
