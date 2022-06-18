@@ -4,6 +4,6 @@ Often one needs to find a map `f` that transports samples of probability measure
 
 Using [`vartransform`](@ref) we can (for many measures) automatically generate this function `f = vartransform(v, μ)` so that [`pushfwd(f, μ)`](@ref) becomes equal to `v`. Instead of sampling `∫(L, v)` we can now sample `∫(L∘f, μ)` by transforming the sampled points `X_μ`  to sample points `X_v = f.(X_μ)`.
 
-A typical application arises in nested sampling which natively uses `μ` as its base measure, while many MCMC sampling algorithms work best in an unbounded space and prefer base measures such as `μ = StdNormal()^n`. 
+A typical application arises in nested sampling which natively uses `μ = StdUniform()^n` as its base measure, while many MCMC sampling algorithms work best in an unbounded space and prefer base measures such as `μ = StdNormal()^n` or `μ = StdLogistic()^n`.
 
 Transformation functions `f = vartransform(v, μ)` support `f_inverse = InverseFunctions.inverse(f)` and `x_v, ladj = ChangesOfVariables.with_logabsdet_jacobian(f, x_μ)`.
