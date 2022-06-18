@@ -10,8 +10,8 @@ using FillArrays
 using MeasureTheory
 using MeasureBase.Interface
 using MeasureTheory: kernel
-
 using Aqua
+using IfElse
 Aqua.test_all(MeasureTheory; ambiguities = false, unbound_args = false)
 
 function draw2(μ)
@@ -23,9 +23,11 @@ function draw2(μ)
     return (x, y)
 end
 
-function test_measure(μ)
-    logdensity_def(μ, testvalue(μ)) isa AbstractFloat
-end
+x = randn(10,3)
+Σ = cholesky(x'*x)
+Λ = cholesky(inv(Σ))
+σ = MeasureTheory.getL(Σ)
+λ = MeasureTheory.getL(Λ)
 
 test_measures = Any[
     # Chain(x -> Normal(μ=x), Normal(μ=0.0))
@@ -52,6 +54,12 @@ test_measures = Any[
     Normal(2, 3)
     Poisson(3.1)
     StudentT(ν = 2.1)
+    MvNormal(σ = [1 0; 0 1; 1 1])
+    MvNormal(λ = [1 0 1; 0 1 1])
+    MvNormal(Σ = Σ)
+    MvNormal(Λ = Λ)
+    MvNormal(σ = σ)
+    MvNormal(λ = λ)
     Uniform()
     Counting(Float64)
     Dirac(0.0) + Normal()
@@ -67,7 +75,6 @@ testbroken_measures = Any[
 @testset "testvalue" begin
     for μ in test_measures
         @info "testing $μ"
-        @test test_measure(μ)
         test_interface(μ)
     end
 
@@ -604,10 +611,16 @@ end
 @testset "IfElseMeasure" begin
     p = rand()
     x = randn()
-    @test logdensityof(MeasureTheory.IfElse.ifelse(Bernoulli(p), Normal(), Normal()), x) ≈
-          logdensityof(Normal(), x)
-    @test logdensityof(
-        MeasureTheory.IfElse.ifelse(Bernoulli(p), Normal(2, 3), Normal()),
-        x,
-    ) ≈ logdensityof(p * Normal(2, 3) + (1 - p) * Normal(), x)
+    
+    @test let
+        a = logdensityof(IfElse.ifelse(Bernoulli(p), Normal(), Normal()), x)
+        b = logdensityof(Normal(), x)
+        a ≈ b
+    end
+
+    @test let
+        a = logdensityof(IfElse.ifelse(Bernoulli(p), Normal(2, 3), Normal()), x)
+        b = logdensityof(p * Normal(2, 3) + (1 - p) * Normal(), x)
+        a ≈ b
+    end
 end

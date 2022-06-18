@@ -104,3 +104,19 @@ function func_string(f, types)
         return string(f)
     end
 end
+
+function getL(C::Cholesky)
+    Cfactors = getfield(C, :factors)
+    Cuplo    = getfield(C, :uplo)
+
+    LowerTriangular(Cuplo === 'L' ? Cfactors : Cfactors')
+end
+
+function getU(C::Cholesky)
+    Cfactors = getfield(C, :factors)
+    Cuplo    = getfield(C, :uplo)
+
+    UpperTriangular(Cuplo === 'U' ? Cfactors : Cfactors')
+end
+
+const Triangular = Union{L,U} where {L<:LowerTriangular,U<:UpperTriangular}
