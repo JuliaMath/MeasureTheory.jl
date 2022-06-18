@@ -1,5 +1,6 @@
 export Affine, AffineTransform
 using LinearAlgebra
+import Base
 
 const AFFINEPARS = [
     (:μ, :σ)
@@ -157,7 +158,7 @@ Affine(nt::NamedTuple, μ::AbstractMeasure) = affine(nt, μ)
 
 Affine(nt::NamedTuple) = affine(nt)
 
-parent(d::Affine) = getfield(d, :parent)
+Base.parent(d::Affine) = getfield(d, :parent)
 
 function params(μ::Affine)
     nt1 = getfield(getfield(μ, :f), :par)
@@ -303,4 +304,8 @@ end
 
 @inline function insupport(d::Affine, x)
     insupport(d.parent, inverse(d.f)(x))
+end
+
+@inline function Distributions.cdf(d::Affine, x) 
+    cdf(parent(d), inverse(d.f)(x))
 end
