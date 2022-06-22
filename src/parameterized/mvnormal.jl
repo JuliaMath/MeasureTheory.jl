@@ -24,8 +24,8 @@ as(d::MvNormal{(:μ,)}) = as(Array, length(d.μ))
 
 as(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}    = as(Array, size(d.Σ, 1))
 as(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}    = as(Array, size(d.Λ, 1))
-as(d::MvNormal{(:μ, :Σ),Tuple{C}}) where {C<:Cholesky} = as(Array, size(d.Σ, 1))
-as(d::MvNormal{(:μ, :Λ),Tuple{C}}) where {C<:Cholesky} = as(Array, size(d.Λ, 1))
+as(d::MvNormal{(:μ, :Σ),<:Tuple{T,C}}) where {T,C<:Cholesky} = as(Array, size(d.Σ, 1))
+as(d::MvNormal{(:μ, :Λ),<:Tuple{T,C}}) where {T,C<:Cholesky} = as(Array, size(d.Λ, 1))
 
 function as(d::MvNormal{(:σ,),Tuple{M}}) where {M<:Triangular}
     σ = d.σ
@@ -80,5 +80,5 @@ insupport(d::MvNormal, x) = insupport(proxy(d), x)
 # Note: (C::Cholesky).L may or may not make a copy, depending on C.uplo, which is not included in the type
 @inline proxy(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}    = affine((σ = d.Σ.L,), Normal()^supportdim(d))
 @inline proxy(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}    = affine((λ = d.Λ.L,), Normal()^supportdim(d))
-@inline proxy(d::MvNormal{(:μ, :Σ),Tuple{C}}) where {C<:Cholesky} = affine((μ = d.μ, σ = d.Σ.L), Normal()^supportdim(d))
-@inline proxy(d::MvNormal{(:μ, :Λ),Tuple{C}}) where {C<:Cholesky} = affine((μ = d.μ, λ = d.Λ.L), Normal()^supportdim(d))
+@inline proxy(d::MvNormal{(:μ, :Σ),Tuple{T,C}}) where {T,C<:Cholesky} = affine((μ = d.μ, σ = d.Σ.L), Normal()^supportdim(d))
+@inline proxy(d::MvNormal{(:μ, :Λ),Tuple{T,C}}) where {T,C<:Cholesky} = affine((μ = d.μ, λ = d.Λ.L), Normal()^supportdim(d))

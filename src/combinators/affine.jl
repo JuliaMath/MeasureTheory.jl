@@ -263,6 +263,10 @@ end
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
 end
 
+@inline function basemeasure(d::MeasureTheory.Affine{N, L, Tuple{A}}) where {N, L<:MeasureBase.Lebesgue, A<:AbstractArray}
+    weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
+end
+
 @inline function basemeasure(
     d::Affine{N,M,Tuple{A1,A2}},
 ) where {N,M,A1<:AbstractArray,A2<:AbstractArray}

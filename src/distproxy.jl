@@ -25,7 +25,23 @@ for m in keys(PROXIES)
         @eval begin
             import $m: $f
             export $f
-            $m.$f(d::AbstractMeasure, args...) = $m.$f(MeasureTheory.proxy(d), args...)
         end
+    end
+end
+
+entropy(m::AbstractMeasure, b::Real) = entropy(proxy(m), b)
+mean(m::AbstractMeasure) = mean(proxy(m))
+std(m::AbstractMeasure) = std(proxy(m))
+var(m::AbstractMeasure) = var(proxy(m))
+quantile(m::AbstractMeasure, q) = quantile(proxy(m), q)
+
+for f in [
+    :cdf
+    :ccdf
+    :logcdf
+    :logccdf
+]
+    @eval begin
+        $f(d::AbstractMeasure, args...) = $f(MeasureTheory.proxy(d), args...)
     end
 end

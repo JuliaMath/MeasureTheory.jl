@@ -12,7 +12,18 @@ using MeasureBase.Interface
 using MeasureTheory: kernel
 using Aqua
 using IfElse
-Aqua.test_all(MeasureTheory; ambiguities = false, unbound_args = false)
+
+# Aqua._test_ambiguities(
+#     Aqua.aspkgids(MeasureTheory);
+#     exclude = [Random.AbstractRNG],
+#     # packages::Vector{PkgId};
+#     # color::Union{Bool, Nothing} = nothing,
+#     # exclude::AbstractArray = [],
+#     # # Options to be passed to `Test.detect_ambiguities`:
+#     # detect_ambiguities_options...,
+# )
+    
+Aqua.test_all(MeasureBase; ambiguities = false)
 
 function draw2(μ)
     x = rand(μ)
