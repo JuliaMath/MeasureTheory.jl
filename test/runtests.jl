@@ -22,7 +22,7 @@ using IfElse
 #     # # Options to be passed to `Test.detect_ambiguities`:
 #     # detect_ambiguities_options...,
 # )
-    
+
 Aqua.test_all(MeasureBase; ambiguities = false)
 
 function draw2(μ)
@@ -34,8 +34,8 @@ function draw2(μ)
     return (x, y)
 end
 
-x = randn(10,3)
-Σ = cholesky(x'*x)
+x = randn(10, 3)
+Σ = cholesky(x' * x)
 Λ = cholesky(inv(Σ))
 σ = MeasureTheory.getL(Σ)
 λ = MeasureTheory.getL(Λ)
@@ -622,7 +622,7 @@ end
 @testset "IfElseMeasure" begin
     p = rand()
     x = randn()
-    
+
     @test let
         a = logdensityof(IfElse.ifelse(Bernoulli(p), Normal(), Normal()), x)
         b = logdensityof(Normal(), x)

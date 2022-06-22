@@ -44,8 +44,8 @@ Base.size(f::AffineTransform{(:λ,)}) = size(f.λ)
 
 LinearAlgebra.rank(f::AffineTransform{(:σ,)})    = rank(f.σ)
 LinearAlgebra.rank(f::AffineTransform{(:λ,)})    = rank(f.λ)
-LinearAlgebra.rank(f::AffineTransform{(:μ,:σ,)}) = rank(f.σ)
-LinearAlgebra.rank(f::AffineTransform{(:μ,:λ,)}) = rank(f.λ)
+LinearAlgebra.rank(f::AffineTransform{(:μ, :σ)}) = rank(f.σ)
+LinearAlgebra.rank(f::AffineTransform{(:μ, :λ)}) = rank(f.λ)
 
 function Base.size(f::AffineTransform{(:μ,)})
     (n,) = size(f.μ)
@@ -263,7 +263,9 @@ end
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
 end
 
-@inline function basemeasure(d::MeasureTheory.Affine{N, L, Tuple{A}}) where {N, L<:MeasureBase.Lebesgue, A<:AbstractArray}
+@inline function basemeasure(
+    d::MeasureTheory.Affine{N,L,Tuple{A}},
+) where {N,L<:MeasureBase.Lebesgue,A<:AbstractArray}
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
 end
 
@@ -334,6 +336,6 @@ end
     insupport(d.parent, inverse(d.f)(x))
 end
 
-@inline function Distributions.cdf(d::Affine, x) 
+@inline function Distributions.cdf(d::Affine, x)
     cdf(parent(d), inverse(d.f)(x))
 end

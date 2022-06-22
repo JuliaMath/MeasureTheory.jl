@@ -84,9 +84,9 @@ FloatBitsTypes = [Float16, Float32, Float64]
 
 for I in IntBitsTypes
     for T in [
-        Random.SamplerTrivial{Random.UInt104Raw{I}} 
-        Random.SamplerTrivial{Random.UInt10Raw{I}} 
-    ] 
+        Random.SamplerTrivial{Random.UInt104Raw{I}}
+        Random.SamplerTrivial{Random.UInt10Raw{I}}
+    ]
         @eval begin
             function Base.rand(r::ResettableRNG, sp::$T)
                 rand(r.rng, sp)
@@ -98,7 +98,7 @@ end
 for U in UIntBitsTypes
     for I in IntBitsTypes
         for T in [
-            Random.SamplerRangeInt{T,U} where T<:Union{IntBitsTypes...}
+            Random.SamplerRangeInt{T,U} where {T<:Union{IntBitsTypes...}}
             Random.SamplerRangeFast{U,I}
         ]
             @eval begin
@@ -110,24 +110,22 @@ for U in UIntBitsTypes
     end
 end
 
-
-
 for T in [
     Random.Sampler
     Random.SamplerBigInt
-    Random.SamplerTag{<:Set, <:Random.Sampler}
+    Random.SamplerTag{<:Set,<:Random.Sampler}
     # Random.SamplerTrivial{Random.CloseOpen01{T}} where {T<:FloatBitsTypes}
     # Random.SamplerTrivial{Random.UInt23Raw{UInt32}}
     Random.UniformT
-    Random.SamplerSimple{T, S, E} where {E, S, T<:Tuple} 
-    Random.SamplerType{T} where T<:AbstractChar
-    Random.SamplerTrivial{Tuple{A}} where A
-    Random.SamplerSimple{Tuple{A, B, C}, S, E} where {E, S, A, B, C}
-    Random.SamplerSimple{<:AbstractArray, <:Random.Sampler}
+    Random.SamplerSimple{T,S,E} where {E,S,T<:Tuple}
+    Random.SamplerType{T} where {T<:AbstractChar}
+    Random.SamplerTrivial{Tuple{A}} where {A}
+    Random.SamplerSimple{Tuple{A,B,C},S,E} where {E,S,A,B,C}
+    Random.SamplerSimple{<:AbstractArray,<:Random.Sampler}
     Random.Masked
-    Random.SamplerSimple{BitSet, <:Random.Sampler}
-    Random.SamplerTrivial{<:Random.UniformBits{T}, E} where {E,T}
-] 
+    Random.SamplerSimple{BitSet,<:Random.Sampler}
+    Random.SamplerTrivial{<:Random.UniformBits{T},E} where {E,T}
+]
     @eval begin
         function Base.rand(r::ResettableRNG, sp::$T)
             rand(r.rng, sp)
