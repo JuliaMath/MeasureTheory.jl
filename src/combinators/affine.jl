@@ -1,5 +1,6 @@
 export Affine, AffineTransform
 using LinearAlgebra
+import Base
 
 const AFFINEPARS = [
     (:μ, :σ)
@@ -43,8 +44,8 @@ Base.size(f::AffineTransform{(:λ,)}) = size(f.λ)
 
 LinearAlgebra.rank(f::AffineTransform{(:σ,)})    = rank(f.σ)
 LinearAlgebra.rank(f::AffineTransform{(:λ,)})    = rank(f.λ)
-LinearAlgebra.rank(f::AffineTransform{(:μ,:σ,)}) = rank(f.σ)
-LinearAlgebra.rank(f::AffineTransform{(:μ,:λ,)}) = rank(f.λ)
+LinearAlgebra.rank(f::AffineTransform{(:μ, :σ)}) = rank(f.σ)
+LinearAlgebra.rank(f::AffineTransform{(:μ, :λ)}) = rank(f.λ)
 
 function Base.size(f::AffineTransform{(:μ,)})
     (n,) = size(f.μ)
@@ -181,7 +182,7 @@ Affine(nt::NamedTuple, μ::AbstractMeasure) = affine(nt, μ)
 
 Affine(nt::NamedTuple) = affine(nt)
 
-parent(d::Affine) = getfield(d, :parent)
+Base.parent(d::Affine) = getfield(d, :parent)
 
 function params(μ::Affine)
     nt1 = getfield(getfield(μ, :f), :par)
@@ -263,6 +264,12 @@ end
 end
 
 @inline function basemeasure(
+    d::MeasureTheory.Affine{N,L,Tuple{A}},
+) where {N,L<:MeasureBase.Lebesgue,A<:AbstractArray}
+    weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
+end
+
+@inline function basemeasure(
     d::Affine{N,M,Tuple{A1,A2}},
 ) where {N,M,A1<:AbstractArray,A2<:AbstractArray}
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
@@ -327,4 +334,8 @@ end
 
 @inline function insupport(d::Affine, x)
     insupport(d.parent, inverse(d.f)(x))
+end
+
+@inline function Distributions.cdf(d::Affine, x)
+    cdf(parent(d), inverse(d.f)(x))
 end

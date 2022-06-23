@@ -22,14 +22,14 @@ export MvNormal
 
 as(d::MvNormal{(:μ,)}) = as(Array, length(d.μ))
 
-as(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}    = as(Array, size(d.Σ, 1))
-as(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}    = as(Array, size(d.Λ, 1))
-as(d::MvNormal{(:μ, :Σ),Tuple{C}}) where {C<:Cholesky} = as(Array, size(d.Σ, 1))
-as(d::MvNormal{(:μ, :Λ),Tuple{C}}) where {C<:Cholesky} = as(Array, size(d.Λ, 1))
+as(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky} = as(Array, size(d.Σ, 1))
+as(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky} = as(Array, size(d.Λ, 1))
+as(d::MvNormal{(:μ, :Σ),<:Tuple{T,C}}) where {T,C<:Cholesky} = as(Array, size(d.Σ, 1))
+as(d::MvNormal{(:μ, :Λ),<:Tuple{T,C}}) where {T,C<:Cholesky} = as(Array, size(d.Λ, 1))
 
 function as(d::MvNormal{(:σ,),Tuple{M}}) where {M<:Triangular}
     σ = d.σ
-    if @inbounds all(i -> σ[i] > 0, diagind(σ))
+    if @inbounds all(i -> σ[i] ≠ 0, diagind(σ))
         return as(Array, size(σ, 1))
     else
         @error "Not implemented yet"
@@ -49,7 +49,7 @@ for N in setdiff(AFFINEPARS, [(:μ,)])
     @eval begin
         function as(d::MvNormal{$N})
             p = proxy(d)
-            if rank(getfield(p,:f)) == only(supportdim(d))
+            if rank(getfield(p, :f)) == only(supportdim(d))
                 return as(Array, supportdim(d))
             else
                 @error "Not yet implemented"
@@ -61,13 +61,13 @@ end
 supportdim(d::MvNormal) = supportdim(params(d))
 
 supportdim(nt::NamedTuple{(:Σ,)}) = size(nt.Σ, 1)
-supportdim(nt::NamedTuple{(:μ,:Σ)}) = size(nt.Σ, 1)
+supportdim(nt::NamedTuple{(:μ, :Σ)}) = size(nt.Σ, 1)
 supportdim(nt::NamedTuple{(:Λ,)}) = size(nt.Λ, 1)
-supportdim(nt::NamedTuple{(:μ,:Λ)}) = size(nt.Λ, 1)
+supportdim(nt::NamedTuple{(:μ, :Λ)}) = size(nt.Λ, 1)
 
 @useproxy MvNormal
 
-for N in [(:Σ,), (:μ,:Σ), (:Λ,), (:μ,:Λ)]
+for N in [(:Σ,), (:μ, :Σ), (:Λ,), (:μ, :Λ)]
     @eval basemeasure_depth(d::MvNormal{$N}) = static(2)
 end
 
@@ -78,7 +78,15 @@ rand(rng::AbstractRNG, ::Type{T}, d::MvNormal) where {T} = rand(rng, T, proxy(d)
 insupport(d::MvNormal, x) = insupport(proxy(d), x)
 
 # Note: (C::Cholesky).L may or may not make a copy, depending on C.uplo, which is not included in the type
-@inline proxy(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}    = affine((σ = d.Σ.L,), Normal()^supportdim(d))
-@inline proxy(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}    = affine((λ = d.Λ.L,), Normal()^supportdim(d))
-@inline proxy(d::MvNormal{(:μ, :Σ),Tuple{C}}) where {C<:Cholesky} = affine((μ = d.μ, σ = d.Σ.L), Normal()^supportdim(d))
-@inline proxy(d::MvNormal{(:μ, :Λ),Tuple{C}}) where {C<:Cholesky} = affine((μ = d.μ, λ = d.Λ.L), Normal()^supportdim(d))
+@inline function proxy(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky}
+    affine((σ = d.Σ.L,), Normal()^supportdim(d))
+end
+@inline function proxy(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky}
+    affine((λ = d.Λ.L,), Normal()^supportdim(d))
+end
+@inline function proxy(d::MvNormal{(:μ, :Σ),Tuple{T,C}}) where {T,C<:Cholesky}
+    affine((μ = d.μ, σ = d.Σ.L), Normal()^supportdim(d))
+end
+@inline function proxy(d::MvNormal{(:μ, :Λ),Tuple{T,C}}) where {T,C<:Cholesky}
+    affine((μ = d.μ, λ = d.Λ.L), Normal()^supportdim(d))
+end

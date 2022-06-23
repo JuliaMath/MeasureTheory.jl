@@ -48,6 +48,6 @@ function logdensity_def(d::InverseGaussian{(:μ, :ϕ)}, x)
 end
 
 function basemeasure(d::InverseGaussian{(:μ, :ϕ)})
-    ℓ = static(-0.5) * (static(log2π) + log(d.ϕ))
+    ℓ = static(-0.5) * (static(float(log2π)) + log(d.ϕ))
     weightedmeasure(ℓ, Lebesgue())
 end

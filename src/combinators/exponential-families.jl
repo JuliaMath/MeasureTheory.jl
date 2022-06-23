@@ -1,4 +1,5 @@
 export ExponentialFamily
+using LazyArrays
 
 @concrete terse struct ExponentialFamily <: AbstractTransitionKernel
     support_contains
@@ -16,10 +17,10 @@ function ExponentialFamily(support_contains, base, mdim, pdim, t, a)
     return ExponentialFamily(support_contains, base, mdim, pdim, t, I, a)
 end
 
-function MeasureBase.powermeasure(fam::ExponentialFamily, dims::NTuple{N,I}) where {N,I}
+function MeasureBase.powermeasure(fam::ExponentialFamily, dims::NTuple)
     support_contains(x) = all(xj -> fam.support_contains(xj), x)
     t = Tuple((y -> f.(y) for f in fam.t))
-    a(η) = BroadcastArray(fam.a, η)
+    a(η) = LazyArrays.BroadcastArray(fam.a, η)
     p = prod(dims)
     ExponentialFamily(
         support_contains,
@@ -31,6 +32,8 @@ function MeasureBase.powermeasure(fam::ExponentialFamily, dims::NTuple{N,I}) whe
         a,
     )
 end
+
+powermeasure(fam::ExponentialFamily, ::Tuple{}) = fam
 
 @concrete terse struct ExpFamMeasure <: AbstractMeasure
     fam

@@ -146,7 +146,7 @@ HalfNormal(σ) = HalfNormal((σ = σ,))
 end
 
 @inline function basemeasure(d::Normal{(:σ²,)})
-    ℓ = static(-0.5) * (static(log2π) + log(d.σ²))
+    ℓ = static(-0.5) * (static(float(log2π)) + log(d.σ²))
     weightedmeasure(ℓ, Lebesgue())
 end
 
