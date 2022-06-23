@@ -29,7 +29,7 @@ as(d::MvNormal{(:μ, :Λ),<:Tuple{T,C}}) where {T,C<:Cholesky} = as(Array, size(
 
 function as(d::MvNormal{(:σ,),Tuple{M}}) where {M<:Triangular}
     σ = d.σ
-    if @inbounds all(i -> σ[i] > 0, diagind(σ))
+    if @inbounds all(i -> σ[i] ≠ 0, diagind(σ))
         return as(Array, size(σ, 1))
     else
         @error "Not implemented yet"
