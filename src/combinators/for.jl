@@ -70,7 +70,9 @@ as(d::For) = as(Array, as(first(marginals(d))), size(first(d.inds))...)
 end
 
 function logdensity_def(d::For, x::AbstractVector)
-    get_i(j) = tuple((getindex(ind, j) for ind in d.inds)...)
+    get_i(j) = map(Base.Fix2(getindex, j), d.inds)
+    # get_i(j) =  (getindex(ind, j) for ind in d.inds)
+    # get_i(j) =  tuple((getindex(ind, j) for ind in d.inds)...)
     sum(eachindex(x)) do j
         i = get_i(j)
         @inbounds logdensity_def(d.f(i...), x[j])
@@ -117,9 +119,8 @@ end
     ::False,
 ) where {T,F,I,N,B}
     dim = size(first(d.inds))
-    base = For(d.inds) do j
-        basemeasure(d.f(j)).base
-    end
+    f(args...) = basemeasure(d.f(args...)).base
+    base = For(f, d.inds...)
     weightedmeasure(static(N) * prod(dim), base)
 end
 
