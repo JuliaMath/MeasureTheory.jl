@@ -635,3 +635,13 @@ end
         a ≈ b
     end
 end
+
+@testset "https://github.com/cscherrer/MeasureTheory.jl/issues/217" begin
+    d = For(rand(3), rand(3)) do x, y
+        Normal(x, y)
+    end
+
+    x = rand(d)
+    
+    @test logdensityof(d, x) isa Real
+end
