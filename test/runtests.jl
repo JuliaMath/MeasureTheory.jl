@@ -574,6 +574,14 @@ end
     f = AffineTransform((μ = 3,))
     @test f(inverse(f)(1)) == 1
     @test inverse(f)(f(1)) == 1
+
+    f = AffineTransform((μ = 3,))
+    @test f(inverse(f)(1)) == 1
+    @test inverse(f)(f(1)) == 1
+
+    f = AffineTransform((σ = [1 2; 2 1],))
+    @test f(inverse(f)([1 2; 2 1])) == [1 2; 2 1]
+    @test inverse(f)(f([1 2; 2 1])) == [1 2; 2 1]
 end
 
 @testset "Affine" begin
