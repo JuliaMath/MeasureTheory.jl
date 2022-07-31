@@ -61,12 +61,12 @@ Base.size(f::AffineTransform, n::Int) = @inbounds size(f)[n]
 (f::AffineTransform{(:μ, :σ)})(x) = f.σ * x + f.μ
 (f::AffineTransform{(:μ, :λ)})(x) = f.λ \ x + f.μ
 
-# Vector `x` observations broadcasts, adjusted for univariate and multivariate cases
-(f::AffineTransform{(:μ,)})(x::AbstractArray) = supportdim(params(f)) == () ? x .+ f.μ : x .+ (f.μ,)
-(f::AffineTransform{(:σ,)})(x::AbstractArray) = supportdim(params(f)) == () ? f.σ .* x : (f.σ,) .* x
-(f::AffineTransform{(:λ,)})(x::AbstractArray) = supportdim(params(f)) == () ? f.λ .\ x : (f.λ,) \ x
-(f::AffineTransform{(:μ, :σ)})(x::AbstractArray) = supportdim(params(f)) == () ? f.σ .* x .+ f.μ : (f.σ,) * x + (f.μ,)
-(f::AffineTransform{(:μ, :λ)})(x::AbstractArray) = supportdim(params(f)) == () ? f.λ .\ x .+ f.μ : (f.λ,) \ x + (f.μ,)
+# Broadcast over vector `x` for univariate distributions
+(f::AffineTransform{(:μ,)})(x::AbstractArray) = supportdim(params(f)) == () ? x .+ f.μ : x + f.μ
+(f::AffineTransform{(:σ,)})(x::AbstractArray) = supportdim(params(f)) == () ? f.σ .* x : f.σ * x
+(f::AffineTransform{(:λ,)})(x::AbstractArray) = supportdim(params(f)) == () ? f.λ .\ x : f.λ \ x
+(f::AffineTransform{(:μ, :σ)})(x::AbstractArray) = supportdim(params(f)) == () ? f.σ .* x .+ f.μ : f.σ * x + f.μ
+(f::AffineTransform{(:μ, :λ)})(x::AbstractArray) = supportdim(params(f)) == () ? f.λ .\ x .+ f.μ : f.λ \ x + f.μ
 
 rowsize(x) = ()
 rowsize(x::AbstractArray) = (size(x, 1),)
@@ -346,4 +346,8 @@ end
 
 @inline function Distributions.cdf(d::Affine, x)
     cdf(parent(d), inverse(d.f)(x))
+end
+
+@inline function Distributions.cdf(d::Affine, x::AbstractArray)
+    cdf.((parent(d),), inverse(d.f)(x))
 end
