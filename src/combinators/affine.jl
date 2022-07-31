@@ -337,5 +337,5 @@ end
 end
 
 @inline function Distributions.cdf(d::Affine, x)
-    cdf(parent(d), inverse(d.f)(x))
+    cdf(parent(d), inverse(d.f).(x))
 end

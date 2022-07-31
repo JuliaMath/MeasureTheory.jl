@@ -645,3 +645,8 @@ end
     
     @test logdensityof(d, x) isa Real
 end
+
+@testset "Distributions.jl cdf" begin
+    @test cdf(Normal(0, 1), 0) == 0.5
+    @test cdf(Normal(0, 1), [0, 0]) == [0.5, 0.5]
+end
