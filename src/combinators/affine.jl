@@ -348,6 +348,6 @@ end
     cdf(parent(d), inverse(d.f)(x))
 end
 
-@inline function Distributions.cdf(d::Affine, x::AbstractArray)
-    cdf.((parent(d),), inverse(d.f)(x))
-end
+# @inline function Distributions.cdf.(d::Affine, x::AbstractArray)
+#     cdf.((parent(d),), inverse(d.f)(x))
+# end
