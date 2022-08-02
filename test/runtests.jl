@@ -574,6 +574,10 @@ end
     f = AffineTransform((μ = 3,))
     @test f(inverse(f)(1)) == 1
     @test inverse(f)(f(1)) == 1
+
+    f = AffineTransform((σ = [1 2; 2 1],))
+    @test f(inverse(f)([1 2; 2 1])) == [1 2; 2 1]
+    @test inverse(f)(f([1 2; 2 1])) == [1 2; 2 1]
 end
 
 @testset "Affine" begin
@@ -644,4 +648,9 @@ end
     x = rand(d)
     
     @test logdensityof(d, x) isa Real
+end
+
+@testset "Distributions.jl cdf" begin
+    @test cdf(Normal(0, 1), 0) == 0.5
+    @test cdf.((Normal(0, 1),), [0, 0]) == [0.5, 0.5]
 end
