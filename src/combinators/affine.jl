@@ -54,19 +54,11 @@ end
 
 Base.size(f::AffineTransform, n::Int) = @inbounds size(f)[n]
 
-# Univariate case with single `x`` observation
 (f::AffineTransform{(:μ,)})(x) = x + f.μ
 (f::AffineTransform{(:σ,)})(x) = f.σ * x
 (f::AffineTransform{(:λ,)})(x) = f.λ \ x
 (f::AffineTransform{(:μ, :σ)})(x) = f.σ * x + f.μ
 (f::AffineTransform{(:μ, :λ)})(x) = f.λ \ x + f.μ
-
-# Broadcast over vector `x` for univariate distributions
-(f::AffineTransform{(:μ,)})(x::AbstractArray) = supportdim(params(f)) == () ? x .+ f.μ : x + f.μ
-(f::AffineTransform{(:σ,)})(x::AbstractArray) = supportdim(params(f)) == () ? f.σ .* x : f.σ * x
-(f::AffineTransform{(:λ,)})(x::AbstractArray) = supportdim(params(f)) == () ? f.λ .\ x : f.λ \ x
-(f::AffineTransform{(:μ, :σ)})(x::AbstractArray) = supportdim(params(f)) == () ? f.σ .* x .+ f.μ : f.σ * x + f.μ
-(f::AffineTransform{(:μ, :λ)})(x::AbstractArray) = supportdim(params(f)) == () ? f.λ .\ x .+ f.μ : f.λ \ x + f.μ
 
 rowsize(x) = ()
 rowsize(x::AbstractArray) = (size(x, 1),)
