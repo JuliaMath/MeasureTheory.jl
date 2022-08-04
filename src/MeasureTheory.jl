@@ -4,7 +4,6 @@ using Random
 
 using MeasureBase
 using MLStyle
-using NestedTuples
 import TransformVariables
 const TV = TransformVariables
 
@@ -65,8 +64,8 @@ using MeasureBase: AbstractTransitionKernel
 
 import Statistics: mean, var, std
 
-import MeasureBase: likelihood
-export likelihood
+import MeasureBase: likelihoodof
+export likelihoodof
 export log_likelihood_ratio
 
 using StaticArrays
