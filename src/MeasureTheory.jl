@@ -7,6 +7,7 @@ using MLStyle
 import TransformVariables
 const TV = TransformVariables
 
+using DistributionMeasures
 using TransformVariables: asℝ₊, as𝕀, asℝ, transform
 
 import Base
