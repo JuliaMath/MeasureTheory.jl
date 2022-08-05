@@ -69,7 +69,7 @@ import MeasureBase: likelihoodof
 export likelihoodof
 export log_likelihood_ratio
 
-using StaticArrays
+using StaticArraysCore
 
 import PrettyPrinting
 
