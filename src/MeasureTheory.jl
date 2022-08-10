@@ -4,10 +4,10 @@ using Random
 
 using MeasureBase
 using MLStyle
-using NestedTuples
 import TransformVariables
 const TV = TransformVariables
 
+using DistributionMeasures
 using TransformVariables: asℝ₊, as𝕀, asℝ, transform
 
 import Base
@@ -65,11 +65,11 @@ using MeasureBase: AbstractTransitionKernel
 
 import Statistics: mean, var, std
 
-import MeasureBase: likelihood
-export likelihood
+import MeasureBase: likelihoodof
+export likelihoodof
 export log_likelihood_ratio
 
-using StaticArrays
+using StaticArraysCore
 
 import PrettyPrinting
 
