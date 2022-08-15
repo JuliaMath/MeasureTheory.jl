@@ -1,5 +1,6 @@
 module MeasureTheory
 
+using Compat
 using Random
 
 using MeasureBase
