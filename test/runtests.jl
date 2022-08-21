@@ -277,7 +277,7 @@ end
 
 @testset "Product of Diracs" begin
     x = randn(3)
-    t = as(productmeasure(Dirac.(x))) 
+    t = as(productmeasure(Dirac.(x)))
     @test transform(t, []) == x
 end
 
@@ -297,7 +297,7 @@ end
 
 #     chain = Chain(kernel, μ)
 
-#     dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing) 
+#     dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing)
 #     tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
 #     tr2 = trace(TimeLift(rand(Random.GLOBAL_RNG, chain)), nothing, u -> u[1] > 15)
 #     collect(Iterators.take(chain, 10))
@@ -348,8 +348,8 @@ end
     # NOTE: The `test_broken` below are mostly because of the change to `Affine`.
     # For example, `Normal{(:μ,:σ)}` is now `Affine{(:μ,:σ), Normal{()}}`.
     # The problem is not really with these measures, but with the tests
-    # themselves. 
-    # 
+    # themselves.
+    #
     # We should instead probably be doing e.g.
     # `D = typeof(Normal(μ=0.3, σ=4.1))`
 
@@ -652,11 +652,29 @@ end
     end
 
     x = rand(d)
-    
+
     @test logdensityof(d, x) isa Real
 end
 
 @testset "Distributions.jl cdf" begin
     @test cdf(Normal(0, 1), 0) == 0.5
     @test cdf.((Normal(0, 1),), [0, 0]) == [0.5, 0.5]
+end
+
+@testset "pairwise normal-normal" begin
+    n0 = Normal(0, 0)
+    n1 = Normal(0.0, 1.0)
+    n2 = Normal(1.0, 2.0)
+    @test MeasureTheory.convolve(n1, n0) == n1
+    @test MeasureTheory.convolve(n1, n2) == MeasureTheory.convolve(n2, n1)
+
+    standard_normal_kernel = MeasureTheory.kernel(Normal{(:μ,)}, μ=identity)
+    σs = [0.0, 1.0, 2.0]
+    normal_kernels = [MeasureTheory.kernel(Normal{(:μ,:σ)}, μ=identity, σ=σ) for σ in σs]
+
+    @test (n1 ↣ standard_normal_kernel) == Normal(0.0, sqrt(2))
+    @test (n0 ↣ standard_normal_kernel) == n1
+
+    @test (n2 ↣ normal_kernels[1]) == n2
+    @test (n2 ↣ normal_kernels[2]) == (n2 ↣ standard_normal_kernel)
 end

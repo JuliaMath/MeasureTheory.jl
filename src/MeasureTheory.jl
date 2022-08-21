@@ -58,7 +58,8 @@ import MeasureBase:
     paramnames,
     ∫,
     𝒹,
-    ∫exp
+    ∫exp,
+    bind
 import MeasureBase: ≪
 using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
@@ -127,6 +128,7 @@ include("parameterized.jl")
 
 include("macros.jl")
 include("combinators/affine.jl")
+include("combinators/convolve.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
@@ -165,4 +167,7 @@ include("transforms/corrcholesky.jl")
 include("transforms/ordered.jl")
 
 include("distproxy.jl")
+
+include("parameterized/pairwise/normal_normal.jl")
+
 end # module
