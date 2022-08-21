@@ -4,7 +4,7 @@ struct Convolution{M,N} <: AbstractMeasure
 end
 
 """
-If μ, ν are subtypes of `AbstractMeasure` or satisfy the Measure interface, r
+If μ, ν are subtypes of `AbstractMeasure` or satisfy the Measure interface,
 then `convolve(μ, ν)` is a measure, called the convolution of μ and ν.
 """
 convolve(μ, ν) = Convolution(μ, ν)
