@@ -175,3 +175,28 @@ end
     logσ = d.logσ
     -logσ - 0.5(exp(-2logσ) * ((x - μ)^2))
 end
+
+
+
+function logdensity_def(p::Normal, q::Normal, x)
+    μp = mean(p)
+    σp = std(p)
+    μq = mean(q)
+    σq = std(q)
+
+    # Result is (((x - μq) / σq)^2 - ((x - μp) / σp)^2) / 2 
+    
+    # We'll write the difference of squares as sqdiff, then divide that by 2 at
+    # the end
+
+    sqdiff = if σp == σq
+        (2x - μq - μp) * (μq - μp) / σp^2
+    else
+        zp = (x - μp) / σp
+        zq = (x - μq) / σq
+        (zq + zp) * (zq - zp)
+    end
+
+    return sqdiff / 2
+end
+
