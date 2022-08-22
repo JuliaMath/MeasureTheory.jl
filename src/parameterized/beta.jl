@@ -21,7 +21,7 @@ end
 
 @inline function basemeasure(d::Beta{(:α, :β)})
     ℓ = -logbeta(d.α, d.β)
-    weightedmeasure(ℓ, Lebesgue())
+    weightedmeasure(ℓ, LebesgueMeasure())
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Beta(μ.α, μ.β))

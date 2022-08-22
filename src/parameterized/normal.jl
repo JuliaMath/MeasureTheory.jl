@@ -147,7 +147,7 @@ end
 
 @inline function basemeasure(d::Normal{(:σ²,)})
     ℓ = static(-0.5) * (static(float(log2π)) + log(d.σ²))
-    weightedmeasure(ℓ, Lebesgue())
+    weightedmeasure(ℓ, LebesgueMeasure())
 end
 
 proxy(d::Normal{(:μ, :σ²)}) = affine((μ = d.μ,), Normal((σ² = d.σ²,)))
