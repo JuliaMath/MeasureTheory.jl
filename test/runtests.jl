@@ -162,7 +162,7 @@ end
         @test sample1 == sample2
     end
 
-    # Fails because we need `asparams` for `::Affine`
+    # Fails because we need `asparams` for `::AffinePushfwd`
     # @testset "Normal" begin
     #     D = affine{(:μ,:σ), Normal}
     #     par = transform(asparams(D), randn(2))
@@ -250,12 +250,12 @@ function ⋅(μ::Normal, kernel)
     m = kernel(μ)
     Normal(μ = m.μ.μ, σ = sqrt(m.μ.σ^2 + m.σ^2))
 end
-struct AffineMap{S,T}
+struct AffinePushfwdMap{S,T}
     B::S
     β::T
 end
-(a::AffineMap)(x) = a.B * x + a.β
-(a::AffineMap)(p::Normal) = Normal(μ = a.B * mean(p) + a.β, σ = sqrt(a.B * p.σ^2 * a.B'))
+(a::AffinePushfwdMap)(x) = a.B * x + a.β
+(a::AffinePushfwdMap)(p::Normal) = Normal(μ = a.B * mean(p) + a.β, σ = sqrt(a.B * p.σ^2 * a.B'))
 
 @testset "DynamicFor" begin
     mc = Chain(Normal(μ = 0.0)) do x
@@ -291,7 +291,7 @@ end
 #     Q = 0.2
 
 #     μ = Normal(μ=ξ0, σ=sqrt(P0))
-#     kernel = MeasureTheory.kernel(Normal; μ=AffineMap(Φ, β), σ=MeasureTheory.AsConst(Q))
+#     kernel = MeasureTheory.kernel(Normal; μ=AffinePushfwdMap(Φ, β), σ=MeasureTheory.AsConst(Q))
 
 #     @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
 
@@ -345,8 +345,8 @@ end
 
 @testset "Reproducibility" begin
 
-    # NOTE: The `test_broken` below are mostly because of the change to `Affine`.
-    # For example, `Normal{(:μ,:σ)}` is now `Affine{(:μ,:σ), Normal{()}}`.
+    # NOTE: The `test_broken` below are mostly because of the change to `AffinePushfwd`.
+    # For example, `Normal{(:μ,:σ)}` is now `AffinePushfwd{(:μ,:σ), Normal{()}}`.
     # The problem is not really with these measures, but with the tests
     # themselves. 
     # 
@@ -524,7 +524,7 @@ end
     @test ℓ ≈ logdensityof(MvNormal((σ = Q * R,)), Q * z)
 end
 
-@testset "Affine" begin
+@testset "AffinePushfwd" begin
     testmeasures = [
         (Normal, NamedTuple())
         (Cauchy, NamedTuple())
@@ -586,7 +586,7 @@ end
     @test inverse(f)(f([1 2; 2 1])) == [1 2; 2 1]
 end
 
-@testset "Affine" begin
+@testset "AffinePushfwd" begin
     unif = ∫(x -> 0 < x < 1, Lebesgue(ℝ))
     f1 = AffineTransform((μ = 3.0, σ = 2.0))
     f2 = AffineTransform((μ = 3.0, λ = 2.0))
@@ -596,8 +596,8 @@ end
 
     for f in [f1, f2, f3, f4, f5]
         par = getfield(f, :par)
-        @test Affine(par)(unif) == Affine(f, unif)
-        @test densityof(Affine(f, Affine(inverse(f), unif)), 0.5) == 1
+        @test AffinePushfwd(par)(unif) == AffinePushfwd(f, unif)
+        @test densityof(AffinePushfwd(f, AffinePushfwd(inverse(f), unif)), 0.5) == 1
     end
 
     d = ∫exp(x -> -x^2, Lebesgue(ℝ))
@@ -611,20 +611,20 @@ end
 
     x = randn(3)
 
-    @test logdensity_def(Affine((μ = μ, σ = σ), d^3), x) ≈
-          logdensity_def(Affine((μ = μ, λ = λ), d^3), x)
-    @test logdensity_def(Affine((σ = σ,), d^3), x) ≈
-          logdensity_def(Affine((λ = λ,), d^3), x)
-    @test logdensity_def(Affine((μ = μ,), d^3), x) ≈ logdensity_def(d^3, x - μ)
+    @test logdensity_def(AffinePushfwd((μ = μ, σ = σ), d^3), x) ≈
+          logdensity_def(AffinePushfwd((μ = μ, λ = λ), d^3), x)
+    @test logdensity_def(AffinePushfwd((σ = σ,), d^3), x) ≈
+          logdensity_def(AffinePushfwd((λ = λ,), d^3), x)
+    @test logdensity_def(AffinePushfwd((μ = μ,), d^3), x) ≈ logdensity_def(d^3, x - μ)
 
     d = ∫exp(x -> -x^2, Lebesgue(ℝ))
-    a = Affine((σ = [1 0]',), d^1)
+    a = AffinePushfwd((σ = [1 0]',), d^1)
     x = randn(2)
     y = randn(1)
     @test logdensityof(a, x) ≈ logdensityof(d, inverse(a.f)(x)[1])
     @test logdensityof(a, a.f(y)) ≈ logdensityof(d^1, y)
 
-    b = Affine((λ = [1 0]'',), d^1)
+    b = AffinePushfwd((λ = [1 0]'',), d^1)
     @test logdensityof(b, x) ≈ logdensityof(d, inverse(b.f)(x)[1])
     @test logdensityof(b, b.f(y)) ≈ logdensityof(d^1, y)
 end

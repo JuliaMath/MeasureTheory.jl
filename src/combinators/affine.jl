@@ -1,4 +1,4 @@
-export Affine, AffineTransform
+export AffinePushfwd, AffineTransform
 using LinearAlgebra
 import Base
 
@@ -161,42 +161,42 @@ basemeasure(d::OrthoLebesgue) = d
 
 logdensity_def(::OrthoLebesgue, x) = static(0.0)
 
-struct Affine{N,M,T} <: AbstractMeasure
+struct AffinePushfwd{N,M,T} <: AbstractMeasure
     f::AffineTransform{N,T}
     parent::M
 end
 
-function Pretty.tile(d::Affine)
+function Pretty.tile(d::AffinePushfwd)
     pars = Pretty.literal(sprint(show, params(d.f); context = :compact => true))
 
-    Pretty.list_layout([pars, Pretty.tile(d.parent)]; prefix = :Affine)
+    Pretty.list_layout([pars, Pretty.tile(d.parent)]; prefix = :AffinePushfwd)
 end
 
-@inline function testvalue(d::Affine)
+@inline function testvalue(d::AffinePushfwd)
     f = getfield(d, :f)
     z = testvalue(parent(d))
     return f(z)
 end
 
-Affine(nt::NamedTuple, μ::AbstractMeasure) = affine(nt, μ)
+AffinePushfwd(nt::NamedTuple, μ::AbstractMeasure) = affine(nt, μ)
 
-Affine(nt::NamedTuple) = affine(nt)
+AffinePushfwd(nt::NamedTuple) = affine(nt)
 
-Base.parent(d::Affine) = getfield(d, :parent)
+Base.parent(d::AffinePushfwd) = getfield(d, :parent)
 
-function params(μ::Affine)
+function params(μ::AffinePushfwd)
     nt1 = getfield(getfield(μ, :f), :par)
     nt2 = params(parent(μ))
     return merge(nt1, nt2)
 end
 
-function paramnames(::Type{A}) where {N,M,A<:Affine{N,M}}
+function paramnames(::Type{A}) where {N,M,A<:AffinePushfwd{N,M}}
     tuple(union(N, paramnames(M))...)
 end
 
-Base.propertynames(d::Affine{N}) where {N} = N ∪ (:parent, :f)
+Base.propertynames(d::AffinePushfwd{N}) where {N} = N ∪ (:parent, :f)
 
-@inline function Base.getproperty(d::Affine, s::Symbol)
+@inline function Base.getproperty(d::AffinePushfwd, s::Symbol)
     if s === :parent
         return getfield(d, :parent)
     elseif s === :f
@@ -206,42 +206,42 @@ Base.propertynames(d::Affine{N}) where {N} = N ∪ (:parent, :f)
     end
 end
 
-Base.size(d::Affine) = size(d.μ)
-Base.size(d::Affine{(:σ,)}) = (size(d.σ, 1),)
-Base.size(d::Affine{(:λ,)}) = (size(d.λ, 2),)
+Base.size(d::AffinePushfwd) = size(d.μ)
+Base.size(d::AffinePushfwd{(:σ,)}) = (size(d.σ, 1),)
+Base.size(d::AffinePushfwd{(:λ,)}) = (size(d.λ, 2),)
 
-@inline function logdensity_def(d::Affine{(:σ,)}, x::AbstractArray)
+@inline function logdensity_def(d::AffinePushfwd{(:σ,)}, x::AbstractArray)
     z = solve(d.σ, x)
     MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
-@inline function logdensity_def(d::Affine{(:λ,)}, x::AbstractArray)
+@inline function logdensity_def(d::AffinePushfwd{(:λ,)}, x::AbstractArray)
     z = d.λ * x
     MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
-@inline function logdensity_def(d::Affine{(:μ,)}, x::AbstractArray)
+@inline function logdensity_def(d::AffinePushfwd{(:μ,)}, x::AbstractArray)
     z = mappedarray(-, x, d.μ)
     MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
-@inline function logdensity_def(d::Affine{(:μ, :σ)}, x::AbstractArray)
+@inline function logdensity_def(d::AffinePushfwd{(:μ, :σ)}, x::AbstractArray)
     z = d.σ \ mappedarray(-, x, d.μ)
     MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
-@inline function logdensity_def(d::Affine{(:μ, :λ)}, x::AbstractArray)
+@inline function logdensity_def(d::AffinePushfwd{(:μ, :λ)}, x::AbstractArray)
     z = d.λ * mappedarray(-, x, d.μ)
     MeasureBase.unsafe_logdensityof(d.parent, z)
 end
 
-@inline function logdensity_def(d::Affine, x)
+@inline function logdensity_def(d::AffinePushfwd, x)
     z = inverse(d.f)(x)
     logdensity_def(d.parent, z)
 end
 
-# # # logdensity_def(d::Affine{(:μ,:λ)}, x) = logdensity_def(d.parent, d.σ \ (x - d.μ))
-# # @inline function logdensity_def(d::Affine{(:μ,:σ), P, Tuple{V,M}}, x) where {P, V<:AbstractVector, M<:AbstractMatrix}
+# # # logdensity_def(d::AffinePushfwd{(:μ,:λ)}, x) = logdensity_def(d.parent, d.σ \ (x - d.μ))
+# # @inline function logdensity_def(d::AffinePushfwd{(:μ,:σ), P, Tuple{V,M}}, x) where {P, V<:AbstractVector, M<:AbstractMatrix}
 # #     z = x - d.μ
 # #     σ = d.σ
 # #     if σ isa Factorization
@@ -252,45 +252,45 @@ end
 # #     sum(zⱼ -> logdensity_def(d.parent, zⱼ), z)
 # # end
 
-# # # logdensity_def(d::Affine{(:μ,:λ)}, x) = logdensity_def(d.parent, d.λ * (x - d.μ))
-# # @inline function logdensity_def(d::Affine{(:μ,:λ), P,Tuple{V,M}}, x) where {P,V<:AbstractVector, M<:AbstractMatrix}
+# # # logdensity_def(d::AffinePushfwd{(:μ,:λ)}, x) = logdensity_def(d.parent, d.λ * (x - d.μ))
+# # @inline function logdensity_def(d::AffinePushfwd{(:μ,:λ), P,Tuple{V,M}}, x) where {P,V<:AbstractVector, M<:AbstractMatrix}
 # #     z = x - d.μ
 # #     lmul!(d.λ, z)
 # #     logdensity_def(d.parent, z)
 # # end
 
-@inline function basemeasure(d::Affine{N,M,Tuple{A}}) where {N,M,A<:AbstractArray}
+@inline function basemeasure(d::AffinePushfwd{N,M,Tuple{A}}) where {N,M,A<:AbstractArray}
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
 end
 
 @inline function basemeasure(
-    d::MeasureTheory.Affine{N,L,Tuple{A}},
+    d::MeasureTheory.AffinePushfwd{N,L,Tuple{A}},
 ) where {N,L<:MeasureBase.Lebesgue,A<:AbstractArray}
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
 end
 
 @inline function basemeasure(
-    d::Affine{N,M,Tuple{A1,A2}},
+    d::AffinePushfwd{N,M,Tuple{A1,A2}},
 ) where {N,M,A1<:AbstractArray,A2<:AbstractArray}
     weightedmeasure(-logjac(d), OrthoLebesgue(params(d)))
 end
 
-@inline basemeasure(d::Affine) = affine(getfield(d, :f), basemeasure(d.parent))
+@inline basemeasure(d::AffinePushfwd) = affine(getfield(d, :f), basemeasure(d.parent))
 
 # We can't do this until we know we're working with Lebesgue measure, since for
 # example it wouldn't make sense to apply a log-Jacobian to a point measure
-@inline function basemeasure(d::Affine{N,L}) where {N,L<:Lebesgue}
+@inline function basemeasure(d::AffinePushfwd{N,L}) where {N,L<:Lebesgue}
     weightedmeasure(-logjac(d), d.parent)
 end
-@inline function basemeasure(d::Affine{N,L}) where {N,L<:LebesgueMeasure}
+@inline function basemeasure(d::AffinePushfwd{N,L}) where {N,L<:LebesgueMeasure}
     weightedmeasure(-logjac(d), d.parent)
 end
 
-logjac(d::Affine) = logjac(getfield(d, :f))
+logjac(d::AffinePushfwd) = logjac(getfield(d, :f))
 
 function Random.rand!(
     rng::Random.AbstractRNG,
-    d::Affine,
+    d::AffinePushfwd,
     x::AbstractVector{T},
     z = Vector{T}(undef, size(getfield(d, :f), 2)),
 ) where {T}
@@ -300,7 +300,7 @@ function Random.rand!(
     return x
 end
 
-# function Base.rand(rng::Random.AbstractRNG, ::Type{T}, d::Affine) where {T}
+# function Base.rand(rng::Random.AbstractRNG, ::Type{T}, d::AffinePushfwd) where {T}
 #     f = getfield(d, :f)
 #     z = rand(rng, T, parent(d))
 #     apply!(x, f, z)
@@ -313,29 +313,29 @@ supportdim(nt::NamedTuple{(:σ,), T}) where {T} = colsize(nt.σ)
 supportdim(nt::NamedTuple{(:λ,), T}) where {T} = rowsize(nt.λ)
 supportdim(nt::NamedTuple{(:μ,), T}) where {T} = size(nt.μ)
 
-asparams(::Affine, ::StaticSymbol{:μ}) = asℝ
-asparams(::Affine, ::StaticSymbol{:σ}) = asℝ₊
-asparams(::Type{A}, ::StaticSymbol{:μ}) where {A<:Affine} = asℝ
-asparams(::Type{A}, ::StaticSymbol{:σ}) where {A<:Affine} = asℝ₊
+asparams(::AffinePushfwd, ::StaticSymbol{:μ}) = asℝ
+asparams(::AffinePushfwd, ::StaticSymbol{:σ}) = asℝ₊
+asparams(::Type{A}, ::StaticSymbol{:μ}) where {A<:AffinePushfwd} = asℝ
+asparams(::Type{A}, ::StaticSymbol{:σ}) where {A<:AffinePushfwd} = asℝ₊
 
-function asparams(d::Affine{N,M,T}, ::StaticSymbol{:μ}) where {N,M,T<:AbstractArray}
+function asparams(d::AffinePushfwd{N,M,T}, ::StaticSymbol{:μ}) where {N,M,T<:AbstractArray}
     as(Array, asℝ, size(d.μ))
 end
 
-function asparams(d::Affine{N,M,T}, ::StaticSymbol{:σ}) where {N,M,T<:AbstractArray}
+function asparams(d::AffinePushfwd{N,M,T}, ::StaticSymbol{:σ}) where {N,M,T<:AbstractArray}
     as(Array, asℝ, size(d.σ))
 end
 
-function Base.rand(rng::Random.AbstractRNG, ::Type{T}, d::Affine) where {T}
+function Base.rand(rng::Random.AbstractRNG, ::Type{T}, d::AffinePushfwd) where {T}
     z = rand(rng, T, parent(d))
     f = getfield(d, :f)
     return f(z)
 end
 
-@inline function insupport(d::Affine, x)
+@inline function insupport(d::AffinePushfwd, x)
     insupport(d.parent, inverse(d.f)(x))
 end
 
-@inline function Distributions.cdf(d::Affine, x)
+@inline function Distributions.cdf(d::AffinePushfwd, x)
     cdf(parent(d), inverse(d.f)(x))
 end

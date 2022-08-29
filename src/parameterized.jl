@@ -65,8 +65,8 @@ function asparams(::Type{M}, constraints::NamedTuple{N}) where {N,M<:Parameteriz
     return as(ordered_transforms)
 end
 
-# TODO: Make this work for Affine measures
-# function asparams(::Type{M}, constraints::NamedTuple{N}) where {N, M<: Affine} 
+# TODO: Make this work for AffinePushfwd measures
+# function asparams(::Type{M}, constraints::NamedTuple{N}) where {N, M<: AffinePushfwd} 
 #     ...
 # end
 

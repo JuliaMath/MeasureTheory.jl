@@ -1,4 +1,4 @@
-# Affine Transformations
+# AffinePushfwd Transformations
 
 It's very common for measures to use parameters `μ` and `σ`, for example as in `Normal(μ=3, σ=4)` or `StudentT(ν=1, μ=3, σ=4)`. In this context, `μ` and `σ` need not always refer to the mean and standard deviation (the `StudentT` measure specified above is equivalent to a [Cauchy](https://en.wikipedia.org/wiki/Cauchy_distribution) measure, so both mean and standard deviation are undefined).
 
@@ -10,7 +10,7 @@ f(z) = σ z + μ
 
 Starting with the above definition, we'll use ``z`` to represent an "un-transformed" variable, typically coming from a measure which has neither a location nor a scale parameter, for example `Normal()`.
 
-Affine transformations are often ambiguously referred as "linear transformations". In fact, an affine transformation is ["the composition of two functions: a translation and a linear map"](https://en.wikipedia.org/wiki/Affine_transformation#Representation) in the stricter algebraic sense: For a function `f` to be linear requires 
+AffinePushfwd transformations are often ambiguously referred as "linear transformations". In fact, an affine transformation is ["the composition of two functions: a translation and a linear map"](https://en.wikipedia.org/wiki/AffinePushfwd_transformation#Representation) in the stricter algebraic sense: For a function `f` to be linear requires 
 ``f(ax + by) == a f(x) + b f(y)``
 for scalars ``a`` and ``b``. For an affine function
 ``f(z) = σ * z + μ``, where the linear map is defined as ``σ`` and the translation defined as ``μ``,
@@ -104,14 +104,14 @@ julia> f⁻¹(f(4))
 4.0
 ```
 
-## `Affine`
+## `AffinePushfwd`
 
-Of particular interest (the whole point of all of this, really) is to have a natural way to work with affine transformations of measures. In accordance with the principle of "common things should have shorter names", we call this `Affine`.
+Of particular interest (the whole point of all of this, really) is to have a natural way to work with affine transformations of measures. In accordance with the principle of "common things should have shorter names", we call this `AffinePushfwd`.
 
-The structure of `Affine` is relatively simple:
+The structure of `AffinePushfwd` is relatively simple:
 
 ```julia
-struct Affine{N,M,T} <: AbstractMeasure
+struct AffinePushfwd{N,M,T} <: AbstractMeasure
     f::AffineTransform{N,T}
     parent::M
 end

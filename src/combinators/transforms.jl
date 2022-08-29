@@ -99,9 +99,9 @@ as(μ::Pullback) = TV.inverse(μ.f) ∘ μ.ν
 as(::Lebesgue) = asℝ
 
 # TODO: Make this work for affine embeddings
-as(d::Affine) = _as_affine(_firstval(d))
+as(d::AffinePushfwd) = _as_affine(_firstval(d))
 
-_firstval(d::Affine) = first(values(getfield(getfield(d, :f), :par)))
+_firstval(d::AffinePushfwd) = first(values(getfield(getfield(d, :f), :par)))
 _as_affine(x::Real) = asℝ
 _as_affine(x::AbstractArray) = as(Vector, size(x, 1))
 

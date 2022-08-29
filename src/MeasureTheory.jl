@@ -88,7 +88,7 @@ using Tricks: static_hasmethod
 using Static
 
 export as
-export Affine
+export AffinePushfwd
 export AffineTransform
 export insupport
 export For
