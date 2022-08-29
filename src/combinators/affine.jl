@@ -339,3 +339,28 @@ end
 @inline function Distributions.cdf(d::AffinePushfwd, x)
     cdf(parent(d), inverse(d.f)(x))
 end
+
+@inline function mean(d::AffinePushfwd)
+    f = getfield(d, :f)
+    f(mean(parent(d)))
+end
+
+@inline function std(d::AffinePushfwd{(:μ,)})
+    std(parent(d))
+end
+
+@inline function std(d::AffinePushfwd{(:μ,:σ)})
+    d.σ * std(parent(d)) 
+end
+
+@inline function std(d::AffinePushfwd{(:σ,)})
+    d.σ * std(parent(d)) 
+end
+
+@inline function std(d::AffinePushfwd{(:λ,)})
+    std(parent(d)) / d.λ 
+end
+
+@inline function std(d::AffinePushfwd{(:μ,:λ,)})
+    std(parent(d)) / d.λ 
+end
