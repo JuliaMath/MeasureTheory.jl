@@ -2,6 +2,10 @@ function as(d::PowerMeasure)
     as(Array, as(d.parent), length.(d.axes)...)
 end
 
+function as(d::ProductMeasure{<:AbstractArray{<:Dirac}})
+    return asConst(testvalue.(marginals(d)))
+end
+
 function as(d::ProductMeasure{A}) where {A<:AbstractArray}
     mar = marginals(d)
     ts = map(as, mar)
