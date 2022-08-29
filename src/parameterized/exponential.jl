@@ -6,7 +6,7 @@ export Exponential
 @parameterized Exponential(β)
 
 insupport(::Exponential, x) = x ≥ 0
-basemeasure(::Exponential) = Lebesgue()
+basemeasure(::Exponential) = LebesgueMeasure()
 
 @kwstruct Exponential()
 

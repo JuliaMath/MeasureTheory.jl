@@ -49,5 +49,5 @@ end
 
 function basemeasure(d::InverseGaussian{(:μ, :ϕ)})
     ℓ = static(-0.5) * (static(float(log2π)) + log(d.ϕ))
-    weightedmeasure(ℓ, Lebesgue())
+    weightedmeasure(ℓ, LebesgueMeasure())
 end

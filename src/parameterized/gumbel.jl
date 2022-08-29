@@ -4,7 +4,7 @@ export Gumbel
 
 @parameterized Gumbel()
 
-basemeasure(::Gumbel{()}) = Lebesgue(ℝ)
+basemeasure(::Gumbel{()}) = LebesgueMeasure()
 
 @kwstruct Gumbel()
 

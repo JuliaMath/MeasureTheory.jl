@@ -27,7 +27,7 @@ end
 
 logdensity_def(d::Laplace, x) = logdensity_def(proxy(d), x)
 
-basemeasure(::Laplace{()}) = WeightedMeasure(static(-logtwo), Lebesgue(ℝ))
+basemeasure(::Laplace{()}) = WeightedMeasure(static(-logtwo), LebesgueMeasure())
 
 # @affinepars Laplace
 

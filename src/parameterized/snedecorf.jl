@@ -16,7 +16,7 @@ end
 
 @inline function basemeasure(d::SnedecorF{(:ν1, :ν2)})
     ℓ = -logbeta(d.ν1 / 2, d.ν2 / 2)
-    weightedmeasure(ℓ, Lebesgue())
+    weightedmeasure(ℓ, LebesgueMeasure())
 end
 
 xform(::SnedecorF) = asℝ₊
