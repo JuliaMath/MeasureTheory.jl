@@ -307,11 +307,11 @@ end
 #     return z
 # end
 
-supportdim(nt::NamedTuple{(:μ, :σ)}) = colsize(nt.σ)
-supportdim(nt::NamedTuple{(:μ, :λ)}) = rowsize(nt.λ)
-supportdim(nt::NamedTuple{(:σ,)}) = colsize(nt.σ)
-supportdim(nt::NamedTuple{(:λ,)}) = rowsize(nt.λ)
-supportdim(nt::NamedTuple{(:μ,)}) = size(nt.μ)
+supportdim(nt::NamedTuple{(:μ, :σ), T}) where {T} = colsize(nt.σ)
+supportdim(nt::NamedTuple{(:μ, :λ), T}) where {T} = rowsize(nt.λ)
+supportdim(nt::NamedTuple{(:σ,), T}) where {T} = colsize(nt.σ)
+supportdim(nt::NamedTuple{(:λ,), T}) where {T} = rowsize(nt.λ)
+supportdim(nt::NamedTuple{(:μ,), T}) where {T} = size(nt.μ)
 
 asparams(::Affine, ::StaticSymbol{:μ}) = asℝ
 asparams(::Affine, ::StaticSymbol{:σ}) = asℝ₊

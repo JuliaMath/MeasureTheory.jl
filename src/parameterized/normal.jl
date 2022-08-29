@@ -27,8 +27,8 @@ export Normal, HalfNormal
 
 for N in AFFINEPARS
     @eval begin
-        proxy(d::Normal{$N}) = affine(params(d), Normal())
-        @useproxy Normal{$N}
+        proxy(d::Normal{$N,T}) where {T} = affine(params(d), Normal())
+        @useproxy Normal{$N,T} where {T}
     end
 end
 
@@ -47,9 +47,9 @@ insupport(d::Normal) = Returns(true)
 
 params(::Type{N}) where {N<:Normal} = ()
 
-Normal(μ, σ) = Normal((μ = μ, σ = σ))
+Normal(μ::M, σ::S) where {M,S} = Normal((μ = μ, σ = σ))::Normal{(:μ, :σ),Tuple{M,S}}
 
-Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
+# Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
 as(::Normal) = asℝ
 
