@@ -665,3 +665,21 @@ end
     @test cdf(Normal(0, 1), 0) == 0.5
     @test cdf.((Normal(0, 1),), [0, 0]) == [0.5, 0.5]
 end
+
+@testset "pairwise normal-normal" begin
+    n0 = Normal(0, 0)
+    n1 = Normal(0.0, 1.0)
+    n2 = Normal(1.0, 2.0)
+    @test MeasureTheory.convolve(n1, n0) == n1
+    @test MeasureTheory.convolve(n1, n2) == MeasureTheory.convolve(n2, n1)
+
+    standard_normal_kernel = MeasureTheory.kernel(Normal{(:μ,)}, μ=identity)
+    σs = [0.0, 1.0, 2.0]
+    normal_kernels = [MeasureTheory.kernel(Normal{(:μ,:σ)}, μ=identity, σ=σ) for σ in σs]
+
+    @test (n1 ↣ standard_normal_kernel) == Normal(0.0, sqrt(2))
+    @test (n0 ↣ standard_normal_kernel) == n1
+
+    @test (n2 ↣ normal_kernels[1]) == n2
+    @test (n2 ↣ normal_kernels[2]) == (n2 ↣ standard_normal_kernel)
+end

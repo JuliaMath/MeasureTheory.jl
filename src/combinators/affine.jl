@@ -36,7 +36,7 @@ import InverseFunctions: inverse
 @inline inverse(f::AffineTransform{(:λ,)}) = AffineTransform((σ = f.λ,))
 @inline inverse(f::AffineTransform{(:μ,)}) = AffineTransform((μ = -f.μ,))
 
-# `size(f) == (m,n)` means `f : ℝⁿ → ℝᵐ`  
+# `size(f) == (m,n)` means `f : ℝⁿ → ℝᵐ`
 Base.size(f::AffineTransform{(:μ, :σ)}) = size(f.σ)
 Base.size(f::AffineTransform{(:μ, :λ)}) = size(f.λ)
 Base.size(f::AffineTransform{(:σ,)}) = size(f.σ)
@@ -339,3 +339,16 @@ end
 @inline function Distributions.cdf(d::Affine, x)
     cdf(parent(d), inverse(d.f)(x))
 end
+
+function mean(d::Affine)
+    m = mean(parent(d))
+    f = getfield(d, :f)
+    return f(m)
+end
+
+# std only for univariate distributions
+std(d::Affine{(:μ,)}) = std(parent(d))
+std(d::Affine{(:σ,)}) = d.σ * std(parent(d))
+std(d::Affine{(:λ,)}) = d.λ \ std(parent(d))
+std(d::Affine{(:μ, :σ)}) = d.σ * std(parent(d))
+std(d::Affine{(:μ, :λ)}) = d.λ \ std(parent(d))
