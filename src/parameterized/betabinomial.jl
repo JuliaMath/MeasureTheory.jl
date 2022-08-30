@@ -12,16 +12,13 @@ testvalue(::BetaBinomial) = 0
 
 @kwstruct BetaBinomial(n, α, β)
 
-function Base.rand(rng::AbstractRNG, ::Type, d::BetaBinomial{(:n, :α, :β)})
-    rand(rng, Dists.BetaBinomial(d.n, d.α, d.β))
-end
-
 function Base.rand(
     rng::AbstractRNG,
-    ::Type,
-    d::BetaBinomial{(:n, :α, :β),Tuple{I,A}},
-) where {I<:Integer,A}
-    rand(rng, Dists.BetaBinomial(d.n, d.α, d.β))
+    ::Type{T},
+    d::BetaBinomial{(:n, :α, :β)},
+) where {T}
+    k = rand(rng, T, Beta(d.α, d.β))
+    return rand(rng, T, Binomial(d.n, k))
 end
 
 @inline function insupport(d::BetaBinomial, x)
