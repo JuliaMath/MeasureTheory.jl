@@ -35,7 +35,3 @@ end
 
 asparams(::Type{<:BetaBinomial}, ::StaticSymbol{:α}) = asℝ₊
 asparams(::Type{<:BetaBinomial}, ::StaticSymbol{:β}) = asℝ₊
-
-function proxy(d::BetaBinomial{(:n, :α, :β),Tuple{I,A}}) where {I<:Integer,A}
-    Dists.BetaBinomial(d.n, d.α, d.β)
-end
