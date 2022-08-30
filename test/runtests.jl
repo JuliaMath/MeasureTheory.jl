@@ -54,6 +54,7 @@ test_measures = Any[
     Bernoulli(0.2)
     Beta(2, 3)
     Binomial(10, 0.3)
+    BetaBinomial(10, 2, 3)
     Cauchy()
     Dirichlet(ones(3))
     Exponential()
@@ -277,7 +278,7 @@ end
 
 @testset "Product of Diracs" begin
     x = randn(3)
-    t = as(productmeasure(Dirac.(x))) 
+    t = as(productmeasure(Dirac.(x)))
     @test transform(t, []) == x
 end
 
@@ -297,7 +298,7 @@ end
 
 #     chain = Chain(kernel, μ)
 
-#     dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing) 
+#     dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing)
 #     tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
 #     tr2 = trace(TimeLift(rand(Random.GLOBAL_RNG, chain)), nothing, u -> u[1] > 15)
 #     collect(Iterators.take(chain, 10))
@@ -348,8 +349,8 @@ end
     # NOTE: The `test_broken` below are mostly because of the change to `Affine`.
     # For example, `Normal{(:μ,:σ)}` is now `Affine{(:μ,:σ), Normal{()}}`.
     # The problem is not really with these measures, but with the tests
-    # themselves. 
-    # 
+    # themselves.
+    #
     # We should instead probably be doing e.g.
     # `D = typeof(Normal(μ=0.3, σ=4.1))`
 
@@ -369,6 +370,10 @@ end
 
     @testset "Beta" begin
         @test repro(Beta, (:α, :β))
+    end
+
+    @testset "BetaBinomial" begin
+        @test repro(BetaBinomial, (:n, :α, :β), (n = 10,))
     end
 
     @testset "Cauchy" begin
@@ -652,7 +657,7 @@ end
     end
 
     x = rand(d)
-    
+
     @test logdensityof(d, x) isa Real
 end
 
