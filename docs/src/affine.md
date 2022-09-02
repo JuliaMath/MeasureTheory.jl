@@ -1,4 +1,4 @@
-# AffinePushfwd Transformations
+# Affine Transformations
 
 It's very common for measures to use parameters `μ` and `σ`, for example as in `Normal(μ=3, σ=4)` or `StudentT(ν=1, μ=3, σ=4)`. In this context, `μ` and `σ` need not always refer to the mean and standard deviation (the `StudentT` measure specified above is equivalent to a [Cauchy](https://en.wikipedia.org/wiki/Cauchy_distribution) measure, so both mean and standard deviation are undefined).
 
