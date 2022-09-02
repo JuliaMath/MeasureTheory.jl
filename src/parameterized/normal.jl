@@ -154,18 +154,20 @@ proxy(d::Normal{(:μ, :σ²)}) = affine((μ = d.μ,), Normal((σ² = d.σ²,)))
 @useproxy Normal{(:μ, :σ²)}
 
 ###############################################################################
+@kwstruct Normal(τ)
 @kwstruct Normal(μ, τ)
 
-@inline function logdensity_def(d::Normal{(:τ)}, x)
-    τ = d.τ
-    0.5 * (log(τ) - τ * x^2)
+@inline function logdensity_def(d::Normal{(:τ,)}, x)
+    -0.5 * x^2 * d.τ
 end
 
-@inline function logdensity_def(d::Normal{(:μ, :τ)}, x)
-    μ = d.μ
-    τ = d.τ
-    0.5 * (log(τ) - τ * (x - μ)^2)
+@inline function basemeasure(d::Normal{(:τ,)})
+    ℓ = static(-0.5) * (static(float(log2π)) - log(d.τ))
+    weightedmeasure(ℓ, LebesgueMeasure())
 end
+
+proxy(d::Normal{(:μ, :τ)}) = affine((μ = d.μ,), Normal((τ = d.τ,)))
+@useproxy Normal{(:μ, :τ)}
 
 ###############################################################################
 @kwstruct Normal(μ, logσ)
