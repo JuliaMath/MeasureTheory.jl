@@ -178,8 +178,6 @@ proxy(d::Normal{(:μ, :τ)}) = affine((μ = d.μ,), Normal((τ = d.τ,)))
     -logσ - 0.5(exp(-2logσ) * ((x - μ)^2))
 end
 
-
-
 function logdensity_def(p::Normal, q::Normal, x)
     μp = mean(p)
     σp = std(p)
@@ -187,7 +185,7 @@ function logdensity_def(p::Normal, q::Normal, x)
     σq = std(q)
 
     # Result is (((x - μq) / σq)^2 - ((x - μp) / σp)^2) / 2 
-    
+
     # We'll write the difference of squares as sqdiff, then divide that by 2 at
     # the end
 
@@ -201,4 +199,3 @@ function logdensity_def(p::Normal, q::Normal, x)
 
     return sqdiff / 2
 end
-

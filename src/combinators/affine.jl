@@ -307,11 +307,11 @@ end
 #     return z
 # end
 
-supportdim(nt::NamedTuple{(:μ, :σ), T}) where {T} = colsize(nt.σ)
-supportdim(nt::NamedTuple{(:μ, :λ), T}) where {T} = rowsize(nt.λ)
-supportdim(nt::NamedTuple{(:σ,), T}) where {T} = colsize(nt.σ)
-supportdim(nt::NamedTuple{(:λ,), T}) where {T} = rowsize(nt.λ)
-supportdim(nt::NamedTuple{(:μ,), T}) where {T} = size(nt.μ)
+supportdim(nt::NamedTuple{(:μ, :σ),T}) where {T} = colsize(nt.σ)
+supportdim(nt::NamedTuple{(:μ, :λ),T}) where {T} = rowsize(nt.λ)
+supportdim(nt::NamedTuple{(:σ,),T}) where {T}    = colsize(nt.σ)
+supportdim(nt::NamedTuple{(:λ,),T}) where {T}    = rowsize(nt.λ)
+supportdim(nt::NamedTuple{(:μ,),T}) where {T}    = size(nt.μ)
 
 asparams(::AffinePushfwd, ::StaticSymbol{:μ}) = asℝ
 asparams(::AffinePushfwd, ::StaticSymbol{:σ}) = asℝ₊
@@ -349,18 +349,18 @@ end
     std(parent(d))
 end
 
-@inline function std(d::AffinePushfwd{(:μ,:σ)})
-    d.σ * std(parent(d)) 
+@inline function std(d::AffinePushfwd{(:μ, :σ)})
+    d.σ * std(parent(d))
 end
 
 @inline function std(d::AffinePushfwd{(:σ,)})
-    d.σ * std(parent(d)) 
+    d.σ * std(parent(d))
 end
 
 @inline function std(d::AffinePushfwd{(:λ,)})
-    std(parent(d)) / d.λ 
+    std(parent(d)) / d.λ
 end
 
-@inline function std(d::AffinePushfwd{(:μ,:λ,)})
-    std(parent(d)) / d.λ 
+@inline function std(d::AffinePushfwd{(:μ, :λ)})
+    std(parent(d)) / d.λ
 end

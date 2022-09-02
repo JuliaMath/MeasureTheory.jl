@@ -255,7 +255,9 @@ struct AffinePushfwdMap{S,T}
     β::T
 end
 (a::AffinePushfwdMap)(x) = a.B * x + a.β
-(a::AffinePushfwdMap)(p::Normal) = Normal(μ = a.B * mean(p) + a.β, σ = sqrt(a.B * p.σ^2 * a.B'))
+function (a::AffinePushfwdMap)(p::Normal)
+    Normal(μ = a.B * mean(p) + a.β, σ = sqrt(a.B * p.σ^2 * a.B'))
+end
 
 @testset "DynamicFor" begin
     mc = Chain(Normal(μ = 0.0)) do x
@@ -277,7 +279,7 @@ end
 
 @testset "Product of Diracs" begin
     x = randn(3)
-    t = as(productmeasure(Dirac.(x))) 
+    t = as(productmeasure(Dirac.(x)))
     @test transform(t, []) == x
 end
 
@@ -652,7 +654,7 @@ end
     end
 
     x = rand(d)
-    
+
     @test logdensityof(d, x) isa Real
 end
 
