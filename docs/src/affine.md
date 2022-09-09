@@ -104,14 +104,14 @@ julia> f⁻¹(f(4))
 4.0
 ```
 
-## `Affine`
+## `AffinePushfwd`
 
-Of particular interest (the whole point of all of this, really) is to have a natural way to work with affine transformations of measures. In accordance with the principle of "common things should have shorter names", we call this `Affine`.
+Of particular interest (the whole point of all of this, really) is to have a natural way to work with affine transformations of measures. In accordance with the principle of "common things should have shorter names", we call this `AffinePushfwd`.
 
-The structure of `Affine` is relatively simple:
+The structure of `AffinePushfwd` is relatively simple:
 
 ```julia
-struct Affine{N,M,T} <: AbstractMeasure
+struct AffinePushfwd{N,M,T} <: AbstractMeasure
     f::AffineTransform{N,T}
     parent::M
 end

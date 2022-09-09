@@ -27,8 +27,8 @@ export Normal, HalfNormal
 
 for N in AFFINEPARS
     @eval begin
-        proxy(d::Normal{$N}) = affine(params(d), Normal())
-        @useproxy Normal{$N}
+        proxy(d::Normal{$N,T}) where {T} = affine(params(d), Normal())
+        @useproxy Normal{$N,T} where {T}
     end
 end
 
@@ -37,7 +37,7 @@ insupport(d::Normal, x) = true
 insupport(d::Normal) = Returns(true)
 
 @inline logdensity_def(d::Normal{()}, x) = -x^2 / 2
-@inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), Lebesgue(ℝ))
+@inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), LebesgueMeasure())
 
 @kwstruct Normal(μ)
 @kwstruct Normal(σ)
@@ -47,9 +47,9 @@ insupport(d::Normal) = Returns(true)
 
 params(::Type{N}) where {N<:Normal} = ()
 
-Normal(μ, σ) = Normal((μ = μ, σ = σ))
+Normal(μ::M, σ::S) where {M,S} = Normal((μ = μ, σ = σ))::Normal{(:μ, :σ),Tuple{M,S}}
 
-Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
+# Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
 as(::Normal) = asℝ
 
@@ -147,25 +147,27 @@ end
 
 @inline function basemeasure(d::Normal{(:σ²,)})
     ℓ = static(-0.5) * (static(float(log2π)) + log(d.σ²))
-    weightedmeasure(ℓ, Lebesgue())
+    weightedmeasure(ℓ, LebesgueMeasure())
 end
 
 proxy(d::Normal{(:μ, :σ²)}) = affine((μ = d.μ,), Normal((σ² = d.σ²,)))
 @useproxy Normal{(:μ, :σ²)}
 
 ###############################################################################
+@kwstruct Normal(τ)
 @kwstruct Normal(μ, τ)
 
-@inline function logdensity_def(d::Normal{(:τ)}, x)
-    τ = d.τ
-    0.5 * (log(τ) - τ * x^2)
+@inline function logdensity_def(d::Normal{(:τ,)}, x)
+    -0.5 * x^2 * d.τ
 end
 
-@inline function logdensity_def(d::Normal{(:μ, :τ)}, x)
-    μ = d.μ
-    τ = d.τ
-    0.5 * (log(τ) - τ * (x - μ)^2)
+@inline function basemeasure(d::Normal{(:τ,)})
+    ℓ = static(-0.5) * (static(float(log2π)) - log(d.τ))
+    weightedmeasure(ℓ, LebesgueMeasure())
 end
+
+proxy(d::Normal{(:μ, :τ)}) = affine((μ = d.μ,), Normal((τ = d.τ,)))
+@useproxy Normal{(:μ, :τ)}
 
 ###############################################################################
 @kwstruct Normal(μ, logσ)
@@ -174,4 +176,26 @@ end
     μ = d.μ
     logσ = d.logσ
     -logσ - 0.5(exp(-2logσ) * ((x - μ)^2))
+end
+
+function logdensity_def(p::Normal, q::Normal, x)
+    μp = mean(p)
+    σp = std(p)
+    μq = mean(q)
+    σq = std(q)
+
+    # Result is (((x - μq) / σq)^2 - ((x - μp) / σp)^2) / 2 
+
+    # We'll write the difference of squares as sqdiff, then divide that by 2 at
+    # the end
+
+    sqdiff = if σp == σq
+        (2x - μq - μp) * (μq - μp) / σp^2
+    else
+        zp = (x - μp) / σp
+        zq = (x - μq) / σq
+        (zq + zp) * (zq - zp)
+    end
+
+    return sqdiff / 2
 end

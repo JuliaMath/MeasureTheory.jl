@@ -8,7 +8,7 @@ pages = [
     "Home" => "index.md",
     "Tutorials" => [
         "Adding a new measure" => "adding.md",
-        "Affine transformations" => "affine.md",
+        "AffinePushfwd transformations" => "affine.md",
     ],
     "API Reference" => [
         "MeasureBase" => "api_measurebase.md",

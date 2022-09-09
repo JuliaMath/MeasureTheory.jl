@@ -1,7 +1,7 @@
 ###############################################################################
-# Affine
+# AffinePushfwd
 
-affine(f::AffineTransform, μ::AbstractMeasure) = Affine(f, μ)
+affine(f::AffineTransform, μ::AbstractMeasure) = AffinePushfwd(f, μ)
 
 affine(nt::NamedTuple, μ::AbstractMeasure) = affine(AffineTransform(nt), μ)
 
