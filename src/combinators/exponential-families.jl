@@ -97,7 +97,7 @@ end
 
 # end
 
-function MeasureBase.likelihood(fam::ExponentialFamily, y)
+function MeasureBase.likelihoodof(fam::ExponentialFamily, y)
     c = logdensityof(fam.base, y)
     t = ApplyArray(vcat, (f.(y) for f in fam.t)...)
     tᵀx = t' * fam.x

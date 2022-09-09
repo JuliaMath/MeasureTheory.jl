@@ -275,6 +275,12 @@ end
     end
 end
 
+@testset "Product of Diracs" begin
+    x = randn(3)
+    t = as(productmeasure(Dirac.(x))) 
+    @test transform(t, []) == x
+end
+
 # @testset "Univariate chain" begin
 #     ξ0 = 1.
 #     x = 1.2
