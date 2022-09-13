@@ -161,7 +161,7 @@ basemeasure(d::OrthoLebesgue) = d
 
 logdensity_def(::OrthoLebesgue, x) = static(0.0)
 
-struct AffinePushfwd{N,M,T} <: AbstractMeasure
+struct AffinePushfwd{N,M,T} <: AbstractPushforward
     f::AffineTransform{N,T}
     parent::M
 end
