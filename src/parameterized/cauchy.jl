@@ -14,7 +14,7 @@ export Cauchy, HalfCauchy
 
 logdensity_def(d::Cauchy, x) = logdensity_def(proxy(d), x)
 
-basemeasure(d::Cauchy) = WeightedMeasure(static(-logπ), LebesgueMeasure())
+basemeasure(d::Cauchy) = WeightedMeasure(static(-logπ), LebesgueBase())
 
 # @affinepars Cauchy
 

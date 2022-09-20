@@ -24,7 +24,7 @@ export Lebesgue
 export ℝ, ℝ₊, 𝕀
 export ⊙
 export SpikeMixture
-export CountingMeasure
+export CountingBase
 export TrivialMeasure
 export Likelihood
 export testvalue
@@ -57,7 +57,7 @@ import MeasureBase:
     𝒹,
     ∫exp
 import MeasureBase: ≪
-using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
+using MeasureBase: BoundedInts, BoundedReals, CountingBase, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractTransitionKernel
 
@@ -94,7 +94,7 @@ using MeasureBase: kernel
 using MeasureBase: Returns
 import MeasureBase: proxy, @useproxy
 import MeasureBase: basemeasure_depth
-using MeasureBase: LebesgueMeasure
+using MeasureBase: LebesgueBase
 
 import DensityInterface: logdensityof
 import DensityInterface: densityof

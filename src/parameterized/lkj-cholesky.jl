@@ -38,9 +38,6 @@ https://github.com/tpapp/AltDistributions.jl
 
 LKJCholesky(k::Integer) = LKJCholesky(k, 1.0)
 
-asparams(::Type{<:LKJCholesky}, ::StaticSymbol{:η}) = asℝ₊
-asparams(::Type{<:LKJCholesky}, ::StaticSymbol{:logη}) = asℝ
-
 # Modified from
 # https://github.com/tpapp/AltDistributions.jl
 
@@ -81,14 +78,14 @@ as(d::LKJCholesky) = CorrCholesky(d.k)
 
 @inline function basemeasure(d::LKJCholesky{(:k, :η)})
     t = as(d)
-    base = Pushforward(t, LebesgueMeasure()^TV.dimension(t), False())
+    base = Pushforward(t, LebesgueBase()^TV.dimension(t), False())
     WeightedMeasure(Dists.lkj_logc0(d.k, d.η), base)
 end
 
 @inline function basemeasure(d::LKJCholesky{(:k, :logη)})
     t = as(d)
     η = exp(d.logη)
-    base = Pushforward(t, LebesgueMeasure()^TV.dimension(t), False())
+    base = Pushforward(t, LebesgueBase()^TV.dimension(t), False())
     WeightedMeasure(Dists.lkj_logc0(d.k, η), base)
 end
 

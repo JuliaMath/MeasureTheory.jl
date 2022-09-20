@@ -50,7 +50,7 @@ end
 
 @inline function basemeasure(d::StudentT{(:ν,)})
     ℓ = loggamma((d.ν + 1) / 2) - loggamma(d.ν / 2) - log(π * d.ν) / 2
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 xform(::StudentT) = asℝ
@@ -62,8 +62,6 @@ proxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
 @half StudentT
 
 HalfStudentT(ν, σ) = HalfStudentT((ν = ν, σ = σ))
-
-asparams(::Type{<:StudentT}, ::StaticSymbol{:ν}) = asℝ₊
 
 insupport(::StudentT, x) = true
 insupport(::StudentT) = Returns(true)

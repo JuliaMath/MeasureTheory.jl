@@ -4,7 +4,7 @@ export Multinomial
 
 @parameterized Multinomial(n, p)
 
-basemeasure(d::Multinomial) = CountingMeasure()
+basemeasure(d::Multinomial) = CountingBase()
 
 @inline function insupport(d::Multinomial{(:n, :p)}, x)
     length(x) == length(d.p) || return false

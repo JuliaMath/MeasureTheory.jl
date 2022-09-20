@@ -6,7 +6,7 @@ export Exponential
 @parameterized Exponential(β)
 
 insupport(::Exponential, x) = x ≥ 0
-basemeasure(::Exponential) = LebesgueMeasure()
+basemeasure(::Exponential) = LebesgueBase()
 
 @kwstruct Exponential()
 
@@ -34,8 +34,6 @@ end
 
 proxy(d::Exponential{(:β,)}) = Dists.Exponential(d.β)
 
-asparams(::Type{<:Exponential}, ::StaticSymbol{:β}) = asℝ₊
-
 ##########################
 # Log-Scale logβ
 
@@ -51,8 +49,6 @@ end
 end
 
 proxy(d::Exponential{(:logβ,)}) = Dists.Exponential(exp(d.logβ))
-
-asparams(::Type{<:Exponential}, ::StaticSymbol{:logβ}) = asℝ
 
 ##########################
 # Rate λ
@@ -70,8 +66,6 @@ end
 
 proxy(d::Exponential{(:λ,)}) = Dists.Exponential(1 / d.λ)
 
-asparams(::Type{<:Exponential}, ::StaticSymbol{:λ}) = asℝ₊
-
 ##########################
 # Log-Rate logλ
 
@@ -87,5 +81,3 @@ end
 end
 
 proxy(d::Exponential{(:logλ,)}) = Dists.Exponential(exp(-d.logλ))
-
-asparams(::Type{<:Exponential}, ::StaticSymbol{:logλ}) = asℝ

@@ -75,3 +75,60 @@ function asparams(μ::M, nt::NamedTuple = NamedTuple()) where {M<:ParameterizedM
 end
 
 as(::Half) = asℝ₊
+
+
+asparams(::AffinePushfwd, ::StaticSymbol{:μ}) = asℝ
+asparams(::AffinePushfwd, ::StaticSymbol{:σ}) = asℝ₊
+asparams(::Type{A}, ::StaticSymbol{:μ}) where {A<:AffinePushfwd} = asℝ
+asparams(::Type{A}, ::StaticSymbol{:σ}) where {A<:AffinePushfwd} = asℝ₊
+
+function asparams(d::AffinePushfwd{N,M,T}, ::StaticSymbol{:μ}) where {N,M,T<:AbstractArray}
+    as(Array, asℝ, size(d.μ))
+end
+
+function asparams(d::AffinePushfwd{N,M,T}, ::StaticSymbol{:σ}) where {N,M,T<:AbstractArray}
+    as(Array, asℝ, size(d.σ))
+end
+
+
+asparams(::Type{<:Bernoulli}, ::StaticSymbol{:p}) = as𝕀
+asparams(::Type{<:Bernoulli}, ::StaticSymbol{:logitp}) = asℝ
+
+asparams(::Type{<:Beta}, ::StaticSymbol{:α}) = asℝ₊
+asparams(::Type{<:Beta}, ::StaticSymbol{:β}) = asℝ₊
+
+
+asparams(::Type{<:BetaBinomial}, ::StaticSymbol{:α}) = asℝ₊
+asparams(::Type{<:BetaBinomial}, ::StaticSymbol{:β}) = asℝ₊
+
+
+asparams(::Type{<:Binomial}, ::StaticSymbol{:p}) = as𝕀
+asparams(::Type{<:Binomial}, ::StaticSymbol{:logitp}) = asℝ
+asparams(::Type{<:Binomial}, ::StaticSymbol{:probitp}) = asℝ
+
+asparams(::Type{<:Exponential}, ::StaticSymbol{:β}) = asℝ₊
+asparams(::Type{<:Exponential}, ::StaticSymbol{:logβ}) = asℝ
+asparams(::Type{<:Exponential}, ::StaticSymbol{:λ}) = asℝ₊
+asparams(::Type{<:Exponential}, ::StaticSymbol{:logλ}) = asℝ
+
+
+asparams(::Type{<:LKJCholesky}, ::StaticSymbol{:η}) = asℝ₊
+asparams(::Type{<:LKJCholesky}, ::StaticSymbol{:logη}) = asℝ
+
+asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:p}) = as𝕀
+asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:logitp}) = asℝ
+asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:r}) = asℝ₊
+asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:λ}) = asℝ₊
+asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:logλ}) = asℝ
+
+asparams(::Type{<:Normal}, ::StaticSymbol{:σ²}) = asℝ₊
+asparams(::Type{<:Normal}, ::StaticSymbol{:τ}) = asℝ₊
+asparams(::Type{<:Normal}, ::StaticSymbol{:logτ}) = asℝ
+
+asparams(::Type{<:Poisson}, ::StaticSymbol{:λ}) = asℝ₊
+asparams(::Type{<:Poisson}, ::StaticSymbol{:logλ}) = asℝ
+
+asparams(::Type{<:SnedecorF}, ::StaticSymbol{:ν1}) = asℝ₊
+asparams(::Type{<:SnedecorF}, ::StaticSymbol{:ν2}) = asℝ₊
+
+asparams(::Type{<:StudentT}, ::StaticSymbol{:ν}) = asℝ₊

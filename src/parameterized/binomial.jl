@@ -9,7 +9,7 @@ probit(p) = sqrt2 * erfinv(2p - 1)
 
 @parameterized Binomial(n, p)
 
-basemeasure(d::Binomial) = CountingMeasure()
+basemeasure(d::Binomial) = CountingBase()
 
 testvalue(::Binomial) = 0
 
@@ -90,7 +90,3 @@ end
 function proxy(d::Binomial{(:n, :probitp),Tuple{I,A}}) where {I<:Integer,A}
     Dists.Binomial(d.n, Φ(d.probitp))
 end
-
-asparams(::Type{<:Binomial}, ::StaticSymbol{:p}) = as𝕀
-asparams(::Type{<:Binomial}, ::StaticSymbol{:logitp}) = asℝ
-asparams(::Type{<:Binomial}, ::StaticSymbol{:probitp}) = asℝ

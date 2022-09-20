@@ -6,7 +6,7 @@ using SpecialFunctions
 
 @parameterized BetaBinomial(n, α, β)
 
-basemeasure(d::BetaBinomial) = CountingMeasure()
+basemeasure(d::BetaBinomial) = CountingBase()
 
 testvalue(::BetaBinomial) = 0
 
@@ -32,6 +32,3 @@ end
     logdenom = logbeta(α, β)
     return logbinom + lognum - logdenom
 end
-
-asparams(::Type{<:BetaBinomial}, ::StaticSymbol{:α}) = asℝ₊
-asparams(::Type{<:BetaBinomial}, ::StaticSymbol{:β}) = asℝ₊

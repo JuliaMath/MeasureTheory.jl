@@ -37,7 +37,7 @@ insupport(d::Normal, x) = true
 insupport(d::Normal) = Returns(true)
 
 @inline logdensity_def(d::Normal{()}, x) = -x^2 / 2
-@inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), LebesgueMeasure())
+@inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), LebesgueBase())
 
 @kwstruct Normal(μ)
 @kwstruct Normal(σ)
@@ -81,10 +81,7 @@ as(::Normal) = asℝ
 # (μ = -0.4548087051528626, σ² = 11.920775478312793)
 #
 # And of course, you can apply `Normal` to any one of the above.
-#
-asparams(::Type{<:Normal}, ::StaticSymbol{:σ²}) = asℝ₊
-asparams(::Type{<:Normal}, ::StaticSymbol{:τ}) = asℝ₊
-asparams(::Type{<:Normal}, ::StaticSymbol{:logτ}) = asℝ
+
 
 # Rather than try to reimplement everything in Distributions, measures can have
 # a `proxy` method. This just delegates some methods to the corresponding
@@ -147,7 +144,7 @@ end
 
 @inline function basemeasure(d::Normal{(:σ²,)})
     ℓ = static(-0.5) * (static(float(log2π)) + log(d.σ²))
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 proxy(d::Normal{(:μ, :σ²)}) = affine((μ = d.μ,), Normal((σ² = d.σ²,)))
@@ -163,7 +160,7 @@ end
 
 @inline function basemeasure(d::Normal{(:τ,)})
     ℓ = static(-0.5) * (static(float(log2π)) - log(d.τ))
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 proxy(d::Normal{(:μ, :τ)}) = affine((μ = d.μ,), Normal((τ = d.τ,)))

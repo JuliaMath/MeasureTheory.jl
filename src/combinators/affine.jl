@@ -161,7 +161,7 @@ basemeasure(d::OrthoLebesgue) = d
 
 logdensity_def(::OrthoLebesgue, x) = static(0.0)
 
-struct AffinePushfwd{N,M,T} <: AbstractPushforward
+struct AffinePushfwd{N,M,T} <: MeasureBase.AbstractPushforward
     f::AffineTransform{N,T}
     parent::M
 end
@@ -172,7 +172,9 @@ function Pretty.tile(d::AffinePushfwd)
     Pretty.list_layout([pars, Pretty.tile(d.parent)]; prefix = :AffinePushfwd)
 end
 
-
+@inline MeasureBase.transport_origin(d::AffinePushfwd) = d.parent
+@inline MeasureBase.to_origin(d::AffinePushfwd, y) = inverse(getfield(d, :f), y)
+@inline MeasureBase.from_origin(d::AffinePushfwd, x) = getfield(d, :f)(x)
 
 @inline function testvalue(d::AffinePushfwd)
     f = getfield(d, :f)
@@ -284,7 +286,7 @@ end
 @inline function basemeasure(d::AffinePushfwd{N,L}) where {N,L<:Lebesgue}
     weightedmeasure(-logjac(d), d.parent)
 end
-@inline function basemeasure(d::AffinePushfwd{N,L}) where {N,L<:LebesgueMeasure}
+@inline function basemeasure(d::AffinePushfwd{N,L}) where {N,L<:LebesgueBase}
     weightedmeasure(-logjac(d), d.parent)
 end
 
@@ -314,19 +316,6 @@ supportdim(nt::NamedTuple{(:μ, :λ),T}) where {T} = rowsize(nt.λ)
 supportdim(nt::NamedTuple{(:σ,),T}) where {T}    = colsize(nt.σ)
 supportdim(nt::NamedTuple{(:λ,),T}) where {T}    = rowsize(nt.λ)
 supportdim(nt::NamedTuple{(:μ,),T}) where {T}    = size(nt.μ)
-
-asparams(::AffinePushfwd, ::StaticSymbol{:μ}) = asℝ
-asparams(::AffinePushfwd, ::StaticSymbol{:σ}) = asℝ₊
-asparams(::Type{A}, ::StaticSymbol{:μ}) where {A<:AffinePushfwd} = asℝ
-asparams(::Type{A}, ::StaticSymbol{:σ}) where {A<:AffinePushfwd} = asℝ₊
-
-function asparams(d::AffinePushfwd{N,M,T}, ::StaticSymbol{:μ}) where {N,M,T<:AbstractArray}
-    as(Array, asℝ, size(d.μ))
-end
-
-function asparams(d::AffinePushfwd{N,M,T}, ::StaticSymbol{:σ}) where {N,M,T<:AbstractArray}
-    as(Array, asℝ, size(d.σ))
-end
 
 function Base.rand(rng::Random.AbstractRNG, ::Type{T}, d::AffinePushfwd) where {T}
     z = rand(rng, T, parent(d))

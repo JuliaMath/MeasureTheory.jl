@@ -21,15 +21,12 @@ end
 
 @inline function basemeasure(d::Beta{(:α, :β)})
     ℓ = -logbeta(d.α, d.β)
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Beta) = rand(rng, Dists.Beta(μ.α, μ.β))
 
 proxy(d::Beta{(:α, :β)}) = Dists.Beta(d.α, d.β)
-
-asparams(::Type{<:Beta}, ::StaticSymbol{:α}) = asℝ₊
-asparams(::Type{<:Beta}, ::StaticSymbol{:β}) = asℝ₊
 
 insupport(::Beta, x) = in𝕀(x)
 insupport(::Beta) = in𝕀
