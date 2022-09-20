@@ -1,5 +1,4 @@
 using LinearAlgebra
-export mydot
 
 function solve(A::Union{AbstractMatrix,Factorization}, y::AbstractArray)
     (m, n) = size(A)
