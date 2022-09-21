@@ -7,8 +7,6 @@ using FillArrays
 
 @parameterized Dirichlet(α)
 
-as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
-
 @inline function basemeasure(μ::Dirichlet{(:α,)})
     α = μ.α
     t = as(μ)

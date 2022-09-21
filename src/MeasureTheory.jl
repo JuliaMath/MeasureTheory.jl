@@ -114,13 +114,12 @@ xlogy(x, y) = x * log(y)
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
 
-as(args...; kwargs...) = TV.as(args...; kwargs...)
 
 include("utils.jl")
 # include("const.jl")
 include("combinators/for.jl")
 # include("traits.jl")
-include("parameterized.jl")
+# include("parameterized.jl")
 
 include("macros.jl")
 include("combinators/affine.jl")

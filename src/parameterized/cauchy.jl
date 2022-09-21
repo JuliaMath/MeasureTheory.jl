@@ -40,7 +40,6 @@ end
 
 ≪(::Cauchy, ::Lebesgue{X}) where {X<:Real} = true
 
-as(::Cauchy) = asℝ
 
 @half Cauchy
 

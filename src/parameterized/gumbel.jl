@@ -33,7 +33,6 @@ function Base.rand(rng::AbstractRNG, d::Gumbel{()})
     -log(-log(u))
 end
 
-as(::Gumbel) = asℝ
 
 ≪(::Gumbel, ::Lebesgue{X}) where {X<:Real} = true
 

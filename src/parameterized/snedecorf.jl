@@ -19,7 +19,6 @@ end
     weightedmeasure(ℓ, LebesgueBase())
 end
 
-xform(::SnedecorF) = asℝ₊
 
 Base.rand(rng::AbstractRNG, T::Type, d::SnedecorF) = rand(rng, proxy(d))
 

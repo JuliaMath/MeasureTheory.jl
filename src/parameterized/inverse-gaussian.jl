@@ -35,7 +35,6 @@ export InverseGaussian
 
 Base.rand(rng::AbstractRNG, T::Type, d::InverseGaussian) = rand(rng, proxy(d))
 
-as(::InverseGaussian) = asℝ₊
 
 insupport(::InverseGaussian, x) = x > 0
 

@@ -53,7 +53,6 @@ end
     weightedmeasure(ℓ, LebesgueBase())
 end
 
-xform(::StudentT) = asℝ
 
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 

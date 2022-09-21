@@ -51,7 +51,6 @@ Normal(μ::M, σ::S) where {M,S} = Normal((μ = μ, σ = σ))::Normal{(:μ, :σ)
 
 # Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
-as(::Normal) = asℝ
 
 # `@kwalias` defines some alias names, giving users flexibility in the names
 # they use. For example, σ² is standard notation for the variance parameter, but
