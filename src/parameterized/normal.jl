@@ -185,13 +185,11 @@ function logdensity_def(p::Normal, q::Normal, x)
     # We'll write the difference of squares as sqdiff, then divide that by 2 at
     # the end
 
-    sqdiff = if σp == σq
-        (2x - μq - μp) * (μq - μp) / (2 * σp^2)
+    if σp == σq
+        return (2x - μq - μp) * (μp - μq) / (2 * σp^2)
     else
         zp = (x - μp) / σp
         zq = (x - μq) / σq
         return ((zq + zp) * (zq - zp)) / 2 + log(abs(σq / σp))
     end
-
-    return sqdiff / 2
 end
