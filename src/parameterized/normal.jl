@@ -180,17 +180,17 @@ function logdensity_def(p::Normal, q::Normal, x)
     μq = mean(q)
     σq = std(q)
 
-    # Result is (((x - μq) / σq)^2 - ((x - μp) / σp)^2) / 2 
+    # Result is (((x - μq) / σq)^2 - ((x - μp) / σp)^2 + log(abs(σq / σp))) / 2 
 
     # We'll write the difference of squares as sqdiff, then divide that by 2 at
     # the end
 
     sqdiff = if σp == σq
-        (2x - μq - μp) * (μq - μp) / σp^2
+        (2x - μq - μp) * (μq - μp) / (2 * σp^2)
     else
         zp = (x - μp) / σp
         zq = (x - μq) / σq
-        (zq + zp) * (zq - zp)
+        return ((zq + zp) * (zq - zp)) / 2 + log(abs(σq / σp))
     end
 
     return sqdiff / 2
