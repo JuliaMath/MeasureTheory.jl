@@ -1,5 +1,4 @@
 
-
 using MappedArrays
 
 # function as(d::ProductMeasure{Returns{T},F,A}) where {T,F,A<:AbstractArray}

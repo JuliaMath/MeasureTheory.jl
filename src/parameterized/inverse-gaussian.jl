@@ -35,7 +35,6 @@ export InverseGaussian
 
 Base.rand(rng::AbstractRNG, T::Type, d::InverseGaussian) = rand(rng, proxy(d))
 
-
 insupport(::InverseGaussian, x) = x > 0
 
 # GLM parameterization

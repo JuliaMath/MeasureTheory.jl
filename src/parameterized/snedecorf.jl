@@ -19,7 +19,6 @@ end
     weightedmeasure(ℓ, LebesgueBase())
 end
 
-
 Base.rand(rng::AbstractRNG, T::Type, d::SnedecorF) = rand(rng, proxy(d))
 
 proxy(d::SnedecorF{(:ν1, :ν2)}) = Dists.FDist(d.ν1, d.ν2)

@@ -33,7 +33,6 @@ function Base.rand(rng::AbstractRNG, d::Gumbel{()})
     -log(-log(u))
 end
 
-
 ≪(::Gumbel, ::Lebesgue{X}) where {X<:Real} = true
 
 proxy(::Gumbel{()}) = Dists.Gumbel()

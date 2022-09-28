@@ -53,7 +53,6 @@ end
     weightedmeasure(ℓ, LebesgueBase())
 end
 
-
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 
 proxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)

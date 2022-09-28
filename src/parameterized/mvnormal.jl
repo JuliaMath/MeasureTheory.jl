@@ -20,8 +20,6 @@ export MvNormal
 @kwstruct MvNormal(μ, Σ)
 @kwstruct MvNormal(μ, Λ)
 
-
-
 for N in setdiff(AFFINEPARS, [(:μ,)])
     @eval begin
         function as(d::MvNormal{$N})

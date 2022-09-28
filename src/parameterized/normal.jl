@@ -51,7 +51,6 @@ Normal(μ::M, σ::S) where {M,S} = Normal((μ = μ, σ = σ))::Normal{(:μ, :σ)
 
 # Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
 
-
 # `@kwalias` defines some alias names, giving users flexibility in the names
 # they use. For example, σ² is standard notation for the variance parameter, but
 # it's a lot to type. Some users might prefer to just use `var` and have us do
@@ -80,7 +79,6 @@ Normal(μ::M, σ::S) where {M,S} = Normal((μ = μ, σ = σ))::Normal{(:μ, :σ)
 # (μ = -0.4548087051528626, σ² = 11.920775478312793)
 #
 # And of course, you can apply `Normal` to any one of the above.
-
 
 # Rather than try to reimplement everything in Distributions, measures can have
 # a `proxy` method. This just delegates some methods to the corresponding

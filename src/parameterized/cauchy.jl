@@ -40,7 +40,6 @@ end
 
 ≪(::Cauchy, ::Lebesgue{X}) where {X<:Real} = true
 
-
 @half Cauchy
 
 HalfCauchy(σ) = HalfCauchy(σ = σ)

@@ -21,7 +21,6 @@ density_def(::Uniform{()}, x) = 1.0
 
 logdensity_def(d::Uniform{()}, x) = 0.0
 
-
 Base.rand(rng::AbstractRNG, T::Type, μ::Uniform{()}) = rand(rng, T)
 
 ###############################################################################

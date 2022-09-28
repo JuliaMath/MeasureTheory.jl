@@ -76,7 +76,6 @@ end
 
 as(::Half) = asℝ₊
 
-
 asparams(::AffinePushfwd, ::StaticSymbol{:μ}) = asℝ
 asparams(::AffinePushfwd, ::StaticSymbol{:σ}) = asℝ₊
 asparams(::Type{A}, ::StaticSymbol{:μ}) where {A<:AffinePushfwd} = asℝ
@@ -90,17 +89,14 @@ function asparams(d::AffinePushfwd{N,M,T}, ::StaticSymbol{:σ}) where {N,M,T<:Ab
     as(Array, asℝ, size(d.σ))
 end
 
-
 asparams(::Type{<:Bernoulli}, ::StaticSymbol{:p}) = as𝕀
 asparams(::Type{<:Bernoulli}, ::StaticSymbol{:logitp}) = asℝ
 
 asparams(::Type{<:Beta}, ::StaticSymbol{:α}) = asℝ₊
 asparams(::Type{<:Beta}, ::StaticSymbol{:β}) = asℝ₊
 
-
 asparams(::Type{<:BetaBinomial}, ::StaticSymbol{:α}) = asℝ₊
 asparams(::Type{<:BetaBinomial}, ::StaticSymbol{:β}) = asℝ₊
-
 
 asparams(::Type{<:Binomial}, ::StaticSymbol{:p}) = as𝕀
 asparams(::Type{<:Binomial}, ::StaticSymbol{:logitp}) = asℝ
@@ -110,7 +106,6 @@ asparams(::Type{<:Exponential}, ::StaticSymbol{:β}) = asℝ₊
 asparams(::Type{<:Exponential}, ::StaticSymbol{:logβ}) = asℝ
 asparams(::Type{<:Exponential}, ::StaticSymbol{:λ}) = asℝ₊
 asparams(::Type{<:Exponential}, ::StaticSymbol{:logλ}) = asℝ
-
 
 asparams(::Type{<:LKJCholesky}, ::StaticSymbol{:η}) = asℝ₊
 asparams(::Type{<:LKJCholesky}, ::StaticSymbol{:logη}) = asℝ
@@ -150,7 +145,6 @@ function as(d::ProductMeasure{A}) where {A<:AbstractArray}
         error("Not yet implemented")
     end
 end
-
 
 function as(d::ProductMeasure{A}) where {A<:MappedArrays.ReadonlyMappedArray}
     d1 = marginals(d).f(first(marginals(d).data))

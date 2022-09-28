@@ -16,7 +16,6 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Exponential{()}) = randexp(rng, T)
 
-
 ##########################
 # Scale β
 

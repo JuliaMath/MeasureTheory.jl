@@ -12,11 +12,7 @@ testvalue(::BetaBinomial) = 0
 
 @kwstruct BetaBinomial(n, α, β)
 
-function Base.rand(
-    rng::AbstractRNG,
-    ::Type{T},
-    d::BetaBinomial{(:n, :α, :β)},
-) where {T}
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::BetaBinomial{(:n, :α, :β)}) where {T}
     k = rand(rng, T, Beta(d.α, d.β))
     return rand(rng, T, Binomial(d.n, k))
 end
