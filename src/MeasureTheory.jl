@@ -31,7 +31,6 @@ export testvalue
 export basekernel
 
 using Infinities
-using DynamicIterators
 using KeywordCalls
 using ConstructionBase
 using Accessors
@@ -114,7 +113,6 @@ xlogy(x, y) = x * log(y)
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
 
-
 include("utils.jl")
 # include("const.jl")
 include("combinators/for.jl")
@@ -127,9 +125,11 @@ include("combinators/weighted.jl")
 include("combinators/product.jl")
 # include("combinators/transforms.jl")
 # include("combinators/exponential-families.jl")
-include("resettable-rng.jl")
-include("realized.jl")
-include("combinators/chain.jl")
+
+# TODO: Move these to a new package
+# include("resettable-rng.jl")
+# include("realized.jl")
+# include("combinators/chain.jl")
 
 # include("distributions.jl")
 include("smart-constructors.jl")
