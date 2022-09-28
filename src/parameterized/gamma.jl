@@ -28,7 +28,7 @@ Gamma(k, σ) = Gamma((k = k, σ = σ))
 
 @useproxy Gamma{(:k, :σ)}
 function proxy(d::Gamma{(:k, :σ)})
-    affine(NamedTuple{(:σ,)}(d.σ), Gamma((k = d.k,)))
+    affine((σ = d.σ,), Gamma((k = d.k,)))
 end
 
 @kwstruct Gamma(k, λ)
