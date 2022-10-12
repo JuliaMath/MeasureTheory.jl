@@ -37,6 +37,9 @@ function density_def(d::Bernoulli{(:p,)}, y)
     return 2 * p * y - p - y + 1
 end
 
+densityof(d::Bernoulli, y) = density_def(d, y)
+unsafe_densityof(d::Bernoulli, y) = density_def(d, y)
+
 @inline function logdensity_def(d::Bernoulli{(:logitp,)}, y)
     x = d.logitp
     return y * x - log1pexp(x)
@@ -59,3 +62,15 @@ end
 
 proxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
 proxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))
+
+function smf(b::B, x::X) where {B<:Bernoulli,X}
+    T = Core.Compiler.return_type(densityof, Tuple{B,X})
+    x < zero(x) && return zero(T)
+    x ≥ one(x) && return one(T)
+    return densityof(b, zero(x))
+end
+
+function smfinv(b::Bernoulli, p)
+    p0 = densityof(b, 0)
+    p ≤ p0 ? 0 : 1
+end
