@@ -173,7 +173,7 @@ function Pretty.tile(d::AffinePushfwd)
 end
 
 @inline MeasureBase.transport_origin(d::AffinePushfwd) = d.parent
-@inline MeasureBase.to_origin(d::AffinePushfwd, y) = inverse(getfield(d, :f), y)
+@inline MeasureBase.to_origin(d::AffinePushfwd, y) = inverse(getfield(d, :f))(y)
 @inline MeasureBase.from_origin(d::AffinePushfwd, x) = getfield(d, :f)(x)
 
 @inline function testvalue(d::AffinePushfwd)
