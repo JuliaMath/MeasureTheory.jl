@@ -5,14 +5,17 @@ using Random
 
 using MeasureBase
 using MLStyle
+import TransformVariables
+const TV = TransformVariables
 
 using DistributionMeasures
-# using TransformVariables: asℝ₊, as𝕀, asℝ, transform
+using TransformVariables: asℝ₊, as𝕀, asℝ, transform
 
 import Base
 import Distributions
 const Dists = Distributions
 
+export TV
 export transform
 export ≪
 export gentype
@@ -115,7 +118,7 @@ xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
 
 include("utils.jl")
-# include("const.jl")
+include("const.jl")
 include("combinators/for.jl")
 # include("traits.jl")
 # include("parameterized.jl")
@@ -124,15 +127,13 @@ include("macros.jl")
 include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
-# include("combinators/transforms.jl")
-# include("combinators/exponential-families.jl")
+include("combinators/transforms.jl")
+include("combinators/exponential-families.jl")
+include("resettable-rng.jl")
+include("realized.jl")
+include("combinators/chain.jl")
 
-# TODO: Move these to a new package
-# include("resettable-rng.jl")
-# include("realized.jl")
-# include("combinators/chain.jl")
-
-# include("distributions.jl")
+include("distributions.jl")
 include("smart-constructors.jl")
 
 include("parameterized/normal.jl")
@@ -150,7 +151,7 @@ include("parameterized/bernoulli.jl")
 include("parameterized/poisson.jl")
 include("parameterized/binomial.jl")
 include("parameterized/multinomial.jl")
-# include("parameterized/lkj-cholesky.jl")
+include("parameterized/lkj-cholesky.jl")
 include("parameterized/negativebinomial.jl")
 include("parameterized/betabinomial.jl")
 include("parameterized/gamma.jl")
@@ -159,8 +160,8 @@ include("parameterized/inverse-gaussian.jl")
 
 include("combinators/ifelse.jl")
 
-# include("transforms/corrcholesky.jl")
-# include("transforms/ordered.jl")
+include("transforms/corrcholesky.jl")
+include("transforms/ordered.jl")
 
 include("distproxy.jl")
 end # module
