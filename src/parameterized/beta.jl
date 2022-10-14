@@ -37,5 +37,5 @@ function MeasureBase.smf(μ::Beta{(:α, :β)}, x)
     return first(SpecialFunctions.beta_inc(μ.α, μ.β, clamp(x, 0, 1)))
 end
 
-MeasureBase.smfinv(μ::Beta{(:α, :β)}, p) = first(beta_inc_inv(μ.α, μ.β, p))
+MeasureBase.invsmf(μ::Beta{(:α, :β)}, p) = first(beta_inc_inv(μ.α, μ.β, p))
 

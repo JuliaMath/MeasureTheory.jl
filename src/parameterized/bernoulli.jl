@@ -70,7 +70,7 @@ function smf(b::B, x::X) where {B<:Bernoulli,X}
     return densityof(b, zero(x))
 end
 
-function smfinv(b::Bernoulli, p)
+function invsmf(b::Bernoulli, p)
     p0 = densityof(b, 0)
     p ≤ p0 ? 0 : 1
 end
