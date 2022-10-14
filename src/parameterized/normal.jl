@@ -25,6 +25,8 @@ export Normal, HalfNormal
 #
 @parameterized Normal()
 
+massof(::Normal) = static(1.0)
+
 for N in AFFINEPARS
     @eval begin
         proxy(d::Normal{$N,T}) where {T} = affine(params(d), Normal())
@@ -191,3 +193,8 @@ function logdensity_def(p::Normal, q::Normal, x)
         return ((zq + zp) * (zq - zp)) / 2 + log(abs(σq / σp))
     end
 end
+
+MeasureBase.transport_origin(::Normal) = StdNormal()
+
+MeasureBase.to_origin(::Normal{()}, y) = y
+MeasureBase.from_origin(::Normal{()}, x) = x

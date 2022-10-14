@@ -28,3 +28,14 @@ proxy(d::Beta{(:α, :β)}) = Dists.Beta(d.α, d.β)
 
 insupport(::Beta, x) = in𝕀(x)
 insupport(::Beta) = in𝕀
+
+function MeasureBase.smf(μ::Beta{(:α, :β)}, x) 
+    if iszero(μ.α) 
+        return float(last(promote(μ.α, μ.β, x, x >= 0)))
+    end
+
+    return first(SpecialFunctions.beta_inc(μ.α, μ.β, clamp(x, 0, 1)))
+end
+
+MeasureBase.smfinv(μ::Beta{(:α, :β)}, p) = first(beta_inc_inv(μ.α, μ.β, p))
+
