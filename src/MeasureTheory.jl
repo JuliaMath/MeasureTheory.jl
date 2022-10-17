@@ -8,12 +8,12 @@ using MLStyle
 import TransformVariables
 const TV = TransformVariables
 
-using DistributionMeasures
+# using DistributionMeasures
 using TransformVariables: asℝ₊, as𝕀, asℝ, transform
 
 import Base
-import Distributions
-const Dists = Distributions
+# import Distributions
+# const Dists = Distributions
 
 export TV
 export transform
@@ -27,7 +27,6 @@ export Lebesgue
 export ℝ, ℝ₊, 𝕀
 export ⊙
 export SpikeMixture
-export CountingBase
 export TrivialMeasure
 export Likelihood
 export testvalue
@@ -120,7 +119,6 @@ xlog1py(x, y) = x * log(1 + y)
 include("utils.jl")
 include("const.jl")
 include("combinators/for.jl")
-# include("traits.jl")
 # include("parameterized.jl")
 
 include("macros.jl")
@@ -128,10 +126,10 @@ include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
-include("combinators/exponential-families.jl")
-include("resettable-rng.jl")
-include("realized.jl")
-include("combinators/chain.jl")
+# include("combinators/exponential-families.jl")
+# include("resettable-rng.jl")
+# include("realized.jl")
+# include("combinators/chain.jl")
 
 include("distributions.jl")
 include("smart-constructors.jl")

@@ -3,7 +3,7 @@ using StatsFuns
 using Base.Iterators: take
 using Random
 using LinearAlgebra
-using DynamicIterators: trace, TimeLift
+# using DynamicIterators: trace, TimeLift
 using TransformVariables: transform, as𝕀
 using FillArrays
 

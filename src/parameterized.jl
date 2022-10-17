@@ -196,6 +196,6 @@ function as(d::MvNormal{(:λ,),Tuple{M}}) where {M<:Triangular}
 end
 
 as(::Normal) = asℝ
-xform(::SnedecorF) = asℝ₊
-xform(::StudentT) = asℝ
-xform(::Uniform{()}) = as𝕀
+as(::SnedecorF) = asℝ₊
+as(::StudentT) = asℝ
+as(::Uniform{()}) = as𝕀

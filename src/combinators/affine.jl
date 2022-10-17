@@ -327,8 +327,8 @@ end
     insupport(d.parent, inverse(d.f)(x))
 end
 
-@inline function Distributions.cdf(d::AffinePushfwd, x)
-    cdf(parent(d), inverse(d.f)(x))
+@inline function MeasureBase.smf(d::AffinePushfwd, x)
+    smf(parent(d), inverse(d.f)(x))
 end
 
 @inline function mean(d::AffinePushfwd)
