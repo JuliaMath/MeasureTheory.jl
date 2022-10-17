@@ -55,8 +55,6 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
 
-proxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
-
 @half StudentT
 
 HalfStudentT(ν, σ) = HalfStudentT((ν = ν, σ = σ))
