@@ -15,8 +15,6 @@ insupport(::Uniform{()}, x) = in𝕀(x)
 
 @inline basemeasure(::Uniform{()}) = LebesgueBase()
 
-proxy(::Uniform{()}) = Dists.Uniform()
-
 density_def(::Uniform{()}, x) = 1.0
 
 logdensity_def(d::Uniform{()}, x) = 0.0
