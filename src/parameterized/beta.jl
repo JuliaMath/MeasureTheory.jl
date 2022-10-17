@@ -28,3 +28,11 @@ proxy(d::Beta{(:α, :β)}) = Dists.Beta(d.α, d.β)
 
 insupport(::Beta, x) = in𝕀(x)
 insupport(::Beta) = in𝕀
+
+function smf(d::Beta{(:α, :β)}, x::Real)
+    StatsFuns.betacdf(d.α, d.β, x)
+end
+
+function invsmf(d::Beta{(:α, :β)}, p)
+    StatsFuns.betainvcdf(d.α, d.β, p)
+end

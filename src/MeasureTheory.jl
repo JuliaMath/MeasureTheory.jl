@@ -54,7 +54,9 @@ import MeasureBase:
     paramnames,
     ∫,
     𝒹,
-    ∫exp
+    ∫exp,
+    smf,
+    invsmf
 import MeasureBase: ≪
 using MeasureBase: BoundedInts, BoundedReals, CountingBase, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict

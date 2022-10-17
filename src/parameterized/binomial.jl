@@ -90,3 +90,11 @@ end
 function proxy(d::Binomial{(:n, :probitp),Tuple{I,A}}) where {I<:Integer,A}
     Dists.Binomial(d.n, Φ(d.probitp))
 end
+
+function smf(μ::Binomial{(:n, :p)}, k)
+    α = max(0, floor(k) + 1)
+    β = max(0, μ.n - floor(k))
+
+    beta_smf = smf(Beta(α, β), μ.p)
+    one(beta_smf) - beta_smf
+end

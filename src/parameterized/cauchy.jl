@@ -47,3 +47,11 @@ HalfCauchy(σ) = HalfCauchy(σ = σ)
 proxy(d::Cauchy{()}) = Dists.Cauchy()
 
 insupport(::Cauchy, x) = true
+
+function smf(::Cauchy{()}, x)
+    invπ * atan(x) + 0.5
+end
+
+function invsmf(::Cauchy{()}, p)
+    tan(π * (p - 0.5))
+end

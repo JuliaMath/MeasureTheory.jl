@@ -79,3 +79,7 @@ end
 end
 
 proxy(d::Exponential{(:logλ,)}) = Dists.Exponential(exp(-d.logλ))
+
+smf(Exponential{()}, x) = smf(StdExponential(), x)
+
+invsmf(Exponential{()}, p) = invsmf(StdExponential(), p)
