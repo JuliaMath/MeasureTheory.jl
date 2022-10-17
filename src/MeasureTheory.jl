@@ -57,6 +57,8 @@ import MeasureBase:
     ∫,
     𝒹,
     ∫exp,
+    smf,
+    invsmf,
     massof
 import MeasureBase: ≪
 using MeasureBase: BoundedInts, BoundedReals, CountingBase, IntegerDomain, IntegerNumbers
