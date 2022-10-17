@@ -25,15 +25,18 @@ insupport(::Laplace, x) = true
     return -abs(x)
 end
 
-logdensity_def(d::Laplace, x) = logdensity_def(proxy(d), x)
+Laplace(μ, σ) = Laplace((μ=μ, σ=σ))
 
 basemeasure(::Laplace{()}) = WeightedMeasure(static(-logtwo), LebesgueBase())
 
 # @affinepars Laplace
 
 function Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace{()}) where {T}
-    rand(rng, Dists.Laplace())
+    sign = rand(rng, Bool)
+    absx = randexp(rng, T)
+    sign == true ? absx : -absx
 end
+
 Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace) where {T} = Base.rand(rng, T, proxy(μ))
 
 ≪(::Laplace, ::Lebesgue{X}) where {X<:Real} = true
