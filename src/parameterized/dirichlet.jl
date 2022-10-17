@@ -20,12 +20,9 @@ end
 Dirichlet(k::Integer, α) = Dirichlet(Fill(α, k))
 
 @inline function logdensity_def(d::Dirichlet{(:α,)}, x)
-    α = d.α
-    s = 0.0
-    for j in eachindex(x)
-        s += xlogy(α[j] - 1, x[j])
+    mapreduce(+, d.α, x) do αj, xj
+        xlogy(αj - 1, xj)
     end
-    return s
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Dirichlet) = rand(rng, Dists.Dirichlet(μ.α))
