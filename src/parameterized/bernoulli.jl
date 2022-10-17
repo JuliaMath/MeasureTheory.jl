@@ -60,9 +60,6 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{(:logitp,)})
     rand(rng, T) < logistic(d.logitp)
 end
 
-proxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
-proxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))
-
 function smf(b::B, x::X) where {B<:Bernoulli,X}
     T = Core.Compiler.return_type(densityof, Tuple{B,X})
     x < zero(x) && return zero(T)
