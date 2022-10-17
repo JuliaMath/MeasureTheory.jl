@@ -30,13 +30,14 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Dirichlet) = rand(rng, Dists.Dirichlet(μ.α))
 
-proxy(d::Dirichlet{(:α,)}) = Dists.Dirichlet(d.α)
 
-function testvalue(d::Dirichlet{(:α,)})
+function testvalue(::Type{T}, d::Dirichlet{(:α,)}) where {T}
     n = length(d.α)
-    Fill(1 / n, n)
+    Fill(inv(convert(T, n)), n)
 end
 
 @inline function insupport(d::Dirichlet{(:α,)}, x)
     length(x) == length(d.α) && sum(x) ≈ 1.0
 end
+
+as(μ::Dirichlet) = TV.UnitSimplex(length(μ.α))
