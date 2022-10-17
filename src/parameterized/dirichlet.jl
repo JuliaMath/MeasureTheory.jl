@@ -9,8 +9,7 @@ using FillArrays
 
 @inline function basemeasure(μ::Dirichlet{(:α,)})
     α = μ.α
-    t = as(μ)
-    d = TV.dimension(t)
+    # TODO: We can make this traverse α only once. Is that faster?
     logw = loggamma(sum(α)) - sum(loggamma, α)
     return WeightedMeasure(logw, Lebesgue(Simplex()))
 end
@@ -20,9 +19,14 @@ end
 Dirichlet(k::Integer, α) = Dirichlet(Fill(α, k))
 
 @inline function logdensity_def(d::Dirichlet{(:α,)}, x)
-    mapreduce(+, d.α, x) do αj, xj
-        xlogy(αj - 1, xj)
+    sum(zip(d.α, x)) do (αj, xj)
+        xlogy(αj - 1, xj) 
     end
+
+    # `mapreduce` is slow for this case
+    # mapreduce(+, d.α, x) do αj, xj
+    #     xlogy(αj - 1, xj)
+    # end
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Dirichlet) = rand(rng, Dists.Dirichlet(μ.α))
