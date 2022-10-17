@@ -28,13 +28,11 @@ end
 
 import Base
 
-function Base.rand(rng::AbstractRNG, d::Gumbel{()})
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::Gumbel{()}) where {T}
     u = rand(rng)
     -log(-log(u))
 end
 
 ≪(::Gumbel, ::Lebesgue{X}) where {X<:Real} = true
-
-proxy(::Gumbel{()}) = Dists.Gumbel()
 
 insupport(::Gumbel, x) = true
