@@ -92,14 +92,14 @@ testbroken_measures = Any[
 
     for μ in testbroken_measures
         @info "testing $μ"
-        @test_broken test_measure(μ)
+        @test_broken test_interface(μ)
     end
 
-    @testset "testvalue(::Chain)" begin
-        mc = Chain(x -> Normal(μ = x), Normal(μ = 0.0))
-        r = testvalue(mc)
-        @test logdensity_def(mc, Iterators.take(r, 10)) isa AbstractFloat
-    end
+    # @testset "testvalue(::Chain)" begin
+    #     mc = Chain(x -> Normal(μ = x), Normal(μ = 0.0))
+    #     r = testvalue(mc)
+    #     @test logdensity_def(mc, Iterators.take(r, 10)) isa AbstractFloat
+    # end
 end
 
 @testset "Parameterized Measures" begin

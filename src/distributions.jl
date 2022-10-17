@@ -39,4 +39,4 @@ function as(d::Dists.Product, _data::NamedTuple = NamedTuple())
     as(Vector, as(v[1]), n)
 end
 
-as(m::DistributionMeasures.DistributionMeasure) = as(m.d)
+# as(m::DistributionMeasures.DistributionMeasure) = as(m.d)
