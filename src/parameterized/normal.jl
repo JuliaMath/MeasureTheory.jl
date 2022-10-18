@@ -171,7 +171,12 @@ proxy(d::Normal{(:μ, :τ)}) = affine((μ = d.μ,), Normal((τ = d.τ,)))
 @inline function logdensity_def(d::Normal{(:μ, :logσ)}, x)
     μ = d.μ
     logσ = d.logσ
-    -logσ - 0.5(exp(-2logσ) * ((x - μ)^2))
+    - 0.5(exp(-2 * logσ) * ((x - μ)^2))
+end
+
+function basemeasure(d::Normal{(:μ, :logσ)})
+    ℓ = static(-0.5) * (static(float(log2π)) + static(2.0) * d.logσ)
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 function logdensity_def(p::Normal, q::Normal, x)
