@@ -81,7 +81,7 @@ testbroken_measures = Any[
     Pushforward(as𝕀, Normal())
     # InverseGamma(2) # Not defined yet
     # MvNormal(I(3)) # Entirely broken for now
-    TrivialMeasure()
+    # TrivialMeasure()
 ]
 
 @testset "testvalue" begin
@@ -95,11 +95,11 @@ testbroken_measures = Any[
         @test_broken test_interface(μ)
     end
 
-    # @testset "testvalue(::Chain)" begin
-    #     mc = Chain(x -> Normal(μ = x), Normal(μ = 0.0))
-    #     r = testvalue(mc)
-    #     @test logdensity_def(mc, Iterators.take(r, 10)) isa AbstractFloat
-    # end
+    @testset "testvalue(::Chain)" begin
+        mc = Chain(x -> Normal(μ = x), Normal(μ = 0.0))
+        r = testvalue(mc)
+        @test logdensity_def(mc, Iterators.take(r, 10)) isa AbstractFloat
+    end
 end
 
 @testset "Parameterized Measures" begin
@@ -163,25 +163,24 @@ end
         @test sample1 == sample2
     end
 
-    # Fails because we need `asparams` for `::AffinePushfwd`
-    # @testset "Normal" begin
-    #     D = affine{(:μ,:σ), Normal}
-    #     par = transform(asparams(D), randn(2))
-    #     d = D(par)
-    #     @test params(d) == par
+    @testset "Normal" begin
+        D = affine{(:μ,:σ), Normal}
+        par = transform(asparams(D), randn(2))
+        d = D(par)
+        @test params(d) == par
 
-    #     μ = par.μ
-    #     σ = par.σ
-    #     σ² = σ^2
-    #     τ = 1/σ²
-    #     logσ = log(σ)
-    #     y = rand(d)
+        μ = par.μ
+        σ = par.σ
+        σ² = σ^2
+        τ = 1/σ²
+        logσ = log(σ)
+        y = rand(d)
 
-    #     ℓ = logdensity_def(Normal(;μ,σ), y)
-    #     @test ℓ ≈ logdensity_def(Normal(;μ,σ²), y)
-    #     @test ℓ ≈ logdensity_def(Normal(;μ,τ), y)
-    #     @test ℓ ≈ logdensity_def(Normal(;μ,logσ), y)
-    # end
+        ℓ = logdensity_def(Normal(;μ,σ), y)
+        @test ℓ ≈ logdensity_def(Normal(;μ,σ²), y)
+        @test ℓ ≈ logdensity_def(Normal(;μ,τ), y)
+        @test ℓ ≈ logdensity_def(Normal(;μ,logσ), y)
+    end
 
     @testset "LKJCholesky" begin
         D = LKJCholesky{(:k, :η)}
@@ -260,23 +259,23 @@ function (a::AffinePushfwdMap)(p::Normal)
     Normal(μ = a.B * mean(p) + a.β, σ = sqrt(a.B * p.σ^2 * a.B'))
 end
 
-# @testset "DynamicFor" begin
-#     mc = Chain(Normal(μ = 0.0)) do x
-#         Normal(μ = x)
-#     end
-#     r = rand(mc)
+@testset "DynamicFor" begin
+    mc = Chain(Normal(μ = 0.0)) do x
+        Normal(μ = x)
+    end
+    r = rand(mc)
 
-#     # Check that `r` is now deterministic
-#     @test logdensity_def(mc, take(r, 100)) == logdensity_def(mc, take(r, 100))
+    # Check that `r` is now deterministic
+    @test logdensity_def(mc, take(r, 100)) == logdensity_def(mc, take(r, 100))
 
-#     d2 = For(r) do x
-#         Normal(μ = x)
-#     end
+    d2 = For(r) do x
+        Normal(μ = x)
+    end
 
-#     @test let r2 = rand(d2)
-#         logdensity_def(d2, take(r2, 100)) == logdensity_def(d2, take(r2, 100))
-#     end
-# end
+    @test let r2 = rand(d2)
+        logdensity_def(d2, take(r2, 100)) == logdensity_def(d2, take(r2, 100))
+    end
+end
 
 @testset "Product of Diracs" begin
     x = randn(3)
@@ -284,28 +283,28 @@ end
     @test transform(t, []) == x
 end
 
-# @testset "Univariate chain" begin
-#     ξ0 = 1.
-#     x = 1.2
-#     P0 = 1.0
+@testset "Univariate chain" begin
+    ξ0 = 1.
+    x = 1.2
+    P0 = 1.0
 
-#     Φ = 0.8
-#     β = 0.1
-#     Q = 0.2
+    Φ = 0.8
+    β = 0.1
+    Q = 0.2
 
-#     μ = Normal(μ=ξ0, σ=sqrt(P0))
-#     kernel = MeasureTheory.kernel(Normal; μ=AffinePushfwdMap(Φ, β), σ=MeasureTheory.AsConst(Q))
+    μ = Normal(μ=ξ0, σ=sqrt(P0))
+    kernel = MeasureTheory.kernel(Normal; μ=AffinePushfwdMap(Φ, β), σ=MeasureTheory.AsConst(Q))
 
-#     @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
+    @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
 
-#     chain = Chain(kernel, μ)
+    chain = Chain(kernel, μ)
 
-#     dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing)
-#     tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
-#     tr2 = trace(TimeLift(rand(Random.GLOBAL_RNG, chain)), nothing, u -> u[1] > 15)
-#     collect(Iterators.take(chain, 10))
-#     collect(Iterators.take(rand(Random.GLOBAL_RNG, chain), 10))
-# end
+    dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing)
+    tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
+    tr2 = trace(TimeLift(rand(Random.GLOBAL_RNG, chain)), nothing, u -> u[1] > 15)
+    collect(Iterators.take(chain, 10))
+    collect(Iterators.take(rand(Random.GLOBAL_RNG, chain), 10))
+end
 
 @testset "rootmeasure/logpdf" begin
     x = rand(Normal())
@@ -486,9 +485,9 @@ end
         @test densityof(f, x) ≈ x^2
     end
 
-    # let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
-    #     @test logdensity_def(d, Cauchy(), x) ≈ 0 atol=1e-12
-    # end
+    let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
+        @test logdensity_def(d, Cauchy(), x) ≈ 0 atol=1e-12
+    end
 
     let f = 𝒹(∫exp(x -> x^2, Normal()), Normal())
         @test logdensityof(f, x) ≈ x^2

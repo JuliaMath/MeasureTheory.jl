@@ -121,7 +121,6 @@ xlog1py(x, y) = x * log(1 + y)
 include("utils.jl")
 include("const.jl")
 include("combinators/for.jl")
-# include("parameterized.jl")
 
 include("macros.jl")
 include("combinators/affine.jl")
@@ -129,9 +128,9 @@ include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
 # include("combinators/exponential-families.jl")
-# include("resettable-rng.jl")
-# include("realized.jl")
-# include("combinators/chain.jl")
+include("resettable-rng.jl")
+include("realized.jl")
+include("combinators/chain.jl")
 
 include("distributions.jl")
 include("smart-constructors.jl")
@@ -162,6 +161,8 @@ include("combinators/ifelse.jl")
 
 include("transforms/corrcholesky.jl")
 include("transforms/ordered.jl")
+
+include("parameterized.jl")
 
 include("distproxy.jl")
 end # module
