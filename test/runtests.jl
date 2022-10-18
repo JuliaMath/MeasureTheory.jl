@@ -77,22 +77,10 @@ test_measures = Any[
     Dirac(0.0) + Normal()
 ]
 
-testbroken_measures = Any[
-    Pushforward(as𝕀, Normal())
-    # InverseGamma(2) # Not defined yet
-    # MvNormal(I(3)) # Entirely broken for now
-    TrivialMeasure()
-]
-
 @testset "testvalue" begin
     for μ in test_measures
         @info "testing $μ"
         test_interface(μ)
-    end
-
-    for μ in testbroken_measures
-        @info "testing $μ"
-        @test_broken test_interface(μ)
     end
 
     # @testset "testvalue(::Chain)" begin
