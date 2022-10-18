@@ -73,7 +73,7 @@ test_measures = Any[
     MvNormal(σ = σ)
     MvNormal(λ = λ)
     Uniform()
-    Counting(Float64)
+    # Counting(Float64)
     Dirac(0.0) + Normal()
 ]
 

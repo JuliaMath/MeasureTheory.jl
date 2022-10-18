@@ -36,3 +36,5 @@ end
 ≪(::Gumbel, ::Lebesgue{X}) where {X<:Real} = true
 
 insupport(::Gumbel, x) = true
+
+proxy(::Gumbel{()}) = Dists.Gumbel()

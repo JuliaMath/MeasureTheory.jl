@@ -84,13 +84,15 @@ function Base.rand(
     rand(rng, Dists.Binomial(d.n, Φ(d.probitp)))
 end
 
-# proxy(d::Binomial{(:n, :p),Tuple{I,A}}) where {I<:Integer,A} = Dists.Binomial(d.n, d.p)
-# function proxy(d::Binomial{(:n, :logitp),Tuple{I,A}}) where {I<:Integer,A}
-#     Dists.Binomial(d.n, logistic(d.logitp))
-# end
-# function proxy(d::Binomial{(:n, :probitp),Tuple{I,A}}) where {I<:Integer,A}
-#     Dists.Binomial(d.n, Φ(d.probitp))
-# end
+proxy(d::Binomial{(:n, :p),Tuple{I,A}}) where {I<:Integer,A} = Dists.Binomial(d.n, d.p)
+
+function proxy(d::Binomial{(:n, :logitp),Tuple{I,A}}) where {I<:Integer,A}
+    Dists.Binomial(d.n, logistic(d.logitp))
+end
+
+function proxy(d::Binomial{(:n, :probitp),Tuple{I,A}}) where {I<:Integer,A}
+    Dists.Binomial(d.n, Φ(d.probitp))
+end
 
 function smf(μ::Binomial{(:n, :p)}, k)
     α = max(0, floor(k) + 1)
