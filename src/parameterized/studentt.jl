@@ -61,3 +61,5 @@ HalfStudentT(ν, σ) = HalfStudentT((ν = ν, σ = σ))
 
 insupport(::StudentT, x) = true
 insupport(::StudentT) = Returns(true)
+
+proxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)

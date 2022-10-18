@@ -54,3 +54,5 @@ end
 function invsmf(::Cauchy{()}, p)
     tan(π * (p - 0.5))
 end
+
+proxy(d::Cauchy{()}) = Dists.Cauchy()

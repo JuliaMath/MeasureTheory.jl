@@ -28,3 +28,5 @@ end
     logdenom = logbeta(α, β)
     return logbinom + lognum - logdenom
 end
+
+proxy(d::BetaBinomial{(:n, :α, :β)}) = Dists.BetaBinomial(d.n, d.α, d.β)

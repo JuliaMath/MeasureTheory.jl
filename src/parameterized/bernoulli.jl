@@ -71,3 +71,6 @@ function invsmf(b::Bernoulli, p)
     p0 = densityof(b, 0)
     p ≤ p0 ? 0 : 1
 end
+
+proxy(d::Bernoulli{(:p,)}) = Dists.Bernoulli(d.p)
+proxy(d::Bernoulli{(:logitp,)}) = Dists.Bernoulli(logistic(d.logitp))

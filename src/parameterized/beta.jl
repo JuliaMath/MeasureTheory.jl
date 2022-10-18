@@ -34,3 +34,5 @@ end
 function invsmf(d::Beta{(:α, :β)}, p)
     StatsFuns.betainvcdf(d.α, d.β, p)
 end
+
+proxy(d::Beta{(:α, :β)}) = Dists.Beta(d.α, d.β)
