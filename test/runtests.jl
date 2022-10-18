@@ -152,7 +152,7 @@ end
     end
 
     @testset "Normal" begin
-        D = affine{(:μ,:σ), Normal}
+        D = Normal{(:μ, :σ)}
         par = transform(asparams(D), randn(2))
         d = D(par)
         @test params(d) == par
@@ -164,10 +164,10 @@ end
         logσ = log(σ)
         y = rand(d)
 
-        ℓ = logdensity_def(Normal(;μ,σ), y)
-        @test ℓ ≈ logdensity_def(Normal(;μ,σ²), y)
-        @test ℓ ≈ logdensity_def(Normal(;μ,τ), y)
-        @test ℓ ≈ logdensity_def(Normal(;μ,logσ), y)
+        ℓ = logdensityof(Normal(;μ,σ), y)
+        @test ℓ ≈ logdensityof(Normal(;μ,σ²), y)
+        @test ℓ ≈ logdensityof(Normal(;μ,τ), y)
+        @test ℓ ≈ logdensityof(Normal(;μ,logσ), y)
     end
 
     @testset "LKJCholesky" begin
@@ -271,32 +271,34 @@ end
     @test transform(t, []) == x
 end
 
-@testset "Univariate chain" begin
-    ξ0 = 1.
-    x = 1.2
-    P0 = 1.0
+using DynamicIterators: trace, TimeLift
 
-    Φ = 0.8
-    β = 0.1
-    Q = 0.2
+# @testset "Univariate chain" begin
+#     ξ0 = 1.
+#     x = 1.2
+#     P0 = 1.0
 
-    μ = Normal(μ=ξ0, σ=sqrt(P0))
-    kernel = MeasureTheory.kernel(Normal; μ=AffinePushfwdMap(Φ, β), σ=MeasureTheory.AsConst(Q))
+#     Φ = 0.8
+#     β = 0.1
+#     Q = 0.2
 
-    @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
+#     μ = Normal(μ=ξ0, σ=sqrt(P0))
+#     kernel = MeasureTheory.kernel(Normal; μ=AffinePushfwdMap(Φ, β), σ=MeasureTheory.AsConst(Q))
 
-    chain = Chain(kernel, μ)
+#     @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
 
-    dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing)
-    tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
-    tr2 = trace(TimeLift(rand(Random.GLOBAL_RNG, chain)), nothing, u -> u[1] > 15)
-    collect(Iterators.take(chain, 10))
-    collect(Iterators.take(rand(Random.GLOBAL_RNG, chain), 10))
-end
+#     chain = Chain(kernel, μ)
+
+#     dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing)
+#     tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
+#     tr2 = trace(TimeLift(rand(Random.GLOBAL_RNG, chain)), nothing, u -> u[1] > 15)
+#     collect(Iterators.take(chain, 10))
+#     collect(Iterators.take(rand(Random.GLOBAL_RNG, chain), 10))
+# end
 
 @testset "rootmeasure/logpdf" begin
     x = rand(Normal())
-    @test logdensityof(𝒹(Normal(), rootmeasure(Normal())), x) ≈ logdensityof(Normal(), x)
+    @test log𝒹(Normal(), rootmeasure(Normal()))(x) ≈ logdensityof(Normal(), x)
 end
 
 @testset "Transforms" begin
@@ -413,7 +415,7 @@ end
     end
 
     @testset "Normal" begin
-        @test_broken repro(Normal, (:μ, :σ))
+        @test repro(Normal, (:μ, :σ))
     end
 
     @testset "Poisson" begin
