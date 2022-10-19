@@ -676,7 +676,14 @@ smf_measures = [
     StudentT.(merge.(Ref((ν=1 + 2 * rand(),)), affinepars_1d))
 ] |> vcat
 
-for μ in smf_measures
-    test_smf(μ)
-    test_interface(μ)
+@testset "smf" begin
+    for μ in smf_measures
+        test_smf(μ)
+    end
+end
+
+@testset "more interface tests" begin
+    for μ in smf_measures
+        test_interface(μ)
+    end
 end
