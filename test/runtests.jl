@@ -489,21 +489,21 @@ end
         d = Normal(σ = 3)
         h = HalfNormal(3)
         x = rand(h)
-        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
+        @test density_rel(h, Lebesgue(ℝ), x) ≈ 2 * density_rel(d, Lebesgue(ℝ), x)
     end
 
     @testset "HalfCauchy" begin
         d = Cauchy(σ = 3)
         h = HalfCauchy(3)
         x = rand(h)
-        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
+        @test density_rel(h, Lebesgue(ℝ), x) ≈ 2 * density_rel(d, Lebesgue(ℝ), x)
     end
 
     @testset "HalfStudentT" begin
         d = StudentT(ν = 2, σ = 3)
         h = HalfStudentT(2, 3)
         x = rand(h)
-        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
+        @test density_rel(h, Lebesgue(ℝ), x) ≈ 2 * density_rel(d, Lebesgue(ℝ), x)
     end
 end
 
