@@ -77,22 +77,10 @@ test_measures = Any[
     Dirac(0.0) + Normal()
 ]
 
-testbroken_measures = Any[
-    Pushforward(as𝕀, Normal())
-    # InverseGamma(2) # Not defined yet
-    # MvNormal(I(3)) # Entirely broken for now
-    # TrivialMeasure()
-]
-
 @testset "testvalue" begin
     for μ in test_measures
         @info "testing $μ"
         test_interface(μ)
-    end
-
-    for μ in testbroken_measures
-        @info "testing $μ"
-        @test_broken test_interface(μ)
     end
 
     @testset "testvalue(::Chain)" begin
@@ -161,6 +149,25 @@ end
         sample1 = rand(MersenneTwister(123), Poisson(; logλ = log(100)))
         sample2 = rand(MersenneTwister(123), Poisson(; λ = 100))
         @test sample1 == sample2
+    end
+
+    @testset "Normal" begin
+        D = Normal{(:μ, :σ)}
+        par = transform(asparams(D), randn(2))
+        d = D(par)
+        @test params(d) == par
+
+        μ = par.μ
+        σ = par.σ
+        σ² = σ^2
+        τ = 1/σ²
+        logσ = log(σ)
+        y = rand(d)
+
+        ℓ = logdensityof(Normal(;μ,σ), y)
+        @test ℓ ≈ logdensityof(Normal(;μ,σ²), y)
+        @test ℓ ≈ logdensityof(Normal(;μ,τ), y)
+        @test ℓ ≈ logdensityof(Normal(;μ,logσ), y)
     end
 
     @testset "LKJCholesky" begin
@@ -264,32 +271,34 @@ end
     @test transform(t, []) == x
 end
 
-@testset "Univariate chain" begin
-    ξ0 = 1.
-    x = 1.2
-    P0 = 1.0
+using DynamicIterators: trace, TimeLift
 
-    Φ = 0.8
-    β = 0.1
-    Q = 0.2
+# @testset "Univariate chain" begin
+#     ξ0 = 1.
+#     x = 1.2
+#     P0 = 1.0
 
-    μ = Normal(μ=ξ0, σ=sqrt(P0))
-    kernel = MeasureTheory.kernel(Normal; μ=AffinePushfwdMap(Φ, β), σ=MeasureTheory.AsConst(Q))
+#     Φ = 0.8
+#     β = 0.1
+#     Q = 0.2
 
-    @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
+#     μ = Normal(μ=ξ0, σ=sqrt(P0))
+#     kernel = MeasureTheory.kernel(Normal; μ=AffinePushfwdMap(Φ, β), σ=MeasureTheory.AsConst(Q))
 
-    chain = Chain(kernel, μ)
+#     @test (μ ⋅ kernel).μ == Normal(μ = 0.9, σ = 0.824621).μ
 
-    dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing)
-    tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
-    tr2 = trace(TimeLift(rand(Random.GLOBAL_RNG, chain)), nothing, u -> u[1] > 15)
-    collect(Iterators.take(chain, 10))
-    collect(Iterators.take(rand(Random.GLOBAL_RNG, chain), 10))
-end
+#     chain = Chain(kernel, μ)
+
+#     dyniterate(iter::TimeLift, ::Nothing) = dyniterate(iter, 0=>nothing)
+#     tr1 = trace(TimeLift(chain), nothing, u -> u[1] > 15)
+#     tr2 = trace(TimeLift(rand(Random.GLOBAL_RNG, chain)), nothing, u -> u[1] > 15)
+#     collect(Iterators.take(chain, 10))
+#     collect(Iterators.take(rand(Random.GLOBAL_RNG, chain), 10))
+# end
 
 @testset "rootmeasure/logpdf" begin
     x = rand(Normal())
-    @test logdensityof(𝒹(Normal(), rootmeasure(Normal())), x) ≈ logdensityof(Normal(), x)
+    @test log𝒹(Normal(), rootmeasure(Normal()))(x) ≈ logdensityof(Normal(), x)
 end
 
 @testset "Transforms" begin
@@ -406,7 +415,7 @@ end
     end
 
     @testset "Normal" begin
-        @test_broken repro(Normal, (:μ, :σ))
+        @test repro(Normal, (:μ, :σ))
     end
 
     @testset "Poisson" begin

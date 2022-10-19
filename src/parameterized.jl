@@ -116,6 +116,8 @@ asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:r}) = asℝ₊
 asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:λ}) = asℝ₊
 asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:logλ}) = asℝ
 
+asparams(::Type{<:Normal}, ::StaticSymbol{:μ}) = asℝ
+asparams(::Type{<:Normal}, ::StaticSymbol{:σ}) = asℝ₊
 asparams(::Type{<:Normal}, ::StaticSymbol{:σ²}) = asℝ₊
 asparams(::Type{<:Normal}, ::StaticSymbol{:τ}) = asℝ₊
 asparams(::Type{<:Normal}, ::StaticSymbol{:logτ}) = asℝ
