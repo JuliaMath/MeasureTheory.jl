@@ -118,6 +118,8 @@ xlogy(x, y) = x * log(y)
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
 
+using MeasureBase: Φ, Φinv
+
 include("utils.jl")
 include("const.jl")
 include("combinators/for.jl")

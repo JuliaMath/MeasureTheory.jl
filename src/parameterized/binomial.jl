@@ -4,8 +4,6 @@ export Binomial
 import Base
 using SpecialFunctions
 
-using MeasureBase: Φ, Φinv
-
 probit(p) = Φinv(p)
 
 @parameterized Binomial(n, p)
