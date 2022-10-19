@@ -63,3 +63,9 @@ insupport(::StudentT, x) = true
 insupport(::StudentT) = Returns(true)
 
 proxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
+
+smf(d::StudentT, x) = smf(proxy(d), x)
+invsmf(d::StudentT, p) = invsmf(proxy(d), p)
+
+smf(d::StudentT{(:ν,)}, x) = cdf(proxy(d), x)
+invsmf(d::StudentT{(:ν,)}, p) = quantile(proxy(d), p)

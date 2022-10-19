@@ -673,7 +673,7 @@ smf_measures = [
     # [Binomial(rand(5:20), rand())]
     Cauchy.(affinepars_1d)
     Normal.(affinepars_1d)
-    # StudentT.(merge.(Ref((ν=1 + 2 * rand(),)), affinepars_1d))
+    StudentT.(merge.(Ref((ν=1 + 2 * rand(),)), affinepars_1d))
 ] |> vcat
 
 for μ in smf_measures
