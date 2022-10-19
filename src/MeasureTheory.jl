@@ -105,6 +105,9 @@ import DensityInterface: densityof
 import DensityInterface: DensityKind
 using DensityInterface
 
+using ForwardDiff
+using ForwardDiff: Dual
+
 gentype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
 # gentype(μ::AbstractMeasure) = gentype(basemeasure(μ))
