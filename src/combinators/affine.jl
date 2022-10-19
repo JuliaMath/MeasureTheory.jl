@@ -357,7 +357,8 @@ end
 end
 
 
-
+###############################################################################
+# smf
 
 @inline function smf(d::AffinePushfwd{(:μ,)}, x)
     f = getfield(d, :f)
@@ -378,12 +379,46 @@ end
 
 @inline function smf(d::AffinePushfwd{(:λ,)}, x)
     f = getfield(d, :f)
-    p = smf(parent(d), inverse(f)(x)) / d.λ
+    p = smf(parent(d), inverse(f)(x))
     d.λ > 0 ? p : one(p) - p
 end
 
 @inline function smf(d::AffinePushfwd{(:μ, :λ)}, x)
     f = getfield(d, :f)
-    p = smf(parent(d), inverse(f)(x)) / d.λ
+    p = smf(parent(d), inverse(f)(x))
     d.λ > 0 ? p : one(p) - p
 end
+
+
+###############################################################################
+# invsmf
+
+@inline function invsmf(d::AffinePushfwd{(:μ,)}, p)
+    f = getfield(d, :f)
+    f(invsmf(parent(d), p))
+end
+
+@inline function invsmf(d::AffinePushfwd{(:μ, :σ)}, p)
+    p = d.σ > 0 ? p : one(p) - p
+    f = getfield(d, :f)
+    f(invsmf(parent(d), p))
+end
+
+@inline function invsmf(d::AffinePushfwd{(:σ,)}, p)
+    p = d.σ > 0 ? p : one(p) - p
+    f = getfield(d, :f)
+    f(invsmf(parent(d), p))
+end
+
+@inline function invsmf(d::AffinePushfwd{(:λ,)}, p)
+    p = d.λ > 0 ? p : one(p) - p
+    f = getfield(d, :f)
+    f(invsmf(parent(d), p))
+end
+
+@inline function invsmf(d::AffinePushfwd{(:μ, :λ)}, p)
+    p = d.λ > 0 ? p : one(p) - p
+    f = getfield(d, :f)
+    f(invsmf(parent(d), p))
+end
+

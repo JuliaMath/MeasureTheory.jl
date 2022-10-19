@@ -656,3 +656,24 @@ end
     @test smf(Normal(0, 1), 0) == 0.5
     @test smf.((Normal(0, 1),), [0, 0]) == [0.5, 0.5]
 end
+
+affinepars_1d = [
+    (;)
+    (μ = randn(),)
+    (σ = randn(),)
+    (λ = randn(),)
+    (μ = randn(), σ = randn())
+    (μ = randn(), λ = randn())
+]
+
+smf_measures = [
+    Bernoulli()
+    Bernoulli(rand())
+    Bernoulli(logitp = randn())
+    Beta(rand(), rand())
+    BetaBinomial(rand(5:20), 2 * rand(), 2 * rand())
+    Binomial(rand(5:20), rand())
+    Cauchy()
+    Cauchy(μ=randn(), σ=rand())
+    Cauchy()
+]
