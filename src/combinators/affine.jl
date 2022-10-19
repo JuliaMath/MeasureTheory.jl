@@ -355,3 +355,35 @@ end
 @inline function std(d::AffinePushfwd{(:μ, :λ)})
     std(parent(d)) / d.λ
 end
+
+
+
+
+@inline function smf(d::AffinePushfwd{(:μ,)}, x)
+    f = getfield(d, :f)
+    smf(parent(d), inverse(f)(x))
+end
+
+@inline function smf(d::AffinePushfwd{(:μ, :σ)}, x)
+    f = getfield(d, :f)
+    p = smf(parent(d), inverse(f)(x))
+    d.σ > 0 ? p : one(p) - p
+end
+
+@inline function smf(d::AffinePushfwd{(:σ,)}, x)
+    f = getfield(d, :f)
+    p = smf(parent(d), inverse(f)(x))
+    d.σ > 0 ? p : one(p) - p
+end
+
+@inline function smf(d::AffinePushfwd{(:λ,)}, x)
+    f = getfield(d, :f)
+    p = smf(parent(d), inverse(f)(x)) / d.λ
+    d.λ > 0 ? p : one(p) - p
+end
+
+@inline function smf(d::AffinePushfwd{(:μ, :λ)}, x)
+    f = getfield(d, :f)
+    p = smf(parent(d), inverse(f)(x)) / d.λ
+    d.λ > 0 ? p : one(p) - p
+end
