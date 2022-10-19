@@ -652,7 +652,7 @@ end
     @test logdensityof(d, x) isa Real
 end
 
-@testset "Distributions.jl cdf" begin
+@testset "Normal smf" begin
     @test smf(Normal(0, 1), 0) == 0.5
     @test smf.((Normal(0, 1),), [0, 0]) == [0.5, 0.5]
 end
