@@ -163,25 +163,6 @@ end
         @test sample1 == sample2
     end
 
-    @testset "Normal" begin
-        D = affine{(:μ,:σ), Normal}
-        par = transform(asparams(D), randn(2))
-        d = D(par)
-        @test params(d) == par
-
-        μ = par.μ
-        σ = par.σ
-        σ² = σ^2
-        τ = 1/σ²
-        logσ = log(σ)
-        y = rand(d)
-
-        ℓ = logdensity_def(Normal(;μ,σ), y)
-        @test ℓ ≈ logdensity_def(Normal(;μ,σ²), y)
-        @test ℓ ≈ logdensity_def(Normal(;μ,τ), y)
-        @test ℓ ≈ logdensity_def(Normal(;μ,logσ), y)
-    end
-
     @testset "LKJCholesky" begin
         D = LKJCholesky{(:k, :η)}
         par = transform(asparams(D, (k = 4,)), randn(1))
@@ -477,20 +458,20 @@ end
 
 @testset "Density measures and Radon-Nikodym" begin
     x = randn()
-    let d = ∫(𝒹(Cauchy(), Normal()), Normal())
-        @test logdensityof(𝒹(d, Cauchy()), x) ≈ 0 atol = 1e-12
-    end
+    # let d = ∫(𝒹(Cauchy(), Normal()), Normal())
+    #     @test logdensity_rel(𝒹(d, Cauchy()), x) ≈ 0 atol = 1e-12
+    # end
 
     let f = 𝒹(∫(x -> x^2, Normal()), Normal())
-        @test densityof(f, x) ≈ x^2
+        @test f(x) ≈ x^2
     end
 
-    let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
-        @test logdensity_def(d, Cauchy(), x) ≈ 0 atol=1e-12
-    end
+    # let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
+    #     @test logdensity_rel(d, Cauchy(), x) ≈ 0 atol=1e-12
+    # end
 
-    let f = 𝒹(∫exp(x -> x^2, Normal()), Normal())
-        @test logdensityof(f, x) ≈ x^2
+    let f = log𝒹(∫exp(x -> x^2, Normal()), Normal())
+        @test f(x) ≈ x^2
     end
 end
 
