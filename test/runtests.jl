@@ -667,13 +667,16 @@ affinepars_1d = [
 ]
 
 smf_measures = [
-    Bernoulli()
-    Bernoulli(rand())
-    Bernoulli(logitp = randn())
-    Beta(rand(), rand())
-    BetaBinomial(rand(5:20), 2 * rand(), 2 * rand())
-    Binomial(rand(5:20), rand())
-    Cauchy()
-    Cauchy(μ=randn(), σ=rand())
-    Cauchy()
-]
+    [Bernoulli(), Bernoulli(rand()), Bernoulli(logitp = randn())]
+    [Beta(rand(), rand())]
+    # [BetaBinomial(rand(5:20), 2 * rand(), 2 * rand())]
+    # [Binomial(rand(5:20), rand())]
+    Cauchy.(affinepars_1d)
+    Normal.(affinepars_1d)
+    # StudentT.(merge.(Ref((ν=1 + 2 * rand(),)), affinepars_1d))
+] |> vcat
+
+for μ in smf_measures
+    test_smf(μ)
+    test_interface(μ)
+end

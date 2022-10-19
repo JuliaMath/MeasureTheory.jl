@@ -204,7 +204,7 @@ MeasureBase.transport_origin(::Normal) = StdNormal()
 MeasureBase.to_origin(::Normal{()}, y) = y
 MeasureBase.from_origin(::Normal{()}, x) = x
 
-smf(::Normal{()}, x) = Φ(x)
-invsmf(::Normal{()}, p) = Φinv(p)
+MeasureBase.smf(::Normal{()}, x) = Φ(x)
+MeasureBase.invsmf(::Normal{()}, p) = Φinv(p)
 
 @smfAD Normal{()}
