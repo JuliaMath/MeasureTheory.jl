@@ -38,8 +38,8 @@ insupport(d::Normal, x) = true
 
 insupport(d::Normal) = Returns(true)
 
-@inline logdensity_def(d::Normal{()}, x) = -x^2 / 2
-@inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), LebesgueBase())
+@inline logdensity_def(d::Normal{()}, x) = - muladd(x, x, log2π) / 2;
+@inline basemeasure(::Normal{()}) = LebesgueBase()
 
 @kwstruct Normal(μ)
 @kwstruct Normal(σ)
