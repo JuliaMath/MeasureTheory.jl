@@ -128,7 +128,7 @@ logjac(f::AffineTransform{(:μ, :σ)}) = logjac(f.σ)
 logjac(f::AffineTransform{(:μ, :λ)}) = -logjac(f.λ)
 logjac(f::AffineTransform{(:σ,)}) = logjac(f.σ)
 logjac(f::AffineTransform{(:λ,)}) = -logjac(f.λ)
-logjac(f::AffineTransform{(:μ,)}) = 0.0
+logjac(f::AffineTransform{(:μ,)}) = static(0.0)
 
 ###############################################################################
 
