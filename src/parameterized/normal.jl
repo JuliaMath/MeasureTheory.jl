@@ -34,9 +34,9 @@ for N in AFFINEPARS
     end
 end
 
-insupport(d::Normal, x) = true
+insupport(d::Normal, x) = True()
 
-insupport(d::Normal) = Returns(true)
+insupport(d::Normal) = Returns(True())
 
 @inline logdensity_def(d::Normal{()}, x) = - muladd(x, x, log2π) / 2;
 @inline basemeasure(::Normal{()}) = LebesgueBase()
