@@ -117,6 +117,15 @@ end
 
 @inline function _basemeasure(
     d::For{T,F,I},
+    ::Type{<:WeightedMeasure{StaticFloat64{0.0},B}},
+    ::True,
+) where {T,F,I,B}
+    dim = size(first(d.inds))
+    instance(B)^dim
+end
+
+@inline function _basemeasure(
+    d::For{T,F,I},
     ::Type{<:WeightedMeasure{StaticFloat64{N},B}},
     ::True,
 ) where {T,F,I,N,B}
