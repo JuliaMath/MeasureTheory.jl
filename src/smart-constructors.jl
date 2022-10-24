@@ -21,4 +21,4 @@ function affine(f::AffineTransform{(:μ, :λ)}, parent::Lebesgue{RealNumbers})
     affine(AffineTransform((λ = f.λ,)), parent)
 end
 
-affine(f::AffineTransform, μ::LebesgueBase) = weightedmeasure(logjac(f), μ)
+affine(f::AffineTransform, μ::LebesgueBase) = weightedmeasure(-logjac(f), μ)

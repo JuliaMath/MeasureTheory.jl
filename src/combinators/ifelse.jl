@@ -4,7 +4,9 @@ struct IfElseMeasure{B,T,F} <: AbstractMeasure
     f::F
 end
 
-insupport(d::IfElseMeasure, x) = insupport(d.t, x) || insupport(d.f, x)
+using MeasureBase: istrue
+
+insupport(d::IfElseMeasure, x) = istrue(insupport(d.t, x)) || istrue(insupport(d.f, x))
 
 function logdensity_def(d::IfElseMeasure, x)
     p = mean(d.b)
