@@ -20,7 +20,7 @@ Dirichlet(k::Integer, α) = Dirichlet(Fill(α, k))
 
 @inline function logdensity_def(d::Dirichlet{(:α,)}, x)
     sum(zip(d.α, x)) do (αj, xj)
-        xlogy(αj - 1, xj) 
+        xlogy(αj - 1, xj)
     end
 
     # `mapreduce` is slow for this case
@@ -30,7 +30,6 @@ Dirichlet(k::Integer, α) = Dirichlet(Fill(α, k))
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Dirichlet) = rand(rng, Dists.Dirichlet(μ.α))
-
 
 function testvalue(::Type{T}, d::Dirichlet{(:α,)}) where {T}
     n = length(d.α)

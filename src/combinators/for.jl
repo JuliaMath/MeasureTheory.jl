@@ -76,7 +76,7 @@ end
     ind = only(d.inds)
     Δj = firstindex(x) - first(ind)
     sum(ind) do j
-        @inbounds logdensity_def(d.f(j), x[j + Δj])
+        @inbounds logdensity_def(d.f(j), x[j+Δj])
     end
 end
 
@@ -281,3 +281,21 @@ end
 function Base.rand(rng::AbstractRNG, ::Type{T}, d::For{M,F,I}) where {T,M,F,I}
     MeasureBase._rand_product(rng, T, marginals(d), M)
 end
+
+import MeasureBase
+
+function MeasureBase.transport_origin(d::AbstractProductMeasure)
+    For(MeasureBase.transport_origin, marginals(d))
+end
+
+function MeasureBase.to_origin(d::AbstractProductMeasure, x)
+    mappedarray(MeasureBase.to_origin, marginals(d), x)
+end
+
+function MeasureBase.from_origin(d::AbstractProductMeasure, x)
+    mappedarray(MeasureBase.from_origin, marginals(d), x)
+end
+
+# function MeasureBase.getdof(d::AbstractProductMeasure)
+#     sum(getdof, marginals(d))
+# end

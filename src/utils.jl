@@ -124,7 +124,7 @@ const Triangular = Union{L,U} where {L<:LowerTriangular,U<:UpperTriangular}
 # But then we have method ambiguities
 macro smfAD(M)
     quote
-        function MeasureBase.smf(μ::$M, x::Dual{TAG}) where TAG
+        function MeasureBase.smf(μ::$M, x::Dual{TAG}) where {TAG}
             val = ForwardDiff.value(x)
             Δ = ForwardDiff.partials(x)
             Dual{TAG}(smf(μ, val), Δ * densityof(μ, val))

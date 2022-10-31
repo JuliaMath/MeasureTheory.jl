@@ -25,7 +25,7 @@ insupport(::Laplace, x) = true
     return -abs(x)
 end
 
-Laplace(μ, σ) = Laplace((μ=μ, σ=σ))
+Laplace(μ, σ) = Laplace((μ = μ, σ = σ))
 
 basemeasure(::Laplace{()}) = WeightedMeasure(static(-logtwo), LebesgueBase())
 

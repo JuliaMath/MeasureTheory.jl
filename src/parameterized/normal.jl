@@ -38,7 +38,7 @@ insupport(d::Normal, x) = True()
 
 insupport(d::Normal) = Returns(True())
 
-@inline logdensity_def(d::Normal{()}, x) = - muladd(x, x, log2π) / 2;
+@inline logdensity_def(d::Normal{()}, x) = -muladd(x, x, log2π) / 2;
 @inline basemeasure(::Normal{()}) = LebesgueBase()
 
 @kwstruct Normal(μ)
@@ -171,7 +171,7 @@ proxy(d::Normal{(:μ, :τ)}) = affine((μ = d.μ,), Normal((τ = d.τ,)))
 @inline function logdensity_def(d::Normal{(:μ, :logσ)}, x)
     μ = d.μ
     logσ = d.logσ
-    - 0.5(exp(-2 * logσ) * ((x - μ)^2))
+    -0.5(exp(-2 * logσ) * ((x - μ)^2))
 end
 
 function basemeasure(d::Normal{(:μ, :logσ)})
