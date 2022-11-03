@@ -160,14 +160,14 @@ end
         μ = par.μ
         σ = par.σ
         σ² = σ^2
-        τ = 1/σ²
+        τ = 1 / σ²
         logσ = log(σ)
         y = rand(d)
 
-        ℓ = logdensityof(Normal(;μ,σ), y)
-        @test ℓ ≈ logdensityof(Normal(;μ,σ²), y)
-        @test ℓ ≈ logdensityof(Normal(;μ,τ), y)
-        @test ℓ ≈ logdensityof(Normal(;μ,logσ), y)
+        ℓ = logdensityof(Normal(; μ, σ), y)
+        @test ℓ ≈ logdensityof(Normal(; μ, σ²), y)
+        @test ℓ ≈ logdensityof(Normal(; μ, τ), y)
+        @test ℓ ≈ logdensityof(Normal(; μ, logσ), y)
     end
 
     @testset "LKJCholesky" begin
@@ -666,15 +666,16 @@ affinepars_1d = [
     (μ = randn(), λ = randn())
 ]
 
-smf_measures = [
-    [Bernoulli(), Bernoulli(rand()), Bernoulli(logitp = randn())]
-    [Beta(rand(), rand())]
-    # [BetaBinomial(rand(5:20), 2 * rand(), 2 * rand())]
-    # [Binomial(rand(5:20), rand())]
-    Cauchy.(affinepars_1d)
-    Normal.(affinepars_1d)
-    StudentT.(merge.(Ref((ν=1 + 2 * rand(),)), affinepars_1d))
-] |> vcat
+smf_measures =
+    [
+        [Bernoulli(), Bernoulli(rand()), Bernoulli(logitp = randn())]
+        [Beta(rand(), rand())]
+        # [BetaBinomial(rand(5:20), 2 * rand(), 2 * rand())]
+        # [Binomial(rand(5:20), rand())]
+        Cauchy.(affinepars_1d)
+        Normal.(affinepars_1d)
+        StudentT.(merge.(Ref((ν = 1 + 2 * rand(),)), affinepars_1d))
+    ] |> vcat
 
 @testset "smf" begin
     for μ in smf_measures
