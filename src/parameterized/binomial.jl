@@ -29,6 +29,10 @@ end
 
 Binomial(n) = Binomial(n, 0.5)
 
+function Dists.rand(rng::ResettableRNG, d::Dists.Binomial)
+    rand(rng.rng, d)
+end
+
 ###############################################################################
 @kwstruct Binomial(n, p)
 
