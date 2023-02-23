@@ -199,3 +199,23 @@ function logdensity_def(p::Normal, q::Normal, x)
 
     return sqdiff / 2
 end
+
+for N in ((:μ,), (:σ,), (:λ,), (:μ, :σ), (:μ, :λ))
+    expr = Expr(:block)
+    if first(N) == :μ
+        push!(expr.args, :(mean(d::Normal{$N}) = d.μ))
+    else
+        push!(expr.args, :(mean(d::Normal{$N,Tuple{T}}) where {T} = zero(T)))
+    end
+    cov_var = last(N)
+    push!(expr.args, :(var(d::Normal{$N}) = abs2(std(d))))
+    if cov_var == :μ
+        push!(expr.args, :(std(d::Normal{$N, Tuple{T}}) where {T} = one(T)))
+    elseif cov_var == :σ
+        push!(expr.args, :(std(d::Normal{$N}) = d.σ))
+    elseif cov_var == :λ
+        push!(expr.args, :(std(d::Normal{$N}) = inv(d.λ)))
+    end
+    eval(expr)
+end
+

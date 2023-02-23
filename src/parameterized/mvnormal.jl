@@ -90,3 +90,28 @@ end
 @inline function proxy(d::MvNormal{(:μ, :Λ),Tuple{T,C}}) where {T,C<:Cholesky}
     affine((μ = d.μ, λ = d.Λ.L), Normal()^supportdim(d))
 end
+
+# Statistics dispatch
+for N in ((:μ,), (:σ,), (:λ,), (:Σ,), (:Λ,), (:μ, :σ), (:μ, :λ), (:μ, :Σ), (:μ, :Λ))
+    expr = Expr(:block)
+    if first(N) == :μ
+        push!(expr.args, :(mean(d::MvNormal{$N}) = d.μ))
+    else
+        push!(expr.args, :(mean(d::MvNormal{$N,Tuple{T}}) where {T} = zeros(eltype(T), supportdim(d))))
+    end
+    cov_var = last(N)
+    push!(expr.args, :(var(d::MvNormal{$N}) = diag(cov(d))))
+    push!(expr.args, :(std(d::MvNormal{$N}) = sqrt.(diag(cov(d)))))
+    if cov_var == :μ
+        push!(expr.args, :(cov(d::MvNormal{$N, Tuple{T}}) where {T} = I(supportdim(d)...)))
+    elseif cov_var == :σ
+        push!(expr.args, :(cov(d::MvNormal{$N}) = d.σ * d.σ'))
+    elseif cov_var == :λ
+        push!(expr.args, :(cov(d::MvNormal{$N}) = inv(d.λ' * d.λ)))
+    elseif cov_var == :Σ
+        push!(expr.args, :(cov(d::MvNormal{$N}) = Matrix(d.Σ)))
+    elseif cov_var == :Λ
+        push!(expr.args, :(cov(d::MvNormal{$N}) = inv(d.Λ')))
+    end
+    eval(expr)
+end

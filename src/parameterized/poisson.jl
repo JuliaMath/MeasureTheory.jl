@@ -38,6 +38,10 @@ function Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:logλ,)})
     rand(rng, Dists.Poisson(exp(d.logλ)))
 end
 
+mean(d::Poisson{(:λ,)}) = d.λ
+std(d::Poisson{(:λ,)}) = sqrt(d.λ)
+var(d::Poisson{(:λ,)}) = d.λ
+
 @inline function insupport(::Poisson, x)
     isinteger(x) && x ≥ 0
 end
