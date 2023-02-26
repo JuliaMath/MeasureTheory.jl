@@ -116,7 +116,7 @@ end
         @test ℓ ≈ logdensity_def(Binomial(; n, logitp), y)
         @test ℓ ≈ logdensity_def(Binomial(; n, probitp), y)
 
-        rng = ResettableRNG(Random.Xoshiro())
+        rng = ResettableRNG(Random.MersenneTwister())
         @test rand(rng, Binomial(n=0, p=1.0)) == 0
         @test rand(rng, Binomial(n=10, p=1.0)) == 10
 
