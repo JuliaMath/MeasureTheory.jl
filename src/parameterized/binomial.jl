@@ -23,15 +23,11 @@ end
     x ∈ (0, 1)
 end
 
-function Base.rand(rng::AbstractRNG, ::Type, d::Binomial{(:n, :p)})
-    rand(rng, Dists.Binomial(d.n, d.p))
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::Binomial{(:n, :p)}) where {T}
+    rand(rng, T, Dists.Binomial(d.n, d.p))
 end
 
 Binomial(n) = Binomial(n, 0.5)
-
-function Dists.rand(rng::ResettableRNG, d::Dists.Binomial)
-    rand(rng.rng, d)
-end
 
 ###############################################################################
 @kwstruct Binomial(n, p)
