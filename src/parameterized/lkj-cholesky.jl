@@ -56,7 +56,7 @@ logdensity_def(d::LKJCholesky, C::Cholesky) = logdensity_def(d, C.UL)
     # z = diag(L)
     # sum(log.(z) .* ((k:-1:1) .+ 2*(η-1)))
 
-    # Note: https://github.com/cscherrer/MeasureTheory.jl/issues/100#issuecomment-852428192
+    # Note: https://github.com/JuliaMath/MeasureTheory.jl/issues/100#issuecomment-852428192
     c = d.k + 2(η - 1)
     n = size(L, 1)
     s = sum(1:n) do i
