@@ -657,7 +657,7 @@ end
     end
 end
 
-@testset "https://github.com/cscherrer/MeasureTheory.jl/issues/217" begin
+@testset "https://github.com/JuliaMath/MeasureTheory.jl/issues/217" begin
     d = For(rand(3), rand(3)) do x, y
         Normal(x, y)
     end
