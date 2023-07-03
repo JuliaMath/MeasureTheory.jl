@@ -1,7 +1,7 @@
 # MeasureTheory
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://cscherrer.github.io/MeasureTheory.jl/stable)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://cscherrer.github.io/MeasureTheory.jl/dev)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://JuliaMath.github.io/MeasureTheory.jl/stable)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaMath.github.io/MeasureTheory.jl/dev)
 [![Build Status](https://github.com/JuliaMath/MeasureTheory.jl/workflows/CI/badge.svg)](https://github.com/JuliaMath/MeasureTheory.jl/actions)
 [![Coverage](https://codecov.io/gh/JuliaMath/MeasureTheory.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaMath/MeasureTheory.jl)
 [![DOI](https://proceedings.juliacon.org/papers/10.21105/jcon.00092/status.svg)](https://doi.org/10.21105/jcon.00092)
@@ -21,7 +21,7 @@ To install `MeasureTheory.jl`, open the Julia Pkg REPL (by typing `]` in the sta
 pkg> add MeasureTheory
 ```
 
-To get an idea of the possibilities offered by this package, go to the [documentation](https://cscherrer.github.io/MeasureTheory.jl/stable).
+To get an idea of the possibilities offered by this package, go to the [documentation](https://JuliaMath.github.io/MeasureTheory.jl/stable).
 
 
 
