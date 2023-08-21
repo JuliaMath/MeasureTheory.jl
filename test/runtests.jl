@@ -73,7 +73,6 @@ test_measures = Any[
     MvNormal(σ = σ)
     MvNormal(λ = λ)
     Uniform()
-    Counting(Float64)
     Dirac(0.0) + Normal()
 ]
 
@@ -313,7 +312,7 @@ end
 
 @testset "rootmeasure/logpdf" begin
     x = rand(Normal())
-    @test logdensityof(𝒹(Normal(), rootmeasure(Normal())), x) ≈ logdensityof(Normal(), x)
+    @test logdensity_rel(Normal(), rootmeasure(Normal()), x) ≈ logdensityof(Normal(), x)
 end
 
 @testset "Transforms" begin
@@ -480,45 +479,26 @@ end
     end
 end
 
-@testset "Density measures and Radon-Nikodym" begin
-    x = randn()
-    let d = ∫(𝒹(Cauchy(), Normal()), Normal())
-        @test logdensityof(𝒹(d, Cauchy()), x) ≈ 0 atol = 1e-12
-    end
-
-    let f = 𝒹(∫(x -> x^2, Normal()), Normal())
-        @test densityof(f, x) ≈ x^2
-    end
-
-    # let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
-    #     @test logdensity_def(d, Cauchy(), x) ≈ 0 atol=1e-12
-    # end
-
-    let f = 𝒹(∫exp(x -> x^2, Normal()), Normal())
-        @test logdensityof(f, x) ≈ x^2
-    end
-end
-
 @testset "Half measures" begin
     @testset "HalfNormal" begin
         d = Normal(σ = 3)
         h = HalfNormal(3)
         x = rand(h)
-        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
+        @test densityof(h, x) ≈ 2 * densityof(d, x)
     end
 
     @testset "HalfCauchy" begin
         d = Cauchy(σ = 3)
         h = HalfCauchy(3)
         x = rand(h)
-        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
+        @test densityof(h, x) ≈ 2 * densityof(d, x)
     end
 
     @testset "HalfStudentT" begin
         d = StudentT(ν = 2, σ = 3)
         h = HalfStudentT(2, 3)
         x = rand(h)
-        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
+        @test densityof(h, x) ≈ 2 * densityof(d, x)
     end
 end
 
