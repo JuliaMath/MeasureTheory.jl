@@ -13,7 +13,7 @@ import Base
 
 Bernoulli(p) = Bernoulli((p = p,))
 
-basemeasure(::Bernoulli) = CountingMeasure()
+basemeasure(::Bernoulli) = CountingBase()
 
 testvalue(::Bernoulli) = true
 

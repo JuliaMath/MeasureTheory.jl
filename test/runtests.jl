@@ -120,7 +120,7 @@ end
         @test rand(rng, Binomial(n=0, p=1.0)) == 0
         @test rand(rng, Binomial(n=10, p=1.0)) == 10
 
-        @test_broken logdensity_def(Binomial(n, p), CountingMeasure(ℤ[0:n]), x) ≈
+        @test_broken logdensity_def(Binomial(n, p), CountingBase(ℤ[0:n]), x) ≈
                      binomlogpdf(n, p, x)
     end
 
@@ -157,7 +157,7 @@ end
         sample2 = rand(MersenneTwister(123), NegativeBinomial(; r, logλ))
         @test sample1 == sample2
 
-        @test_broken logdensity_def(Binomial(n, p), CountingMeasure(ℤ[0:n]), x) ≈
+        @test_broken logdensity_def(Binomial(n, p), CountingBase(ℤ[0:n]), x) ≈
                      binomlogpdf(n, p, x)
     end
 

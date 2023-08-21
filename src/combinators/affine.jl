@@ -282,7 +282,7 @@ end
 @inline function basemeasure(d::AffinePushfwd{N,L}) where {N,L<:Lebesgue}
     weightedmeasure(-logjac(d), d.parent)
 end
-@inline function basemeasure(d::AffinePushfwd{N,L}) where {N,L<:LebesgueMeasure}
+@inline function basemeasure(d::AffinePushfwd{N,L}) where {N,L<:LebesgueBase}
     weightedmeasure(-logjac(d), d.parent)
 end
 

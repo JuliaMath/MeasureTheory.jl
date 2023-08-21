@@ -7,7 +7,7 @@ import Base
 
 insupport(::NegativeBinomial, x) = isinteger(x) && x ≥ 0
 
-basemeasure(::NegativeBinomial) = CountingMeasure()
+basemeasure(::NegativeBinomial) = CountingBase()
 
 testvalue(::NegativeBinomial) = 0
 

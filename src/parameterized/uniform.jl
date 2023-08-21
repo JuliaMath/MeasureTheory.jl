@@ -13,7 +13,7 @@ export Uniform
 insupport(::Uniform{()}) = in𝕀
 insupport(::Uniform{()}, x) = in𝕀(x)
 
-@inline basemeasure(::Uniform{()}) = LebesgueMeasure()
+@inline basemeasure(::Uniform{()}) = LebesgueBase()
 
 proxy(::Uniform{()}) = Dists.Uniform()
 

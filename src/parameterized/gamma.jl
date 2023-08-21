@@ -19,7 +19,7 @@ end
 
 function basemeasure(d::Gamma{(:k,)})
     ℓ = -loggamma(d.k)
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 @kwstruct Gamma(k, σ)
@@ -57,11 +57,11 @@ function basemeasure(d::Gamma{(:μ, :ϕ)})
     ϕ = d.ϕ
     ϕinv = inv(ϕ)
     ℓ = -ϕinv * log(ϕ) - first(logabsgamma(ϕinv))
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 function basemeasure(d::Gamma{(:μ, :ϕ),Tuple{M,StaticFloat64{ϕ}}}) where {M,ϕ}
     ϕinv = inv(ϕ)
     ℓ = static(-ϕinv * log(ϕ) - first(logabsgamma(ϕinv)))
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end

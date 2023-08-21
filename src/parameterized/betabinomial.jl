@@ -6,7 +6,7 @@ using SpecialFunctions
 
 @parameterized BetaBinomial(n, α, β)
 
-basemeasure(d::BetaBinomial) = CountingMeasure()
+basemeasure(d::BetaBinomial) = CountingBase()
 
 testvalue(::BetaBinomial) = 0
 

@@ -9,7 +9,7 @@ probit(p) = sqrt2 * erfinv(2p - 1)
 
 @parameterized Binomial(n, p)
 
-basemeasure(d::Binomial) = CountingMeasure()
+basemeasure(d::Binomial) = CountingBase()
 
 testvalue(::Binomial) = 0
 

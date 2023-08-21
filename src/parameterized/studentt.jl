@@ -50,7 +50,7 @@ end
 
 @inline function basemeasure(d::StudentT{(:ν,)})
     ℓ = loggamma((d.ν + 1) / 2) - loggamma(d.ν / 2) - log(π * d.ν) / 2
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 xform(::StudentT) = asℝ
