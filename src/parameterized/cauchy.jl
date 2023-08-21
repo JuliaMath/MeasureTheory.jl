@@ -48,7 +48,7 @@ as(::Cauchy) = asℝ
 
 HalfCauchy(σ) = HalfCauchy(σ = σ)
 
-Base.rand(::FixedRNG, ::Type{T}, μ::HalfCauchy) where {T} = one(T)
+Base.rand(::FixedRNG, ::Type{T}, μ::Half{<:Cauchy}) where {T} = one(T)
 
 proxy(d::Cauchy{()}) = Dists.Cauchy()
 
