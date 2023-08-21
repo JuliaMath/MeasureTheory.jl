@@ -49,7 +49,7 @@ function TV.transform_with(flag::TV.LogJacFlag, t::Ordered, x, index::T) where {
     return (y, ℓ, index)
 end
 
-TV.inverse_eltype(t::Ordered, y::AbstractVector) = TV.extended_eltype(y)
+TV.inverse_eltype(t::Ordered, y::AbstractVector) = eltype(y)
 
 Ordered(n::Int) = Ordered(asℝ, n)
 

@@ -118,6 +118,9 @@ xlog1py(x, y) = x * log(1 + y)
 
 as(args...; kwargs...) = TV.as(args...; kwargs...)
 
+# Type piracy until https://github.com/JuliaMath/MeasureBase.jl/issues/127 is fixed
+MeasureBase.rand(::FixedRNG, ::Type{Bool}) = true
+
 include("utils.jl")
 include("const.jl")
 include("combinators/for.jl")

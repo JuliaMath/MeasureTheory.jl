@@ -28,8 +28,8 @@ end
 
 import Base
 
-function Base.rand(rng::AbstractRNG, d::Gumbel{()})
-    u = rand(rng)
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::Gumbel{()}) where {T}
+    u = rand(rng, T)
     -log(-log(u))
 end
 
