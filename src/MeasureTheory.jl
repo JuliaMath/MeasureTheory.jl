@@ -11,8 +11,6 @@ const TV = TransformVariables
 using TransformVariables: asℝ₊, as𝕀, asℝ, transform
 
 import Base
-# import Distributions
-# const Dists = Distributions
 
 export TV
 export transform
