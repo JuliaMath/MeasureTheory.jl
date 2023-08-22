@@ -73,7 +73,6 @@ test_measures = Any[
     MvNormal(σ = σ)
     MvNormal(λ = λ)
     Uniform()
-    # Counting(Float64)
     Dirac(0.0) + Normal()
 ]
 
@@ -103,6 +102,10 @@ end
         ℓ = logdensity_def(Binomial(; n, p), y)
         @test ℓ ≈ logdensity_def(Binomial(; n, logitp), y)
         @test ℓ ≈ logdensity_def(Binomial(; n, probitp), y)
+
+        rng = ResettableRNG(Random.MersenneTwister())
+        @test rand(rng, Binomial(n=0, p=1.0)) == 0
+        @test rand(rng, Binomial(n=10, p=1.0)) == 10
 
         @test_broken logdensity_def(Binomial(n, p), CountingBase(ℤ[0:n]), x) ≈
                      binomlogpdf(n, p, x)
@@ -298,7 +301,7 @@ using DynamicIterators: trace, TimeLift
 
 @testset "rootmeasure/logpdf" begin
     x = rand(Normal())
-    @test log𝒹(Normal(), rootmeasure(Normal()))(x) ≈ logdensityof(Normal(), x)
+    @test logdensity_rel(Normal(), rootmeasure(Normal()), x) ≈ logdensityof(Normal(), x)
 end
 
 @testset "Transforms" begin
@@ -465,45 +468,26 @@ end
     end
 end
 
-@testset "Density measures and Radon-Nikodym" begin
-    x = randn()
-    # let d = ∫(𝒹(Cauchy(), Normal()), Normal())
-    #     @test logdensity_rel(𝒹(d, Cauchy()), x) ≈ 0 atol = 1e-12
-    # end
-
-    let f = 𝒹(∫(x -> x^2, Normal()), Normal())
-        @test f(x) ≈ x^2
-    end
-
-    # let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
-    #     @test logdensity_rel(d, Cauchy(), x) ≈ 0 atol=1e-12
-    # end
-
-    let f = log𝒹(∫exp(x -> x^2, Normal()), Normal())
-        @test f(x) ≈ x^2
-    end
-end
-
 @testset "Half measures" begin
     @testset "HalfNormal" begin
         d = Normal(σ = 3)
         h = HalfNormal(3)
         x = rand(h)
-        @test density_rel(h, Lebesgue(ℝ), x) ≈ 2 * density_rel(d, Lebesgue(ℝ), x)
+        @test densityof(h, x) ≈ 2 * densityof(d, x)
     end
 
     @testset "HalfCauchy" begin
         d = Cauchy(σ = 3)
         h = HalfCauchy(3)
         x = rand(h)
-        @test density_rel(h, Lebesgue(ℝ), x) ≈ 2 * density_rel(d, Lebesgue(ℝ), x)
+        @test densityof(h, x) ≈ 2 * densityof(d, x)
     end
 
     @testset "HalfStudentT" begin
         d = StudentT(ν = 2, σ = 3)
         h = HalfStudentT(2, 3)
         x = rand(h)
-        @test density_rel(h, Lebesgue(ℝ), x) ≈ 2 * density_rel(d, Lebesgue(ℝ), x)
+        @test densityof(h, x) ≈ 2 * densityof(d, x)
     end
 end
 
@@ -642,7 +626,7 @@ end
     end
 end
 
-@testset "https://github.com/cscherrer/MeasureTheory.jl/issues/217" begin
+@testset "https://github.com/JuliaMath/MeasureTheory.jl/issues/217" begin
     d = For(rand(3), rand(3)) do x, y
         Normal(x, y)
     end

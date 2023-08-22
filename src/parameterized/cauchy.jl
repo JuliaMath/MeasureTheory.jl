@@ -27,6 +27,7 @@ function density_def(d::Cauchy{()}, x)
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng, T)
+
 Base.rand(::FixedRNG, ::Type{T}, ::Cauchy{()}) where {T} = zero(T)
 
 for N in AFFINEPARS
@@ -44,6 +45,8 @@ end
 @half Cauchy
 
 HalfCauchy(σ) = HalfCauchy(σ = σ)
+
+Base.rand(::FixedRNG, ::Type{T}, μ::Half{<:Cauchy}) where {T} = one(T)
 
 insupport(::Cauchy, x) = true
 

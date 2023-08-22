@@ -8,7 +8,6 @@ using MLStyle
 import TransformVariables
 const TV = TransformVariables
 
-# using DistributionMeasures
 using TransformVariables: asℝ₊, as𝕀, asℝ, transform
 
 import Base
@@ -122,6 +121,10 @@ xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
 
 using MeasureBase: Φ, Φinv
+as(args...; kwargs...) = TV.as(args...; kwargs...)
+
+# Type piracy until https://github.com/JuliaMath/MeasureBase.jl/issues/127 is fixed
+MeasureBase.rand(::FixedRNG, ::Type{Bool}) = true
 
 include("utils.jl")
 include("const.jl")

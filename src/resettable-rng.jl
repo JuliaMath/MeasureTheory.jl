@@ -57,6 +57,14 @@ for T in vcat(subtypes(Signed), subtypes(Unsigned), subtypes(AbstractFloat))
     end
 end
 
+function Base.rand(r::ResettableRNG, d::AbstractMeasure)
+    rand(r.rng, d)
+end
+
+function Base.rand(r::ResettableRNG, ::Type{T}, d::AbstractMeasure) where {T}
+    rand(r.rng, T, d)
+end
+
 Base.iterate(r::ResettableRNG) = iterate(r, nothing)
 
 function Base.iterate(r::ResettableRNG, ::Nothing)

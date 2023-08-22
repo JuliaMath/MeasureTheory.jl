@@ -162,8 +162,6 @@ function as(d::ProductMeasure{<:Base.Generator})
     as(Array, as(d1), size(marginals(d))...)
 end
 
-as(args...; kwargs...) = TV.as(args...; kwargs...)
-
 as(::Beta) = as𝕀
 as(::Cauchy) = asℝ
 as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
