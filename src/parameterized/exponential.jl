@@ -6,7 +6,7 @@ export Exponential
 @parameterized Exponential(β)
 
 insupport(::Exponential, x) = x ≥ 0
-basemeasure(::Exponential) = LebesgueMeasure()
+basemeasure(::Exponential) = LebesgueBase()
 
 @kwstruct Exponential()
 
@@ -15,8 +15,6 @@ basemeasure(::Exponential) = LebesgueMeasure()
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Exponential{()}) = randexp(rng, T)
-
-as(::Exponential) = asℝ₊
 
 ##########################
 # Scale β
@@ -34,8 +32,6 @@ end
 
 proxy(d::Exponential{(:β,)}) = Dists.Exponential(d.β)
 
-asparams(::Type{<:Exponential}, ::StaticSymbol{:β}) = asℝ₊
-
 ##########################
 # Log-Scale logβ
 
@@ -51,8 +47,6 @@ end
 end
 
 proxy(d::Exponential{(:logβ,)}) = Dists.Exponential(exp(d.logβ))
-
-asparams(::Type{<:Exponential}, ::StaticSymbol{:logβ}) = asℝ
 
 ##########################
 # Rate λ
@@ -70,8 +64,6 @@ end
 
 proxy(d::Exponential{(:λ,)}) = Dists.Exponential(1 / d.λ)
 
-asparams(::Type{<:Exponential}, ::StaticSymbol{:λ}) = asℝ₊
-
 ##########################
 # Log-Rate logλ
 
@@ -88,4 +80,6 @@ end
 
 proxy(d::Exponential{(:logλ,)}) = Dists.Exponential(exp(-d.logλ))
 
-asparams(::Type{<:Exponential}, ::StaticSymbol{:logλ}) = asℝ
+smf(::Exponential{()}, x) = smf(StdExponential(), x)
+
+invsmf(::Exponential{()}, p) = invsmf(StdExponential(), p)

@@ -3,7 +3,7 @@ using StatsFuns
 using Base.Iterators: take
 using Random
 using LinearAlgebra
-using DynamicIterators: trace, TimeLift
+# using DynamicIterators: trace, TimeLift
 using TransformVariables: transform, as𝕀
 using FillArrays
 
@@ -73,26 +73,13 @@ test_measures = Any[
     MvNormal(σ = σ)
     MvNormal(λ = λ)
     Uniform()
-    Counting(Float64)
     Dirac(0.0) + Normal()
-]
-
-testbroken_measures = Any[
-    Pushforward(as𝕀, Normal())
-    # InverseGamma(2) # Not defined yet
-    # MvNormal(I(3)) # Entirely broken for now
-    TrivialMeasure()
 ]
 
 @testset "testvalue" begin
     for μ in test_measures
         @info "testing $μ"
         test_interface(μ)
-    end
-
-    for μ in testbroken_measures
-        @info "testing $μ"
-        @test_broken test_measure(μ)
     end
 
     @testset "testvalue(::Chain)" begin
@@ -120,7 +107,7 @@ end
         @test rand(rng, Binomial(n=0, p=1.0)) == 0
         @test rand(rng, Binomial(n=10, p=1.0)) == 10
 
-        @test_broken logdensity_def(Binomial(n, p), CountingMeasure(ℤ[0:n]), x) ≈
+        @test_broken logdensity_def(Binomial(n, p), CountingBase(ℤ[0:n]), x) ≈
                      binomlogpdf(n, p, x)
     end
 
@@ -157,7 +144,7 @@ end
         sample2 = rand(MersenneTwister(123), NegativeBinomial(; r, logλ))
         @test sample1 == sample2
 
-        @test_broken logdensity_def(Binomial(n, p), CountingMeasure(ℤ[0:n]), x) ≈
+        @test_broken logdensity_def(Binomial(n, p), CountingBase(ℤ[0:n]), x) ≈
                      binomlogpdf(n, p, x)
     end
 
@@ -167,25 +154,24 @@ end
         @test sample1 == sample2
     end
 
-    # Fails because we need `asparams` for `::AffinePushfwd`
-    # @testset "Normal" begin
-    #     D = affine{(:μ,:σ), Normal}
-    #     par = transform(asparams(D), randn(2))
-    #     d = D(par)
-    #     @test params(d) == par
+    @testset "Normal" begin
+        D = Normal{(:μ, :σ)}
+        par = transform(asparams(D), randn(2))
+        d = D(par)
+        @test params(d) == par
 
-    #     μ = par.μ
-    #     σ = par.σ
-    #     σ² = σ^2
-    #     τ = 1/σ²
-    #     logσ = log(σ)
-    #     y = rand(d)
+        μ = par.μ
+        σ = par.σ
+        σ² = σ^2
+        τ = 1 / σ²
+        logσ = log(σ)
+        y = rand(d)
 
-    #     ℓ = logdensity_def(Normal(;μ,σ), y)
-    #     @test ℓ ≈ logdensity_def(Normal(;μ,σ²), y)
-    #     @test ℓ ≈ logdensity_def(Normal(;μ,τ), y)
-    #     @test ℓ ≈ logdensity_def(Normal(;μ,logσ), y)
-    # end
+        ℓ = logdensityof(Normal(; μ, σ), y)
+        @test ℓ ≈ logdensityof(Normal(; μ, σ²), y)
+        @test ℓ ≈ logdensityof(Normal(; μ, τ), y)
+        @test ℓ ≈ logdensityof(Normal(; μ, logσ), y)
+    end
 
     @testset "LKJCholesky" begin
         D = LKJCholesky{(:k, :η)}
@@ -288,6 +274,8 @@ end
     @test transform(t, []) == x
 end
 
+using DynamicIterators: trace, TimeLift
+
 # @testset "Univariate chain" begin
 #     ξ0 = 1.
 #     x = 1.2
@@ -313,7 +301,7 @@ end
 
 @testset "rootmeasure/logpdf" begin
     x = rand(Normal())
-    @test logdensityof(𝒹(Normal(), rootmeasure(Normal())), x) ≈ logdensityof(Normal(), x)
+    @test logdensity_rel(Normal(), rootmeasure(Normal()), x) ≈ logdensityof(Normal(), x)
 end
 
 @testset "Transforms" begin
@@ -430,7 +418,7 @@ end
     end
 
     @testset "Normal" begin
-        @test_broken repro(Normal, (:μ, :σ))
+        @test repro(Normal, (:μ, :σ))
     end
 
     @testset "Poisson" begin
@@ -480,45 +468,26 @@ end
     end
 end
 
-@testset "Density measures and Radon-Nikodym" begin
-    x = randn()
-    let d = ∫(𝒹(Cauchy(), Normal()), Normal())
-        @test logdensityof(𝒹(d, Cauchy()), x) ≈ 0 atol = 1e-12
-    end
-
-    let f = 𝒹(∫(x -> x^2, Normal()), Normal())
-        @test densityof(f, x) ≈ x^2
-    end
-
-    # let d = ∫exp(log𝒹(Cauchy(), Normal()), Normal())
-    #     @test logdensity_def(d, Cauchy(), x) ≈ 0 atol=1e-12
-    # end
-
-    let f = 𝒹(∫exp(x -> x^2, Normal()), Normal())
-        @test logdensityof(f, x) ≈ x^2
-    end
-end
-
 @testset "Half measures" begin
     @testset "HalfNormal" begin
         d = Normal(σ = 3)
         h = HalfNormal(3)
         x = rand(h)
-        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
+        @test densityof(h, x) ≈ 2 * densityof(d, x)
     end
 
     @testset "HalfCauchy" begin
         d = Cauchy(σ = 3)
         h = HalfCauchy(3)
         x = rand(h)
-        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
+        @test densityof(h, x) ≈ 2 * densityof(d, x)
     end
 
     @testset "HalfStudentT" begin
         d = StudentT(ν = 2, σ = 3)
         h = HalfStudentT(2, 3)
         x = rand(h)
-        @test densityof(𝒹(h, Lebesgue(ℝ)), x) ≈ 2 * densityof(𝒹(d, Lebesgue(ℝ)), x)
+        @test densityof(h, x) ≈ 2 * densityof(d, x)
     end
 end
 
@@ -667,7 +636,39 @@ end
     @test logdensityof(d, x) isa Real
 end
 
-@testset "Distributions.jl cdf" begin
-    @test cdf(Normal(0, 1), 0) == 0.5
-    @test cdf.((Normal(0, 1),), [0, 0]) == [0.5, 0.5]
+@testset "Normal smf" begin
+    @test smf(Normal(0, 1), 0) == 0.5
+    @test smf.((Normal(0, 1),), [0, 0]) == [0.5, 0.5]
+end
+
+affinepars_1d = [
+    (;)
+    (μ = randn(),)
+    (σ = randn(),)
+    (λ = randn(),)
+    (μ = randn(), σ = randn())
+    (μ = randn(), λ = randn())
+]
+
+smf_measures =
+    [
+        [Bernoulli(), Bernoulli(rand()), Bernoulli(logitp = randn())]
+        [Beta(rand(), rand())]
+        # [BetaBinomial(rand(5:20), 2 * rand(), 2 * rand())]
+        # [Binomial(rand(5:20), rand())]
+        Cauchy.(affinepars_1d)
+        Normal.(affinepars_1d)
+        StudentT.(merge.(Ref((ν = 1 + 2 * rand(),)), affinepars_1d))
+    ] |> vcat
+
+@testset "smf" begin
+    for μ in smf_measures
+        test_smf(μ)
+    end
+end
+
+@testset "more interface tests" begin
+    for μ in smf_measures
+        test_interface(μ)
+    end
 end

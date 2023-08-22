@@ -8,12 +8,9 @@ using MLStyle
 import TransformVariables
 const TV = TransformVariables
 
-using DistributionMeasures
 using TransformVariables: asℝ₊, as𝕀, asℝ, transform
 
 import Base
-import Distributions
-const Dists = Distributions
 
 export TV
 export transform
@@ -27,14 +24,12 @@ export Lebesgue
 export ℝ, ℝ₊, 𝕀
 export ⊙
 export SpikeMixture
-export CountingMeasure
 export TrivialMeasure
 export Likelihood
 export testvalue
 export basekernel
 
 using Infinities
-using DynamicIterators
 using KeywordCalls
 using ConstructionBase
 using Accessors
@@ -58,9 +53,12 @@ import MeasureBase:
     paramnames,
     ∫,
     𝒹,
-    ∫exp
+    ∫exp,
+    smf,
+    invsmf,
+    massof
 import MeasureBase: ≪
-using MeasureBase: BoundedInts, BoundedReals, CountingMeasure, IntegerDomain, IntegerNumbers
+using MeasureBase: BoundedInts, BoundedReals, CountingBase, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractTransitionKernel
 
@@ -97,12 +95,15 @@ using MeasureBase: kernel
 using MeasureBase: Returns
 import MeasureBase: proxy, @useproxy
 import MeasureBase: basemeasure_depth
-using MeasureBase: LebesgueMeasure
+using MeasureBase: LebesgueBase
 
 import DensityInterface: logdensityof
 import DensityInterface: densityof
 import DensityInterface: DensityKind
 using DensityInterface
+
+using ForwardDiff
+using ForwardDiff: Dual
 
 gentype(μ::AbstractMeasure) = typeof(testvalue(μ))
 
@@ -117,20 +118,22 @@ xlogy(x, y) = x * log(y)
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
 
+using MeasureBase: Φ, Φinv
 as(args...; kwargs...) = TV.as(args...; kwargs...)
+
+# Type piracy until https://github.com/JuliaMath/MeasureBase.jl/issues/127 is fixed
+MeasureBase.rand(::FixedRNG, ::Type{Bool}) = true
 
 include("utils.jl")
 include("const.jl")
 include("combinators/for.jl")
-# include("traits.jl")
-include("parameterized.jl")
 
 include("macros.jl")
 include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/product.jl")
 include("combinators/transforms.jl")
-include("combinators/exponential-families.jl")
+# include("combinators/exponential-families.jl")
 include("resettable-rng.jl")
 include("realized.jl")
 include("combinators/chain.jl")
@@ -164,6 +167,8 @@ include("combinators/ifelse.jl")
 
 include("transforms/corrcholesky.jl")
 include("transforms/ordered.jl")
+
+include("parameterized.jl")
 
 include("distproxy.jl")
 end # module

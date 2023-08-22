@@ -7,7 +7,7 @@ import Base
 
 insupport(::NegativeBinomial, x) = isinteger(x) && x ≥ 0
 
-basemeasure(::NegativeBinomial) = CountingMeasure()
+basemeasure(::NegativeBinomial) = CountingBase()
 
 testvalue(::NegativeBinomial) = 0
 
@@ -76,9 +76,3 @@ function proxy(d::NegativeBinomial{(:r, :logλ)})
 end
 
 ###############################################################################
-
-asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:p}) = as𝕀
-asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:logitp}) = asℝ
-asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:r}) = asℝ₊
-asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:λ}) = asℝ₊
-asparams(::Type{<:NegativeBinomial}, ::StaticSymbol{:logλ}) = asℝ

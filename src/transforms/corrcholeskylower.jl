@@ -38,7 +38,7 @@ function TV.transform_with(
     return U', ℓ, index
 end
 
-TV.inverse_eltype(t::CorrCholeskyLower, L::LowerTriangular) = TV.extended_eltype(L)
+TV.inverse_eltype(t::CorrCholeskyLower, L::LowerTriangular) = eltype(L)
 
 function TV.inverse_at!(x::AbstractVector, index, t::CorrCholeskyLower, L::LowerTriangular)
     return TV.inverse_at!(x, index, CorrCholeskyUpper(t.n), L')

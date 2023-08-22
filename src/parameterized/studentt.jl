@@ -50,20 +50,22 @@ end
 
 @inline function basemeasure(d::StudentT{(:ν,)})
     ℓ = loggamma((d.ν + 1) / 2) - loggamma(d.ν / 2) - log(π * d.ν) / 2
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
-xform(::StudentT) = asℝ
-
 Base.rand(rng::AbstractRNG, T::Type, μ::StudentT{(:ν,)}) = rand(rng, Dists.TDist(μ.ν))
-
-proxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
 
 @half StudentT
 
 HalfStudentT(ν, σ) = HalfStudentT((ν = ν, σ = σ))
 
-asparams(::Type{<:StudentT}, ::StaticSymbol{:ν}) = asℝ₊
-
 insupport(::StudentT, x) = true
 insupport(::StudentT) = Returns(true)
+
+proxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
+
+smf(d::StudentT, x) = smf(proxy(d), x)
+invsmf(d::StudentT, p) = invsmf(proxy(d), p)
+
+smf(d::StudentT{(:ν,)}, x) = cdf(proxy(d), x)
+invsmf(d::StudentT{(:ν,)}, p) = quantile(proxy(d), p)

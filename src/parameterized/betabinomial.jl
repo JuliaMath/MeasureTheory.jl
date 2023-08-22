@@ -6,17 +6,13 @@ using SpecialFunctions
 
 @parameterized BetaBinomial(n, α, β)
 
-basemeasure(d::BetaBinomial) = CountingMeasure()
+basemeasure(d::BetaBinomial) = CountingBase()
 
 testvalue(::BetaBinomial) = 0
 
 @kwstruct BetaBinomial(n, α, β)
 
-function Base.rand(
-    rng::AbstractRNG,
-    ::Type{T},
-    d::BetaBinomial{(:n, :α, :β)},
-) where {T}
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::BetaBinomial{(:n, :α, :β)}) where {T}
     k = rand(rng, T, Beta(d.α, d.β))
     return rand(rng, T, Binomial(d.n, k))
 end
@@ -33,5 +29,4 @@ end
     return logbinom + lognum - logdenom
 end
 
-asparams(::Type{<:BetaBinomial}, ::StaticSymbol{:α}) = asℝ₊
-asparams(::Type{<:BetaBinomial}, ::StaticSymbol{:β}) = asℝ₊
+proxy(d::BetaBinomial{(:n, :α, :β)}) = Dists.BetaBinomial(d.n, d.α, d.β)

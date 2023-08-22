@@ -128,7 +128,7 @@ logjac(f::AffineTransform{(:μ, :σ)}) = logjac(f.σ)
 logjac(f::AffineTransform{(:μ, :λ)}) = -logjac(f.λ)
 logjac(f::AffineTransform{(:σ,)}) = logjac(f.σ)
 logjac(f::AffineTransform{(:λ,)}) = -logjac(f.λ)
-logjac(f::AffineTransform{(:μ,)}) = 0.0
+logjac(f::AffineTransform{(:μ,)}) = static(0.0)
 
 ###############################################################################
 
@@ -161,7 +161,7 @@ basemeasure(d::OrthoLebesgue) = d
 
 logdensity_def(::OrthoLebesgue, x) = static(0.0)
 
-struct AffinePushfwd{N,M,T} <: AbstractMeasure
+struct AffinePushfwd{N,M,T} <: MeasureBase.AbstractPushforward
     f::AffineTransform{N,T}
     parent::M
 end
@@ -171,6 +171,10 @@ function Pretty.tile(d::AffinePushfwd)
 
     Pretty.list_layout([pars, Pretty.tile(d.parent)]; prefix = :AffinePushfwd)
 end
+
+@inline MeasureBase.transport_origin(d::AffinePushfwd) = d.parent
+@inline MeasureBase.to_origin(d::AffinePushfwd, y) = inverse(getfield(d, :f))(y)
+@inline MeasureBase.from_origin(d::AffinePushfwd, x) = getfield(d, :f)(x)
 
 @inline function testvalue(d::AffinePushfwd)
     f = getfield(d, :f)
@@ -282,7 +286,7 @@ end
 @inline function basemeasure(d::AffinePushfwd{N,L}) where {N,L<:Lebesgue}
     weightedmeasure(-logjac(d), d.parent)
 end
-@inline function basemeasure(d::AffinePushfwd{N,L}) where {N,L<:LebesgueMeasure}
+@inline function basemeasure(d::AffinePushfwd{N,L}) where {N,L<:LebesgueBase}
     weightedmeasure(-logjac(d), d.parent)
 end
 
@@ -313,19 +317,6 @@ supportdim(nt::NamedTuple{(:σ,),T}) where {T}    = colsize(nt.σ)
 supportdim(nt::NamedTuple{(:λ,),T}) where {T}    = rowsize(nt.λ)
 supportdim(nt::NamedTuple{(:μ,),T}) where {T}    = size(nt.μ)
 
-asparams(::AffinePushfwd, ::StaticSymbol{:μ}) = asℝ
-asparams(::AffinePushfwd, ::StaticSymbol{:σ}) = asℝ₊
-asparams(::Type{A}, ::StaticSymbol{:μ}) where {A<:AffinePushfwd} = asℝ
-asparams(::Type{A}, ::StaticSymbol{:σ}) where {A<:AffinePushfwd} = asℝ₊
-
-function asparams(d::AffinePushfwd{N,M,T}, ::StaticSymbol{:μ}) where {N,M,T<:AbstractArray}
-    as(Array, asℝ, size(d.μ))
-end
-
-function asparams(d::AffinePushfwd{N,M,T}, ::StaticSymbol{:σ}) where {N,M,T<:AbstractArray}
-    as(Array, asℝ, size(d.σ))
-end
-
 function Base.rand(rng::Random.AbstractRNG, ::Type{T}, d::AffinePushfwd) where {T}
     z = rand(rng, T, parent(d))
     f = getfield(d, :f)
@@ -336,8 +327,8 @@ end
     insupport(d.parent, inverse(d.f)(x))
 end
 
-@inline function Distributions.cdf(d::AffinePushfwd, x)
-    cdf(parent(d), inverse(d.f)(x))
+@inline function MeasureBase.smf(d::AffinePushfwd, x)
+    smf(parent(d), inverse(d.f)(x))
 end
 
 @inline function mean(d::AffinePushfwd)
@@ -363,4 +354,68 @@ end
 
 @inline function std(d::AffinePushfwd{(:μ, :λ)})
     std(parent(d)) / d.λ
+end
+
+###############################################################################
+# smf
+
+@inline function smf(d::AffinePushfwd{(:μ,)}, x)
+    f = getfield(d, :f)
+    smf(parent(d), inverse(f)(x))
+end
+
+@inline function smf(d::AffinePushfwd{(:μ, :σ)}, x)
+    f = getfield(d, :f)
+    p = smf(parent(d), inverse(f)(x))
+    d.σ > 0 ? p : one(p) - p
+end
+
+@inline function smf(d::AffinePushfwd{(:σ,)}, x)
+    f = getfield(d, :f)
+    p = smf(parent(d), inverse(f)(x))
+    d.σ > 0 ? p : one(p) - p
+end
+
+@inline function smf(d::AffinePushfwd{(:λ,)}, x)
+    f = getfield(d, :f)
+    p = smf(parent(d), inverse(f)(x))
+    d.λ > 0 ? p : one(p) - p
+end
+
+@inline function smf(d::AffinePushfwd{(:μ, :λ)}, x)
+    f = getfield(d, :f)
+    p = smf(parent(d), inverse(f)(x))
+    d.λ > 0 ? p : one(p) - p
+end
+
+###############################################################################
+# invsmf
+
+@inline function invsmf(d::AffinePushfwd{(:μ,)}, p)
+    f = getfield(d, :f)
+    f(invsmf(parent(d), p))
+end
+
+@inline function invsmf(d::AffinePushfwd{(:μ, :σ)}, p)
+    p = d.σ > 0 ? p : one(p) - p
+    f = getfield(d, :f)
+    f(invsmf(parent(d), p))
+end
+
+@inline function invsmf(d::AffinePushfwd{(:σ,)}, p)
+    p = d.σ > 0 ? p : one(p) - p
+    f = getfield(d, :f)
+    f(invsmf(parent(d), p))
+end
+
+@inline function invsmf(d::AffinePushfwd{(:λ,)}, p)
+    p = d.λ > 0 ? p : one(p) - p
+    f = getfield(d, :f)
+    f(invsmf(parent(d), p))
+end
+
+@inline function invsmf(d::AffinePushfwd{(:μ, :λ)}, p)
+    p = d.λ > 0 ? p : one(p) - p
+    f = getfield(d, :f)
+    f(invsmf(parent(d), p))
 end
