@@ -4,7 +4,7 @@ export Gumbel
 
 @parameterized Gumbel()
 
-basemeasure(::Gumbel{()}) = LebesgueMeasure()
+basemeasure(::Gumbel{()}) = LebesgueBase()
 
 @kwstruct Gumbel()
 
@@ -28,15 +28,13 @@ end
 
 import Base
 
-function Base.rand(rng::AbstractRNG, d::Gumbel{()})
-    u = rand(rng)
+function Base.rand(rng::AbstractRNG, ::Type{T}, d::Gumbel{()}) where {T}
+    u = rand(rng, T)
     -log(-log(u))
 end
 
-as(::Gumbel) = asℝ
-
 ≪(::Gumbel, ::Lebesgue{X}) where {X<:Real} = true
 
-proxy(::Gumbel{()}) = Dists.Gumbel()
-
 insupport(::Gumbel, x) = true
+
+proxy(::Gumbel{()}) = Dists.Gumbel()

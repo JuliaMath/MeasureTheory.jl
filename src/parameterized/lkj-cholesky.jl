@@ -38,9 +38,6 @@ https://github.com/tpapp/AltDistributions.jl
 
 LKJCholesky(k::Integer) = LKJCholesky(k, 1.0)
 
-asparams(::Type{<:LKJCholesky}, ::StaticSymbol{:η}) = asℝ₊
-asparams(::Type{<:LKJCholesky}, ::StaticSymbol{:logη}) = asℝ
-
 # Modified from
 # https://github.com/tpapp/AltDistributions.jl
 
@@ -56,7 +53,7 @@ logdensity_def(d::LKJCholesky, C::Cholesky) = logdensity_def(d, C.UL)
     # z = diag(L)
     # sum(log.(z) .* ((k:-1:1) .+ 2*(η-1)))
 
-    # Note: https://github.com/cscherrer/MeasureTheory.jl/issues/100#issuecomment-852428192
+    # Note: https://github.com/JuliaMath/MeasureTheory.jl/issues/100#issuecomment-852428192
     c = d.k + 2(η - 1)
     n = size(L, 1)
     s = sum(1:n) do i
@@ -81,14 +78,14 @@ as(d::LKJCholesky) = CorrCholesky(d.k)
 
 @inline function basemeasure(d::LKJCholesky{(:k, :η)})
     t = as(d)
-    base = Pushforward(t, LebesgueMeasure()^TV.dimension(t), False())
+    base = Pushforward(t, LebesgueBase()^TV.dimension(t), False())
     WeightedMeasure(Dists.lkj_logc0(d.k, d.η), base)
 end
 
 @inline function basemeasure(d::LKJCholesky{(:k, :logη)})
     t = as(d)
     η = exp(d.logη)
-    base = Pushforward(t, LebesgueMeasure()^TV.dimension(t), False())
+    base = Pushforward(t, LebesgueBase()^TV.dimension(t), False())
     WeightedMeasure(Dists.lkj_logc0(d.k, η), base)
 end
 

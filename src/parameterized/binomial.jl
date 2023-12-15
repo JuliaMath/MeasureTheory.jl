@@ -4,12 +4,11 @@ export Binomial
 import Base
 using SpecialFunctions
 
-probit(p) = sqrt2 * erfinv(2p - 1)
-Φ(z) = (1 + erf(invsqrt2 * z)) / 2
+probit(p) = Φinv(p)
 
 @parameterized Binomial(n, p)
 
-basemeasure(d::Binomial) = CountingMeasure()
+basemeasure(d::Binomial) = CountingBase()
 
 testvalue(::Binomial) = 0
 
@@ -84,13 +83,19 @@ function Base.rand(
 end
 
 proxy(d::Binomial{(:n, :p),Tuple{I,A}}) where {I<:Integer,A} = Dists.Binomial(d.n, d.p)
+
 function proxy(d::Binomial{(:n, :logitp),Tuple{I,A}}) where {I<:Integer,A}
     Dists.Binomial(d.n, logistic(d.logitp))
 end
+
 function proxy(d::Binomial{(:n, :probitp),Tuple{I,A}}) where {I<:Integer,A}
     Dists.Binomial(d.n, Φ(d.probitp))
 end
 
-asparams(::Type{<:Binomial}, ::StaticSymbol{:p}) = as𝕀
-asparams(::Type{<:Binomial}, ::StaticSymbol{:logitp}) = asℝ
-asparams(::Type{<:Binomial}, ::StaticSymbol{:probitp}) = asℝ
+function smf(μ::Binomial{(:n, :p)}, k)
+    α = max(0, floor(k) + 1)
+    β = max(0, μ.n - floor(k))
+
+    beta_smf = smf(Beta(α, β), μ.p)
+    one(beta_smf) - beta_smf
+end

@@ -1,9 +1,9 @@
 # MeasureTheory
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://cscherrer.github.io/MeasureTheory.jl/stable)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://cscherrer.github.io/MeasureTheory.jl/dev)
-[![Build Status](https://github.com/cscherrer/MeasureTheory.jl/workflows/CI/badge.svg)](https://github.com/cscherrer/MeasureTheory.jl/actions)
-[![Coverage](https://codecov.io/gh/cscherrer/MeasureTheory.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/cscherrer/MeasureTheory.jl)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://JuliaMath.github.io/MeasureTheory.jl/stable)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaMath.github.io/MeasureTheory.jl/dev)
+[![Build Status](https://github.com/JuliaMath/MeasureTheory.jl/workflows/CI/badge.svg)](https://github.com/JuliaMath/MeasureTheory.jl/actions)
+[![Coverage](https://codecov.io/gh/JuliaMath/MeasureTheory.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaMath/MeasureTheory.jl)
 [![DOI](https://proceedings.juliacon.org/papers/10.21105/jcon.00092/status.svg)](https://doi.org/10.21105/jcon.00092)
 
 `MeasureTheory.jl` is a package for building and reasoning about measures.
@@ -21,7 +21,7 @@ To install `MeasureTheory.jl`, open the Julia Pkg REPL (by typing `]` in the sta
 pkg> add MeasureTheory
 ```
 
-To get an idea of the possibilities offered by this package, go to the [documentation](https://cscherrer.github.io/MeasureTheory.jl/stable).
+To get an idea of the possibilities offered by this package, go to the [documentation](https://JuliaMath.github.io/MeasureTheory.jl/stable).
 
 
 
@@ -29,7 +29,7 @@ To get an idea of the possibilities offered by this package, go to the [document
 
 For interaction and shorter usage questions, there is the dedicated channel [#measuretheory on Julia's Zulip chat julialang.zulipchat.com](https://julialang.zulipchat.com/#narrow/stream/259730-measuretheory.2Ejl) and the #measuretheory channel on the [Julia language Slack chat](https://julialang.org/slack/) and for broader discussions [Julia's discourse forum](https://discourse.julialang.org).
 
-Development takes place on Github with [Github's issue ticker](https://github.com/cscherrer/MeasureTheory.jl/issues) for bug reports and coordination.
+Development takes place on Github with [Github's issue ticker](https://github.com/JuliaMath/MeasureTheory.jl/issues) for bug reports and coordination.
 
 We adhere to the [community standards set forward by the Julia community.](https://julialang.org/community/standards/)
 
@@ -39,4 +39,4 @@ We adhere to the [community standards set forward by the Julia community.](https
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/cscherrer/MeasureTheory.jl.svg)](https://starchart.cc/cscherrer/MeasureTheory.jl)
+[![Stargazers over time](https://starchart.cc/JuliaMath/MeasureTheory.jl.svg)](https://starchart.cc/JuliaMath/MeasureTheory.jl)

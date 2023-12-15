@@ -14,7 +14,7 @@ export Cauchy, HalfCauchy
 
 logdensity_def(d::Cauchy, x) = logdensity_def(proxy(d), x)
 
-basemeasure(d::Cauchy) = WeightedMeasure(static(-logπ), LebesgueMeasure())
+basemeasure(d::Cauchy) = WeightedMeasure(static(-logπ), LebesgueBase())
 
 # @affinepars Cauchy
 
@@ -28,6 +28,8 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng, T)
 
+Base.rand(::FixedRNG, ::Type{T}, ::Cauchy{()}) where {T} = zero(T)
+
 for N in AFFINEPARS
     @eval begin
         proxy(d::Cauchy{$N}) = affine(params(d), Cauchy())
@@ -40,12 +42,20 @@ end
 
 ≪(::Cauchy, ::Lebesgue{X}) where {X<:Real} = true
 
-as(::Cauchy) = asℝ
-
 @half Cauchy
 
 HalfCauchy(σ) = HalfCauchy(σ = σ)
 
-proxy(d::Cauchy{()}) = Dists.Cauchy()
+Base.rand(::FixedRNG, ::Type{T}, μ::Half{<:Cauchy}) where {T} = one(T)
 
 insupport(::Cauchy, x) = true
+
+function smf(::Cauchy{()}, x)
+    invπ * atan(x) + 0.5
+end
+
+function invsmf(::Cauchy{()}, p)
+    tan(π * (p - 0.5))
+end
+
+proxy(d::Cauchy{()}) = Dists.Cauchy()

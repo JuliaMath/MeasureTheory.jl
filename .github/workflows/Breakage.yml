@@ -15,8 +15,8 @@ jobs:
       fail-fast: false
       matrix:
         pkg: [
-          "cscherrer/Soss.jl",
-          "mschauer/Mitosis.jl"
+          # "cscherrer/Soss.jl",
+          # "mschauer/Mitosis.jl"
         ]
         pkgversion: [latest, stable]
 

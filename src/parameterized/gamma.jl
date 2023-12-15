@@ -19,7 +19,7 @@ end
 
 function basemeasure(d::Gamma{(:k,)})
     ℓ = -loggamma(d.k)
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 @kwstruct Gamma(k, σ)
@@ -28,7 +28,7 @@ Gamma(k, σ) = Gamma((k = k, σ = σ))
 
 @useproxy Gamma{(:k, :σ)}
 function proxy(d::Gamma{(:k, :σ)})
-    affine(NamedTuple{(:σ,)}(d.σ), Gamma((k = d.k,)))
+    affine((σ = d.σ,), Gamma((k = d.k,)))
 end
 
 @kwstruct Gamma(k, λ)
@@ -41,8 +41,6 @@ end
 Base.rand(rng::AbstractRNG, T::Type, μ::Gamma{()}) = rand(rng, T, Exponential())
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Gamma{(:k,)}) = rand(rng, Dists.Gamma(μ.k))
-
-as(::Gamma) = asℝ₊
 
 insupport(::Gamma, x) = x > 0
 
@@ -57,11 +55,11 @@ function basemeasure(d::Gamma{(:μ, :ϕ)})
     ϕ = d.ϕ
     ϕinv = inv(ϕ)
     ℓ = -ϕinv * log(ϕ) - first(logabsgamma(ϕinv))
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 function basemeasure(d::Gamma{(:μ, :ϕ),Tuple{M,StaticFloat64{ϕ}}}) where {M,ϕ}
     ϕinv = inv(ϕ)
     ℓ = static(-ϕinv * log(ϕ) - first(logabsgamma(ϕinv)))
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end

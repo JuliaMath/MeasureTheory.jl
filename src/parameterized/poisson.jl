@@ -28,9 +28,6 @@ end
     return y * d.logλ - exp(d.logλ) - loggamma(1 + y)
 end
 
-asparams(::Type{<:Poisson}, ::StaticSymbol{:λ}) = asℝ₊
-asparams(::Type{<:Poisson}, ::StaticSymbol{:logλ}) = asℝ
-
 gentype(::Poisson) = Int
 
 Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:λ,)}) = rand(rng, Dists.Poisson(d.λ))

@@ -16,17 +16,12 @@ end
 
 @inline function basemeasure(d::SnedecorF{(:ν1, :ν2)})
     ℓ = -logbeta(d.ν1 / 2, d.ν2 / 2)
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
-
-xform(::SnedecorF) = asℝ₊
 
 Base.rand(rng::AbstractRNG, T::Type, d::SnedecorF) = rand(rng, proxy(d))
 
 proxy(d::SnedecorF{(:ν1, :ν2)}) = Dists.FDist(d.ν1, d.ν2)
-
-asparams(::Type{<:SnedecorF}, ::StaticSymbol{:ν1}) = asℝ₊
-asparams(::Type{<:SnedecorF}, ::StaticSymbol{:ν2}) = asℝ₊
 
 insupport(::SnedecorF, x) = x > 0
 

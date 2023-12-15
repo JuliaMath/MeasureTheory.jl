@@ -1,5 +1,4 @@
 using LinearAlgebra
-export mydot
 
 function solve(A::Union{AbstractMatrix,Factorization}, y::AbstractArray)
     (m, n) = size(A)
@@ -120,3 +119,15 @@ function getU(C::Cholesky)
 end
 
 const Triangular = Union{L,U} where {L<:LowerTriangular,U<:UpperTriangular}
+
+# Ideally we could just add one method smf(μ::$M, x::Dual{TAG}) where TAG
+# But then we have method ambiguities
+macro smfAD(M)
+    quote
+        function MeasureBase.smf(μ::$M, x::Dual{TAG}) where {TAG}
+            val = ForwardDiff.value(x)
+            Δ = ForwardDiff.partials(x)
+            Dual{TAG}(smf(μ, val), Δ * densityof(μ, val))
+        end
+    end
+end

@@ -7,12 +7,9 @@ using FillArrays
 
 @parameterized Dirichlet(α)
 
-as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
-
 @inline function basemeasure(μ::Dirichlet{(:α,)})
     α = μ.α
-    t = as(μ)
-    d = TV.dimension(t)
+    # TODO: We can make this traverse α only once. Is that faster?
     logw = loggamma(sum(α)) - sum(loggamma, α)
     return WeightedMeasure(logw, Lebesgue(Simplex()))
 end
@@ -22,23 +19,25 @@ end
 Dirichlet(k::Integer, α) = Dirichlet(Fill(α, k))
 
 @inline function logdensity_def(d::Dirichlet{(:α,)}, x)
-    α = d.α
-    s = 0.0
-    for j in eachindex(x)
-        s += xlogy(α[j] - 1, x[j])
+    sum(zip(d.α, x)) do (αj, xj)
+        xlogy(αj - 1, xj)
     end
-    return s
+
+    # `mapreduce` is slow for this case
+    # mapreduce(+, d.α, x) do αj, xj
+    #     xlogy(αj - 1, xj)
+    # end
 end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Dirichlet) = rand(rng, Dists.Dirichlet(μ.α))
 
-proxy(d::Dirichlet{(:α,)}) = Dists.Dirichlet(d.α)
-
-function testvalue(d::Dirichlet{(:α,)})
+function testvalue(::Type{T}, d::Dirichlet{(:α,)}) where {T}
     n = length(d.α)
-    Fill(1 / n, n)
+    Fill(inv(convert(T, n)), n)
 end
 
 @inline function insupport(d::Dirichlet{(:α,)}, x)
     length(x) == length(d.α) && sum(x) ≈ 1.0
 end
+
+as(μ::Dirichlet) = TV.UnitSimplex(length(μ.α))

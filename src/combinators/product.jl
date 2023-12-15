@@ -1,39 +1,5 @@
-function as(d::PowerMeasure)
-    as(Array, as(d.parent), length.(d.axes)...)
-end
-
-function as(d::ProductMeasure{<:AbstractArray{<:Dirac}})
-    return asConst(testvalue.(marginals(d)))
-end
-
-function as(d::ProductMeasure{A}) where {A<:AbstractArray}
-    mar = marginals(d)
-    ts = map(as, mar)
-    if allequal(ts)
-        return as(Array, first(ts), size(ts))
-    else
-        error("Not yet implemented")
-    end
-end
 
 using MappedArrays
-
-function as(d::ProductMeasure{A}) where {A<:MappedArrays.ReadonlyMappedArray}
-    d1 = marginals(d).f(first(marginals(d).data))
-    as(Array, as(d1), size(marginals(d))...)
-end
-
-function as(d::ProductMeasure{T}) where {T<:Tuple}
-    as(map(as, d.marginals))
-end
-
-###############################################################################
-# I <: Base.Generator
-
-function as(d::ProductMeasure{<:Base.Generator})
-    d1 = marginals(d).f(first(marginals(d).iter))
-    as(Array, as(d1), size(marginals(d))...)
-end
 
 # function as(d::ProductMeasure{Returns{T},F,A}) where {T,F,A<:AbstractArray}
 #     as(Array, as(d.f.f.value), size(d.xs))

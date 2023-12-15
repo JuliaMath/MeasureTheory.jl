@@ -20,31 +20,6 @@ export MvNormal
 @kwstruct MvNormal(μ, Σ)
 @kwstruct MvNormal(μ, Λ)
 
-as(d::MvNormal{(:μ,)}) = as(Array, length(d.μ))
-
-as(d::MvNormal{(:Σ,),Tuple{C}}) where {C<:Cholesky} = as(Array, size(d.Σ, 1))
-as(d::MvNormal{(:Λ,),Tuple{C}}) where {C<:Cholesky} = as(Array, size(d.Λ, 1))
-as(d::MvNormal{(:μ, :Σ),<:Tuple{T,C}}) where {T,C<:Cholesky} = as(Array, size(d.Σ, 1))
-as(d::MvNormal{(:μ, :Λ),<:Tuple{T,C}}) where {T,C<:Cholesky} = as(Array, size(d.Λ, 1))
-
-function as(d::MvNormal{(:σ,),Tuple{M}}) where {M<:Triangular}
-    σ = d.σ
-    if @inbounds all(i -> σ[i] ≠ 0, diagind(σ))
-        return as(Array, size(σ, 1))
-    else
-        @error "Not implemented yet"
-    end
-end
-
-function as(d::MvNormal{(:λ,),Tuple{M}}) where {M<:Triangular}
-    λ = d.λ
-    if @inbounds all(i -> λ[i] > 0, diagind(λ))
-        return as(Array, size(λ, 1))
-    else
-        @error "Not implemented yet"
-    end
-end
-
 for N in setdiff(AFFINEPARS, [(:μ,)])
     @eval begin
         function as(d::MvNormal{$N})

@@ -25,6 +25,8 @@ export Normal, HalfNormal
 #
 @parameterized Normal()
 
+massof(::Normal) = static(1.0)
+
 for N in AFFINEPARS
     @eval begin
         proxy(d::Normal{$N,T}) where {T} = affine(params(d), Normal())
@@ -32,12 +34,12 @@ for N in AFFINEPARS
     end
 end
 
-insupport(d::Normal, x) = true
+insupport(d::Normal, x) = True()
 
-insupport(d::Normal) = Returns(true)
+insupport(d::Normal) = Returns(True())
 
-@inline logdensity_def(d::Normal{()}, x) = -x^2 / 2
-@inline basemeasure(::Normal{()}) = WeightedMeasure(static(-0.5 * log2π), LebesgueMeasure())
+@inline logdensity_def(d::Normal{()}, x) = -muladd(x, x, log2π) / 2;
+@inline basemeasure(::Normal{()}) = LebesgueBase()
 
 @kwstruct Normal(μ)
 @kwstruct Normal(σ)
@@ -50,8 +52,6 @@ params(::Type{N}) where {N<:Normal} = ()
 Normal(μ::M, σ::S) where {M,S} = Normal((μ = μ, σ = σ))::Normal{(:μ, :σ),Tuple{M,S}}
 
 # Normal(nt::NamedTuple{N,Tuple{Vararg{AbstractArray}}}) where {N} = MvNormal(nt)
-
-as(::Normal) = asℝ
 
 # `@kwalias` defines some alias names, giving users flexibility in the names
 # they use. For example, σ² is standard notation for the variance parameter, but
@@ -81,10 +81,6 @@ as(::Normal) = asℝ
 # (μ = -0.4548087051528626, σ² = 11.920775478312793)
 #
 # And of course, you can apply `Normal` to any one of the above.
-#
-asparams(::Type{<:Normal}, ::StaticSymbol{:σ²}) = asℝ₊
-asparams(::Type{<:Normal}, ::StaticSymbol{:τ}) = asℝ₊
-asparams(::Type{<:Normal}, ::StaticSymbol{:logτ}) = asℝ
 
 # Rather than try to reimplement everything in Distributions, measures can have
 # a `proxy` method. This just delegates some methods to the corresponding
@@ -147,7 +143,7 @@ end
 
 @inline function basemeasure(d::Normal{(:σ²,)})
     ℓ = static(-0.5) * (static(float(log2π)) + log(d.σ²))
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 proxy(d::Normal{(:μ, :σ²)}) = affine((μ = d.μ,), Normal((σ² = d.σ²,)))
@@ -163,7 +159,7 @@ end
 
 @inline function basemeasure(d::Normal{(:τ,)})
     ℓ = static(-0.5) * (static(float(log2π)) - log(d.τ))
-    weightedmeasure(ℓ, LebesgueMeasure())
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 proxy(d::Normal{(:μ, :τ)}) = affine((μ = d.μ,), Normal((τ = d.τ,)))
@@ -175,7 +171,12 @@ proxy(d::Normal{(:μ, :τ)}) = affine((μ = d.μ,), Normal((τ = d.τ,)))
 @inline function logdensity_def(d::Normal{(:μ, :logσ)}, x)
     μ = d.μ
     logσ = d.logσ
-    -logσ - 0.5(exp(-2logσ) * ((x - μ)^2))
+    -0.5(exp(-2 * logσ) * ((x - μ)^2))
+end
+
+function basemeasure(d::Normal{(:μ, :logσ)})
+    ℓ = static(-0.5) * (static(float(log2π)) + static(2.0) * d.logσ)
+    weightedmeasure(ℓ, LebesgueBase())
 end
 
 function logdensity_def(p::Normal, q::Normal, x)
@@ -184,20 +185,18 @@ function logdensity_def(p::Normal, q::Normal, x)
     μq = mean(q)
     σq = std(q)
 
-    # Result is (((x - μq) / σq)^2 - ((x - μp) / σp)^2) / 2 
+    # Result is (((x - μq) / σq)^2 - ((x - μp) / σp)^2 + log(abs(σq / σp))) / 2 
 
     # We'll write the difference of squares as sqdiff, then divide that by 2 at
     # the end
 
-    sqdiff = if σp == σq
-        (2x - μq - μp) * (μq - μp) / σp^2
+    if σp == σq
+        return (2x - μq - μp) * (μp - μq) / (2 * σp^2)
     else
         zp = (x - μp) / σp
         zq = (x - μq) / σq
-        (zq + zp) * (zq - zp)
+        return ((zq + zp) * (zq - zp)) / 2 + log(abs(σq / σp))
     end
-
-    return sqdiff / 2
 end
 
 for N in ((:μ,), (:σ,), (:λ,), (:μ, :σ), (:μ, :λ))
@@ -219,3 +218,12 @@ for N in ((:μ,), (:σ,), (:λ,), (:μ, :σ), (:μ, :λ))
     eval(expr)
 end
 
+MeasureBase.transport_origin(::Normal) = StdNormal()
+
+MeasureBase.to_origin(::Normal{()}, y) = y
+MeasureBase.from_origin(::Normal{()}, x) = x
+
+MeasureBase.smf(::Normal{()}, x) = Φ(x)
+MeasureBase.invsmf(::Normal{()}, p) = Φinv(p)
+
+@smfAD Normal{()}
