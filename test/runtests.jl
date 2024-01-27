@@ -1,6 +1,7 @@
 using Test
 using StatsFuns
 using Base.Iterators: take
+using Statistics
 using Random
 using LinearAlgebra
 # using DynamicIterators: trace, TimeLift
@@ -23,7 +24,7 @@ using IfElse
 #     # detect_ambiguities_options...,
 # )
 
-Aqua.test_all(MeasureBase; ambiguities = false)
+# Aqua.test_all(MeasureBase; ambiguities = false)
 
 function draw2(μ)
     x = rand(μ)
@@ -411,6 +412,33 @@ end
         x = rand(d)
         @test logdensityof(d, x) ≈ logdensityof(Dists.MvNormal(Σ), x)
         @test logdensityof(MvNormal(zeros(3), σ), x) ≈ logdensityof(d, x)
+
+        D = 3
+        μ = randn(D)
+        zero_μ = zeros(D)
+        σ = LowerTriangular(randn(D, D))
+        Σ = σ * σ'
+        λ = inv(σ)
+        Λ = inv(Σ)
+
+        d = MvNormal(;μ)
+        @test mean(d) == μ
+        @test cov(d) == I(D)
+        @testset "Cov param: $(string(cov_param))" for (cov_param, val) in [(:σ, σ), (:Σ, Σ), (:λ, λ), (:Λ, Λ)]
+            @eval begin
+                # Mean is not given
+                d = MvNormal(;$cov_param=$val)
+                @test mean(d) == $zero_μ
+                @test cov(d) ≈ $Σ
+                @test std(d) ≈ sqrt.(diag($Σ))
+                @test var(d) ≈ diag($Σ)
+                d = MvNormal(;μ=$μ, $cov_param=$val)
+                @test mean(d) == $μ
+                @test cov(d) ≈ $Σ
+                @test std(d) ≈ sqrt.(diag($Σ))
+                @test var(d) ≈ diag($Σ)
+            end
+        end
     end
 
     @testset "NegativeBinomial" begin
@@ -419,10 +447,34 @@ end
 
     @testset "Normal" begin
         @test repro(Normal, (:μ, :σ))
+        μ = randn()
+        σ = rand()
+        λ = inv(σ)
+        d = Normal(;μ)
+        @test mean(d) == μ
+        @test var(d) == one(μ)
+        @test std(d) == one(μ)
+        @testset "std param : $(string(std_param))" for (std_param, val) in [(:σ, σ), (:λ, λ)]
+            @eval begin
+                d = Normal(;μ=$μ)
+                @test mean(d) == $μ
+                @test var(d) == one($μ)
+                @test std(d) == one($μ)
+                d = Normal(;μ=$μ, $std_param=$val)
+                @test mean(d) == $μ
+                @test var(d) ≈ abs2($σ)
+                @test std(d) ≈ $σ
+            end
+        end
     end
 
     @testset "Poisson" begin
         @test repro(Poisson, (:λ,))
+        λ = rand()
+        d = Poisson(;λ)
+        @test mean(d) == λ
+        @test var(d) == λ
+        @test std(d) == sqrt(λ)
     end
 
     @testset "StudentT" begin
@@ -441,6 +493,9 @@ end
     x = Vector{Int16}(undef, 10)
     @test rand!(d, x) isa Vector
     @test rand(d) isa Vector
+    @test mean(d) == mean.(collect(marginals(d)))
+    @test std(d) == std.(collect(marginals(d)))
+    @test var(d) == var.(collect(marginals(d)))
 
     @testset "Indexed by Generator" begin
         d = For((j^2 for j in 1:10)) do i

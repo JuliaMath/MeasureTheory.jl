@@ -62,7 +62,7 @@ using MeasureBase: BoundedInts, BoundedReals, CountingBase, IntegerDomain, Integ
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractTransitionKernel
 
-import Statistics: mean, var, std
+import Statistics: mean, cov, var, std
 
 import MeasureBase: likelihoodof
 export likelihoodof

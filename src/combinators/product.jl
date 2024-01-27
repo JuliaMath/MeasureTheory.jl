@@ -23,6 +23,11 @@ using MappedArrays
     x
 end
 
+for f in (:mean, :var, :std)
+    @eval $f(d::ProductMeasure) = map($f, marginals(d))
+    @eval $f(d::For) = map($f, marginals(d))
+end
+
 # # e.g. set(Normal(μ=2)^5, params, randn(5))
 # function Accessors.set(
 #     d::ProductMeasure{A},
