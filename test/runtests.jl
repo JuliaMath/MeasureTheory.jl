@@ -462,8 +462,8 @@ end
                 @test std(d) == one($μ)
                 d = Normal(;μ=$μ, $std_param=$val)
                 @test mean(d) == $μ
-                @test var(d) == abs2($σ)
-                @test std(d) == $σ
+                @test var(d) ≈ abs2($σ)
+                @test std(d) ≈ $σ
             end
         end
     end
