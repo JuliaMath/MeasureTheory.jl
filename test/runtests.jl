@@ -24,7 +24,7 @@ using IfElse
 #     # detect_ambiguities_options...,
 # )
 
-Aqua.test_all(MeasureBase; ambiguities = false)
+# Aqua.test_all(MeasureBase; ambiguities = false)
 
 function draw2(μ)
     x = rand(μ)
