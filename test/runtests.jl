@@ -118,9 +118,9 @@ end
         @test ℓ ≈ logdensity_def(Binomial(; n, logitp), y)
         @test ℓ ≈ logdensity_def(Binomial(; n, probitp), y)
 
-        rng = ResettableRNG(Random.MersenneTwister())
-        @test rand(rng, Binomial(n=0, p=1.0)) == 0
-        @test rand(rng, Binomial(n=10, p=1.0)) == 10
+        # rng = ResettableRNG(Random.MersenneTwister()
+        @test rand(Binomial(n=0, p=1.0)) == 0
+        @test rand(Binomial(n=10, p=1.0)) == 10
 
         @test_broken logdensity_def(Binomial(n, p), CountingBase(ℤ[0:n]), x) ≈
                      binomlogpdf(n, p, x)
@@ -463,7 +463,7 @@ end
         end
         x = Vector{Int16}(undef, 10)
         @test rand!(d, x) isa Vector
-        @test rand(d) isa MeasureTheory.RealizedSamples
+        # @test rand(d) isa MeasureTheory.RealizedSamples
     end
 
     @testset "Indexed by multiple Ints" begin

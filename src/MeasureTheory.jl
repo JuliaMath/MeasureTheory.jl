@@ -130,8 +130,9 @@ include("combinators/affine.jl")
 include("combinators/weighted.jl")
 include("combinators/transforms.jl")
 # include("combinators/exponential-families.jl")
-include("resettable-rng.jl")
-include("realized.jl")
+# TODO: Clean these up and re-add them
+# include("resettable-rng.jl")
+# include("realized.jl")
 # include("combinators/chain.jl")
 
 include("distributions.jl")
