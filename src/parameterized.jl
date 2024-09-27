@@ -179,20 +179,16 @@ as(d::MvNormal{(:μ, :Λ),<:Tuple{T,C}}) where {T,C<:Cholesky} = as(Array, size(
 
 function as(d::MvNormal{(:σ,),Tuple{M}}) where {M<:Triangular}
     σ = d.σ
-    if @inbounds all(i -> σ[i] ≠ 0, diagind(σ))
-        return as(Array, size(σ, 1))
-    else
-        @error "Not implemented yet"
-    end
+    @inbounds @assert all(i -> σ[i] ≠ 0, diagind(σ)) "Not implemented yet"
+
+    as(Array, size(σ, 1))
 end
 
 function as(d::MvNormal{(:λ,),Tuple{M}}) where {M<:Triangular}
     λ = d.λ
-    if @inbounds all(i -> λ[i] > 0, diagind(λ))
-        return as(Array, size(λ, 1))
-    else
-        @error "Not implemented yet"
-    end
+    @inbounds @assert all(i -> λ[i] > 0, diagind(λ)) "Not implemented yet"
+
+    as(Array, size(λ, 1))
 end
 
 as(::Normal) = asℝ
