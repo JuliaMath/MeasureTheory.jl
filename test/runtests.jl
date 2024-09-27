@@ -12,6 +12,16 @@ using MeasureBase.Interface
 using MeasureTheory: kernel
 using Aqua
 using IfElse
+using JET
+
+@testset "Code quality (Aqua.jl)" begin
+    Aqua.test_all(MeasureTheory, ambiguities = false)
+    # Aqua.test_ambiguities(MeasureTheory)
+end
+
+# @testset "Code linting (JET.jl)" begin
+#     JET.test_package(MeasureTheory; target_defined_modules = true)
+# end
 
 # Aqua._test_ambiguities(
 #     Aqua.aspkgids(MeasureTheory);
@@ -66,14 +76,19 @@ test_measures = Any[
     Normal(2, 3)
     Poisson(3.1)
     StudentT(ν = 2.1)
-    MvNormal(σ = [1 0; 0 1; 1 1])
-    MvNormal(λ = [1 0 1; 0 1 1])
+    MvNormal(σ = [1. 0.; 0. 1.; 1. 1.])
+    MvNormal(λ = [1. 0. 1.; 0. 1. 1.])
     MvNormal(Σ = Σ)
     MvNormal(Λ = Λ)
     MvNormal(σ = σ)
     MvNormal(λ = λ)
     Uniform()
     Dirac(0.0) + Normal()
+    InverseGamma(2)
+    InverseGamma(2, 3)
+    ScaleFree()
+    ScaledInvChiSq(2, 3)
+    NormalInvChiSq(0, 100, 1, 1)
 ]
 
 @testset "testvalue" begin
@@ -82,11 +97,11 @@ test_measures = Any[
         test_interface(μ)
     end
 
-    @testset "testvalue(::Chain)" begin
-        mc = Chain(x -> Normal(μ = x), Normal(μ = 0.0))
-        r = testvalue(mc)
-        @test logdensity_def(mc, Iterators.take(r, 10)) isa AbstractFloat
-    end
+    # @testset "testvalue(::Chain)" begin
+    #     mc = Chain(x -> Normal(μ = x), Normal(μ = 0.0))
+    #     r = testvalue(mc)
+    #     @test logdensity_def(mc, Iterators.take(r, 10)) isa AbstractFloat
+    # end
 end
 
 @testset "Parameterized Measures" begin
@@ -250,23 +265,23 @@ function (a::AffinePushfwdMap)(p::Normal)
     Normal(μ = a.B * mean(p) + a.β, σ = sqrt(a.B * p.σ^2 * a.B'))
 end
 
-@testset "DynamicFor" begin
-    mc = Chain(Normal(μ = 0.0)) do x
-        Normal(μ = x)
-    end
-    r = rand(mc)
+# @testset "DynamicFor" begin
+#     mc = Chain(Normal(μ = 0.0)) do x
+#         Normal(μ = x)
+#     end
+#     r = rand(mc)
 
-    # Check that `r` is now deterministic
-    @test logdensity_def(mc, take(r, 100)) == logdensity_def(mc, take(r, 100))
+#     # Check that `r` is now deterministic
+#     @test logdensity_def(mc, take(r, 100)) == logdensity_def(mc, take(r, 100))
 
-    d2 = For(r) do x
-        Normal(μ = x)
-    end
+#     d2 = For(r) do x
+#         Normal(μ = x)
+#     end
 
-    @test let r2 = rand(d2)
-        logdensity_def(d2, take(r2, 100)) == logdensity_def(d2, take(r2, 100))
-    end
-end
+#     @test let r2 = rand(d2)
+#         logdensity_def(d2, take(r2, 100)) == logdensity_def(d2, take(r2, 100))
+#     end
+# end
 
 @testset "Product of Diracs" begin
     x = randn(3)
@@ -274,7 +289,7 @@ end
     @test transform(t, []) == x
 end
 
-using DynamicIterators: trace, TimeLift
+# using DynamicIterators: trace, TimeLift
 
 # @testset "Univariate chain" begin
 #     ξ0 = 1.

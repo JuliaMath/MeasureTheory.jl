@@ -25,6 +25,9 @@ export Normal, HalfNormal
 #
 @parameterized Normal()
 
+mean(::Normal{()}) = 0.0
+std(::Normal{()}) = 1.0
+
 massof(::Normal) = static(1.0)
 
 for N in AFFINEPARS

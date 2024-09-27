@@ -168,7 +168,7 @@ as(d::Dirichlet{(:α,)}) = TV.UnitSimplex(length(d.α))
 as(::Exponential) = asℝ₊
 as(::Gamma) = asℝ₊
 as(::Gumbel) = asℝ
-as(::InverseGaussian) = asℝ₊
+# as(::InverseGaussian) = asℝ₊
 as(::Laplace) = asℝ
 as(d::MvNormal{(:μ,)}) = as(Array, length(d.μ))
 

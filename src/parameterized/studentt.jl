@@ -2,6 +2,7 @@
 # StudentT distribution
 
 export StudentT, HalfStudentT
+using Statistics: quantile
 
 @parameterized StudentT(ν)
 
@@ -67,5 +68,5 @@ proxy(d::StudentT{(:ν,)}) = Dists.TDist(d.ν)
 smf(d::StudentT, x) = smf(proxy(d), x)
 invsmf(d::StudentT, p) = invsmf(proxy(d), p)
 
-smf(d::StudentT{(:ν,)}, x) = cdf(proxy(d), x)
+smf(d::StudentT{(:ν,)}, x) = Dists.cdf(proxy(d), x)
 invsmf(d::StudentT{(:ν,)}, p) = quantile(proxy(d), p)

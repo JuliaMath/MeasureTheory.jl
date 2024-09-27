@@ -39,4 +39,3 @@ end
 
 Base.rand(rng::AbstractRNG, ::Type{T}, μ::Laplace) where {T} = Base.rand(rng, T, proxy(μ))
 
-≪(::Laplace, ::Lebesgue{X}) where {X<:Real} = true

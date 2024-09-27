@@ -166,13 +166,13 @@ Base.length(r::RealizedSamples) = length(r.parent)
 
 Base.IteratorSize(r::RealizedSamples) = Base.IteratorSize(r.parent)
 
-function Base.rand(
-    rng::AbstractRNG,
-    ::Type{T},
-    d::ProductMeasure{G},
-) where {T,G<:Base.Generator}
-    RealizedSamples(ResettableRNG(rng), marginals(d))
-end
+# function Base.rand(
+#     rng::AbstractRNG,
+#     ::Type{T},
+#     d::ProductMeasure{G},
+# ) where {T,G<:Base.Generator}
+#     RealizedSamples(ResettableRNG(rng), marginals(d))
+# end
 
 function Base.rand(
     rng::AbstractRNG,

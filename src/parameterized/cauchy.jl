@@ -28,7 +28,7 @@ end
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Cauchy{()}) = randn(rng, T) / randn(rng, T)
 
-Base.rand(::FixedRNG, ::Type{T}, ::Cauchy{()}) where {T} = zero(T)
+Base.rand(::ConstantRNG, ::Type{T}, ::Cauchy{()}) where {T} = zero(T)
 
 for N in AFFINEPARS
     @eval begin
@@ -40,13 +40,12 @@ for N in AFFINEPARS
     end
 end
 
-≪(::Cauchy, ::Lebesgue{X}) where {X<:Real} = true
 
 @half Cauchy
 
 HalfCauchy(σ) = HalfCauchy(σ = σ)
 
-Base.rand(::FixedRNG, ::Type{T}, μ::Half{<:Cauchy}) where {T} = one(T)
+Base.rand(::ConstantRNG, ::Type{T}, μ::Half{<:Cauchy}) where {T} = one(T)
 
 insupport(::Cauchy, x) = true
 

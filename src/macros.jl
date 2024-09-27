@@ -40,34 +40,6 @@ macro capture(template, ex, action)
 end
 
 function _parameterized(__module__, expr)
-    @capture ($op($μ($(p...)), $base)) expr begin
-        @assert op ∈ [:<<, :≪, :≃]
-        μbase = Symbol(:__, μ, :_base)
-
-        μ = esc(μ)
-        base = esc(base)
-
-        # @gensym basename
-        q = quote
-            struct $μ{N,T} <: MeasureBase.ParameterizedMeasure{N}
-                par::NamedTuple{N,T}
-
-                $μ{N,T}(nt::NamedTuple{N,T}) where {N,T<:Tuple} = new{N,T}(nt)
-            end
-
-            const $μbase = $base
-            MeasureBase.basemeasure(::$μ) = $μbase
-        end
-
-        if !isempty(p)
-            # e.g. Normal(μ,σ) = Normal((μ=μ, σ=σ))
-            pnames = QuoteNode.(p)
-            push!(q.args, :($μ($(p...)) = $μ(NamedTuple{($(pnames...),)}(($(p...),)))))
-        end
-
-        return q
-    end
-
     @capture $μ($(p...)) expr begin
         μ = esc(μ)
 
@@ -131,8 +103,8 @@ end
 
 """
     @half dist([paramnames])
-Starting from a symmetric univariate measure `dist ≪ Lebesgue(ℝ)`, create a new
-measure `Halfdist ≪ Lebesgue(ℝ₊)`. For example,
+Starting from a symmetric univariate measure `dist`, create a new
+measure `Halfdist`. For example,
     @half Normal()
 creates `HalfNormal()`, and 
     @half StudentT(ν)

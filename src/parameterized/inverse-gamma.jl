@@ -3,21 +3,33 @@
 
 export InverseGamma
 
-@parameterized InverseGamma(shape) ≃ Lebesgue(ℝ₊)
+@parameterized InverseGamma(shape)
+
+@kwstruct InverseGamma(shape)
+
+@kwstruct InverseGamma(shape, σ)
+
+insupport(::InverseGamma, x::Real) = x > 0
+
+basemeasure(::InverseGamma) = LebesgueBase()
 
 @inline function logdensity_def(μ::InverseGamma{(:shape,)}, x)
     α = μ.shape
     xinv = 1 / x
 
-    return xlogy(α + 1, xinv) - xinv - loggamma(α)
+    α - loggamma(α) + xlogy(α + 1, xinv) - xinv
 end
 
 function Base.rand(rng::AbstractRNG, T::Type, μ::InverseGamma{(:shape,)})
-    rand(rng, Dists.InverseGamma(μ.shape))
+    rand(rng, Dists.InverseGamma(μ.shape, one(μ.shape)))
 end
 
-≪(::InverseGamma, ::Lebesgue{X}) where {X<:Real} = true
+InverseGamma(shape, σ) = InverseGamma((shape = shape, σ = σ))
 
-as(::InverseGamma) = asℝ₊
+proxy(d::InverseGamma{(:shape, :σ)}) = affine((σ=d.σ,), InverseGamma(d.shape))
 
-# @μσ_methods InverseGamma(shape)
+function Base.rand(rng::AbstractRNG, T::Type, d::InverseGamma{(:shape, :σ)})
+    rand(rng, T, proxy(d))
+end
+
+@useproxy InverseGamma{(:shape, :σ)}

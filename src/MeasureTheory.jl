@@ -14,7 +14,6 @@ import Base
 
 export TV
 export transform
-export ≪
 export gentype
 export For
 
@@ -57,7 +56,6 @@ import MeasureBase:
     smf,
     invsmf,
     massof
-import MeasureBase: ≪
 using MeasureBase: BoundedInts, BoundedReals, CountingBase, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractTransitionKernel
@@ -96,6 +94,7 @@ using MeasureBase: Returns
 import MeasureBase: proxy, @useproxy
 import MeasureBase: basemeasure_depth
 using MeasureBase: LebesgueBase
+using ConstantRNGs
 
 import DensityInterface: logdensityof
 import DensityInterface: densityof
@@ -121,8 +120,6 @@ xlog1py(x, y) = x * log(1 + y)
 using MeasureBase: Φ, Φinv
 as(args...; kwargs...) = TV.as(args...; kwargs...)
 
-# Type piracy until https://github.com/JuliaMath/MeasureBase.jl/issues/127 is fixed
-MeasureBase.rand(::FixedRNG, ::Type{Bool}) = true
 
 include("utils.jl")
 include("const.jl")
@@ -131,15 +128,16 @@ include("combinators/for.jl")
 include("macros.jl")
 include("combinators/affine.jl")
 include("combinators/weighted.jl")
-include("combinators/product.jl")
 include("combinators/transforms.jl")
 # include("combinators/exponential-families.jl")
 include("resettable-rng.jl")
 include("realized.jl")
-include("combinators/chain.jl")
+# include("combinators/chain.jl")
 
 include("distributions.jl")
 include("smart-constructors.jl")
+
+include("scalefree.jl")
 
 include("parameterized/normal.jl")
 include("parameterized/studentt.jl")
@@ -151,7 +149,7 @@ include("parameterized/dirichlet.jl")
 include("parameterized/gumbel.jl")
 include("parameterized/exponential.jl")
 include("parameterized/mvnormal.jl")
-# include("parameterized/inverse-gamma.jl")
+include("parameterized/inverse-gamma.jl")
 include("parameterized/bernoulli.jl")
 include("parameterized/poisson.jl")
 include("parameterized/binomial.jl")
@@ -161,7 +159,9 @@ include("parameterized/negativebinomial.jl")
 include("parameterized/betabinomial.jl")
 include("parameterized/gamma.jl")
 include("parameterized/snedecorf.jl")
-include("parameterized/inverse-gaussian.jl")
+# include("parameterized/inverse-gaussian.jl")
+include("parameterized/scaled-invchisq.jl")
+include("parameterized/normal-invchisq.jl")
 
 include("combinators/ifelse.jl")
 
@@ -170,5 +170,4 @@ include("transforms/ordered.jl")
 
 include("parameterized.jl")
 
-include("distproxy.jl")
 end # module
