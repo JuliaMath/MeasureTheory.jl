@@ -9,7 +9,7 @@ using SpecialFunctions: loggamma
 
 @kwstruct NormalInvChiSq(μ, σ², κ, ν)
 
-function MeasureBase.testvalue(::Type{T}, ::NormalInvChiSq) where {T<:Real}
+function Base.rand(::ConstantRNG, ::Type{T}, ::NormalInvChiSq{(:μ, :σ², :κ, :ν)}) where {T<:Real}
     (;μ = zero(T), σ = one(T))
 end
 
@@ -25,7 +25,7 @@ function MeasureBase.logdensity_def(d::NormalInvChiSq{(:μ, :σ², :κ, :ν)}, x
     σ² = σ ^ 2
 
     # TODO: Check the (μ,σ²) parameterization of a Normal, maybe change to that to avoid the sqrt.
-    logdensity_def(ScaledInvChiSq(ν₀, σ²₀), σ²) + logdensity_def(Normal(μ₀, sqrt(σ²/κ₀)), μ)
+    logdensity_def(ScaledInvChiSq(ν₀, σ²₀), σ²) + logdensity_def(Normal((μ= μ₀, σ²=σ²/κ₀)), μ)
 end
 
 MeasureBase.basemeasure(::NormalInvChiSq) = productmeasure((μ = LebesgueBase(), σ = LebesgueBase()))
