@@ -1,4 +1,4 @@
-using StatsFuns
+# using StatsFuns
 export Normal, HalfNormal
 
 # The `@parameterized` macro below does three things:

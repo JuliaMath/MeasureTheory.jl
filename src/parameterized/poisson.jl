@@ -28,8 +28,6 @@ end
     return y * d.logλ - exp(d.logλ) - loggamma(1 + y)
 end
 
-gentype(::Poisson) = Int
-
 Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:λ,)}) = rand(rng, Dists.Poisson(d.λ))
 function Base.rand(rng::AbstractRNG, T::Type, d::Poisson{(:logλ,)})
     rand(rng, Dists.Poisson(exp(d.logλ)))

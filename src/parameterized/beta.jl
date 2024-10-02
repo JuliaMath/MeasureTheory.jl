@@ -2,6 +2,8 @@
 
 export Beta
 
+import StatsFuns
+
 @parameterized Beta(α, β)
 
 @kwstruct Beta(α, β)
@@ -17,7 +19,7 @@ export Beta
     return xlogy(d.α - 1, x) + xlog1py(d.β - 1, -x)
 end
 
-@inline function basemeasure(d::Beta{(:α, :β)})
+@inline function MeasureBase.basemeasure(d::Beta{(:α, :β)})
     ℓ = -logbeta(d.α, d.β)
     weightedmeasure(ℓ, LebesgueBase())
 end

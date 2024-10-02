@@ -2,6 +2,7 @@
 
 export Bernoulli
 import Base
+using StatsFuns: logistic
 
 @parameterized Bernoulli()
 
@@ -49,8 +50,6 @@ function density_def(d::Bernoulli{(:logitp,)}, y)
     exp_x = exp(d.logitp)
     return exp_x^y / (1 + exp_x)
 end
-
-gentype(::Bernoulli) = Bool
 
 Base.rand(rng::AbstractRNG, T::Type, d::Bernoulli{()}) = rand(rng, T) < one(T) / 2
 

@@ -14,7 +14,6 @@ import Base
 
 export TV
 export transform
-export gentype
 export For
 
 export AbstractMeasure
@@ -32,7 +31,7 @@ using Infinities
 using KeywordCalls
 using ConstructionBase
 using Accessors
-using StatsFuns
+# using StatsFuns
 using SpecialFunctions
 using ConcreteStructs
 
@@ -104,9 +103,6 @@ using DensityInterface
 using ForwardDiff
 using ForwardDiff: Dual
 
-gentype(μ::AbstractMeasure) = typeof(testvalue(μ))
-
-# gentype(μ::AbstractMeasure) = gentype(basemeasure(μ))
 
 xlogx(x::Number) = LogExpFunctions.xlogx(x)
 xlogx(x, y) = x * log(x)
@@ -117,10 +113,13 @@ xlogy(x, y) = x * log(y)
 xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
 
+log1pexp(x::Number) = LogExpFunctions.log1pexp(x)
+log1pexp(x) = log(1 + exp(x))
+
 using MeasureBase: Φ, Φinv
 as(args...; kwargs...) = TV.as(args...; kwargs...)
 
-
+include("consts.jl")
 include("utils.jl")
 include("const.jl")
 include("combinators/for.jl")
