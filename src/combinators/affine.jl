@@ -356,6 +356,28 @@ end
     std(parent(d)) / d.λ
 end
 
+
+@inline function var(d::AffinePushfwd{(:μ,)})
+    var(parent(d))
+end
+
+@inline function var(d::AffinePushfwd{(:μ, :σ)})
+    d.σ^2 * var(parent(d))
+end
+
+@inline function var(d::AffinePushfwd{(:σ,)})
+    d.σ^2 * var(parent(d))
+end
+
+@inline function var(d::AffinePushfwd{(:λ,)})
+    var(parent(d)) / d.λ^2
+end
+
+@inline function var(d::AffinePushfwd{(:μ, :λ)})
+    var(parent(d)) / d.λ^2
+end
+
+
 ###############################################################################
 # smf
 
