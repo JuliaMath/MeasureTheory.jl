@@ -104,16 +104,16 @@ using ForwardDiff
 using ForwardDiff: Dual
 
 
-xlogx(x::Number) = LogExpFunctions.xlogx(x)
+xlogx(x::AbstractFloat) = LogExpFunctions.xlogx(x)
 xlogx(x, y) = x * log(x)
 
-xlogy(x::Number, y::Number) = LogExpFunctions.xlogy(x, y)
+xlogy(x::AbstractFloat, y::AbstractFloat) = LogExpFunctions.xlogy(x, y)
 xlogy(x, y) = x * log(y)
 
-xlog1py(x::Number, y::Number) = LogExpFunctions.xlog1py(x, y)
+xlog1py(x::AbstractFloat, y::AbstractFloat) = LogExpFunctions.xlog1py(x, y)
 xlog1py(x, y) = x * log(1 + y)
 
-log1pexp(x::Number) = LogExpFunctions.log1pexp(x)
+log1pexp(x::AbstractFloat) = LogExpFunctions.log1pexp(x)
 log1pexp(x) = log(1 + exp(x))
 
 using MeasureBase: Φ, Φinv
