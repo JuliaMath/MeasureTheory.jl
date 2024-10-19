@@ -33,7 +33,6 @@ function Base.rand(rng::AbstractRNG, ::Type{T}, d::Gumbel{()}) where {T}
     -log(-log(u))
 end
 
-
 insupport(::Gumbel, x) = true
 
 proxy(::Gumbel{()}) = Dists.Gumbel()

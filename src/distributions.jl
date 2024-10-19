@@ -38,4 +38,3 @@ function as(d::Dists.Product, _data::NamedTuple = NamedTuple())
     v = d.v
     as(Vector, as(v[1]), n)
 end
-

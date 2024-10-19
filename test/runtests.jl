@@ -76,8 +76,8 @@ test_measures = Any[
     Normal(2, 3)
     Poisson(3.1)
     StudentT(ν = 2.1)
-    MvNormal(σ = [1. 0.; 0. 1.; 1. 1.])
-    MvNormal(λ = [1. 0. 1.; 0. 1. 1.])
+    MvNormal(σ = [1.0 0.0; 0.0 1.0; 1.0 1.0])
+    MvNormal(λ = [1.0 0.0 1.0; 0.0 1.0 1.0])
     MvNormal(Σ = Σ)
     MvNormal(Λ = Λ)
     MvNormal(σ = σ)
@@ -119,8 +119,8 @@ end
         @test ℓ ≈ logdensity_def(Binomial(; n, probitp), y)
 
         # rng = ResettableRNG(Random.MersenneTwister()
-        @test rand(Binomial(n=0, p=1.0)) == 0
-        @test rand(Binomial(n=10, p=1.0)) == 10
+        @test rand(Binomial(n = 0, p = 1.0)) == 0
+        @test rand(Binomial(n = 10, p = 1.0)) == 10
 
         @test_broken logdensity_def(Binomial(n, p), CountingBase(ℤ[0:n]), x) ≈
                      binomlogpdf(n, p, x)

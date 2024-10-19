@@ -42,7 +42,6 @@ for N in AFFINEPARS
     end
 end
 
-
 @half Cauchy
 
 HalfCauchy(σ) = HalfCauchy(σ = σ)

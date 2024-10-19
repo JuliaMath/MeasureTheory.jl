@@ -103,7 +103,6 @@ using DensityInterface
 using ForwardDiff
 using ForwardDiff: Dual
 
-
 xlogx(x::AbstractFloat) = LogExpFunctions.xlogx(x)
 xlogx(x, y) = x * log(x)
 

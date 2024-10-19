@@ -1,4 +1,4 @@
-export ScaleFree    
+export ScaleFree
 using MeasureBase: LebesgueBase
 struct ScaleFree <: AbstractMeasure end
 

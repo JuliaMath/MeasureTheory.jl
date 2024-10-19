@@ -26,7 +26,7 @@ end
 
 InverseGamma(shape, σ) = InverseGamma((shape = shape, σ = σ))
 
-proxy(d::InverseGamma{(:shape, :σ)}) = affine((σ=d.σ,), InverseGamma(d.shape))
+proxy(d::InverseGamma{(:shape, :σ)}) = affine((σ = d.σ,), InverseGamma(d.shape))
 
 function Base.rand(rng::AbstractRNG, T::Type, d::InverseGamma{(:shape, :σ)})
     rand(rng, T, proxy(d))
