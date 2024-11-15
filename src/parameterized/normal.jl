@@ -41,7 +41,7 @@ insupport(d::Normal, x) = True()
 
 insupport(d::Normal) = Returns(True())
 
-@inline logdensity_def(d::Normal{()}, x) = -muladd(x, x, log2π) / 2;
+@inline logdensity_def(d::Normal{()}, x) = muladd(x, x, log2π) / (-2);
 @inline basemeasure(::Normal{()}) = LebesgueBase()
 
 @kwstruct Normal(μ)

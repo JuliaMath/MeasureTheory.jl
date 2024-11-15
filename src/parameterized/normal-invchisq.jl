@@ -5,7 +5,21 @@ using KeywordCalls
 
 using SpecialFunctions: loggamma
 
-@parameterized NormalInvChiSq(μ, σ², κ, ν)
+# @parameterized NormalInvChiSq(μ, σ², κ, ν)
+
+struct NormalInvChiSq{N,T} <: ParameterizedMeasure{N}
+    par::NamedTuple{N,T}
+    function (NormalInvChiSq{N,T}(nt::NamedTuple{N,T}) where {N,T<:Tuple})
+        for p in (:σ², :κ, :ν)
+            @assert getproperty(nt, p) > 0
+        end
+        new{N,T}(nt)
+    end
+end
+
+function NormalInvChiSq(μ, σ², κ, ν)
+    NormalInvChiSq(NamedTuple{(:μ, :σ², :κ, :ν)}((μ, σ², κ, ν)))
+end
 
 @kwstruct NormalInvChiSq(μ, σ², κ, ν)
 
@@ -56,4 +70,10 @@ function Base.rand(
     # TODO: See about avoiding the sqrt here.
     μ = rand(rng, T, Normal(μ₀, σ / sqrt(κ₀)))
     return (; μ, σ)
+end
+
+function MeasureBase.pushfwd(::Type{Normal}, dist::NormalInvChiSq{(:μ, :σ², :κ, :ν)})
+    (μ, σ², κ, ν) = params(dist)
+    σ = sqrt(σ² * (1 + inv(κ)))
+    return StudentT(ν, μ, σ)
 end
