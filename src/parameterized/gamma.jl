@@ -9,9 +9,15 @@ export Gamma
 
 proxy(::Gamma{()}) = Exponential()
 
+rand(rng::AbstractRNG, T::Type, ::Gamma{()}) = rand(rng, T, Exponential())
+
 @useproxy Gamma{()}
 
 @kwstruct Gamma(k)
+
+Gamma(k) = Gamma((k = k,))
+
+rand(rng::AbstractRNG, T::Type, d::Gamma{(:k,)}) = T(rand(rng, Dists.Gamma(d.k)))
 
 @inline function logdensity_def(d::Gamma{(:k,)}, x)
     return xlogy(d.k - 1, x) - x
@@ -31,14 +37,18 @@ function proxy(d::Gamma{(:k, :σ)})
     affine((σ = d.σ,), Gamma((k = d.k,)))
 end
 
+Base.rand(rng::AbstractRNG, T::Type, d::Gamma{(:k,:σ)}) = rand(rng, T, proxy(d))
+
 @kwstruct Gamma(k, λ)
+
+Base.rand(rng::AbstractRNG, T::Type, d::Gamma{(:k,:λ)}) = rand(rng, T, proxy(d))
 
 @useproxy Gamma{(:k, :λ)}
 function proxy(d::Gamma{(:k, :λ)})
     affine(NamedTuple{(:λ,)}(d.λ), Gamma((k = d.k,)))
 end
 
-Base.rand(rng::AbstractRNG, T::Type, μ::Gamma{()}) = rand(rng, T, Exponential())
+Base.rand(rng::AbstractRNG, T::Type, ::Gamma{()}) = rand(rng, T, Exponential())
 
 Base.rand(rng::AbstractRNG, T::Type, μ::Gamma{(:k,)}) = rand(rng, Dists.Gamma(μ.k))
 
