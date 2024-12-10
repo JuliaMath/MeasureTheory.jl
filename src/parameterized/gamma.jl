@@ -48,8 +48,6 @@ function proxy(d::Gamma{(:k, :λ)})
     affine(NamedTuple{(:λ,)}(d.λ), Gamma((k = d.k,)))
 end
 
-Base.rand(rng::AbstractRNG, T::Type, ::Gamma{()}) = rand(rng, T, Exponential())
-
 Base.rand(rng::AbstractRNG, T::Type, μ::Gamma{(:k,)}) = rand(rng, Dists.Gamma(μ.k))
 
 insupport(::Gamma, x) = x > 0
