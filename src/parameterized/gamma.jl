@@ -28,6 +28,10 @@ function basemeasure(d::Gamma{(:k,)})
     weightedmeasure(ℓ, LebesgueBase())
 end
 
+mean(d::Gamma{(:k, )}) = d.k 
+var(d::Gamma{(:k, )}) = d.k 
+std(d::Gamma{(:k, )}) = sqrt(d.k)
+
 @kwstruct Gamma(k, σ)
 
 Gamma(k, σ) = Gamma((k = k, σ = σ))
@@ -37,11 +41,13 @@ function proxy(d::Gamma{(:k, :σ)})
     affine((σ = d.σ,), Gamma((k = d.k,)))
 end
 
-Base.rand(rng::AbstractRNG, T::Type, d::Gamma{(:k,:σ)}) = rand(rng, T, proxy(d))
+Base.rand(rng::AbstractRNG, T::Type, d::Gamma{(:k, :σ)}) = rand(rng, T, proxy(d))
 
 @kwstruct Gamma(k, λ)
 
-Base.rand(rng::AbstractRNG, T::Type, d::Gamma{(:k,:λ)}) = rand(rng, T, proxy(d))
+Base.rand(rng::AbstractRNG, T::Type, d::Gamma{(:k, :λ)}) = rand(rng, T, proxy(d))
+
+
 
 @useproxy Gamma{(:k, :λ)}
 function proxy(d::Gamma{(:k, :λ)})
