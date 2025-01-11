@@ -10,9 +10,9 @@ using SpecialFunctions: loggamma
 struct NormalInvChiSq{N,T} <: ParameterizedMeasure{N}
     par::NamedTuple{N,T}
     function (NormalInvChiSq{N,T}(nt::NamedTuple{N,T}) where {N,T<:Tuple})
-        for p in (:σ², :κ, :ν)
-            @assert getproperty(nt, p) > 0
-        end
+        @assert nt.σ² > 0
+        @assert nt.κ > 0
+        @assert nt.ν > 0
         new{N,T}(nt)
     end
 end
