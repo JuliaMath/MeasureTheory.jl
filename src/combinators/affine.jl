@@ -20,6 +20,8 @@ function Pretty.tile(f::AffineTransform)
     result
 end
 
+massof(f::AffineTransform) = massof(parent(f))
+
 Base.show(io::IO, f::AffineTransform) = Pretty.pprint(io, f)
 
 params(f::AffineTransform) = getfield(f, :par)
