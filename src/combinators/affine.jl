@@ -20,8 +20,6 @@ function Pretty.tile(f::AffineTransform)
     result
 end
 
-MeasureBase.massof(f::AffineTransform) = massof(parent(f))
-
 Base.show(io::IO, f::AffineTransform) = Pretty.pprint(io, f)
 
 params(f::AffineTransform) = getfield(f, :par)
@@ -211,6 +209,8 @@ Base.propertynames(d::AffinePushfwd{N}) where {N} = N ∪ (:parent, :f)
         return getproperty(getfield(d, :f), s)
     end
 end
+
+massof(d::AffinePushfwd) = massof(parent(d))
 
 Base.size(d::AffinePushfwd) = size(d.μ)
 Base.size(d::AffinePushfwd{(:σ,)}) = (size(d.σ, 1),)
