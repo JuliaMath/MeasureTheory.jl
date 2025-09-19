@@ -27,7 +27,7 @@ Return a transformation for a given parameterized measure subject to the named t
 
 ```
 julia> asparams(Binomial{(:p,)}, (n=10,))
-TransformVariables.TransformTuple{NamedTuple{(:p,), Tuple{TransformVariables.ScaledShiftedLogistic{Float64}}}}((p = as𝕀,), 1)
+TransformVariables.TransformTuple{NamedTuple{(:p,), Tuple{TransformVariables.CompositeScalarTransform{Tuple{TVShift{Float64}, TVScale{Float64}, TVLogistic}}}}}((p = as𝕀,), 1)
 ```
 
 ------------
@@ -38,7 +38,7 @@ Return a transformation with no constraints. For example,
 
 ```
 julia> asparams(Normal{(:μ,:σ)})
-TransformVariables.TransformTuple{NamedTuple{(:μ, :σ), Tuple{TransformVariables.Identity, TransformVariables.ShiftedExp{true, Float64}}}}((μ = asℝ, σ = asℝ₊), 2)
+TransformVariables.TransformTuple{NamedTuple{(:μ, :σ), Tuple{TransformVariables.Identity, TransformVariables.CompositeScalarTransform{Tuple{TVShift{Float64}, TVExp}}}}}((μ = asℝ, σ = asℝ₊), 2)
 ```
 """
 function asparams end
