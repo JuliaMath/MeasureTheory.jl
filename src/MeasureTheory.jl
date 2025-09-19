@@ -57,7 +57,6 @@ import MeasureBase:
     smf,
     invsmf,
     massof
-import MeasureBase: ≪
 using MeasureBase: BoundedInts, BoundedReals, CountingBase, IntegerDomain, IntegerNumbers
 using MeasureBase: weightedmeasure, restrict
 using MeasureBase: AbstractTransitionKernel

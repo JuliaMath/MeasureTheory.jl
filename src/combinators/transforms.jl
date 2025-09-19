@@ -14,7 +14,7 @@ insupport(d::Pushforward, x) = insupport(d.μ, inverse(d.f)(x))
 Pushforward(f, μ) = Pushforward(f, μ, True())
 
 function Pretty.tile(pf::Pushforward{<:TV.CallableTransform})
-    Pretty.list_layout(Pretty.tile.([pf.f.t, pf.μ, pf.logjac]); prefix = :Pushforward)
+    Pretty.list_layout(Pretty.tile.([pf.f.x, pf.μ, pf.logjac]); prefix = :Pushforward)
 end
 
 function Pretty.tile(pf::Pushforward)
@@ -31,7 +31,7 @@ Pullback(f, ν) = Pullback(f, ν, True())
 insupport(d::Pullback, x) = insupport(d.ν, d.f(x))
 
 function Pretty.tile(pf::Pullback{<:TV.CallableTransform})
-    Pretty.list_layout(Pretty.tile.([pf.f.t, pf.ν, pf.logjac]); prefix = :Pullback)
+    Pretty.list_layout(Pretty.tile.([pf.f.x, pf.ν, pf.logjac]); prefix = :Pullback)
 end
 
 function Pretty.tile(pf::Pullback)
@@ -41,7 +41,7 @@ end
 @inline function logdensity_def(pb::Pullback{F,M,True}, x) where {F<:CallableTransform,M}
     f = pb.f
     ν = pb.ν
-    y, logJ = TV.transform_and_logjac(f.t, x)
+    y, logJ = TV.transform_and_logjac(f.x, x)
     return logdensity_def(ν, y) + logJ
 end
 
@@ -55,8 +55,8 @@ end
 @inline function logdensity_def(pf::Pushforward{F,M,True}, y) where {F<:CallableTransform,M}
     f = pf.f
     μ = pf.μ
-    x = TV.inverse(f.t)(y)
-    _, logJ = TV.transform_and_logjac(f.t, x)
+    x = TV.inverse(f.x)(y)
+    _, logJ = TV.transform_and_logjac(f.x, x)
     return logdensity_def(μ, x) - logJ
 end
 
@@ -66,7 +66,7 @@ end
 ) where {F<:CallableTransform,M}
     f = pf.f
     μ = pf.μ
-    x = TV.inverse(f.t)(y)
+    x = TV.inverse(f.x)(y)
     return logdensity_def(μ, x)
 end
 
@@ -76,9 +76,9 @@ function Pushforward(f::AbstractTransform, ν, logjac = True())
     Pushforward(TV.transform(f), ν, logjac)
 end
 
-Pullback(f::CallableInverse, ν, logjac = True()) = Pushforward(TV.transform(f.t), ν, logjac)
+Pullback(f::CallableInverse, ν, logjac = True()) = Pushforward(TV.transform(f.x), ν, logjac)
 
-Pushforward(f::CallableInverse, ν, logjac = True()) = Pullback(TV.transform(f.t), ν, logjac)
+Pushforward(f::CallableInverse, ν, logjac = True()) = Pullback(TV.transform(f.x), ν, logjac)
 
 Base.rand(rng::AbstractRNG, T::Type, ν::Pushforward) = ν.f(rand(rng, T, ν.μ))
 

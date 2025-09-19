@@ -20,9 +20,9 @@ addlogjac(::TV.NoLogJac, Δℓ) = TV.NoLogJac()
 
 using MappedArrays
 
-bounds(t::TV.ShiftedExp{true}) = (t.shift, TV.∞)
-bounds(t::TV.ShiftedExp{false}) = (-TV.∞, t.shift)
-bounds(t::TV.ScaledShiftedLogistic) = (t.shift, t.scale + t.shift)
+bounds(t::TV.CompositeScalarTransform{Tuple{TVShift{T}, TVExp}}) where {T} = (t.transforms[1].shift, TV.∞)
+bounds(t::TV.CompositeScalarTransform{Tuple{TVShift{T}, TVNeg, TVExp}}) where {T} = (-TV.∞, t.transforms[1].shift)
+bounds(t::TV.TransformVariables.CompositeScalarTransform{Tuple{TVShift{T}, TVScale{T}, TVLogistic}}) where {T} = (t.shift, t.scale + t.shift)
 bounds(::TV.Identity) = (-TV.∞, TV.∞)
 
 const OrderedΔx = -8.0

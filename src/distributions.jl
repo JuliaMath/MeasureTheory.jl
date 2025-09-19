@@ -11,15 +11,16 @@ const Dists = Distributions
     error("Not implemented:\nas($d)")
 end
 
-using TransformVariables: ShiftedExp, ScaledShiftedLogistic
+using TransformVariables: TVShift, TVExp, TVNeg, TVScale, TVLogistic
 
 function asTransform(supp::Dists.RealInterval)
     (lb, ub) = (supp.lb, supp.ub)
 
     (lb, ub) == (-Inf, Inf) && (return asℝ)
-    isinf(ub) && return ShiftedExp(true, lb)
-    isinf(lb) && return ShiftedExp(false, lb)
-    return ScaledShiftedLogistic(ub - lb, lb)
+    isinf(ub) && return TVShift(lb) ∘ TVExp()
+    isinf(lb) && return TVShift(lb) ∘ TVNeg() ∘ TVExp()
+    shift, scale = promote(lb, ub - lb)
+    return TVShift(shift) ∘ TVScale(scale) ∘ TVLogistic()
 end
 
 as(μ::AbstractMeasure, _data::NamedTuple) = as(μ)
